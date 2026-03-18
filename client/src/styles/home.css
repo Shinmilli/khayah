@@ -1,0 +1,14 @@
+/* Home page overrides (main layout in index.css) */
+.section.no-margin-h .section_wrapper {
+  margin-left: 0;
+  margin-right: 0;
+  max-width: none;
+}
+
+.section.no-margin-h .items_group {
+  margin: 0;
+}
+
+.section.no-margin-h .column {
+  padding: 0;
+}
