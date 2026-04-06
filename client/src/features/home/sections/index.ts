@@ -1,8 +1,4 @@
-export { ActionBoxesSection } from './ActionBoxesSection'
 export { BoardSection } from './BoardSection'
-export { HeadingSection } from './HeadingSection'
 export { HeroSection } from './HeroSection'
 export { ImpactSection } from './ImpactSection'
-export { LatestPostsSection } from './LatestPostsSection'
-export { PhotoCardsSection } from './PhotoCardsSection'
 export { StorySection } from './StorySection'

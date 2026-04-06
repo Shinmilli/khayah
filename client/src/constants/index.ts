@@ -22,11 +22,3 @@ export const FOOTER = {
   contactText:
     '사단법인 카야 인터내셔널\n경기도 성남시 분당구 이매동 81-3 (방아로 38)\nT 070.5121.2198 | F 070.8650.3639\nE khayahinternational@gmail.com',
 } as const
-
-/** 홈 슬라이더 이미지 (Rev Slider home-khayah – 업로드 폴더 복사 시 사용) */
-export const SLIDER_IMAGES = [
-  '/images/slider/home_khayah_slider2.jpg',
-  '/images/slider/home_khayah_slider3.jpg',
-  '/images/slider/home_khayah_slider4.jpg',
-  '/images/slider/home_khayah_slider5.jpg',
-] as const
