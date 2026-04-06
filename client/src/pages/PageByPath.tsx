@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { fetchPageBySlug, fetchPostBySlug } from '../services/api'
-import { PAGES_STATIC, pathToSlug } from '../constants/pagesContent'
+import { PAGES_STATIC, normalizePathKey, pathToSlug } from '../constants/pagesContent'
 import type { Page } from '../types/page'
 import type { Post } from '../types/post'
 import '../styles/page.css'
 
 export function PageByPath() {
   const location = useLocation()
-  const pathKey = location.pathname.replace(/^\/+|\/+$/g, '')
+  const pathKey = normalizePathKey(location.pathname)
+  const hashId = location.hash.replace(/^#/, '')
   const [apiPage, setApiPage] = useState<Page | null | undefined>(undefined)
   const [post, setPost] = useState<Post | null | undefined>(undefined)
 
@@ -54,6 +55,14 @@ export function PageByPath() {
     if (title) document.title = `${title} | 사단법인 카야 인터내셔널`
     return () => { document.title = '사단법인 카야 인터내셔널 | 개발NGO' }
   }, [title])
+
+  useEffect(() => {
+    if (!hashId) return
+    const timer = window.setTimeout(() => {
+      document.getElementById(hashId)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }, 80)
+    return () => clearTimeout(timer)
+  }, [hashId, pathKey, staticPage, apiPage])
 
   if (post) {
     return (

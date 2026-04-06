@@ -1,16 +1,45 @@
 /* Base & Betheme-child inspired (Khayah) */
 :root {
+  --site-header-height: 80px;
   --khayah-red: #b20838;
   --khayah-red-hover: #c78598;
   --text-dark: #404954;
   --text-muted: #737e86;
-  --font-sans: 'Malgun Gothic', '맑은 고딕', Dotum, sans-serif;
-  --font-heading: 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+  --font-sans:
+    'Pretendard',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    'Helvetica Neue',
+    Arial,
+    sans-serif;
+  --font-heading: var(--font-sans);
   font-family: var(--font-sans);
   line-height: 1.5;
   font-weight: 400;
   color: var(--text-dark);
   background-color: #fff;
+}
+
+body {
+  padding-top: var(--site-header-height);
+}
+
+body.has-overlay-header {
+  padding-top: 0;
+}
+
+@media (max-width: 768px) {
+  :root {
+    --site-header-height: 70px;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --site-header-height: 60px;
+  }
 }
 
 * {
@@ -335,74 +364,403 @@ a:hover {
   color: #fff;
 }
 
-/* Footer */
+/* Footer — 본문과 맞닿게 두고 상단만 푸터 내부와 동일한 얇은 회색선(#eee) */
 #Footer {
-  margin-top: 50px;
-  padding-top: 40px;
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-top: 0;
+  padding-bottom: 0;
   border-top: 1px solid #eee;
   background: #f9f9f9;
-}
-
-#Footer .widgets_wrapper {
-  padding: 0 20px 30px;
+  font-family: var(--font-sans, inherit);
 }
 
 #Footer .container {
   max-width: 1200px;
   margin: 0 auto;
+}
+
+/* 전역 .column 의 margin-bottom 이 푸터 카피 아래를 크게 벌림 → 푸터 안에서만 제거 */
+#Footer .footer_copy .column {
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+/* 푸터 상단 얇은 줄: 후원신청·SNS 등만, 오른쪽 정렬 */
+.footer-links-bar {
+  padding: 9px 12px;
+  border-bottom: 1px solid #eee;
+  box-sizing: border-box;
+  background: #f9f9f9;
+}
+
+.footer-links-bar__inner {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.footer-links-bar .container {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.footer-links-bar__nav {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.footer-links-bar__row {
   display: flex;
   flex-wrap: wrap;
-}
-
-#Footer .widget {
-  margin-bottom: 20px;
-}
-
-#Footer .widget h4 {
-  font-size: 17px;
-  margin-bottom: 12px;
-  color: var(--text-dark);
-}
-
-#Footer .textwidget,
-#Footer .footer-links {
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0;
+  margin: 0;
+  padding: 0;
   font-size: 14px;
-  line-height: 1.6;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.4;
+  text-align: right;
+}
+
+.footer-links-bar__sep {
+  margin: 0 0.45em;
+  color: #ccc;
+  user-select: none;
+}
+
+.footer-links-bar__link,
+.footer-links-bar__text {
+  color: #666;
+  text-decoration: none;
+  line-height: 1.4;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.footer-links-bar__link:hover {
+  color: var(--khayah-red);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.footer-links-bar__text {
+  opacity: 0.55;
+  cursor: default;
+}
+
+/* 푸터 본문: 법인명·주소 등 왼쪽 (로고 + 텍스트) */
+.footer-main {
+  padding: 0 12px;
+  box-sizing: border-box;
+  background: #f9f9f9;
+}
+
+.footer-main__inner {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.footer-main__left {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  column-gap: 32px;
+  row-gap: 11px;
+  max-width: 100%;
+  text-align: left;
+}
+
+.footer-main__logo {
+  height: 48px;
+  width: auto;
+  max-width: 134px;
+  object-fit: contain;
+  display: block;
+  flex-shrink: 0;
+  margin-top: 0;
+}
+
+.footer-main__logo--fallback {
+  filter: grayscale(1) brightness(0.42);
+}
+
+.footer-main__address {
+  min-width: 0;
+}
+
+.footer-main__line {
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+  line-height: 1.34;
   color: #666;
 }
 
-#Footer .footer-links {
-  list-style: none;
+.footer-main__line:last-child {
+  margin-bottom: 0;
 }
 
-#Footer .footer-links li {
-  margin-bottom: 6px;
+.footer-main__line--org {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-dark);
+  line-height: 1.22;
+  margin-top: -3px;
+  margin-bottom: 0;
 }
 
 #Footer .footer_copy {
-  padding: 20px;
+  padding: 19px 10px;
   border-top: 1px solid #eee;
   position: relative;
 }
 
+#Footer .footer_copy .container {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
 #Footer .copyright {
-  font-size: 13px;
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+  line-height: 1.42;
   color: #666;
   text-align: center;
 }
 
 #back_to_top {
   position: absolute;
-  left: 20px;
+  left: 12px;
   top: 50%;
   transform: translateY(-50%);
-  padding: 8px 12px;
-  font-size: 18px;
+  padding: 3px 7px;
+  font-size: 14px;
+  line-height: 1;
   color: #666;
 }
 
 #back_to_top:hover {
   color: var(--khayah-red);
+}
+
+/* 가장 작은 모바일: 로고 상단 → 법인·주소 블록 하단 */
+@media (max-width: 480px) {
+  .footer-links-bar {
+    padding: 8px 10px;
+  }
+
+  .footer-main {
+    padding: 0 12px;
+  }
+
+  .footer-main__left {
+    flex-direction: column;
+    align-items: flex-start;
+    row-gap: 11px;
+    column-gap: 0;
+  }
+
+  .footer-main__logo {
+    height: 46px;
+    max-width: 128px;
+  }
+
+  #Footer .footer_copy {
+    padding: 16px 8px;
+  }
+}
+
+/* 전역 플로팅 후원 (홈: 히어로 절반 이상 스크롤 아웃 시 / 그 외 페이지: 항상) */
+.site-floating-fab {
+  --fab-donate-size: 72px;
+  --fab-social-size: 46px;
+  --fab-social-gap: 10px;
+  --fab-stack-gap: 12px;
+  position: fixed;
+  right: max(16px, env(safe-area-inset-right));
+  bottom: max(32px, env(safe-area-inset-bottom));
+  z-index: 900;
+  width: var(--fab-donate-size);
+  height: var(--fab-donate-size);
+  font-family: var(--font-sans, inherit);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 0.25s ease,
+    visibility 0.25s ease;
+}
+
+/* 후원 버튼→소셜 사이 빈 구간에서도 hover 유지 (마우스 경로 끊김 방지) */
+.site-floating-fab::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: var(--fab-donate-size);
+  width: 80px;
+  height: calc(
+    var(--fab-social-size) * 3 + var(--fab-social-gap) * 2 + var(--fab-stack-gap)
+  );
+  transform: translateX(-50%);
+  pointer-events: auto;
+  z-index: 0;
+}
+
+.site-floating-fab.is-visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* 소셜: 후원 버튼 가로 중앙 정렬, 클릭은 브리지 위로 */
+.site-floating-fab__socials {
+  position: absolute;
+  left: 50%;
+  right: auto;
+  bottom: calc(100% + var(--fab-stack-gap));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--fab-social-gap);
+  z-index: 2;
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(-50%, 6px);
+  pointer-events: none;
+  transition:
+    opacity 0.22s ease,
+    visibility 0.22s ease,
+    transform 0.22s ease;
+}
+
+.site-floating-fab.is-visible:hover .site-floating-fab__socials,
+.site-floating-fab.is-visible:focus-within .site-floating-fab__socials {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, 0);
+  pointer-events: auto;
+}
+
+.site-floating-fab__social {
+  width: var(--fab-social-size);
+  height: var(--fab-social-size);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  border: none;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  /* 전역 a:hover 색상 덮어쓰기 방지 — 아이콘(currentColor) 고정, 크기만 변화 */
+  transition: transform 0.18s ease;
+}
+
+.site-floating-fab__social:hover,
+.site-floating-fab__social:focus-visible {
+  transform: scale(1.07);
+}
+
+.site-floating-fab__social svg {
+  flex-shrink: 0;
+  pointer-events: none;
+}
+
+.site-floating-fab__social--instagram {
+  background: linear-gradient(45deg, #f58529, #dd2a7b 48%, #8134af);
+  color: #fff;
+}
+
+.site-floating-fab__social--instagram:hover,
+.site-floating-fab__social--instagram:focus-visible {
+  color: #fff;
+}
+
+.site-floating-fab__social--blog {
+  background: #03c75a;
+  color: #fff;
+}
+
+.site-floating-fab__social--blog:hover,
+.site-floating-fab__social--blog:focus-visible {
+  color: #fff;
+}
+
+.site-floating-fab__social--kakao {
+  background: #fee500;
+  color: #3c1e1e;
+}
+
+.site-floating-fab__social--kakao:hover,
+.site-floating-fab__social--kakao:focus-visible {
+  color: #3c1e1e;
+}
+
+.site-floating-fab__donate {
+  position: relative;
+  z-index: 1;
+  width: var(--fab-donate-size);
+  height: var(--fab-donate-size);
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 10px 6px 12px;
+  box-sizing: border-box;
+  background: var(--khayah-red);
+  color: #fff;
+  text-decoration: none;
+  border: none;
+  box-shadow: 0 3px 14px rgba(0, 0, 0, 0.12);
+  transition:
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.site-floating-fab__donate:hover,
+.site-floating-fab__donate:active {
+  background: var(--khayah-red);
+  color: #fff;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.14);
+}
+
+.site-floating-fab__donate:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.85);
+  outline-offset: 2px;
+}
+
+.site-floating-fab__heart {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+  color: #fff;
+}
+
+.site-floating-fab__heart svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.site-floating-fab__label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  text-align: center;
 }
 
 /* Post list (blog) */

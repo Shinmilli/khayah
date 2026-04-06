@@ -40,7 +40,7 @@ export const PAGES_STATIC: Record<string, StaticPage> = {
 `,
   },
   '카야/카야-스토리': {
-    title: '카야 스토리',
+    title: '인사말(카야스토리)',
     content: '<p>카야가 걸어온 이야기와 현장의 소식을 전합니다.</p>',
   },
   '카야/카야-연혁': {
@@ -64,13 +64,25 @@ export const PAGES_STATIC: Record<string, StaticPage> = {
 `,
   },
   '카야/위치안내': {
-    title: '위치안내',
+    title: '오시는 길',
     content: `
 <p><strong>카야코리아</strong><br/>
 04080 서울특별시 마포구 토정로 174</p>
 <p>T 031 689 3639 | E khayahkorea@gmail.com</p>
 <p>대중교통 이용 시 안내문을 참고해 주세요.</p>
 `,
+  },
+  '카야/조직도': {
+    title: '조직도',
+    content: '<p>카야의 조직 구성과 역할을 안내합니다.</p>',
+  },
+  '카야/이사회-전문위원': {
+    title: '이사회 / 전문위원',
+    content: '<p>이사회 및 전문위원 구성을 안내합니다.</p>',
+  },
+  '카야/핵심사업': {
+    title: '핵심사업',
+    content: '<p>카야의 핵심 사업을 소개합니다. <a href="/사업/진행사업">진행사업</a>에서 상세 내용을 확인하실 수 있습니다.</p>',
   },
   '해외사업': {
     title: '해외사업',
@@ -130,6 +142,22 @@ export const PAGES_STATIC: Record<string, StaticPage> = {
     title: '후원신청',
     content: '<p>후원 신청 및 정기후원 안내 페이지입니다. 문의: khayahkorea@gmail.com / 031 689 3639</p>',
   },
+  '후원가이드/정기후원': {
+    title: '정기후원',
+    content: '<p>정기 후원 참여 방법을 안내합니다. <a href="/후원가이드/후원신청">후원 신청</a> · 문의: 031 689 3639</p>',
+  },
+  '후원가이드/일시후원': {
+    title: '일시후원',
+    content: '<p>일시 후원 및 계좌 안내입니다. <a href="/후원가이드/후원자-가이드">후원안내</a>를 함께 확인해 주세요.</p>',
+  },
+  '후원가이드/물품후원': {
+    title: '물품후원',
+    content: '<p>물품 후원 절차 및 문의 안내입니다.</p>',
+  },
+  '후원가이드/자원봉사': {
+    title: '자원봉사',
+    content: '<p>자원봉사 참여 및 신청 안내입니다.</p>',
+  },
   '소식': {
     title: '소식',
     content: '<p>카야의 최신 소식, 공지사항, 소식지, 재정보고를 확인하실 수 있습니다.</p><p><a href="/소식/공지사항">공지사항</a> · <a href="/소식/카야소식">카야소식</a> · <a href="/소식/소식지">소식지</a> · <a href="/소식/재정보고">재정보고</a></p>',
@@ -150,6 +178,14 @@ export const PAGES_STATIC: Record<string, StaticPage> = {
     title: '재정보고',
     content: '<p>연간 재정보고 및 사업보고 자료를 안내합니다.</p>',
   },
+  '소식/언론보도': {
+    title: '언론보도',
+    content: '<p>언론 보도 및 보도자료를 안내합니다.</p>',
+  },
+  '소식/1대1문의': {
+    title: '1:1 문의',
+    content: '<p>1:1 문의 안내입니다. 이메일: khayahkorea@gmail.com · T 031 689 3639</p>',
+  },
   '카야와-함께': {
     title: '카야와 함께',
     content: '<p>카야와 함께할 수 있는 방법을 안내합니다. <a href="/카야와-함께/공지사항">공지사항</a> · <a href="/카야와-함께/카야소식">카야소식</a></p>',
@@ -164,10 +200,26 @@ export const PAGES_STATIC: Record<string, StaticPage> = {
   },
 }
 
-/** pathname에서 API slug 추출 (마지막 세그먼트) */
-export function pathToSlug(pathname: string): string {
+/** 각 세그먼트를 한 번 디코드해 정적 키·API slug와 맞춤 (이중 인코딩 URL 대응) */
+function decodeSegment(segment: string): string {
+  try {
+    return decodeURIComponent(segment)
+  } catch {
+    return segment
+  }
+}
+
+/** pathname을 PAGES_STATIC 키 형태로 정규화 (예: 카야/%EC%B9%94… → 카야/카야소개) */
+export function normalizePathKey(pathname: string): string {
   const trimmed = pathname.replace(/^\/+|\/+$/g, '')
   if (!trimmed) return ''
-  const segments = trimmed.split('/')
+  return trimmed.split('/').map(decodeSegment).join('/')
+}
+
+/** pathname에서 API slug 추출 (마지막 세그먼트, 디코드 후) */
+export function pathToSlug(pathname: string): string {
+  const key = normalizePathKey(pathname)
+  if (!key) return ''
+  const segments = key.split('/')
   return segments[segments.length - 1] ?? ''
 }

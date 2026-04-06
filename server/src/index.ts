@@ -3,6 +3,7 @@ import express from 'express'
 import cors from 'cors'
 import { postsRouter } from './routes/posts'
 import { pagesRouter } from './routes/pages'
+import { youtubeRouter } from './routes/youtube'
 
 const app = express()
 const PORT = process.env.PORT ?? 3001
@@ -12,6 +13,7 @@ app.use(express.json())
 
 app.use('/api', postsRouter)
 app.use('/api', pagesRouter)
+app.use('/api', youtubeRouter)
 
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok' })

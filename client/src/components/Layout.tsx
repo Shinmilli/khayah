@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
-import { Header } from './Header'
+import { FloatingDonateButton } from './FloatingDonateButton'
 import { Footer } from './Footer'
+import { Header } from './Header'
 
 interface LayoutProps {
   children: ReactNode
@@ -15,6 +16,7 @@ export function Layout({ children }: LayoutProps) {
         </header>
       </div>
       <div id="Content">{children}</div>
+      <FloatingDonateButton />
       <Footer />
     </div>
   )
