@@ -7,6 +7,15 @@
   padding-top: 0;
 }
 
+/* 인사말(.greeting-modern): 시그 블록 아래 기본 section padding-bottom·컬럼 여백으로 흰 띠 생김 → 제거 */
+.page-content-wrapper > .section:has(.greeting-modern) {
+  padding-bottom: 0;
+}
+
+.page-content-wrapper > .section:has(.greeting-modern) .column.one {
+  margin-bottom: 0;
+}
+
 .page-hero {
   position: relative;
   width: 100%;
@@ -671,7 +680,7 @@
   grid-template-columns: 1fr;
   grid-template-rows: auto auto;
   justify-items: center;
-  row-gap: 16px;
+  row-gap: 32px;
 }
 
 .khayah-about-def-vmv .values-orbit__node--v5 .values-orbit__stack {
@@ -683,7 +692,7 @@
   text-align: center;
   justify-self: center;
   max-width: min(340px, 92vw);
-  margin-top: 4px;
+  margin-top: 0;
 }
 
 /* 노드 배치 — 1·2는 약간 아래, 3·4는 위로 올리고 좌우로 살짝 벌림 */
@@ -771,7 +780,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: stretch;
-    gap: 12px;
+    gap: 18px;
     text-align: left;
     background: #f5f5f5;
     border-radius: 10px;
@@ -867,7 +876,7 @@
 }
 
 .page-content-wrapper .page-body p.kh-history__lead {
-  margin: 0 0 clamp(28px, 4vw, 48px);
+  margin: clamp(32px, 5.5vw, 64px) 0 clamp(28px, 4vw, 48px);
   font-size: clamp(20px, 4.8vw, 26px);
   font-weight: 500;
   line-height: 1.55;

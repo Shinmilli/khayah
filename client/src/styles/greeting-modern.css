@@ -21,11 +21,13 @@
   --gm-subtext: #666;
   --gm-red: var(--khayah-red, #b20838);
   --gm-content-max: 1100px;
+  /* 시그 블록만 메인 그리드보다 살짝 넓게 */
+  --gm-sig-extra: 72px;
   --gm-pad-x: clamp(20px, 5vw, 6%);
 
   box-sizing: border-box;
   margin-top: 0;
-  margin-bottom: 8px;
+  margin-bottom: 0;
   font-family: 'Noto Sans KR', 'Pretendard', sans-serif;
   font-weight: 300;
   color: var(--gm-text);
@@ -204,7 +206,7 @@
 
 .greeting-modern .sig-inner {
   box-sizing: border-box;
-  max-width: var(--gm-content-max);
+  max-width: calc(var(--gm-content-max) + var(--gm-sig-extra));
   margin: 0 auto;
   padding: 0 var(--gm-pad-x);
   display: grid;
@@ -215,7 +217,7 @@
 
 .greeting-modern .sig-quote {
   font-family: 'DM Serif Display', Georgia, serif;
-  font-size: clamp(1.1rem, 2.25vw, 1.32rem);
+  font-size: clamp(1.22rem, 2.55vw, 1.48rem);
   color: rgba(255, 255, 255, 0.88);
   line-height: 1.52;
   font-style: italic;
