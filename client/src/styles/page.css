@@ -19,13 +19,11 @@
 .page-hero {
   position: relative;
   width: 100%;
-  min-height: clamp(112px, 17vw, 190px);
-  display: flex;
-  flex-direction: column;
+  min-height: clamp(220px, 30vw, 360px);
+  display: grid;
+  place-items: center;
   overflow: hidden;
   background: #111;
-  margin: 0;
-  padding: 0;
 }
 
 .page-hero__bg {
@@ -56,13 +54,8 @@
   z-index: 1;
   width: 92%;
   max-width: 1100px;
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: auto;
-  margin-bottom: 0;
-  padding-top: clamp(4px, 1vw, 10px);
-  /* 하단 스크롤 힌트(absolute)와 겹치지 않도록 */
-  padding-bottom: clamp(28px, 4.5vw, 44px);
+  padding-top: calc(var(--site-header-height, 80px) * 0.2);
+  padding-bottom: 10px;
   text-align: center;
 }
 
