@@ -1,0 +1,297 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=DM+Sans:wght@300;400;500&family=DM+Serif+Display:ital@0;1&display=swap');
+
+/* greeting_modern.html — 히어로·내비 제외 본문 (인사말 페이지 전용) */
+/* section/column 패딩을 벗어나 배경색이 뷰포트 가로 전체를 채움 */
+.page-content-wrapper .the_content_wrapper.page-body > .greeting-modern {
+  width: 100vw;
+  max-width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  position: relative;
+  left: auto;
+  overflow-x: clip;
+}
+
+.greeting-modern {
+  --gm-black: #0a0a0a;
+  --gm-off-white: #f5f4f0;
+  --gm-mid-gray: #888;
+  --gm-light-gray: #e8e6e1;
+  --gm-text: #1c1c1c;
+  --gm-subtext: #666;
+  --gm-red: var(--khayah-red, #b20838);
+  --gm-content-max: 1100px;
+  --gm-pad-x: clamp(20px, 5vw, 6%);
+
+  box-sizing: border-box;
+  margin-top: 0;
+  margin-bottom: 8px;
+  font-family: 'Noto Sans KR', 'Pretendard', sans-serif;
+  font-weight: 300;
+  color: var(--gm-text);
+  background: var(--gm-off-white);
+}
+
+.greeting-modern *,
+.greeting-modern *::before,
+.greeting-modern *::after {
+  box-sizing: border-box;
+}
+
+.greeting-modern .intro-strip {
+  border-bottom: 1px solid var(--gm-light-gray);
+  padding: clamp(28px, 4vw, 40px) var(--gm-pad-x);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  background: var(--gm-off-white);
+}
+
+.greeting-modern .intro-strip-label {
+  font-family: 'DM Sans', 'Noto Sans KR', sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--gm-mid-gray);
+}
+
+.greeting-modern .intro-strip-divider {
+  flex: 1;
+  height: 1px;
+  background: var(--gm-light-gray);
+  max-width: 200px;
+  min-width: 40px;
+}
+
+.greeting-modern .content {
+  background: var(--gm-off-white);
+}
+
+.greeting-modern .main-grid {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 0;
+  max-width: var(--gm-content-max);
+  margin: 0 auto;
+  padding: clamp(60px, 10vw, 100px) var(--gm-pad-x);
+}
+
+.greeting-modern .sidebar {
+  padding-right: clamp(32px, 5vw, 60px);
+  border-right: 1px solid var(--gm-light-gray);
+  position: sticky;
+  top: calc(var(--site-header-height, 80px) + 24px);
+  align-self: start;
+}
+
+/* .page-body h2 기본값보다 우선 */
+.page-content-wrapper .page-body .greeting-modern h2.sidebar-title {
+  font-family: 'DM Serif Display', Georgia, 'Noto Serif KR', serif;
+  font-size: clamp(1.75rem, 3.5vw, 2.2rem);
+  line-height: 1.2;
+  color: var(--gm-black);
+  margin: 0 0 24px;
+  font-weight: 400;
+}
+
+.page-content-wrapper .page-body .greeting-modern h2.sidebar-title em {
+  font-style: italic;
+  color: var(--gm-mid-gray);
+}
+
+.greeting-modern .sidebar-meta {
+  font-size: 0.75rem;
+  color: var(--gm-mid-gray);
+  letter-spacing: 0.1em;
+  line-height: 1.8;
+  margin: 0 0 40px;
+}
+
+.greeting-modern .sidebar-tag {
+  display: inline-block;
+  border: 1px solid var(--gm-light-gray);
+  padding: 6px 14px;
+  font-size: 0.68rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gm-subtext);
+  font-family: 'DM Sans', sans-serif;
+  border-radius: 2px;
+}
+
+.greeting-modern .article {
+  padding-left: clamp(32px, 5vw, 70px);
+}
+
+.greeting-modern .article-lead {
+  font-family: 'DM Serif Display', Georgia, serif;
+  font-size: clamp(1.2rem, 2.2vw, 1.45rem);
+  line-height: 1.65;
+  color: var(--gm-black);
+  margin: 0 0 48px;
+  font-style: italic;
+  padding-bottom: 48px;
+  border-bottom: 1px solid var(--gm-light-gray);
+  font-weight: 400;
+}
+
+.greeting-modern .article-body {
+  font-size: 0.94rem;
+  line-height: 2.05;
+  color: #444;
+  margin: 0 0 28px;
+}
+
+.greeting-modern .article-body strong {
+  color: var(--gm-black);
+  font-weight: 500;
+}
+
+.greeting-modern .pull-quote {
+  margin: 56px 0;
+  padding: 0 0 0 32px;
+  border-left: 2px solid var(--gm-black);
+}
+
+.greeting-modern .pull-quote p {
+  font-family: 'DM Serif Display', Georgia, serif;
+  font-size: clamp(1.25rem, 2.5vw, 1.5rem);
+  line-height: 1.5;
+  color: var(--gm-black);
+  font-style: italic;
+  margin: 0;
+  font-weight: 400;
+}
+
+.greeting-modern .pull-quote cite {
+  display: block;
+  margin-top: 16px;
+  font-size: 0.72rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gm-mid-gray);
+  font-style: normal;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.greeting-modern .section-marker {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin: 56px 0 36px;
+}
+
+.greeting-modern .section-marker-num {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  color: var(--gm-mid-gray);
+}
+
+.greeting-modern .section-marker-line {
+  flex: 1;
+  height: 1px;
+  background: var(--gm-light-gray);
+}
+
+.greeting-modern .sig-section {
+  background: var(--gm-black);
+  /* 세로만 여백 — 가로는 main-grid와 동일한 컬럼 폭으로 sig-inner에서만 맞춤 */
+  padding: clamp(44px, 6.8vw, 72px) 0;
+}
+
+.greeting-modern .sig-inner {
+  box-sizing: border-box;
+  max-width: var(--gm-content-max);
+  margin: 0 auto;
+  padding: 0 var(--gm-pad-x);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: clamp(24px, 4vw, 40px);
+}
+
+.greeting-modern .sig-quote {
+  font-family: 'DM Serif Display', Georgia, serif;
+  font-size: clamp(1.1rem, 2.25vw, 1.32rem);
+  color: rgba(255, 255, 255, 0.88);
+  line-height: 1.52;
+  font-style: italic;
+  margin: 0;
+  font-weight: 400;
+  min-width: 0;
+}
+
+.greeting-modern .sig-info {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.greeting-modern .sig-role {
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.35);
+  margin: 0 0 8px;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.greeting-modern .sig-name {
+  font-family: 'DM Serif Display', Georgia, serif;
+  font-size: clamp(1.3rem, 3vw, 1.68rem);
+  color: #fff;
+  font-style: italic;
+  margin: 0 0 6px;
+  font-weight: 400;
+}
+
+.greeting-modern .sig-name-ko {
+  font-size: 0.84rem;
+  color: rgba(255, 255, 255, 0.4);
+  letter-spacing: 0.1em;
+  margin: 0;
+}
+
+.greeting-modern .sig-line {
+  width: 36px;
+  height: 1px;
+  background: var(--gm-red);
+  margin: 16px 0 0 auto;
+}
+
+@media (max-width: 768px) {
+  .greeting-modern .main-grid {
+    grid-template-columns: 1fr;
+    padding: 48px clamp(18px, 4vw, 6%);
+  }
+
+  .greeting-modern .sig-inner {
+    padding: 0 clamp(18px, 4vw, 6%);
+  }
+
+  .greeting-modern .sidebar {
+    position: static;
+    border-right: none;
+    border-bottom: 1px solid var(--gm-light-gray);
+    padding: 0 0 40px;
+    margin-bottom: 40px;
+  }
+
+  .greeting-modern .article {
+    padding-left: 0;
+  }
+
+  .greeting-modern .sig-inner {
+    grid-template-columns: 1fr;
+  }
+
+  .greeting-modern .sig-info {
+    text-align: left;
+  }
+
+  .greeting-modern .sig-line {
+    margin: 20px 0 0 0;
+  }
+}

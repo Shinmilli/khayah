@@ -2,6 +2,178 @@
   padding: 0;
 }
 
+/* BeTheme .section 기본 padding-top: 60px — 브레드크럼 아래 불필요한 흰 띠 제거 */
+.page-content-wrapper > .section {
+  padding-top: 0;
+}
+
+.page-hero {
+  position: relative;
+  width: 100%;
+  min-height: clamp(112px, 17vw, 190px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #111;
+  margin: 0;
+  padding: 0;
+}
+
+.page-hero__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(120deg, #2b2b2b 0%, #1a1a1a 50%, #303030 100%);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transform: scale(1.02);
+}
+
+.page-hero__bg.has-image {
+  background-color: #111;
+}
+
+.page-hero__bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+}
+
+.page-hero__inner {
+  position: relative;
+  z-index: 1;
+  width: 92%;
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: auto;
+  margin-bottom: 0;
+  padding-top: clamp(4px, 1vw, 10px);
+  /* 하단 스크롤 힌트(absolute)와 겹치지 않도록 */
+  padding-bottom: clamp(28px, 4.5vw, 44px);
+  text-align: center;
+}
+
+.page-hero__title {
+  margin: 0;
+  color: #fff;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  font-size: clamp(1.7rem, 3.2vw, 2.6rem);
+  text-shadow: 0 4px 22px rgba(0, 0, 0, 0.35);
+}
+
+.page-hero__scroll {
+  position: absolute;
+  bottom: clamp(14px, 3vw, 24px);
+  left: clamp(16px, 6%, 48px);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 0.65rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+.page-hero__scroll-label {
+  font-weight: 500;
+}
+
+.page-hero__scroll-line {
+  width: 40px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.page-hero__scroll-line::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.8);
+  animation: page-hero-scroll-line 2s ease infinite;
+}
+
+@keyframes page-hero-scroll-line {
+  to {
+    left: 100%;
+  }
+}
+
+.page-crumbs {
+  width: 100%;
+  background: #fff;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  margin: 0;
+  padding: 0;
+}
+
+.page-crumbs__inner {
+  width: 92%;
+  max-width: 1100px;
+  margin: 0 auto;
+  min-height: 38px;
+  padding: 4px 0;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: rgba(0, 0, 0, 0.55);
+  font-size: 13px;
+  letter-spacing: -0.01em;
+}
+
+.page-crumbs__home {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  color: rgba(0, 0, 0, 0.55) !important;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.page-crumbs__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.page-crumbs__sep {
+  color: rgba(0, 0, 0, 0.28);
+}
+
+.page-crumbs__link {
+  color: rgba(0, 0, 0, 0.55) !important;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.page-crumbs__link:hover {
+  text-decoration: underline;
+}
+
+.page-crumbs__current {
+  color: rgba(0, 0, 0, 0.7);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
 .page-content-wrapper .page-title {
   font-size: 28px;
   margin-bottom: 24px;
@@ -58,4 +230,793 @@
 
 .page-content-wrapper .page-body .page-section h2 {
   margin-top: 0;
+}
+
+/* 공지사항 목록 (BeTheme 스타일: 날짜 상단 + 시계 아이콘, 제목 하단, 구분선) */
+.notice-archive-page .notice-archive__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.notice-archive-page .notice-archive__item {
+  border-bottom: 1px solid #e8e8e8;
+  padding: 22px 0;
+}
+
+.notice-archive-page .notice-archive__item:first-child {
+  border-top: 1px solid #e8e8e8;
+}
+
+.notice-archive-page .notice-archive__link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.notice-archive-page .notice-archive__date {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: #9a9a9a;
+  line-height: 1.3;
+}
+
+.notice-archive-page .notice-archive__clock {
+  flex-shrink: 0;
+  color: #b5b5b5;
+}
+
+.notice-archive-page .notice-archive__title {
+  margin: 10px 0 0;
+  padding: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.45;
+  color: #333;
+  letter-spacing: -0.02em;
+}
+
+.notice-archive-page .notice-archive__link:hover .notice-archive__title {
+  color: var(--khayah-red, #b20838);
+}
+
+.notice-archive-page .notice-archive__status {
+  color: #77818e;
+  font-size: 1rem;
+}
+
+.notice-archive-page .notice-archive__status--error {
+  color: #a94442;
+}
+
+/* 카야 소개 — 정의 / VMV (khayah_definition_vmv 시안, 본문 영역 전용) */
+.khayah-about-def-vmv {
+  --ka-bg: #fff;
+  --ka-text: var(--text-dark, #404954);
+  --ka-text-muted: #77818e;
+  --ka-border: #e8e8e8;
+  --ka-accent: var(--khayah-red, #b20838);
+  box-sizing: border-box;
+  margin-bottom: 8px;
+}
+
+.khayah-about-def-vmv *,
+.khayah-about-def-vmv *::before,
+.khayah-about-def-vmv *::after {
+  box-sizing: border-box;
+}
+
+.khayah-about-def-vmv .def-section {
+  padding: clamp(40px, 6vw, 80px) clamp(20px, 5vw, 64px);
+  background: var(--ka-bg);
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: 0 clamp(24px, 5vw, 64px);
+  align-items: start;
+}
+
+.khayah-about-def-vmv .def-label {
+  font-size: clamp(19px, 2.15vw, 24px);
+  font-weight: 700;
+  color: var(--ka-accent);
+  padding-top: 4px;
+  letter-spacing: -0.02em;
+}
+
+.khayah-about-def-vmv .def-headline {
+  font-size: clamp(18px, 2vw, 22px);
+  font-weight: 500;
+  color: var(--ka-text);
+  line-height: 1.5;
+  margin: 0 0 20px;
+}
+
+.khayah-about-def-vmv .def-body {
+  font-size: 15px;
+  color: var(--ka-text-muted);
+  line-height: 1.85;
+  max-width: 520px;
+  margin: 0;
+}
+
+.khayah-about-def-vmv .def-divider {
+  height: 1px;
+  background: var(--ka-border);
+  margin: 0 clamp(20px, 5vw, 64px);
+}
+
+.khayah-about-def-vmv .vmv-hero {
+  position: relative;
+  background: #0d0505;
+  /* 배너 높이(세로) 축소 */
+  padding: clamp(32px, 4.8vw, 56px) clamp(20px, 5vw, 64px);
+  overflow: hidden;
+  text-align: center;
+  width: 100%;
+  border-radius: 10px;
+}
+
+.khayah-about-def-vmv .vmv-hero-cross {
+  position: absolute;
+  /* 왼쪽 여백을 두고 더 오른쪽으로 이동 */
+  left: clamp(52px, 7vw, 112px);
+  /* 십자가 세로는 예전처럼 꽉 차게 */
+  top: 0;
+  bottom: 0;
+  width: min(96px, 14vw);
+  opacity: 0.18;
+  pointer-events: none;
+}
+
+.khayah-about-def-vmv .vmv-hero-title {
+  font-size: clamp(21px, 2.6vw, 28px);
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: 0.5px;
+  margin: 0 0 20px;
+  position: relative;
+}
+
+.khayah-about-def-vmv .vmv-hero-line {
+  width: 40px;
+  height: 2px;
+  background: var(--ka-accent);
+  margin: 0 auto 20px;
+}
+
+.khayah-about-def-vmv .vmv-hero-desc {
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.9;
+  position: relative;
+  margin: 0;
+}
+
+.khayah-about-def-vmv .vmv-content {
+  background: var(--ka-bg);
+}
+
+.khayah-about-def-vmv .vmv-row {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: 0 clamp(24px, 5vw, 64px);
+  padding: clamp(44px, 6vw, 64px) clamp(20px, 5vw, 64px);
+  border-bottom: 1px solid var(--ka-border);
+  align-items: start;
+}
+
+/* 비전: 상단 여유 */
+.khayah-about-def-vmv .vmv-row:first-child {
+  padding-top: clamp(52px, 7.5vw, 84px);
+}
+
+/* vmv-content 안 마지막은 핵심가치 섹션이라 :last-child가 vmv-row에 안 먹음 */
+.khayah-about-def-vmv .vmv-content > .vmv-row:nth-child(2) {
+  border-bottom: none;
+}
+
+.khayah-about-def-vmv .vmv-row-label {
+  font-size: clamp(19px, 2.15vw, 24px);
+  font-weight: 700;
+  color: var(--ka-accent);
+  padding-top: 2px;
+  letter-spacing: -0.02em;
+}
+
+.khayah-about-def-vmv .vmv-row-body {
+  font-size: 15px;
+  color: var(--ka-text-muted);
+  line-height: 1.85;
+  max-width: 540px;
+  margin: 0;
+}
+
+/* 핵심가치 — 이미지 시안(원형) 레이아웃 */
+.khayah-about-def-vmv .values-orbit-section {
+  padding: clamp(36px, 5vw, 52px) clamp(20px, 5vw, 64px) clamp(48px, 6vw, 72px);
+  border-bottom: none;
+}
+
+.khayah-about-def-vmv .values-orbit-section__head {
+  display: grid;
+  place-items: center;
+  text-align: center;
+  margin-bottom: clamp(18px, 2.6vw, 26px);
+}
+
+/* 비전·미션 라벨(.vmv-row-label)과 동일 타이포 (.page-body h3 기본값 덮어씀) */
+.page-content-wrapper .page-body .khayah-about-def-vmv h3.values-orbit-section__title {
+  margin: 0;
+  font-size: clamp(19px, 2.15vw, 24px);
+  font-weight: 700;
+  color: var(--ka-accent);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  font-family: inherit;
+}
+
+.khayah-about-def-vmv .values-orbit-section__underline {
+  width: 42px;
+  height: 3px;
+  background: var(--ka-accent);
+  border-radius: 999px;
+  margin-top: 10px;
+}
+
+.khayah-about-def-vmv .values-orbit-section__body {
+  width: 100%;
+}
+
+.khayah-about-def-vmv .value-tile-icon {
+  width: 40px;
+  height: 40px;
+  margin-bottom: 14px;
+  color: var(--ka-accent);
+  flex-shrink: 0;
+}
+
+.khayah-about-def-vmv .value-tile-icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* 핵심가치 — 이미지 기반(오빗) 레이아웃 */
+.khayah-about-def-vmv .values-orbit {
+  position: relative;
+  width: min(980px, 100%);
+  margin: 0 auto;
+  aspect-ratio: 16 / 8;
+  min-height: 460px;
+  padding-bottom: clamp(28px, 5vw, 64px);
+  overflow: visible;
+}
+
+.khayah-about-def-vmv .values-orbit__bgimg {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  /* 시안: 중앙 링 ≈ 외곽 버블 지름의 1.5~2배 → 기존 대비 약 1/2 */
+  width: min(410px, 48%);
+  height: auto;
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+  opacity: 0.95;
+}
+
+.khayah-about-def-vmv .values-orbit__center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(220px, 30%);
+  text-align: center;
+  z-index: 2;
+}
+
+.khayah-about-def-vmv .values-orbit__center::after {
+  content: none;
+}
+
+/* 중앙 카피도 섹션 라벨·본문 리듬에 맞춤 */
+.khayah-about-def-vmv .values-orbit__center-title {
+  font-size: clamp(19px, 2.15vw, 24px);
+  font-weight: 700;
+  color: var(--ka-accent);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  font-family: inherit;
+}
+
+.khayah-about-def-vmv .values-orbit__center-sub {
+  margin-top: 10px;
+  font-size: 15px;
+  color: var(--ka-text-muted);
+  line-height: 1.85;
+  font-family: inherit;
+}
+
+.khayah-about-def-vmv .values-orbit__stack {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  width: fit-content;
+}
+
+.khayah-about-def-vmv .values-orbit__node {
+  position: absolute;
+  display: grid;
+  align-items: start;
+  z-index: 1;
+  column-gap: clamp(16px, 2.2vw, 30px);
+}
+
+/* 1–4번: 서브텍스트를 버블 높이 기준 세로 중앙에 */
+.khayah-about-def-vmv .values-orbit__node--v1,
+.khayah-about-def-vmv .values-orbit__node--v2,
+.khayah-about-def-vmv .values-orbit__node--v3,
+.khayah-about-def-vmv .values-orbit__node--v4 {
+  align-items: center;
+}
+
+.khayah-about-def-vmv .values-orbit__bubble {
+  position: relative;
+  width: 150px;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  z-index: 2;
+}
+
+.khayah-about-def-vmv .values-orbit__bubble-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+}
+
+.khayah-about-def-vmv .values-orbit__bubble-content {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  padding: 0 16px;
+}
+
+.khayah-about-def-vmv .values-orbit__bubble-content .value-tile-icon {
+  width: 38px;
+  height: 38px;
+  margin-bottom: 10px;
+  color: var(--ka-accent);
+}
+
+.khayah-about-def-vmv .values-orbit__key {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ka-text);
+  line-height: 1.85;
+  text-align: center;
+  font-family: inherit;
+}
+
+.khayah-about-def-vmv .values-orbit__desc {
+  font-size: 15px;
+  color: var(--ka-text-muted);
+  line-height: 1.85;
+  margin: 0;
+  max-width: 240px;
+  font-family: inherit;
+}
+
+/* 좌측 노드: 설명이 버블 왼쪽, 본문은 오른쪽 정렬 */
+.khayah-about-def-vmv .values-orbit__node--v1,
+.khayah-about-def-vmv .values-orbit__node--v3 {
+  width: min(390px, 48%);
+  grid-template-columns: minmax(0, 1.15fr) auto;
+}
+
+.khayah-about-def-vmv .values-orbit__node--v1 .values-orbit__stack,
+.khayah-about-def-vmv .values-orbit__node--v3 .values-orbit__stack {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.khayah-about-def-vmv .values-orbit__node--v1 .values-orbit__desc,
+.khayah-about-def-vmv .values-orbit__node--v3 .values-orbit__desc {
+  grid-column: 1;
+  grid-row: 1;
+  text-align: right;
+  justify-self: end;
+  align-self: center;
+  max-width: min(240px, 36vw);
+}
+
+/* 우측 노드: 설명이 버블 오른쪽, 본문은 왼쪽 정렬 */
+.khayah-about-def-vmv .values-orbit__node--v2,
+.khayah-about-def-vmv .values-orbit__node--v4 {
+  width: min(390px, 48%);
+  grid-template-columns: auto minmax(0, 1.15fr);
+}
+
+.khayah-about-def-vmv .values-orbit__node--v2 .values-orbit__stack,
+.khayah-about-def-vmv .values-orbit__node--v4 .values-orbit__stack {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.khayah-about-def-vmv .values-orbit__node--v2 .values-orbit__desc,
+.khayah-about-def-vmv .values-orbit__node--v4 .values-orbit__desc {
+  grid-column: 2;
+  grid-row: 1;
+  text-align: left;
+  justify-self: start;
+  align-self: center;
+  max-width: min(240px, 36vw);
+}
+
+/* 하단 노드: 설명은 버블 아래 가운데 */
+.khayah-about-def-vmv .values-orbit__node--v5 {
+  left: 50%;
+  bottom: -22%;
+  transform: translateX(-50%);
+  width: min(320px, 88%);
+  grid-template-columns: 1fr;
+  grid-template-rows: auto auto;
+  justify-items: center;
+  row-gap: 16px;
+}
+
+.khayah-about-def-vmv .values-orbit__node--v5 .values-orbit__stack {
+  grid-row: 1;
+}
+
+.khayah-about-def-vmv .values-orbit__node--v5 .values-orbit__desc {
+  grid-row: 2;
+  text-align: center;
+  justify-self: center;
+  max-width: min(340px, 92vw);
+  margin-top: 4px;
+}
+
+/* 노드 배치 — 1·2는 약간 아래, 3·4는 위로 올리고 좌우로 살짝 벌림 */
+.khayah-about-def-vmv .values-orbit__node--v1 {
+  left: 1%;
+  top: 5%;
+}
+.khayah-about-def-vmv .values-orbit__node--v2 {
+  right: 1%;
+  top: 5%;
+}
+.khayah-about-def-vmv .values-orbit__node--v3 {
+  left: -1.5%;
+  top: 56%;
+}
+.khayah-about-def-vmv .values-orbit__node--v4 {
+  right: -1.5%;
+  top: 56%;
+}
+
+/* 반응형: 좁아지면 카드형 리스트로 */
+@media (max-width: 980px) {
+  .khayah-about-def-vmv .values-orbit {
+    aspect-ratio: auto;
+    min-height: 0;
+    padding-bottom: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    align-items: stretch;
+  }
+
+  .khayah-about-def-vmv .values-orbit__bgimg,
+  .khayah-about-def-vmv .values-orbit__center {
+    display: none;
+  }
+
+  /* v1·v3 데스크톱용 grid-column이 1열에서 순서를 깨뜨리지 않도록 전부 초기화 */
+  .khayah-about-def-vmv .values-orbit__node--v1 .values-orbit__stack,
+  .khayah-about-def-vmv .values-orbit__node--v2 .values-orbit__stack,
+  .khayah-about-def-vmv .values-orbit__node--v3 .values-orbit__stack,
+  .khayah-about-def-vmv .values-orbit__node--v4 .values-orbit__stack,
+  .khayah-about-def-vmv .values-orbit__node--v5 .values-orbit__stack {
+    grid-column: unset;
+    grid-row: unset;
+  }
+
+  .khayah-about-def-vmv .values-orbit__node--v1 .values-orbit__desc,
+  .khayah-about-def-vmv .values-orbit__node--v2 .values-orbit__desc,
+  .khayah-about-def-vmv .values-orbit__node--v3 .values-orbit__desc,
+  .khayah-about-def-vmv .values-orbit__node--v4 .values-orbit__desc,
+  .khayah-about-def-vmv .values-orbit__node--v5 .values-orbit__desc {
+    grid-column: unset;
+    grid-row: unset;
+    justify-self: unset;
+    align-self: unset;
+    text-align: left;
+    max-width: none;
+  }
+
+  .khayah-about-def-vmv .values-orbit__stack {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .khayah-about-def-vmv .values-orbit__node,
+  .khayah-about-def-vmv .values-orbit__node--v1,
+  .khayah-about-def-vmv .values-orbit__node--v2,
+  .khayah-about-def-vmv .values-orbit__node--v3,
+  .khayah-about-def-vmv .values-orbit__node--v4,
+  .khayah-about-def-vmv .values-orbit__node--v5 {
+    position: static;
+    left: auto;
+    right: auto;
+    top: auto;
+    bottom: auto;
+    transform: none;
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
+    gap: 12px;
+    text-align: left;
+    background: #f5f5f5;
+    border-radius: 10px;
+    padding: 16px 18px;
+  }
+
+  .khayah-about-def-vmv .values-orbit__node--v5 {
+    grid-column: 1 / -1;
+  }
+
+  .khayah-about-def-vmv .values-orbit__bubble {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex: 1;
+    min-width: 0;
+    width: 100%;
+    min-height: 0;
+    aspect-ratio: auto;
+    padding: 0;
+    place-items: unset;
+    justify-items: unset;
+  }
+
+  .khayah-about-def-vmv .values-orbit__bubble-img {
+    display: none;
+  }
+
+  .khayah-about-def-vmv .values-orbit__bubble-content {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    justify-content: flex-start;
+    text-align: left;
+    padding: 0;
+    min-width: 0;
+    flex: 1;
+  }
+
+  .khayah-about-def-vmv .values-orbit__bubble-content .value-tile-icon {
+    width: 32px;
+    height: 32px;
+    margin-bottom: 0;
+    flex-shrink: 0;
+  }
+
+  .khayah-about-def-vmv .values-orbit__key {
+    text-align: left;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.35;
+    min-width: 0;
+    overflow-wrap: break-word;
+  }
+
+  .khayah-about-def-vmv .values-orbit__desc {
+    margin-top: 0;
+    font-size: 13px;
+    line-height: 1.6;
+    width: 100%;
+  }
+}
+
+@media (max-width: 560px) {
+  .khayah-about-def-vmv .values-orbit {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .khayah-about-def-vmv .def-section,
+  .khayah-about-def-vmv .vmv-row {
+    grid-template-columns: 1fr;
+    gap: 12px 0;
+  }
+
+  .khayah-about-def-vmv .def-label,
+  .khayah-about-def-vmv .vmv-row-label {
+    padding-top: 0;
+  }
+}
+
+/* ─── 카야 연혁 — 세로 타임라인 (메인 컬러 포인트) ─── */
+.page-content-wrapper .kh-history {
+  --kh-hist-accent: var(--khayah-red, #b20838);
+  --kh-hist-line: #e2e4e8;
+  --kh-hist-month: #9aa3ad;
+  --kh-hist-text: #5c6370;
+  --kh-hist-year: #2a2e36;
+  max-width: 820px;
+  margin: 0 auto;
+}
+
+.page-content-wrapper .page-body p.kh-history__lead {
+  margin: 0 0 clamp(28px, 4vw, 48px);
+  font-size: clamp(20px, 4.8vw, 26px);
+  font-weight: 500;
+  line-height: 1.55;
+  letter-spacing: -0.03em;
+  color: #949ca8;
+  text-align: center;
+}
+
+.page-content-wrapper .kh-history__timeline {
+  margin: 0;
+  padding: 0;
+}
+
+.page-content-wrapper .kh-history__block {
+  display: grid;
+  grid-template-columns: clamp(64px, 11vw, 108px) 22px minmax(0, 1fr);
+  column-gap: clamp(14px, 3vw, 28px);
+  align-items: stretch;
+  padding-bottom: clamp(32px, 5vw, 52px);
+  margin: 0;
+}
+
+.page-content-wrapper .kh-history__block:last-child {
+  padding-bottom: 0;
+}
+
+.page-content-wrapper .kh-history__block:last-child .kh-history__line {
+  min-height: 1.25rem;
+}
+
+.page-content-wrapper .kh-history__year-wrap {
+  align-self: start;
+  padding-top: 4px;
+}
+
+.page-content-wrapper .page-body h2.kh-history__year {
+  margin: 0;
+  font-size: clamp(22px, 2.4vw, 28px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  color: var(--kh-hist-year);
+}
+
+.page-content-wrapper .kh-history__rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  min-height: 100%;
+}
+
+.page-content-wrapper .kh-history__dot {
+  flex-shrink: 0;
+  width: 12px;
+  height: 12px;
+  margin-top: 10px;
+  border-radius: 50%;
+  background: var(--kh-hist-accent);
+  box-shadow: 0 0 0 3px rgba(178, 8, 56, 0.12);
+}
+
+.page-content-wrapper .kh-history__line {
+  flex: 1 1 auto;
+  width: 2px;
+  min-height: 2rem;
+  margin-top: 2px;
+  background: var(--kh-hist-line);
+}
+
+.page-content-wrapper .page-body ul.kh-history__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(14px, 2.2vw, 20px);
+}
+
+.page-content-wrapper .kh-history__item {
+  display: grid;
+  grid-template-columns: 2.25rem minmax(0, 1fr);
+  column-gap: 12px;
+  align-items: baseline;
+  margin: 0;
+  padding: 0;
+}
+
+.page-content-wrapper .kh-history__month {
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  color: var(--kh-hist-month);
+  line-height: 1.5;
+}
+
+.page-content-wrapper .kh-history__desc {
+  font-size: clamp(15px, 1.5vw, 16px);
+  line-height: 1.65;
+  color: var(--kh-hist-text);
+  margin: 0;
+}
+
+@media (max-width: 560px) {
+  /* 모바일만: 연도 전체 너비 상단 → 아래에 타임라인 + 월별 목록 */
+  .page-content-wrapper .kh-history__block {
+    grid-template-columns: 18px minmax(0, 1fr);
+    grid-template-rows: auto 1fr;
+    column-gap: 10px;
+    row-gap: 0;
+    padding-bottom: clamp(28px, 6vw, 40px);
+  }
+
+  .page-content-wrapper .kh-history__year-wrap {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    padding-top: 2px;
+    padding-bottom: clamp(8px, 2vw, 12px);
+  }
+
+  .page-content-wrapper .kh-history__rail {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .page-content-wrapper .page-body ul.kh-history__list {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  .page-content-wrapper .kh-history__dot {
+    width: 11px;
+    height: 11px;
+    margin-top: 2px;
+  }
+
+  .page-content-wrapper .page-body h2.kh-history__year {
+    font-size: clamp(18px, 5.2vw, 22px);
+  }
+
+  .page-content-wrapper .page-body ul.kh-history__list {
+    padding-left: 0;
+    border-left: none;
+    margin-left: 0;
+  }
+
+  .page-content-wrapper .kh-history__item {
+    grid-template-columns: 2rem minmax(0, 1fr);
+    column-gap: 8px;
+  }
 }

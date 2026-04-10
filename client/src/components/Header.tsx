@@ -29,7 +29,7 @@ const NAV_COLUMNS: NavColumn[] = [
     label: '카야',
     subColumns: [
       [
-        { label: '인사말(카야스토리)', to: '/카야/카야-스토리' },
+        { label: '인사말', to: '/카야/카야-스토리' },
         { label: '연혁', to: '/카야/카야-연혁' },
         { label: '조직도', to: '/카야/조직도' },
         { label: '이사회 / 전문위원', to: '/카야/이사회-전문위원' },

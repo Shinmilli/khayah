@@ -4,11 +4,17 @@ import { fetchPageBySlug, fetchPostBySlug } from '../services/api'
 import { PAGES_STATIC, normalizePathKey, pathToSlug } from '../constants/pagesContent'
 import type { Page } from '../types/page'
 import type { Post } from '../types/post'
+import { NoticeArchivePage } from './NoticeArchivePage'
+import { PageHero } from '../components/PageHero'
 import '../styles/page.css'
+import '../styles/greeting-modern.css'
 
 export function PageByPath() {
   const location = useLocation()
   const pathKey = normalizePathKey(location.pathname)
+  if (pathKey === '소식/공지사항') {
+    return <NoticeArchivePage />
+  }
   const hashId = location.hash.replace(/^#/, '')
   const [apiPage, setApiPage] = useState<Page | null | undefined>(undefined)
   const [post, setPost] = useState<Post | null | undefined>(undefined)
@@ -67,10 +73,10 @@ export function PageByPath() {
   if (post) {
     return (
       <div className="page-content-wrapper">
+        <PageHero title={post.title} />
         <div className="section">
           <div className="section_wrapper clearfix">
             <div className="column one">
-              <h1 className="page-title">{post.title}</h1>
               <div className="entry-meta" style={{ marginBottom: 16 }}>
                 <time dateTime={post.publishedAt}>
                   {new Date(post.publishedAt).toLocaleDateString('ko-KR')}
@@ -91,10 +97,10 @@ export function PageByPath() {
   if (staticPage) {
     return (
       <div className="page-content-wrapper">
+        <PageHero title={staticPage.title} />
         <div className="section">
           <div className="section_wrapper clearfix">
             <div className="column one">
-              <h1 className="page-title">{staticPage.title}</h1>
               <div
                 className="the_content_wrapper page-body"
                 dangerouslySetInnerHTML={{ __html: staticPage.content }}
@@ -109,10 +115,10 @@ export function PageByPath() {
   if (apiPage) {
     return (
       <div className="page-content-wrapper">
+        <PageHero title={apiPage.title} />
         <div className="section">
           <div className="section_wrapper clearfix">
             <div className="column one">
-              <h1 className="page-title">{apiPage.title}</h1>
               <div
                 className="the_content_wrapper page-body"
                 dangerouslySetInnerHTML={{ __html: apiPage.content || '' }}
@@ -131,10 +137,10 @@ export function PageByPath() {
   if (show404) {
     return (
       <div className="page-content-wrapper">
+        <PageHero title="페이지를 찾을 수 없습니다" />
         <div className="section">
           <div className="section_wrapper clearfix">
             <div className="column one">
-              <h1 className="page-title">페이지를 찾을 수 없습니다</h1>
               <p>요청하신 경로에 해당하는 페이지가 없거나 이동되었을 수 있습니다.</p>
             </div>
           </div>
@@ -145,6 +151,7 @@ export function PageByPath() {
 
   return (
     <div className="page-content-wrapper">
+      <PageHero title={title ?? '불러오는 중...'} />
       <div className="section">
         <div className="section_wrapper clearfix">
           <div className="column one">

@@ -341,8 +341,8 @@ body.has-overlay-header .home-page {
 .story-section {
   background: #fff;
   margin: 0;
-  padding-top: clamp(88px, 9vw, 156px);
-  padding-bottom: 60px;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 .story-container {
