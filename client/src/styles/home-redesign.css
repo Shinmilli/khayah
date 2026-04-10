@@ -116,7 +116,7 @@ body.has-overlay-header .home-page {
 .hero-content {
   position: absolute;
   inset: 0;
-  padding: calc(var(--header-height) + clamp(12px, 2vh, 24px)) 0 clamp(88px, 16vh, 158px);
+  padding: calc(var(--header-height) + clamp(20px, 3vh, 40px)) 0 clamp(88px, 16vh, 158px);
   color: #fff;
   z-index: 2;
   display: flex;
@@ -142,7 +142,7 @@ body.has-overlay-header .home-page {
   position: relative;
   padding-bottom: clamp(70px, 9vh, 92px);
   min-height: clamp(230px, 30vh, 300px);
-  transform: translateY(-10px);
+  transform: translateY(clamp(14px, 2.2vh, 32px));
 }
 
 .hero-copy {
@@ -341,8 +341,8 @@ body.has-overlay-header .home-page {
 .story-section {
   background: #fff;
   margin: 0;
-  padding-top: 0;
-  padding-bottom: 0;
+  padding-top: clamp(88px, 9vw, 156px);
+  padding-bottom: 60px;
 }
 
 .story-container {
@@ -1008,21 +1008,28 @@ body.has-overlay-header .home-page {
   margin: 0 0 0;
   padding-top: clamp(92px, 11vw, 150px);
   padding-bottom: clamp(36px, 5vw, 56px);
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .board-grid {
   width: min(98%, 1460px);
-  max-width: 1460px;
+  max-width: 100%;
   margin: 0 auto;
   display: grid;
   grid-template-columns: 1.35fr 0.65fr;
   gap: 30px;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 .board-column {
   background: transparent;
   padding: 0;
   box-shadow: none;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .board-head {
@@ -1030,6 +1037,8 @@ body.has-overlay-header .home-page {
   align-items: center;
   gap: 18px;
   margin-bottom: 14px;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .board-head__title {
@@ -1038,6 +1047,9 @@ body.has-overlay-header .home-page {
   font-weight: 800;
   letter-spacing: -0.02em;
   color: var(--text-dark);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .board-more {
@@ -1088,6 +1100,9 @@ body.has-overlay-header .home-page {
   align-items: center;
   justify-content: space-between;
   gap: 10px;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .board-item:last-child {
@@ -1095,12 +1110,19 @@ body.has-overlay-header .home-page {
 }
 
 .board-item--notice {
-  padding-left: 8px;
+  padding-left: 22px;
 }
 
 .board-item:hover {
   background-color: #fafafa;
   padding-left: 8px;
+  padding-right: 8px;
+  margin-left: -8px;
+  margin-right: -8px;
+}
+
+.board-item.board-item--notice:hover {
+  padding-left: 22px;
   padding-right: 8px;
   margin-left: -8px;
   margin-right: -8px;
@@ -1112,6 +1134,7 @@ body.has-overlay-header .home-page {
   color: var(--text-dark);
   line-height: 1.4;
   flex: 1;
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1147,26 +1170,32 @@ body.has-overlay-header .home-page {
 .board-item--notice::before {
   content: '';
   position: absolute;
-  left: 0;
+  left: 2px;
   top: 50%;
   transform: translateY(-50%);
-  width: 4px;
-  height: 4px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
   background: var(--primary-color);
 }
 
 .promo-video {
   margin-top: 10px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 .promo-video__player {
   position: relative;
   width: 100%;
+  max-width: 100%;
   aspect-ratio: 16 / 9;
   background: #000;
   border-radius: 12px;
   overflow: hidden;
+  box-sizing: border-box;
 }
 
 .promo-video__embed {
@@ -1206,6 +1235,10 @@ body.has-overlay-header .home-page {
   text-align: center;
   color: #ccc;
   font-size: 0.85rem;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-wrap: anywhere;
+  word-break: keep-all;
 }
 
 .promo-video__fallback a {
@@ -1224,6 +1257,8 @@ body.has-overlay-header .home-page {
   justify-content: space-between;
   gap: 10px;
   padding-top: 10px;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .promo-video__title {
@@ -1233,6 +1268,8 @@ body.has-overlay-header .home-page {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  min-width: 0;
+  flex: 1;
 }
 
 .promo-video__date {
@@ -1516,8 +1553,12 @@ body.has-overlay-header .home-page {
   }
 
   .hero-content {
-    padding: calc(var(--header-height) + clamp(20px, 4vh, 40px)) 0 clamp(88px, 16vh, 140px);
+    padding: calc(var(--header-height) + clamp(28px, 5vh, 52px)) 0 clamp(88px, 16vh, 140px);
     justify-content: flex-end;
+  }
+
+  .hero-text {
+    transform: translateY(clamp(12px, 2vh, 28px));
   }
 
   .story-container {
@@ -1525,9 +1566,10 @@ body.has-overlay-header .home-page {
     max-width: 100%;
   }
 
+  /* 제목은 story-container 패딩만 사용 — 트랙에 좌우 패딩을 또 두면 Impact 제목보다 안쪽으로 들어감 */
   .story-track {
-    padding-left: var(--impact-inline-pad);
-    padding-right: var(--impact-inline-pad);
+    padding-left: 0;
+    padding-right: 0;
   }
 
   .story-controls {
@@ -1573,10 +1615,73 @@ body.has-overlay-header .home-page {
     width: 100%;
     max-width: 100%;
     grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  /* 스토리·Impact 제목(align-col)과 동일: main-width 중앙 + impact-inline-pad */
+  .container.container--board {
+    width: var(--main-width);
+    max-width: var(--main-max-width);
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: var(--impact-inline-pad);
+    padding-right: var(--impact-inline-pad);
+    padding-top: 0;
+    box-sizing: border-box;
   }
 
   .board-column {
-    padding: 20px;
+    padding: 12px 0;
+    max-width: 100%;
+  }
+
+  .board-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+
+  .board-item__title {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+    width: 100%;
+    word-break: keep-all;
+    line-height: 1.45;
+  }
+
+  .board-item__meta {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .board-item:hover {
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .board-item--notice:hover {
+    padding-left: 22px;
+    padding-right: 10px;
+  }
+
+  .promo-video__caption {
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  .promo-video__title {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+    flex: 1 1 100%;
+  }
+
+  .promo-video__date {
+    flex-shrink: 0;
   }
 
   .impact-banner {
@@ -1725,12 +1830,85 @@ body.has-overlay-header .home-page {
     --section-gutter: 12px;
   }
 
+  /* 가장 작은 모바일: 세로 점 페이지네이션 숨김 */
+  .hero-pagination {
+    display: none;
+  }
+
   .hero-content {
-    padding: calc(var(--header-height) + clamp(18px, 4vh, 36px)) 0 clamp(158px, 38vh, 260px);
+    padding: calc(var(--header-height) + clamp(32px, 6.5vh, 52px)) 0 clamp(128px, 30vh, 210px);
+    justify-content: flex-end;
+    text-align: center;
+  }
+
+  .hero-content-inner {
+    width: 100%;
+    max-width: 100%;
+    padding: 0 clamp(14px, 4vw, 22px);
+  }
+
+  .hero-text {
+    align-items: center;
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    padding-bottom: clamp(48px, 11vh, 80px);
+    min-height: 0;
+    transform: translateY(clamp(36px, 8.5vh, 68px));
+    gap: clamp(12px, 2.8vh, 18px);
+  }
+
+  /* 3줄 타이틀 높이를 확보하고, 2줄일 때는 아래(2~3줄)에 붙여 후원 버튼 위치를 동일하게 유지 */
+  .hero-copy {
+    position: relative;
+    left: auto;
+    bottom: auto;
+    transform: none;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    min-height: calc(3 * 1.22 * clamp(1.55rem, calc(3.05vw + 0.55rem), 2.75rem));
+  }
+
+  .hero-text-kr {
+    text-align: center;
+  }
+
+  /* 480px 이하: Impact「자세히보기」(.impact-card__cta)와 동일한 버튼 크기 */
+  .hero-cta-btn {
+    position: relative;
+    left: auto;
+    bottom: auto;
+    transform: none;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 10px 18px;
+    min-height: 0;
+    min-width: 0;
+    width: clamp(220px, 78%, 420px);
+    max-width: none;
+    justify-content: center;
+    font-size: 0.95rem;
+    line-height: 1.25;
+    border-radius: 8px;
+    white-space: nowrap;
+  }
+
+  .hero-cta-btn:hover {
+    transform: translateY(-2px);
+  }
+
+  .container.container--board {
+    padding-left: var(--impact-inline-pad);
+    padding-right: var(--impact-inline-pad);
   }
 
   .board-column {
-    padding: 16px;
+    padding: 10px 0;
   }
 
   .impact-banner__intro {

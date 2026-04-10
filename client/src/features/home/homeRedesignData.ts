@@ -20,17 +20,17 @@ export interface BoardItem {
 
 export const HERO_SLIDES: HeroSlideItem[] = [
   {
-    image: '/images/slider/SliderImg1.JPG',
+    image: '/images/Home/slider/SliderImg1.JPG',
     alt: '아이들 이미지',
     lines: ['카야는', '사람을 키우고 섬기는', '개발 NGO 입니다.'],
   },
   {
-    image: '/images/slider/sliderImg2.jpg',
+    image: '/images/Home/slider/sliderImg2.jpg',
     alt: '함께 만들어가는 세상',
     lines: ['함께 만들어가는', '따뜻한 세상'],
   },
   {
-    image: '/images/slider/sliderImg3.jpg',
+    image: '/images/Home/slider/sliderImg3.jpg',
     alt: '작은 변화와 희망',
     lines: ['작은 변화가', '큰 희망을 만듭니다'],
   },
