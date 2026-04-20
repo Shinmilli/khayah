@@ -1,13 +1,9 @@
-import type { ReactNode } from 'react'
+import { Outlet } from 'react-router-dom'
 import { FloatingDonateButton } from './FloatingDonateButton'
 import { Footer } from './Footer'
 import { Header } from './Header'
 
-interface LayoutProps {
-  children: ReactNode
-}
-
-export function Layout({ children }: LayoutProps) {
+export function Layout() {
   return (
     <div id="Wrapper" className="site">
       <div id="Header_wrapper">
@@ -15,7 +11,9 @@ export function Layout({ children }: LayoutProps) {
           <Header />
         </header>
       </div>
-      <div id="Content">{children}</div>
+      <div id="Content">
+        <Outlet />
+      </div>
       <FloatingDonateButton />
       <Footer />
     </div>
