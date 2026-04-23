@@ -3,9 +3,11 @@ import '../../styles/admin.css'
 import { AdminAppShell } from './AdminAppShell'
 import { AdminLoginPage } from './AdminLoginPage'
 import { AdminRoot } from './AdminRoot'
-import { AdminContentPage } from './pages/AdminContentPage'
+import { AdminBannerPage } from './pages/AdminBannerPage'
+import { AdminPostsPage } from './pages/AdminPostsPage'
 import { AdminInquiriesPage } from './pages/AdminInquiriesPage'
 import { AdminOperationsPage } from './pages/AdminOperationsPage'
+import { AdminPopupPage } from './pages/AdminPopupPage'
 
 export function AdminModule() {
   return (
@@ -13,8 +15,12 @@ export function AdminModule() {
       <Route element={<AdminRoot />}>
         <Route index element={<AdminLoginPage />} />
         <Route path="app" element={<AdminAppShell />}>
-          <Route index element={<Navigate to="content" replace />} />
-          <Route path="content" element={<AdminContentPage />} />
+          <Route index element={<Navigate to="main-banner" replace />} />
+          <Route path="main-banner" element={<AdminBannerPage />} />
+          <Route path="popup" element={<AdminPopupPage />} />
+          <Route path="posts" element={<AdminPostsPage />} />
+          <Route path="banner" element={<Navigate to="/admin/app/main-banner" replace />} />
+          <Route path="content" element={<Navigate to="/admin/app/main-banner" replace />} />
           <Route path="inquiries" element={<AdminInquiriesPage />} />
           <Route path="operations" element={<AdminOperationsPage />} />
         </Route>

@@ -5,11 +5,16 @@ export async function getPosts(req: Request, res: Response) {
   try {
     const page = Math.max(1, parseInt(req.query.page as string) || 1)
     const perPage = Math.min(50, Math.max(1, parseInt(req.query.perPage as string) || 10))
-    const result = await postsService.getPublishedPosts({ page, perPage })
+    const kind = typeof req.query.kind === 'string' ? req.query.kind : undefined
+    const result = await postsService.getPublishedPosts({ page, perPage, kind })
     res.json(result)
   } catch (e) {
     console.error(e)
-    res.status(500).json({ error: 'Failed to fetch posts' })
+    const message = e instanceof Error ? e.message : String(e)
+    res.status(500).json({
+      error: 'Failed to fetch posts',
+      message: process.env.NODE_ENV === 'production' ? undefined : message,
+    })
   }
 }
 

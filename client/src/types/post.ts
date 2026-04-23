@@ -11,6 +11,7 @@ export interface Post {
     id: number
     displayName: string
   }
+  meta?: Record<string, string>
 }
 
 export interface PostsResponse {

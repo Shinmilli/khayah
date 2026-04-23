@@ -10,7 +10,6 @@ export function ImpactSection() {
   const [idx, setIdx] = useState(0)
   const visualRef = useRef<HTMLDivElement | null>(null)
   const bgRef = useRef<HTMLDivElement | null>(null)
-  const initialTopRef = useRef<number | null>(null)
 
   useEffect(() => {
     const timer = window.setInterval(() => {
@@ -20,53 +19,11 @@ export function ImpactSection() {
   }, [])
 
   useEffect(() => {
-    const impactBanner = visualRef.current
     const impactBannerBg = bgRef.current
-    if (!impactBanner || !impactBannerBg) return
+    if (!impactBannerBg) return
 
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-
-    const updateImpactParallax = () => {
-      if (reduceMotion) {
-        impactBannerBg.style.removeProperty('transform')
-        return
-      }
-      const rect = impactBanner.getBoundingClientRect()
-      const windowHeight = window.innerHeight
-      if (rect.bottom >= 0 && rect.top <= windowHeight) {
-        if (initialTopRef.current === null) initialTopRef.current = rect.top
-        const scrolled = initialTopRef.current - rect.top
-        const raw = scrolled * 0.42
-        const ty = Math.max(-52, Math.min(52, raw))
-        impactBannerBg.style.transform = `translateY(${ty}px)`
-      } else {
-        impactBannerBg.style.removeProperty('transform')
-      }
-    }
-
-    let ticking = false
-    const onScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          updateImpactParallax()
-          ticking = false
-        })
-        ticking = true
-      }
-    }
-
-    window.addEventListener('scroll', onScroll, { passive: true })
-    const onResize = () => {
-      initialTopRef.current = null
-      updateImpactParallax()
-    }
-    window.addEventListener('resize', onResize)
-    updateImpactParallax()
-
-    return () => {
-      window.removeEventListener('scroll', onScroll)
-      window.removeEventListener('resize', onResize)
-    }
+    // 요청사항: 임팩트 배너 배경은 움직이지 않고 고정된 한 장 이미지로 유지
+    impactBannerBg.style.removeProperty('transform')
   }, [])
 
   return (

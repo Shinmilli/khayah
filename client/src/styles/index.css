@@ -806,6 +806,10 @@ a:hover {
   color: #818e9c;
   font-size: 15px;
   line-height: 1.5;
+  max-width: 64ch;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .loading,

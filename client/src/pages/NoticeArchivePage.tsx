@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { PageHero } from '../components/PageHero'
-import { fetchPosts } from '../services/api'
+import { fetchPostsByKind } from '../services/api'
 import type { Post } from '../types/post'
 import '../styles/page.css'
 
@@ -43,7 +43,7 @@ export function NoticeArchivePage() {
 
   useEffect(() => {
     let cancelled = false
-    fetchPosts(1, 50)
+    fetchPostsByKind('공지사항', 1, 50)
       .then((res) => {
         if (!cancelled) setPosts(res.posts)
       })

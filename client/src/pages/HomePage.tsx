@@ -1,4 +1,4 @@
-import { BoardSection, HeroSection, ImpactSection, StorySection } from '../features/home/sections'
+import { BoardSection, HeroSection, ImpactSection, PartnersSection, StorySection } from '../features/home/sections'
 import '../styles/home-redesign.css'
 
 export function HomePage() {
@@ -15,6 +15,7 @@ export function HomePage() {
 
       <div className="container container--board">
         <BoardSection />
+        <PartnersSection />
       </div>
     </div>
   )

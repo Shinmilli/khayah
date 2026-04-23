@@ -1,0 +1,121 @@
+/* Site popup (image + today dismiss + close) */
+
+.site-popup {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+}
+
+.site-popup__backdrop {
+  position: absolute;
+  inset: 0;
+  background: transparent;
+  border: none;
+}
+
+.site-popup__card {
+  position: relative;
+  width: min(92vw, 520px);
+  background: #fff;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.28);
+  z-index: 1;
+}
+
+.site-popup__close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: rgba(255, 255, 255, 0.9);
+  color: rgba(0, 0, 0, 0.65);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.site-popup__close:hover {
+  background: #fff;
+}
+
+.site-popup__media {
+  background: #f3f4f6;
+}
+
+.site-popup__link {
+  display: block;
+}
+
+.site-popup__img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.site-popup__actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  row-gap: 8px;
+  padding: 12px 14px;
+  background: #fff;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+/* 자세히 보기(CTA)는 닫기 바로 왼쪽 */
+.site-popup__actions-end {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: nowrap;
+  margin-left: auto;
+}
+
+.site-popup__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(178, 8, 56, 0.45);
+  background: var(--primary-color, #b20838);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.site-popup__cta:hover {
+  background: var(--primary-hover, #8a0629);
+  color: #fff;
+}
+
+.site-popup__today,
+.site-popup__dismiss {
+  border: 1px solid rgba(0, 0, 0, 0.14);
+  background: #fff;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  cursor: pointer;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+.site-popup__today:hover,
+.site-popup__dismiss:hover {
+  background: #f9fafb;
+}
+

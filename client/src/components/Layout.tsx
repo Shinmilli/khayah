@@ -2,6 +2,7 @@ import { Outlet } from 'react-router-dom'
 import { FloatingDonateButton } from './FloatingDonateButton'
 import { Footer } from './Footer'
 import { Header } from './Header'
+import { SitePopup } from './SitePopup'
 
 export function Layout() {
   return (
@@ -14,6 +15,7 @@ export function Layout() {
       <div id="Content">
         <Outlet />
       </div>
+      <SitePopup />
       <FloatingDonateButton />
       <Footer />
     </div>

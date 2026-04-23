@@ -3,6 +3,7 @@ import { prisma } from '../utils/prisma'
 interface FindPublishedOptions {
   page: number
   perPage: number
+  kind?: string
 }
 
 type RepositoryAuthor = { id: number; displayName: string }
@@ -135,14 +136,25 @@ export const postRepository = {
       return { posts: postsPage, total: publishedPosts.length }
     }
 
-    const { page, perPage } = options
+    const { page, perPage, kind } = options
     const skip = (page - 1) * perPage
+    const kindFilter = kind
+      ? {
+          postMeta: {
+            some: {
+              metaKey: 'khayah_kind',
+              metaValue: kind,
+            },
+          },
+        }
+      : {}
 
     const [posts, total] = await Promise.all([
       prisma.post.findMany({
         where: {
           postStatus: 'publish',
           postType: 'post',
+          ...kindFilter,
         },
         orderBy: { postDate: 'desc' },
         skip,
@@ -151,12 +163,14 @@ export const postRepository = {
           author: {
             select: { id: true, displayName: true },
           },
+          postMeta: { select: { metaKey: true, metaValue: true } },
         },
       }),
       prisma.post.count({
         where: {
           postStatus: 'publish',
           postType: 'post',
+          ...kindFilter,
         },
       }),
     ])
@@ -238,6 +252,7 @@ export const postRepository = {
       },
       include: {
         author: { select: { id: true, displayName: true } },
+        postMeta: { select: { metaKey: true, metaValue: true } },
       },
     })
     return post

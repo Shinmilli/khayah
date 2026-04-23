@@ -5,7 +5,7 @@ export function AdminLoginPage() {
   const navigate = useNavigate()
 
   if (isAdminMockLoggedIn()) {
-    return <Navigate to="/admin/app/content" replace />
+    return <Navigate to="/admin/app/main-banner" replace />
   }
 
   return (
@@ -35,7 +35,7 @@ export function AdminLoginPage() {
           className="admin-login__demo"
           onClick={() => {
             setAdminMockLoggedIn(true)
-            navigate('/admin/app/content', { replace: true })
+            navigate('/admin/app/main-banner', { replace: true })
           }}
         >
           담당자 확인용 · 목업으로 관리 화면 보기

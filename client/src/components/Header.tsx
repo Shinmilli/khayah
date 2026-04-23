@@ -69,8 +69,8 @@ const NAV_COLUMNS: NavColumn[] = [
     label: '소식',
     links: [
       { label: '공지사항', to: '/소식/공지사항' },
-      { label: '활동소식', to: '/소식/카야소식' },
-      { label: '연간소식지', to: '/소식/소식지' },
+      { label: '활동소식', to: '/소식/활동소식' },
+      { label: '연간소식지', to: '/소식/연간소식지' },
       { label: '언론보도', to: '/소식/언론보도' },
       { label: '1:1문의', to: '/소식/1대1문의' },
     ],

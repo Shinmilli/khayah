@@ -4,12 +4,21 @@ import type { PostListItem } from '../types/post'
 interface GetPublishedOptions {
   page: number
   perPage: number
+  kind?: string
 }
 
 export const postsService = {
   async getPublishedPosts(options: GetPublishedOptions): Promise<{ posts: PostListItem[]; total: number }> {
     const { posts, total } = await postRepository.findPublished(options)
     const list: PostListItem[] = posts.map((p) => ({
+      meta:
+        'postMeta' in p && Array.isArray((p as { postMeta?: unknown }).postMeta)
+          ? Object.fromEntries(
+              (p as { postMeta: Array<{ metaKey: string | null; metaValue: string | null }> }).postMeta
+                .filter((m) => Boolean(m.metaKey))
+                .map((m) => [m.metaKey as string, m.metaValue ?? '']),
+            )
+          : undefined,
       id: p.id,
       title: p.postTitle,
       excerpt: p.postExcerpt,
@@ -28,6 +37,13 @@ export const postsService = {
   async getPostBySlug(slug: string) {
     const post = await postRepository.findPostBySlug(slug)
     if (!post) return null
+    const meta: Record<string, string> = {}
+    if ('postMeta' in post && Array.isArray((post as { postMeta?: unknown }).postMeta)) {
+      for (const m of (post as { postMeta: Array<{ metaKey: string | null; metaValue: string | null }> }).postMeta) {
+        if (!m.metaKey) continue
+        meta[m.metaKey] = m.metaValue ?? ''
+      }
+    }
     return {
       id: post.id,
       title: post.postTitle,
@@ -40,6 +56,7 @@ export const postsService = {
       author: post.author
         ? { id: post.author.id, displayName: post.author.displayName }
         : undefined,
+      meta,
     }
   },
 }

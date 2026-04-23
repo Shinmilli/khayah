@@ -1,12 +1,16 @@
-import { useCallback, useEffect, useMemo, useRef } from 'react'
-import { STORY_ITEMS } from '../homeRedesignData'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
+import { fetchPostsByKind } from '../../../services/api'
+import type { Post } from '../../../types/post'
 
 export function StorySection() {
   const trackRef = useRef<HTMLDivElement | null>(null)
   const fillRef = useRef<HTMLDivElement | null>(null)
   const progressRef = useRef<HTMLDivElement | null>(null)
+  const [posts, setPosts] = useState<Post[]>([])
 
-  const storyItems = useMemo(() => STORY_ITEMS, [])
+  // Show up to 8 slots; last slot is always "more"
+  const storyItems = useMemo(() => posts.slice(0, 7), [posts])
 
   const updateStoryProgress = useCallback(() => {
     const storyTrack = trackRef.current
@@ -78,6 +82,12 @@ export function StorySection() {
     }
 
     const pd = (e: PointerEvent) => {
+      // 카드 전체가 <Link>라서, 여기서 포인터 캡처를 걸면 클릭이 트랙으로 가버려
+      // 내비게이션(click)이 발생하지 않는 경우가 있습니다.
+      const raw = e.target as Node | null
+      const el = raw instanceof Element ? raw : raw?.parentElement
+      if (el && storyTrack.contains(el) && el.closest('a')) return
+
       storyTrack.setPointerCapture?.(e.pointerId)
       onDown(e.clientX)
     }
@@ -97,6 +107,37 @@ export function StorySection() {
     }
   }, [])
 
+  useEffect(() => {
+    let cancelled = false
+    fetchPostsByKind('스토리', 1, 50)
+      .then((res) => {
+        if (!cancelled) setPosts(res.posts)
+      })
+      .catch(() => {
+        if (!cancelled) setPosts([])
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  const chipLabel = (p: Post): string => {
+    const scope = p.meta?.khayah_story_scope ?? ''
+    switch (scope) {
+      case '국내':
+        return '국내사업'
+      case '해외':
+        return '해외사업'
+      case '옹호':
+        return '옹호사업'
+      case '지원':
+      case '진행':
+        return '진행사업'
+      default:
+        return '스토리'
+    }
+  }
+
   return (
     <section className="story-section" id="news" aria-label="스토리">
       <div className="story-container">
@@ -105,23 +146,36 @@ export function StorySection() {
 
         <div className="story-slider">
           <div ref={trackRef} className="story-track" tabIndex={0} aria-label="스토리 목록">
-            {storyItems.map((item) => (
-              <article key={item.title} className="story-slide">
-                <a className="story-card" href="#news">
+            {storyItems.map((p) => (
+              <article key={p.id} className="story-slide">
+                <Link className="story-card" to={`/posts/${encodeURIComponent(p.slug)}`}>
                   <div className="story-card__media">
-                    <img src={item.image} alt={item.alt} />
+                    <img
+                      src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=800&h=500&fit=crop"
+                      alt=""
+                      loading="lazy"
+                    />
                   </div>
                   <div className="story-card__overlay" aria-hidden="true" />
                   <div className="story-card__content">
-                    <span className="story-card__chip">{item.chip}</span>
+                    <span className="story-card__chip">{chipLabel(p)}</span>
                     <h3 className="story-card__title">
-                      <span className="story-card__title-inner">{item.title}</span>
+                      <span className="story-card__title-inner">{p.title}</span>
                     </h3>
-                    <p className="story-card__text">{item.text}</p>
+                    <p className="story-card__text">{p.excerpt || ''}</p>
                   </div>
-                </a>
+                </Link>
               </article>
             ))}
+            <article className="story-slide">
+              <Link className="story-card story-card--more" to="/stories" aria-label="스토리 더보기">
+                <div className="story-more__inner">
+                  <span className="story-more__btn">
+                    스토리 더보기 <span aria-hidden="true">›</span>
+                  </span>
+                </div>
+              </Link>
+            </article>
           </div>
 
           <div className="story-controls" aria-label="스토리 슬라이더 컨트롤">

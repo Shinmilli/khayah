@@ -1,20 +1,42 @@
 import { useEffect, useState } from 'react'
-import { useLocation } from 'react-router-dom'
+import { Link, Navigate, useLocation } from 'react-router-dom'
 import { fetchPageBySlug, fetchPostBySlug } from '../services/api'
 import { PAGES_STATIC, normalizePathKey, pathToSlug } from '../constants/pagesContent'
 import type { Page } from '../types/page'
 import type { Post } from '../types/post'
-import { NoticeArchivePage } from './NoticeArchivePage'
+import { NewsArchivePage } from './NewsArchivePage'
 import { PageHero } from '../components/PageHero'
 import '../styles/page.css'
 import '../styles/greeting-modern.css'
 
+function storyCtaForPathKey(pathKey: string): { label: string; to: string } | null {
+  if (!pathKey) return null
+  if (pathKey === '국내사업' || pathKey.startsWith('국내사업/')) {
+    return { label: '국내 스토리 확인하기', to: '/stories/domestic' }
+  }
+  if (pathKey === '해외사업' || pathKey.startsWith('해외사업/')) {
+    return { label: '해외 스토리 확인하기', to: '/stories/overseas' }
+  }
+  if (pathKey === '사업/옹호사업' || pathKey.startsWith('사업/옹호사업/')) {
+    return { label: '옹호 스토리 확인하기', to: '/stories/advocacy' }
+  }
+  if (pathKey === '사업/진행사업' || pathKey.startsWith('사업/진행사업/')) {
+    return { label: '지원 스토리 확인하기', to: '/stories/support' }
+  }
+  return null
+}
+
 export function PageByPath() {
   const location = useLocation()
   const pathKey = normalizePathKey(location.pathname)
-  if (pathKey === '소식/공지사항') {
-    return <NoticeArchivePage />
-  }
+
+  // Backward compatibility redirects (old slugs)
+  if (pathKey === '소식/카야소식') return <Navigate to="/소식/활동소식" replace />
+  if (pathKey === '소식/소식지') return <Navigate to="/소식/연간소식지" replace />
+
+  const isNewsArchive =
+    pathKey === '소식/공지사항' || pathKey === '소식/활동소식' || pathKey === '소식/연간소식지' || pathKey === '소식/언론보도'
+
   const hashId = location.hash.replace(/^#/, '')
   const [apiPage, setApiPage] = useState<Page | null | undefined>(undefined)
   const [post, setPost] = useState<Post | null | undefined>(undefined)
@@ -27,6 +49,11 @@ export function PageByPath() {
   const slug = pathToSlug(location.pathname)
 
   useEffect(() => {
+    if (isNewsArchive) {
+      setApiPage(null)
+      setPost(null)
+      return
+    }
     if (staticPage || !slug) {
       setApiPage(null)
       setPost(null)
@@ -54,7 +81,7 @@ export function PageByPath() {
         if (!cancelled) setApiPage(null)
       })
     return () => { cancelled = true }
-  }, [slug, staticPage, isPostPath, postSlug])
+  }, [slug, staticPage, isPostPath, postSlug, isNewsArchive])
 
   const title = staticPage?.title ?? apiPage?.title ?? post?.title ?? null
   useEffect(() => {
@@ -70,10 +97,19 @@ export function PageByPath() {
     return () => clearTimeout(timer)
   }, [hashId, pathKey, staticPage, apiPage])
 
+  if (isNewsArchive) return <NewsArchivePage />
+
   if (post) {
+    const kind = post.meta?.khayah_kind ?? ''
+    const heroTitle =
+      kind === '활동소식'
+        ? '활동소식'
+        : kind === '연간소식지'
+          ? '연간소식지'
+          : kind || '소식'
     return (
       <div className="page-content-wrapper">
-        <PageHero title={post.title} />
+        <PageHero title={heroTitle} />
         <div className="section">
           <div className="section_wrapper clearfix">
             <div className="column one">
@@ -83,6 +119,9 @@ export function PageByPath() {
                 </time>
                 {post.author && <span> · {post.author.displayName}</span>}
               </div>
+              <h1 className="entry-title" style={{ marginBottom: 18 }}>
+                {post.title}
+              </h1>
               <div
                 className="the_content_wrapper page-body"
                 dangerouslySetInnerHTML={{ __html: post.content || post.excerpt || '' }}
@@ -95,6 +134,7 @@ export function PageByPath() {
   }
 
   if (staticPage) {
+    const storyCta = storyCtaForPathKey(pathKey)
     return (
       <div className="page-content-wrapper">
         <PageHero title={staticPage.title} />
@@ -105,6 +145,13 @@ export function PageByPath() {
                 className="the_content_wrapper page-body"
                 dangerouslySetInnerHTML={{ __html: staticPage.content }}
               />
+              {storyCta ? (
+                <div className="page-story-cta">
+                  <Link className="page-story-cta__btn" to={storyCta.to}>
+                    {storyCta.label}
+                  </Link>
+                </div>
+              ) : null}
             </div>
           </div>
         </div>
@@ -113,6 +160,7 @@ export function PageByPath() {
   }
 
   if (apiPage) {
+    const storyCta = storyCtaForPathKey(pathKey)
     return (
       <div className="page-content-wrapper">
         <PageHero title={apiPage.title} />
@@ -123,6 +171,13 @@ export function PageByPath() {
                 className="the_content_wrapper page-body"
                 dangerouslySetInnerHTML={{ __html: apiPage.content || '' }}
               />
+              {storyCta ? (
+                <div className="page-story-cta">
+                  <Link className="page-story-cta__btn" to={storyCta.to}>
+                    {storyCta.label}
+                  </Link>
+                </div>
+              ) : null}
             </div>
           </div>
         </div>

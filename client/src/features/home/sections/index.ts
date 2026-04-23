@@ -1,4 +1,5 @@
 export { BoardSection } from './BoardSection'
 export { HeroSection } from './HeroSection'
 export { ImpactSection } from './ImpactSection'
+export { PartnersSection } from './PartnersSection'
 export { StorySection } from './StorySection'

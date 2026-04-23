@@ -3,6 +3,7 @@ import { Layout } from './components/Layout'
 import { AdminModule } from './features/admin/AdminModule'
 import { HomePage } from './pages/HomePage'
 import { PageByPath } from './pages/PageByPath'
+import { StoryArchivePage } from './pages/StoryArchivePage'
 
 function App() {
   return (
@@ -10,6 +11,8 @@ function App() {
       <Route path="/admin/*" element={<AdminModule />} />
       <Route element={<Layout />}>
         <Route path="/" element={<HomePage />} />
+        <Route path="/stories" element={<StoryArchivePage />} />
+        <Route path="/stories/:scope" element={<StoryArchivePage />} />
         <Route path="*" element={<PageByPath />} />
       </Route>
     </Routes>

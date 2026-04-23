@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { PROMO_YOUTUBE_CHANNEL_URL } from '../../../constants/youtube'
-import { fetchYoutubeLatest } from '../../../services/api'
+import { fetchPostsByKind, fetchYoutubeLatest } from '../../../services/api'
 import type { YoutubeLatestVideo } from '../../../types/youtube'
-import { NOTICE_ITEMS } from '../homeRedesignData'
+import type { Post } from '../../../types/post'
 
 function formatPublished(iso: string): string {
   const d = new Date(iso)
@@ -17,6 +17,8 @@ function formatPublished(iso: string): string {
 export function BoardSection() {
   const [promo, setPromo] = useState<YoutubeLatestVideo | null>(null)
   const [promoError, setPromoError] = useState(false)
+  const [notices, setNotices] = useState<Post[]>([])
+  const [noticeError, setNoticeError] = useState(false)
 
   useEffect(() => {
     let cancelled = false
@@ -32,6 +34,20 @@ export function BoardSection() {
     }
   }, [])
 
+  useEffect(() => {
+    let cancelled = false
+    fetchPostsByKind('공지사항', 1, 5)
+      .then((res) => {
+        if (!cancelled) setNotices(res.posts)
+      })
+      .catch(() => {
+        if (!cancelled) setNoticeError(true)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
   return (
     <section className="board-section">
       <div className="board-grid">
@@ -41,25 +57,32 @@ export function BoardSection() {
             <span className="board-head__badge" aria-hidden="true">
               공지글
             </span>
-            <Link className="board-more" to="/소식" aria-label="더보기">
+            <Link className="board-more" to="/소식/공지사항" aria-label="더보기">
               +
             </Link>
           </div>
 
           <div className="board-list" role="list" aria-label="공지글 목록">
-            {NOTICE_ITEMS.map((item) => (
-              <article
-                key={`${item.title}-${item.date}`}
-                className="board-item board-item--notice"
-                role="listitem"
-              >
-                <h3 className="board-item__title">{item.title}</h3>
-                <div className="board-item__meta">
-                  <span className="board-item__date">{item.date}</span>
-                  {item.isNew && <span className="board-item__new">N</span>}
-                </div>
+            {noticeError ? (
+              <article className="board-item board-item--notice" role="listitem">
+                <h3 className="board-item__title">공지사항을 불러오지 못했습니다.</h3>
               </article>
-            ))}
+            ) : notices.length === 0 ? (
+              <article className="board-item board-item--notice" role="listitem">
+                <h3 className="board-item__title">등록된 공지사항이 없습니다.</h3>
+              </article>
+            ) : (
+              notices.map((post) => (
+                <article key={post.id} className="board-item board-item--notice" role="listitem">
+                  <Link to={`/posts/${encodeURIComponent(post.slug)}`} className="board-item__title">
+                    {post.title}
+                  </Link>
+                  <div className="board-item__meta">
+                    <span className="board-item__date">{formatPublished(post.publishedAt)}</span>
+                  </div>
+                </article>
+              ))
+            )}
           </div>
         </div>
 

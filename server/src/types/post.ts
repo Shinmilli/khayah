@@ -8,4 +8,5 @@ export interface PostListItem {
   postType: string
   publishedAt: string
   author?: { id: number; displayName: string }
+  meta?: Record<string, string>
 }

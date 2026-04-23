@@ -10,8 +10,10 @@ const BIZ_ICONS = [
     <circle cx="12" cy="12" r="10" />
     <path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" />
   </svg>,
-  <svg key="i3" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-    <path d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832a4 4 0 011.985.596l.465.232a4 4 0 001.985.596H18M11 5.882l.348-1.97A1.76 1.76 0 0113.292 3h.416a1.76 1.76 0 011.944 1.912L17 5.882M19 10a2 2 0 11-4 0 2 2 0 014 0z" />
+  <svg key="i3" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor" aria-hidden>
+    <path d="M12.79 21c-.43 0-.84-.17-1.15-.48l-2.55-2.55 1.41-1.41 2.29 2.29 7.39-7.39c.31-.31.72-.48 1.15-.48s.84.17 1.15.48c.63.63.63 1.66 0 2.29l-8.25 8.25c-.31.31-.72.48-1.14.48z" opacity=".0" />
+    <path d="M20.47 10.63c-.42-.42-1.1-.42-1.52 0l-4.92 4.92-2.12-2.12c-.42-.42-1.1-.42-1.52 0l-.3.3 3.94 3.94 6.44-6.44c.42-.42.42-1.1 0-1.52z" opacity=".0" />
+    <path d="M21.5 11.5l-4.78 4.78-1.06-1.06 3.72-3.72c.39-.39.39-1.02 0-1.41s-1.02-.39-1.41 0L14.24 13.8l-1.06-1.06 1.76-1.76c.39-.39.39-1.02 0-1.41s-1.02-.39-1.41 0l-1.76 1.76-2.27-2.27c-.75-.75-1.77-1.17-2.83-1.17S4.59 8.31 3.83 9.07L2 10.9l1.41 1.41 1.83-1.83c.75-.75 1.77-1.17 2.83-1.17.68 0 1.33.18 1.9.52l-1.5 1.5c-.39.39-.39 1.02 0 1.41.19.19.45.29.71.29s.52-.1.71-.29l1.64-1.64 1.06 1.06-1.64 1.64c-.39.39-.39 1.02 0 1.41.19.19.45.29.71.29s.52-.1.71-.29l1.64-1.64 1.06 1.06-1.5 1.5c.33.57.52 1.22.52 1.9 0 1.06-.41 2.08-1.17 2.83L10.9 22 12.31 23.41l1.83-1.83c.76-.76 1.17-1.78 1.17-2.83 0-.79-.24-1.55-.67-2.2l1.02-1.02 1.06 1.06 1.02-1.02c.65.43 1.41.67 2.2.67 1.05 0 2.07-.41 2.83-1.17L24 12.9 21.5 11.5z" />
   </svg>,
   <svg key="i4" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>
     <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
@@ -74,7 +76,7 @@ export function HeroSection() {
         {HERO_BIZ_LINKS.map((item, i) => (
           <Link key={item.to} to={item.to} className="hero-biz-strip__item">
             <span className="hero-biz-strip__icon" aria-hidden="true">
-              {BIZ_ICONS[i]}
+              {i === 2 ? <span className="material-symbols-outlined">handshake</span> : BIZ_ICONS[i]}
             </span>
             <span className="hero-biz-strip__label">{item.label}</span>
           </Link>
