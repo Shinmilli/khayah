@@ -1,0 +1,18 @@
+# Netlify build: publish path is relative to `base` (see Netlify build overview docs).
+# Avoid UI combo "Base: client" + "Publish: client/dist" (resolves to the wrong folder).
+[build]
+  base = "client"
+  command = "npm run build"
+  publish = "dist"
+
+# SPA fallback (applies even if dist/_redirects is missing or mis-encoded).
+# Without this, /admin, /stories, etc. return Netlify 404 on hard navigation.
+[[redirects]]
+  from = "/favicon.ico"
+  to = "/images/logo/khayah_logo.png"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

@@ -1,0 +1,9 @@
+# Render Blueprint — API (Express + Prisma in /server)
+# Dashboard: set Root Directory to `server` if you configure manually instead of Blueprint.
+services:
+  - type: web
+    name: khayah-api
+    runtime: node
+    rootDir: server
+    buildCommand: npm install && npm run build
+    startCommand: npm start
