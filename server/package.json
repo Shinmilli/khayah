@@ -1,10 +1,11 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
+    "start": "node dist/index.js",
     "dev": "ts-node-dev --respawn --watch .env,src src/index.ts",
-    "build": "tsc",
+    "build": "prisma generate && node prisma/patchPrismaClient.cjs && tsc",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:seed": "prisma generate && node prisma/patchPrismaClient.cjs && tsx prisma/seed.ts",

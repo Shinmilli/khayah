@@ -121,3 +121,34 @@ npm run build
 - **포스트가 안 보임**  
   - DB에 `posts` 테이블에 `post_status='publish'`, `post_type='post'`인 행이 있어야 함  
   - 없으면 Prisma Studio로 데이터 추가: `cd server` → `npx prisma studio`
+
+---
+
+## 6. Render 등에 백엔드만 올릴 때 (체크리스트)
+
+레포는 **모노레포**이고, API 서버는 **`server/`** 안에 있습니다. `package.json`에는 이미 **`npm start` → `node dist/index.js`**, **`npm run build` → Prisma generate + 패치 + `tsc`** 가 들어 있습니다.
+
+### Render 대시보드에서 할 일
+
+1. **Root Directory**  
+   - **`server`** 로 두는 것을 권장합니다. (비우면 아래 Build/Start를 루트 기준으로 바꿔야 합니다.)
+
+2. **Build Command** (Root = `server` 일 때)  
+   - `npm install && npm run build`
+
+3. **Start Command**  
+   - **`npm start`**  
+   - (직접 쓰려면 `node dist/index.js` — **`node index.js`는 사용하지 마세요.** 소스는 `src/`, 실행 파일은 `dist/index.js`입니다.)
+
+4. **Environment** (Render → Environment)  
+   - **`DATABASE_URL`** — PostgreSQL 연결 문자열 (Render DB면 Internal/External URL 중 **External** 권장, SSL이면 `?sslmode=require&schema=public` 등)  
+   - **`CLIENT_ORIGIN`** — 실제 웹 주소 (예: `https://내-프론트.onrender.com` 또는 Netlify/Vercel 도메인). CORS에 쓰입니다.  
+   - **`PORT`** — Render가 자동으로 넣는 경우가 많습니다. 없어도 서버는 `process.env.PORT`를 사용합니다.
+
+5. **DB 마이그레이션 (최초 1회 또는 스키마 변경 후)**  
+   - Render Shell에서 (Root = `server` 가정):  
+     `npx prisma migrate deploy`  
+   - 또는 로컬에서 같은 `DATABASE_URL`로 위 명령 실행.
+
+6. **헬스 확인**  
+   - 배포 후 `https://내-서비스.onrender.com/health` 가 `{"status":"ok"}` 이면 프로세스·포트는 정상입니다.
