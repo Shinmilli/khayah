@@ -131,7 +131,11 @@
 }
 
 .khayah-ci-story {
-  max-width: 40rem;
+  max-width: min(52rem, 100%);
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
 }
 
 .khayah-ci-story p {
@@ -143,6 +147,23 @@
 
 .khayah-ci-story p:last-child {
   margin-bottom: 0;
+}
+
+.khayah-ci-story__term {
+  display: inline;
+  padding: 0.12em 0.48em 0.16em;
+  background: #e9ecef;
+  color: #4a5056;
+  border-radius: 0.45em;
+  font-weight: 500;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+.khayah-ci-story__term abbr {
+  text-decoration: none;
+  font-weight: inherit;
+  color: inherit;
 }
 
 .khayah-ci-ref {

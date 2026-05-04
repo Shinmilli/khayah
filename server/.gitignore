@@ -3,3 +3,6 @@ node_modules
 .env
 
 /generated/prisma
+
+# 재정보고 편집본(없으면 시드 JSON 사용)
+/data/financial-reports.json

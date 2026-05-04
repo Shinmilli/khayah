@@ -2,7 +2,7 @@
 
 export const KHAYAH_ORG_CHART_HTML = `
 <div class="khayah-org-chart">
-  <p class="khayah-org-chart__lead">카야의 운영 구조를 도식으로 나타낸 것입니다. 중앙의 세 영역이 유기적으로 맞물리고, 이사회·전문위원이 함께합니다.</p>
+  <p class="khayah-org-chart__lead">카야의 운영 구조를 도식으로 나타낸 것입니다.<br />중앙의 세 영역이 유기적으로 맞물리고, 이사회·전문위원이 함께합니다.</p>
   <figure class="khayah-org-chart__figure">
     <img
       class="khayah-org-chart__img"

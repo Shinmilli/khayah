@@ -16,6 +16,33 @@
   padding: 2.5rem 1.25rem 4rem;
 }
 
+.financial-report__banner {
+  margin: 0 0 1rem;
+  padding: 0.65rem 1rem;
+  border-radius: 10px;
+  background: #fff8e6;
+  border: 1px solid #f0d9a8;
+  color: #6b4f1d;
+  font-size: 0.9rem;
+}
+
+.financial-report__empty {
+  margin: 2rem 0;
+  padding: 2rem 1.25rem;
+  text-align: center;
+  color: #666;
+  background: #fafafa;
+  border: 1px dashed #ccc;
+  border-radius: var(--fr-radius);
+}
+
+.financial-report__tables--single {
+  grid-template-columns: 1fr;
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .financial-report__year-row {
   display: flex;
   flex-wrap: wrap;
@@ -27,36 +54,134 @@
 .financial-report__year-label {
   font-size: 0.875rem;
   color: #555;
-  margin-right: 0.25rem;
+  margin-right: 0.35rem;
 }
 
-.financial-report__year-btn {
-  border: 1px solid #ccc;
+.financial-report__year-strip {
+  display: inline-flex;
+  align-items: stretch;
+  gap: 0.35rem;
+  max-width: 100%;
+}
+
+.financial-report__year-nav {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  min-height: 2.25rem;
+  padding: 0;
+  border: 1px solid #cfd6dc;
+  border-radius: 10px;
   background: #fff;
-  padding: 0.4rem 1rem;
-  border-radius: 999px;
-  font-size: 0.9375rem;
+  color: var(--fr-burgundy);
   cursor: pointer;
-  color: #333;
-  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s,
+    opacity 0.15s;
 }
 
-.financial-report__year-btn:hover {
-  border-color: var(--fr-burgundy);
+.financial-report__year-nav:hover:not(:disabled) {
+  background: #f8f9fa;
+}
+
+.financial-report__year-nav:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+  color: #888;
+}
+
+.financial-report__year-toggle {
+  display: inline-flex;
+  flex-wrap: nowrap;
+  flex: 1;
+  min-width: 0;
+  border-radius: 999px;
+  border: 1px solid #cfd6dc;
+  overflow: hidden;
+  background: #fff;
+}
+
+.financial-report__year-toggle-btn {
+  flex: 1 1 0;
+  border: none;
+  border-right: 1px solid #e8ecf0;
+  background: #fff;
+  padding: 0.42rem 0.65rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #333;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  min-width: 3rem;
+}
+
+.financial-report__year-toggle-btn:last-child {
+  border-right: none;
+}
+
+.financial-report__year-toggle-btn:hover:not(.financial-report__year-toggle-btn--active) {
+  background: #f8f9fa;
   color: var(--fr-burgundy);
 }
 
-.financial-report__year-btn--active {
+.financial-report__year-toggle-btn--active {
   background: var(--fr-burgundy);
-  border-color: var(--fr-burgundy);
   color: #fff;
+}
+
+.financial-report__status {
+  margin: 2rem 0;
+  text-align: center;
+  color: #666;
+  font-size: 0.95rem;
+}
+
+.financial-report__error {
+  margin: 2rem 0;
+  padding: 1.5rem 1.25rem;
+  border-radius: var(--fr-radius);
+  border: 1px solid #e8b4b4;
+  background: #fff5f5;
+  color: #7a1e1e;
+}
+
+.financial-report__error p {
+  margin: 0 0 0.75rem;
+}
+
+.financial-report__error p:last-child {
+  margin-bottom: 0;
+}
+
+.financial-report__error-hint {
+  font-size: 0.88rem;
+  color: #555;
+  line-height: 1.5;
+}
+
+.financial-report__retry {
+  margin-top: 1rem;
+  padding: 0.5rem 1.15rem;
+  border-radius: 8px;
+  border: 1px solid var(--fr-burgundy);
+  background: var(--fr-burgundy);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.financial-report__retry:hover {
+  filter: brightness(1.05);
 }
 
 .financial-report__charts {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 2rem 1.5rem;
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
 }
 
 @media (max-width: 820px) {
@@ -67,6 +192,7 @@
 
 .financial-donut {
   margin: 0;
+  margin-bottom: -0.35rem;
   display: flex;
   justify-content: center;
 }
@@ -201,6 +327,18 @@
 
 .financial-donut__center-amount {
   fill: #111;
+  font-weight: 600;
+  dominant-baseline: middle;
+  font-family: var(--font-sans, system-ui, sans-serif);
+}
+
+.financial-donut__center-amount-num {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.financial-donut__center-amount-won {
   font-size: 12px;
   font-weight: 600;
 }
@@ -213,11 +351,14 @@
   opacity: 0.92;
 }
 
-/* 참고 시안: 비율 숫자는 매우 크고 두껍게, %는 작게, 항목명은 아래 한 줄 */
+/* 참고 시안: 비율 숫자는 매우 크고 두껍게, %는 작게 — 색은 조각색(fill) 인라인 */
 .financial-donut__label-pct {
-  fill: #111;
   dominant-baseline: alphabetic;
   font-family: var(--font-sans, system-ui, sans-serif);
+}
+
+.financial-donut__label-pct.financial-donut__label-pct--onShelf {
+  dominant-baseline: middle;
 }
 
 .financial-donut__label-pct-num {
@@ -229,7 +370,7 @@
 .financial-donut__label-pct-sign {
   font-size: 11px;
   font-weight: 700;
-  fill: #333;
+  fill: inherit;
 }
 
 .financial-donut__label-name {
@@ -274,8 +415,13 @@
   background: var(--fr-table-head);
   color: #fff;
   font-weight: 700;
-  font-size: 0.95rem;
-  padding: 0.65rem 1rem;
+  font-size: 1.15rem;
+  line-height: 1.35;
+  padding: 1rem 1.25rem;
+  min-height: 3.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
 }
 
@@ -330,6 +476,45 @@
 .financial-report__action:hover {
   transform: translateY(-1px);
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+}
+
+/* 하단 카드: 호버 시에도 본문/전역 링크색(메인 레드)으로 바뀌지 않게 */
+.financial-report-page .financial-report__action:hover,
+.financial-report-page .financial-report__action:focus-visible {
+  text-decoration: none;
+}
+
+.financial-report-page a.financial-report__action--teal:hover,
+.financial-report-page a.financial-report__action--teal:focus-visible {
+  color: #fff;
+}
+
+.financial-report-page button.financial-report__action--yellow:hover,
+.financial-report-page button.financial-report__action--yellow:focus-visible {
+  color: #1a1a1a;
+}
+
+.financial-report-page a.financial-report__action--burgundy:hover,
+.financial-report-page a.financial-report__action--burgundy:focus-visible {
+  color: #fff;
+}
+
+.page-content-wrapper .page-body .financial-report-page a.financial-report__action--teal:hover,
+.page-content-wrapper .page-body .financial-report-page a.financial-report__action--teal:focus-visible {
+  color: #fff;
+  text-decoration: none;
+}
+
+.page-content-wrapper .page-body .financial-report-page a.financial-report__action--burgundy:hover,
+.page-content-wrapper .page-body .financial-report-page a.financial-report__action--burgundy:focus-visible {
+  color: #fff;
+  text-decoration: none;
+}
+
+.page-content-wrapper .page-body .financial-report-page button.financial-report__action--yellow:hover,
+.page-content-wrapper .page-body .financial-report-page button.financial-report__action--yellow:focus-visible {
+  color: #1a1a1a;
+  text-decoration: none;
 }
 
 .financial-report__action--teal {

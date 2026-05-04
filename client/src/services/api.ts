@@ -3,6 +3,7 @@ import type { YoutubeLatestVideo } from '../types/youtube'
 import type { PostsResponse } from '../types/post'
 import type { Page } from '../types/page'
 import type { Post } from '../types/post'
+import type { FinancialReportsDocument } from '../features/financial-report/financialReportTypes'
 
 export type AdminPost = Post & { meta?: Record<string, string> }
 export type AdminPostsResponse = { posts: AdminPost[]; total: number }
@@ -74,6 +75,18 @@ export async function uploadDocumentPdf(file: File): Promise<DocumentUploadResul
   return res.json()
 }
 
+/** 재무상태표·운영성과표 등 이미지(JPEG/PNG/WebP/GIF) */
+export async function uploadReportImage(file: File): Promise<DocumentUploadResult> {
+  const form = new FormData()
+  form.append('file', file)
+  const res = await fetch(`${API_BASE}/uploads/image`, { method: 'POST', body: form })
+  if (!res.ok) {
+    const text = await res.text().catch(() => '')
+    throw new Error(text || 'Failed to upload image')
+  }
+  return res.json()
+}
+
 export async function adminFetchPostsByKind(kind: string, page = 1, perPage = 20): Promise<AdminPostsResponse> {
   const res = await fetch(
     `${API_BASE}/admin/posts?kind=${encodeURIComponent(kind)}&page=${page}&perPage=${perPage}`,
@@ -127,4 +140,23 @@ export async function adminUpdatePost(
 export async function adminDeletePost(id: number): Promise<void> {
   const res = await fetch(`${API_BASE}/admin/posts/${id}`, { method: 'DELETE' })
   if (!res.ok) throw new Error('Failed to delete admin post')
+}
+
+export async function fetchFinancialReports(): Promise<FinancialReportsDocument> {
+  const res = await fetch(`${API_BASE}/financial-reports`)
+  if (!res.ok) throw new Error('Failed to fetch financial reports')
+  return res.json()
+}
+
+export async function adminPutFinancialReports(doc: FinancialReportsDocument): Promise<FinancialReportsDocument> {
+  const res = await fetch(`${API_BASE}/admin/financial-reports`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(doc),
+  })
+  if (!res.ok) {
+    const text = await res.text().catch(() => '')
+    throw new Error(text || 'Failed to save financial reports')
+  }
+  return res.json()
 }

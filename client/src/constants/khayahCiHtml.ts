@@ -43,7 +43,7 @@ export const KHAYAH_CI_PAGE_HTML = `
     <li class="khayah-ci-legend__item">
       <span class="khayah-ci-legend__no" aria-hidden="true">④</span>
       <div class="khayah-ci-legend__body">
-        <strong class="khayah-ci-legend__title">손과 원의 결합</strong>
+        <strong class="khayah-ci-legend__title">인간</strong>
         <span class="khayah-ci-legend__desc">하나님의 형상대로 창조하신, 가장 귀한 창조물인 <em>인간</em>의 모습을 나타냅니다.</span>
       </div>
     </li>
@@ -51,7 +51,7 @@ export const KHAYAH_CI_PAGE_HTML = `
 
   <div class="khayah-ci-story">
     <p>
-      카야(<abbr title="히브리어: 부흥·소생">KHAYAH</abbr>) <span class="khayah-ci-ref">1)</span>의 둥근 Y자 <span class="khayah-ci-ref">2)</span>는 아름다운 만물을 만드신 하나님의 손을 상징하며, 그 위의 작은 원 <span class="khayah-ci-ref">3)</span>은 하나님이 창조하신 하늘과 땅, 곧 지구를 의미합니다. 그리고 이 둘이 합쳐져 하나님의 형상대로 창조하신, 가장 귀한 창조물인 인간 <span class="khayah-ci-ref">4)</span>의 모습을 나타냅니다.
+      <span class="khayah-ci-story__term">카야(<abbr title="히브리어: 부흥·소생">KHAYAH</abbr>)</span> <span class="khayah-ci-ref">1)</span>의 <span class="khayah-ci-story__term">둥근 Y자</span> <span class="khayah-ci-ref">2)</span>는 아름다운 만물을 만드신 하나님의 손을 상징하며, 그 위의 <span class="khayah-ci-story__term">작은 원</span> <span class="khayah-ci-ref">3)</span>은 하나님이 창조하신 하늘과 땅, 곧 지구를 의미합니다. 그리고 이 둘이 합쳐져 하나님의 형상대로 창조하신, 가장 귀한 창조물인 <span class="khayah-ci-story__term">인간</span> <span class="khayah-ci-ref">4)</span>의 모습을 나타냅니다.
     </p>
     <p>
       하나님은 그 전지전능한 손으로 아름다운 만물을 만드셨고, 카야 또한 그 마음으로 세상을 품고자 합니다. 그리하여 하나님이 태초에 지으신 모든 것을 보시고 흡족해 하셨던 그 상태로의 카야, 즉 <strong>회복</strong>을 추구합니다.

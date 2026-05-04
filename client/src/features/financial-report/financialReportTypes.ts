@@ -1,6 +1,4 @@
-/**
- * 재정보고 — 연도별 데이터 (추후 관리자 API와 동일 구조로 교체 가능)
- */
+/** 재정보고 — 연도별 데이터 (`GET /api/financial-reports` JSON 구조) */
 export type FinancialReportSegment = {
   id: string
   label: string
@@ -22,4 +20,17 @@ export type FinancialReportYearData = {
   operationsStatementImageUrl?: string | null
   /** 기부금 모금액 및 활용 실적 공시 PDF — 관리자 업로드 URL */
   donationDisclosurePdfUrl?: string | null
+}
+
+/** 공개 재정보고 페이지 — 표·버튼 영역 노출 여부(관리자에서 설정) */
+export type FinancialReportPageSettings = {
+  showBalanceSheet: boolean
+  showOperationsStatement: boolean
+  showActionButtons: boolean
+}
+
+export type FinancialReportsDocument = {
+  version: 1
+  settings: FinancialReportPageSettings
+  reports: FinancialReportYearData[]
 }

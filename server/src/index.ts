@@ -7,6 +7,7 @@ import { youtubeRouter } from './routes/youtube'
 import path from 'path'
 import { uploadsRouter } from './routes/uploads'
 import { adminPostsRouter } from './routes/adminPosts'
+import { financialReportsRouter } from './routes/financialReports'
 
 const app = express()
 const PORT = process.env.PORT ?? 3001
@@ -23,6 +24,7 @@ app.use('/api', pagesRouter)
 app.use('/api', youtubeRouter)
 app.use('/api', uploadsRouter)
 app.use('/api', adminPostsRouter)
+app.use('/api', financialReportsRouter)
 
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok' })

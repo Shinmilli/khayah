@@ -8,6 +8,7 @@ import { AdminPostsPage } from './pages/AdminPostsPage'
 import { AdminInquiriesPage } from './pages/AdminInquiriesPage'
 import { AdminOperationsPage } from './pages/AdminOperationsPage'
 import { AdminPopupPage } from './pages/AdminPopupPage'
+import { AdminFinancialReportsPage } from './pages/AdminFinancialReportsPage'
 
 export function AdminModule() {
   return (
@@ -23,6 +24,7 @@ export function AdminModule() {
           <Route path="content" element={<Navigate to="/admin/app/main-banner" replace />} />
           <Route path="inquiries" element={<AdminInquiriesPage />} />
           <Route path="operations" element={<AdminOperationsPage />} />
+          <Route path="financial-reports" element={<AdminFinancialReportsPage />} />
         </Route>
       </Route>
     </Routes>
