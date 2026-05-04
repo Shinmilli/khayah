@@ -1,0 +1,160 @@
+/* 조직도 도식 */
+.khayah-org-chart {
+  padding: 0.25rem 0 1.5rem;
+}
+
+.khayah-org-chart__lead {
+  margin: 0 0 1.5rem;
+  max-width: 40rem;
+  line-height: 1.65;
+  color: #444;
+  font-size: 0.98rem;
+}
+
+.khayah-org-chart__figure {
+  margin: 0 auto;
+  max-width: min(520px, 100%);
+}
+
+.khayah-org-chart__img {
+  display: block;
+  width: 100%;
+  height: auto;
+  vertical-align: top;
+}
+
+/* 이사회 · 전문위원 표 */
+.khayah-board-page {
+  padding: 0.25rem 0 1rem;
+}
+
+.khayah-board-section + .khayah-board-section {
+  margin-top: 2.75rem;
+  padding-top: 2.25rem;
+  border-top: 1px solid #e0e4e8;
+}
+
+.khayah-board-section__title {
+  margin: 0 0 1.1rem;
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #2c3e50;
+  letter-spacing: -0.02em;
+}
+
+.khayah-board-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-left: 1px solid #cfd6dc;
+  border-right: 1px solid #cfd6dc;
+  border-top: 2px solid #8a96a3;
+  border-bottom: 2px solid #8a96a3;
+  background: #fff;
+}
+
+.khayah-board-cell {
+  padding: 1.1rem 1.15rem 1.15rem;
+  border-right: 1px solid #e8ecf0;
+  border-bottom: 1px solid #e8ecf0;
+  min-height: 4.5rem;
+  box-sizing: border-box;
+}
+
+.khayah-board-cell:nth-child(2n) {
+  border-right: none;
+}
+
+.khayah-board-cell--empty {
+  background: #fafbfc;
+  min-height: 0;
+}
+
+.khayah-board-name {
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 0.35rem;
+  line-height: 1.35;
+}
+
+.khayah-board-role {
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: #555;
+  line-height: 1.5;
+}
+
+@media (max-width: 640px) {
+  .khayah-board-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .khayah-board-cell {
+    border-right: none;
+  }
+
+  .khayah-board-cell--empty {
+    display: none;
+  }
+}
+
+/* 조직도·이사회·전문위원 병합: 왼쪽 제목 / 오른쪽 본문 */
+.khayah-org-board-merged {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 0.25rem 0 1rem;
+}
+
+.khayah-split-row {
+  display: grid;
+  grid-template-columns: minmax(7.5rem, 11rem) minmax(0, 1fr);
+  gap: 1.25rem 2rem;
+  align-items: start;
+  scroll-margin-top: 5.5rem;
+  padding: 2rem 0;
+  border-bottom: 1px solid #e8ecf0;
+}
+
+.khayah-split-row:first-child {
+  padding-top: 0;
+}
+
+.khayah-split-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.khayah-split-row__title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--khayah-hub-accent, #b20838);
+  letter-spacing: -0.02em;
+  line-height: 1.35;
+  position: sticky;
+  top: 5.5rem;
+}
+
+.khayah-split-row__body {
+  min-width: 0;
+}
+
+.khayah-org-board-merged .khayah-org-chart {
+  padding-top: 0;
+}
+
+@media (max-width: 720px) {
+  .khayah-split-row {
+    grid-template-columns: 1fr;
+    gap: 0.65rem;
+    padding: 1.5rem 0;
+  }
+
+  .khayah-split-row__title {
+    position: static;
+    font-size: 1.15rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid #e8ecf0;
+  }
+}

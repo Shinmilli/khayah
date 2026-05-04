@@ -14,11 +14,14 @@ type NavColumn = {
   label: string
   /** 단일 세로 열 */
   links?: NavLink[]
-  /** 카야: 두 개의 세로 열 */
+  /** 카야: 두 개의 세로 열 (가로 배치) */
   subColumns?: NavLink[][]
+  /** 카야: 두 줄 가로 행 (각 행이 한 줄) */
+  subRows?: NavLink[][]
 }
 
 function columnAllLinks(col: NavColumn): NavLink[] {
+  if (col.subRows?.length) return col.subRows.flat()
   if (col.subColumns?.length) return col.subColumns.flat()
   return col.links ?? []
 }
@@ -27,19 +30,18 @@ const NAV_COLUMNS: NavColumn[] = [
   {
     id: 'khaya-col',
     label: '카야',
-    subColumns: [
+    subRows: [
       [
         { label: '인사말', to: '/카야/카야-스토리' },
         { label: '연혁', to: '/카야/카야-연혁' },
-        { label: '조직도', to: '/카야/조직도' },
-        { label: '이사회 / 전문위원', to: '/카야/이사회-전문위원' },
         { label: '오시는 길', to: '/카야/위치안내' },
+        { label: '재정보고', to: '/소식/재정보고' },
       ],
       [
-        { label: '카야 소개 / CI', to: '/카야/카야소개#ci' },
-        { label: '비전/미션', to: '/카야/카야소개#vision' },
+        { label: '카야 소개', to: '/카야/카야소개' },
+        { label: 'CI', to: '/카야/카야소개?tab=ci' },
         { label: '핵심사업', to: '/카야/핵심사업' },
-        { label: '재정보고', to: '/소식/재정보고' },
+        { label: '조직도 · 이사회 · 전문위원', to: '/카야/카야소개?tab=org' },
       ],
     ],
   },
@@ -226,26 +228,45 @@ export function Header() {
                             <p className="site-header__submenu-title">{col.label}</p>
                           </div>
                           <div className="site-header__submenu-right">
-                            <div
-                              className={`site-header__submenu-columns${
-                                col.subColumns && col.subColumns.length > 1 ? ' site-header__submenu-columns--split' : ''
-                              }`}
-                            >
-                              {(col.subColumns ?? [col.links ?? []]).map((group, gi) => (
-                                <div key={gi} className="site-header__submenu-col">
-                                  {group.map((l) => (
-                                    <Link
-                                      key={`${gi}-${l.to}-${l.label}`}
-                                      to={l.to}
-                                      role="menuitem"
-                                      className="site-header__submenu-link"
-                                    >
-                                      {l.label}
-                                    </Link>
-                                  ))}
-                                </div>
-                              ))}
-                            </div>
+                            {col.subRows?.length ? (
+                              <div className="site-header__submenu-rows">
+                                {col.subRows.map((row, ri) => (
+                                  <div key={ri} className="site-header__submenu-row">
+                                    {row.map((l) => (
+                                      <Link
+                                        key={`${ri}-${l.to}-${l.label}`}
+                                        to={l.to}
+                                        role="menuitem"
+                                        className="site-header__submenu-link"
+                                      >
+                                        {l.label}
+                                      </Link>
+                                    ))}
+                                  </div>
+                                ))}
+                              </div>
+                            ) : (
+                              <div
+                                className={`site-header__submenu-columns${
+                                  col.subColumns && col.subColumns.length > 1 ? ' site-header__submenu-columns--split' : ''
+                                }`}
+                              >
+                                {(col.subColumns ?? [col.links ?? []]).map((group, gi) => (
+                                  <div key={gi} className="site-header__submenu-col">
+                                    {group.map((l) => (
+                                      <Link
+                                        key={`${gi}-${l.to}-${l.label}`}
+                                        to={l.to}
+                                        role="menuitem"
+                                        className="site-header__submenu-link"
+                                      >
+                                        {l.label}
+                                      </Link>
+                                    ))}
+                                  </div>
+                                ))}
+                              </div>
+                            )}
                           </div>
                         </div>
                       </div>

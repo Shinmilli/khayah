@@ -1,3 +1,5 @@
+import { KHAYAH_ORG_BOARD_MERGED_HTML } from './khayahOrgBoardHtml'
+import { KHAYAH_LOCATION_PAGE_HTML } from './khayahLocationPageHtml'
 import { KHAYAH_HISTORY_PAGE_HTML } from './khayahHistoryHtml'
 
 /**
@@ -203,20 +205,15 @@ export const PAGES_STATIC: Record<string, StaticPage> = {
   },
   '카야/위치안내': {
     title: '오시는 길',
-    content: `
-<p><strong>카야코리아</strong><br/>
-04080 서울특별시 마포구 토정로 174</p>
-<p>T 031 689 3639 | E khayahkorea@gmail.com</p>
-<p>대중교통 이용 시 안내문을 참고해 주세요.</p>
-`,
+    content: KHAYAH_LOCATION_PAGE_HTML,
   },
   '카야/조직도': {
     title: '조직도',
-    content: '<p>카야의 조직 구성과 역할을 안내합니다.</p>',
+    content: KHAYAH_ORG_BOARD_MERGED_HTML,
   },
   '카야/이사회-전문위원': {
     title: '이사회 / 전문위원',
-    content: '<p>이사회 및 전문위원 구성을 안내합니다.</p>',
+    content: KHAYAH_ORG_BOARD_MERGED_HTML,
   },
   '카야/핵심사업': {
     title: '핵심사업',

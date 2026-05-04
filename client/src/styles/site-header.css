@@ -198,6 +198,27 @@
   min-width: 0;
 }
 
+/* 카야 메뉴: 두 줄 가로 네비 */
+.site-header__submenu-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+
+.site-header__submenu-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: clamp(8px, 1.2vw, 14px) clamp(20px, 2.4vw, 36px);
+  padding-left: clamp(12px, 1.4vw, 28px);
+}
+
+.site-header__submenu-row:not(:last-child) {
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
 .site-header__submenu-link {
   display: block;
   padding: 6px 0;

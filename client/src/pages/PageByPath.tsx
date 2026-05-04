@@ -33,6 +33,8 @@ export function PageByPath() {
   // Backward compatibility redirects (old slugs)
   if (pathKey === '소식/카야소식') return <Navigate to="/소식/활동소식" replace />
   if (pathKey === '소식/소식지') return <Navigate to="/소식/연간소식지" replace />
+  if (pathKey === '카야/조직도') return <Navigate to="/카야/카야소개?tab=org#org-chart" replace />
+  if (pathKey === '카야/이사회-전문위원') return <Navigate to="/카야/카야소개?tab=org#directors" replace />
 
   const isNewsArchive =
     pathKey === '소식/공지사항' || pathKey === '소식/활동소식' || pathKey === '소식/연간소식지' || pathKey === '소식/언론보도'
@@ -137,7 +139,7 @@ export function PageByPath() {
     const storyCta = storyCtaForPathKey(pathKey)
     return (
       <div className="page-content-wrapper">
-        <PageHero title={staticPage.title} />
+        <PageHero title={staticPage.title} showScrollHint={pathKey !== '카야/위치안내'} />
         <div className="section">
           <div className="section_wrapper clearfix">
             <div className="column one">
