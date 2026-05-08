@@ -35,6 +35,20 @@ export async function fetchPostsByKind(kind: string, page = 1, perPage = 10): Pr
   return res.json()
 }
 
+export async function fetchPostsByKindAndRegion(
+  kind: string,
+  region: string | null,
+  page = 1,
+  perPage = 10,
+): Promise<PostsResponse> {
+  const regionParam = region ? `&region=${encodeURIComponent(region)}` : ''
+  const res = await fetch(
+    `${API_BASE}/posts?kind=${encodeURIComponent(kind)}${regionParam}&page=${page}&perPage=${perPage}`,
+  )
+  if (!res.ok) throw new Error('Failed to fetch posts')
+  return res.json()
+}
+
 export async function fetchPageBySlug(slug: string): Promise<Page | null> {
   const res = await fetch(`${API_BASE}/pages/${encodeSlugForPath(slug)}`)
   if (res.status === 404) return null

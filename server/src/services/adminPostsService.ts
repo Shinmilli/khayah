@@ -13,6 +13,19 @@ function slugify(input: string): string {
 
 type AdminPostMeta = Record<string, string>
 
+type AdminPostRow = {
+  id: number
+  postTitle: string
+  postName: string
+  postExcerpt: string
+  postContent: string
+  postStatus: string
+  postType: string
+  postDate: Date
+  author?: { id: number; displayName: string }
+  postMeta: Array<{ metaKey: string | null; metaValue: string | null }>
+}
+
 function metaArrayToObject(list: Array<{ metaKey: string | null; metaValue: string | null }>): AdminPostMeta {
   const out: AdminPostMeta = {}
   for (const m of list) {
@@ -70,7 +83,7 @@ export const adminPostsService = {
     ])
 
     return {
-      posts: posts.map((p) => ({
+      posts: (posts as AdminPostRow[]).map((p) => ({
         id: p.id,
         title: p.postTitle,
         excerpt: p.postExcerpt,

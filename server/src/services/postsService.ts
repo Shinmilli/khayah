@@ -5,6 +5,7 @@ interface GetPublishedOptions {
   page: number
   perPage: number
   kind?: string
+  region?: string
 }
 
 export const postsService = {

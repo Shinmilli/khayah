@@ -1,0 +1,120 @@
+.projects-wrap {
+  max-width: 1120px;
+  width: var(--content-width, 92%);
+  margin: 0 auto;
+}
+
+.projects-tabs {
+  display: flex;
+  justify-content: flex-end;
+  gap: 18px;
+  padding: 18px 0 10px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  margin-bottom: 18px;
+}
+
+.projects-tab {
+  color: rgba(17, 17, 17, 0.7);
+  text-decoration: none;
+  font-weight: 900;
+  letter-spacing: -0.01em;
+}
+
+.projects-tab.is-active {
+  color: #b20838;
+}
+
+.projects-state {
+  padding: 26px 0 40px;
+  color: rgba(17, 17, 17, 0.62);
+}
+
+.projects-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 20px;
+}
+
+.projects-item {
+  display: grid;
+  grid-template-columns: 360px minmax(0, 1fr);
+  gap: 24px;
+  padding: 18px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.projects-thumb {
+  border-radius: 0;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: #111;
+  min-height: 200px;
+  position: relative;
+  overflow: hidden;
+}
+
+.projects-thumb::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(920px 420px at 30% 35%, rgba(178, 8, 56, 0.26), transparent 58%),
+    radial-gradient(900px 420px at 78% 70%, rgba(178, 8, 56, 0.14), transparent 60%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.02));
+}
+
+.projects-meta__top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.projects-date {
+  color: rgba(17, 17, 17, 0.55);
+  font-weight: 800;
+  font-size: 0.95rem;
+}
+
+.projects-badge {
+  display: inline-flex;
+  align-items: center;
+  height: 28px;
+  padding: 0 12px;
+  background: rgba(0, 0, 0, 0.06);
+  color: rgba(17, 17, 17, 0.7);
+  font-weight: 900;
+  letter-spacing: -0.01em;
+}
+
+.projects-title {
+  display: inline-block;
+  margin-top: 8px;
+  text-decoration: none;
+  color: #111;
+  font-size: 1.38rem;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 1.25;
+}
+
+.projects-title:hover {
+  color: #b20838;
+}
+
+.projects-excerpt {
+  margin: 10px 0 0;
+  color: rgba(17, 17, 17, 0.64);
+  line-height: 1.75;
+}
+
+@media (max-width: 980px) {
+  .projects-item {
+    grid-template-columns: 1fr;
+  }
+  .projects-tabs {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+}
+

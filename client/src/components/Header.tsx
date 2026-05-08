@@ -6,7 +6,7 @@ import '../styles/site-header.css'
 const LOGO_SRC = '/images/logo/khayah_logo.png'
 const FALLBACK_LOGO = '/images/logo/khayah_logo.png'
 
-type NavLink = { label: string; to: string }
+type NavLink = { label: string; to: string; children?: NavLink[] }
 
 type NavColumn = {
   id: string
@@ -23,7 +23,8 @@ type NavColumn = {
 function columnAllLinks(col: NavColumn): NavLink[] {
   if (col.subRows?.length) return col.subRows.flat()
   if (col.subColumns?.length) return col.subColumns.flat()
-  return col.links ?? []
+  const base = col.links ?? []
+  return base.flatMap((l) => [l, ...(l.children ?? [])])
 }
 
 const NAV_COLUMNS: NavColumn[] = [
@@ -49,8 +50,15 @@ const NAV_COLUMNS: NavColumn[] = [
     id: 'business-col',
     label: '사업',
     links: [
-      { label: '국내사업', to: '/국내사업' },
-      { label: '해외사업', to: '/해외사업' },
+      { label: '국내사업', to: '/국내사업', children: [{ label: '교육', to: '/국내사업/교육' }] },
+      {
+        label: '해외사업',
+        to: '/해외사업',
+        children: [
+          { label: '교육', to: '/해외사업/교육' },
+          { label: '보건의료', to: '/해외사업/보건의료' },
+        ],
+      },
       { label: '옹호사업', to: '/사업/옹호사업' },
       { label: '진행사업', to: '/사업/진행사업' },
     ],
@@ -168,6 +176,71 @@ export function Header() {
 
   const closeMobile = () => setMobileOpen(false)
 
+  const renderLinkList = (links: NavLink[]) => (
+    <div className="site-header__submenu-columns">
+      <div className="site-header__submenu-col">
+        {links.map((l) =>
+          l.children?.length ? (
+            <div key={`${l.to}-${l.label}`} className="site-header__submenu-group">
+              <Link to={l.to} role="menuitem" className="site-header__submenu-group-title">
+                {l.label}
+              </Link>
+              <div className="site-header__submenu-sublinks" aria-label={`${l.label} 내부 카테고리`}>
+                {l.children.map((c) => (
+                  <Link
+                    key={`${l.to}__${c.to}__${c.label}`}
+                    to={c.to}
+                    role="menuitem"
+                    className="site-header__submenu-sublink"
+                  >
+                    {c.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div key={`${l.to}-${l.label}`} className="site-header__submenu-group site-header__submenu-group--single">
+              <Link to={l.to} role="menuitem" className="site-header__submenu-group-title">
+                {l.label}
+              </Link>
+            </div>
+          ),
+        )}
+      </div>
+    </div>
+  )
+
+  const renderMobileLinks = (col: NavColumn) => {
+    if (!col.links?.length) {
+      return columnAllLinks(col).map((l) => (
+        <Link key={`${l.to}-${l.label}`} to={l.to} onClick={closeMobile}>
+          {l.label}
+        </Link>
+      ))
+    }
+
+    return col.links.map((l) =>
+      l.children?.length ? (
+        <div key={`${l.to}-${l.label}`} className="site-header__mobile-subgroup">
+          <Link to={l.to} onClick={closeMobile} className="site-header__mobile-subgroup-title">
+            {l.label}
+          </Link>
+          <div className="site-header__mobile-sublinks" aria-label={`${l.label} 내부 카테고리`}>
+            {l.children.map((c) => (
+              <Link key={`${l.to}__${c.to}__${c.label}`} to={c.to} onClick={closeMobile}>
+                {c.label}
+              </Link>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <Link key={`${l.to}-${l.label}`} to={l.to} onClick={closeMobile}>
+          {l.label}
+        </Link>
+      ),
+    )
+  }
+
   return (
     <header
       className={`site-header${!atTop ? ' is-scrolled' : ''}${mobileOpen ? ' is-mobile-open' : ''}${
@@ -246,26 +319,34 @@ export function Header() {
                                 ))}
                               </div>
                             ) : (
-                              <div
-                                className={`site-header__submenu-columns${
-                                  col.subColumns && col.subColumns.length > 1 ? ' site-header__submenu-columns--split' : ''
-                                }`}
-                              >
-                                {(col.subColumns ?? [col.links ?? []]).map((group, gi) => (
-                                  <div key={gi} className="site-header__submenu-col">
-                                    {group.map((l) => (
-                                      <Link
-                                        key={`${gi}-${l.to}-${l.label}`}
-                                        to={l.to}
-                                        role="menuitem"
-                                        className="site-header__submenu-link"
-                                      >
-                                        {l.label}
-                                      </Link>
+                              <>
+                                {col.subColumns ? (
+                                  <div
+                                    className={`site-header__submenu-columns${
+                                      col.subColumns && col.subColumns.length > 1
+                                        ? ' site-header__submenu-columns--split'
+                                        : ''
+                                    }`}
+                                  >
+                                    {col.subColumns.map((group, gi) => (
+                                      <div key={gi} className="site-header__submenu-col">
+                                        {group.map((l) => (
+                                          <Link
+                                            key={`${gi}-${l.to}-${l.label}`}
+                                            to={l.to}
+                                            role="menuitem"
+                                            className="site-header__submenu-link"
+                                          >
+                                            {l.label}
+                                          </Link>
+                                        ))}
+                                      </div>
                                     ))}
                                   </div>
-                                ))}
-                              </div>
+                                ) : (
+                                  renderLinkList(col.links ?? [])
+                                )}
+                              </>
                             )}
                           </div>
                         </div>
@@ -298,11 +379,7 @@ export function Header() {
           <details key={col.id} className="site-header__mobile-group" open>
             <summary>{col.label}</summary>
             <div className="site-header__mobile-links">
-              {columnAllLinks(col).map((l) => (
-                <Link key={`${l.to}-${l.label}`} to={l.to} onClick={closeMobile}>
-                  {l.label}
-                </Link>
-              ))}
+              {renderMobileLinks(col)}
             </div>
           </details>
         ))}

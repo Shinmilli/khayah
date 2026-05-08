@@ -222,8 +222,8 @@
 .site-header__submenu-link {
   display: block;
   padding: 6px 0;
-  font-size: 1.05rem;
-  font-weight: 400;
+  font-size: 1.06rem;
+  font-weight: 500;
   color: #222;
   text-decoration: none;
   white-space: nowrap;
@@ -232,6 +232,67 @@
 
 .site-header__submenu-link:hover,
 .site-header__submenu-link:focus-visible {
+  color: var(--header-primary);
+}
+
+/* Business 2-depth (그룹 + 내부 카테고리) */
+.site-header__submenu-group {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 10px 0;
+}
+
+.site-header__submenu-group + .site-header__submenu-group {
+  margin-top: 6px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.site-header__submenu-group--single {
+  gap: 0;
+}
+
+.site-header__submenu-group-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.06rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.site-header__submenu-group-title:hover,
+.site-header__submenu-group-title:focus-visible {
+  color: var(--header-primary);
+}
+
+.site-header__submenu-sublinks {
+  display: inline-flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 14px;
+  padding-left: 0;
+  border-left: 0;
+}
+
+.site-header__submenu-sublink {
+  display: block;
+  padding: 4px 0;
+  font-size: 1.01rem;
+  font-weight: 400;
+  color: #333;
+  text-decoration: none;
+  white-space: nowrap;
+  line-height: 1.35;
+}
+
+.site-header__submenu-sublink:hover,
+.site-header__submenu-sublink:focus-visible {
   color: var(--header-primary);
 }
 
@@ -383,7 +444,8 @@
 }
 
 .site-header__mobile-group summary {
-  font-weight: 700;
+  font-weight: 800;
+  font-size: 1.06rem;
   cursor: pointer;
   list-style: none;
   padding: 8px 0;
@@ -401,7 +463,8 @@
 }
 
 .site-header__mobile-links a {
-  font-size: 0.95rem;
+  font-size: 1rem;
+  font-weight: 650;
   color: #444;
   padding: 6px 0;
   text-decoration: none;
@@ -409,6 +472,27 @@
 
 .site-header__mobile-links a:hover {
   color: var(--header-primary);
+}
+
+.site-header__mobile-subgroup {
+  padding: 6px 0 8px;
+}
+
+.site-header__mobile-subgroup-title {
+  display: inline-flex;
+  font-weight: 700;
+  color: #222;
+  padding: 6px 0;
+  text-decoration: none;
+}
+
+.site-header__mobile-sublinks {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 6px 0 0 12px;
+  margin-left: 0;
+  border-left: 0;
 }
 
 .site-header__mobile-single {

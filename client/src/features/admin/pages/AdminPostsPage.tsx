@@ -11,7 +11,7 @@ import {
 } from '../../../services/api'
 import type { AdminPost } from '../../../services/api'
 
-const contentTypes = ['스토리', '공지사항', '활동소식', '연간소식지', '언론보도'] as const
+const contentTypes = ['스토리', '공지사항', '활동소식', '연간소식지', '언론보도', '진행사업'] as const
 type ContentType = (typeof contentTypes)[number]
 
 type YearlyNewsletterMode = '글쓰기' | 'PDF소식지'
@@ -19,6 +19,9 @@ type YearlyNewsletterMode = '글쓰기' | 'PDF소식지'
 /** 스토리 선택 시 필수 구분 (홈 스토리 칩과 대응) */
 const storyPostScopes = ['국내', '해외', '옹호', '진행'] as const
 type StoryPostScope = (typeof storyPostScopes)[number]
+
+const projectRegions = ['네팔', '키르기즈스탄', '미얀마', '국내'] as const
+type ProjectRegion = (typeof projectRegions)[number]
 
 type View = 'list' | 'editor'
 
@@ -85,6 +88,7 @@ function PostEditorForm({
   const [storyScope, setStoryScope] = useState<StoryPostScope | null>(() =>
     initialPostType === '스토리' ? initialStoryScope : null,
   )
+  const [projectRegion, setProjectRegion] = useState<ProjectRegion | null>(null)
   const [yearlyMode, setYearlyMode] = useState<YearlyNewsletterMode>('글쓰기')
   const [title, setTitle] = useState<string>(initialTitle)
   const [saving, setSaving] = useState(false)
@@ -108,6 +112,11 @@ function PostEditorForm({
       setStoryScope(null)
     } else if (prevPostType.current !== '스토리') {
       setStoryScope(null)
+    }
+    if (postType !== '진행사업') {
+      setProjectRegion(null)
+    } else if (prevPostType.current !== '진행사업') {
+      setProjectRegion(null)
     }
     if (postType !== '연간소식지') {
       setYearlyMode('글쓰기')
@@ -144,6 +153,10 @@ function PostEditorForm({
     if (initialPostType === '스토리') {
       const s = initialMeta.khayah_story_scope as StoryPostScope | undefined
       if (s && storyPostScopes.includes(s)) setStoryScope(s)
+    }
+    if (initialPostType === '진행사업') {
+      const r = initialMeta.khayah_project_region as ProjectRegion | undefined
+      if (r && projectRegions.includes(r)) setProjectRegion(r)
     }
     setShortBody(initialContentHtml ?? '')
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -194,6 +207,10 @@ function PostEditorForm({
       setSaveError('스토리 게시 유형(국내/해외/옹호/진행)을 선택해 주세요.')
       return
     }
+    if (postType === '진행사업' && !projectRegion) {
+      setSaveError('진행사업 지역(네팔/키르기즈스탄/미얀마/국내)을 선택해 주세요.')
+      return
+    }
     if (postType === '연간소식지' && yearlyMode === 'PDF소식지' && !docUrl) {
       setSaveError('PDF 업로드 후 링크가 생성되어야 합니다.')
       return
@@ -210,6 +227,9 @@ function PostEditorForm({
       }
       if (postType === '스토리' && storyScope) {
         meta.khayah_story_scope = storyScope
+      }
+      if (postType === '진행사업' && projectRegion) {
+        meta.khayah_project_region = projectRegion
       }
       if (postType === '연간소식지') {
         meta.khayah_newsletter_mode = yearlyMode === '글쓰기' ? '글쓰기 모드' : 'PDF 업로드 모드'
@@ -407,6 +427,34 @@ function PostEditorForm({
               {storyScope === null ? (
                 <p className="admin-upload__hint" role="status">
                   게시 유형을 선택해 주세요.
+                </p>
+              ) : null}
+            </div>
+          ) : postType === '진행사업' ? (
+            <div className="admin-field admin-field--full">
+              <span className="admin-field__label">지역 분류</span>
+              <p className="admin-fieldset__hint admin-fieldset__hint--flush">
+                진행사업 목록의 탭(전체/네팔/키르기즈스탄/미얀마/국내)에 사용됩니다.
+              </p>
+              <div className="admin-segmented admin-segmented--tight" role="group" aria-label="진행사업 지역">
+                {projectRegions.map((r) => (
+                  <button
+                    key={r}
+                    type="button"
+                    className={`admin-segmented__btn${projectRegion === r ? ' admin-segmented__btn--active' : ''}`}
+                    onClick={() => {
+                      if (isEditLocked) return
+                      setProjectRegion(r)
+                    }}
+                    disabled={isEditLocked}
+                  >
+                    {r}
+                  </button>
+                ))}
+              </div>
+              {projectRegion === null ? (
+                <p className="admin-upload__hint" role="status">
+                  지역을 선택해 주세요.
                 </p>
               ) : null}
             </div>

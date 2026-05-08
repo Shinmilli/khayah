@@ -4,9 +4,12 @@ interface FindPublishedOptions {
   page: number
   perPage: number
   kind?: string
+  region?: string
 }
 
 type RepositoryAuthor = { id: number; displayName: string }
+
+type RepositoryPostMetaRow = { metaKey: string | null; metaValue: string | null }
 
 type RepositoryPostRow = {
   id: number
@@ -20,7 +23,13 @@ type RepositoryPostRow = {
   postStatus: 'publish'
   postType: 'page' | 'post'
   author?: RepositoryAuthor
+  postMeta?: RepositoryPostMetaRow[]
 }
+
+type RepositoryPageRow = Pick<
+  RepositoryPostRow,
+  'id' | 'postTitle' | 'postName' | 'postExcerpt' | 'postContent' | 'postParent' | 'menuOrder'
+>
 
 const mockPosts: RepositoryPostRow[] = [
   {
@@ -125,7 +134,7 @@ const mockPosts: RepositoryPostRow[] = [
 ]
 
 export const postRepository = {
-  async findPublished(options: FindPublishedOptions) {
+  async findPublished(options: FindPublishedOptions): Promise<{ posts: RepositoryPostRow[]; total: number }> {
     if (!prisma) {
       const { page, perPage } = options
       const skip = (page - 1) * perPage
@@ -136,7 +145,7 @@ export const postRepository = {
       return { posts: postsPage, total: publishedPosts.length }
     }
 
-    const { page, perPage, kind } = options
+    const { page, perPage, kind, region } = options
     const skip = (page - 1) * perPage
     const kindFilter = kind
       ? {
@@ -149,12 +158,25 @@ export const postRepository = {
         }
       : {}
 
+    const regionFilter =
+      kind === '진행사업' && region
+        ? {
+            postMeta: {
+              some: {
+                metaKey: 'khayah_project_region',
+                metaValue: region,
+              },
+            },
+          }
+        : {}
+
     const [posts, total] = await Promise.all([
       prisma.post.findMany({
         where: {
           postStatus: 'publish',
           postType: 'post',
           ...kindFilter,
+          ...regionFilter,
         },
         orderBy: { postDate: 'desc' },
         skip,
@@ -171,6 +193,7 @@ export const postRepository = {
           postStatus: 'publish',
           postType: 'post',
           ...kindFilter,
+          ...regionFilter,
         },
       }),
     ])
@@ -178,7 +201,7 @@ export const postRepository = {
     return { posts, total }
   },
 
-  async findPublishedPages(options: { page?: number; perPage?: number }) {
+  async findPublishedPages(options: { page?: number; perPage?: number }): Promise<{ pages: RepositoryPageRow[]; total: number }> {
     const page = Math.max(1, options.page ?? 1)
     const perPage = Math.min(100, Math.max(1, options.perPage ?? 50))
     const skip = (page - 1) * perPage
@@ -192,18 +215,16 @@ export const postRepository = {
           return b.postDate.getTime() - a.postDate.getTime()
         })
       const pagesPage = publishedPages.slice(skip, skip + perPage)
-      return {
-        pages: pagesPage.map((p) => ({
-          id: p.id,
-          postTitle: p.postTitle,
-          postName: p.postName,
-          postExcerpt: p.postExcerpt,
-          postContent: p.postContent,
-          postParent: p.postParent,
-          menuOrder: p.menuOrder,
-        })),
-        total: publishedPages.length,
-      }
+      const pages: RepositoryPageRow[] = pagesPage.map((p) => ({
+        id: p.id,
+        postTitle: p.postTitle,
+        postName: p.postName,
+        postExcerpt: p.postExcerpt,
+        postContent: p.postContent,
+        postParent: p.postParent,
+        menuOrder: p.menuOrder,
+      }))
+      return { pages, total: publishedPages.length }
     }
 
     const [pages, total] = await Promise.all([

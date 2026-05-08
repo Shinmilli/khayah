@@ -5,17 +5,16 @@
  * - `@prisma/client` is conditionally loaded to avoid runtime failures when the
  *   Prisma Client hasn't been generated yet (common during early setup).
  */
-import type { PrismaClient } from '@prisma/client'
 
 const connectionString = process.env.DATABASE_URL
 
-export const prisma: PrismaClient | null = (() => {
+export const prisma: any | null = (() => {
   if (process.env.MOCK_DATA === 'true') return null
   if (!connectionString) return null
 
   try {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const { PrismaClient: PrismaClientRuntime } = require('@prisma/client') as typeof import('@prisma/client')
+    const PrismaClientRuntime = (require('@prisma/client') as any).PrismaClient as new (...args: any[]) => any
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const { PrismaPg } = require('@prisma/adapter-pg') as typeof import('@prisma/adapter-pg')
     // eslint-disable-next-line @typescript-eslint/no-var-requires

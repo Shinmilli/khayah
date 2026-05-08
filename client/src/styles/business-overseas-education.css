@@ -1,0 +1,222 @@
+.ov-edu-page {
+  --ov-edu-primary: #b20838;
+  --ov-edu-text: #111;
+  --ov-edu-muted: rgba(17, 17, 17, 0.64);
+  --ov-edu-line: rgba(0, 0, 0, 0.08);
+  --ov-edu-surface: rgba(0, 0, 0, 0.03);
+}
+
+.ov-edu-wrap {
+  max-width: 1120px;
+  width: var(--content-width, 92%);
+  margin: 0 auto;
+}
+
+.ov-edu-hero {
+  padding: clamp(52px, 5.8vw, 86px) 0 clamp(28px, 3.4vw, 46px);
+  text-align: center;
+}
+
+.ov-edu-kicker {
+  margin: 0 0 14px;
+  font-weight: 900;
+  letter-spacing: -0.01em;
+  color: rgba(178, 8, 56, 0.72);
+}
+
+.ov-edu-title {
+  margin: 0;
+  font-size: clamp(34px, 4.4vw, 52px);
+  line-height: 1.14;
+  letter-spacing: -0.05em;
+  color: var(--ov-edu-text);
+}
+
+.ov-edu-desc {
+  margin: 16px auto 0;
+  max-width: 82ch;
+  color: var(--ov-edu-muted);
+  line-height: 1.85;
+}
+
+.ov-edu-divider {
+  height: 1px;
+  background: var(--ov-edu-line);
+  margin: clamp(22px, 3vw, 34px) 0 0;
+}
+
+.ov-edu-section {
+  padding: clamp(34px, 4.4vw, 64px) 0;
+}
+
+/* Layout: left big Korean title, right English tagline + paragraph */
+.ov-edu-head {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  gap: clamp(18px, 3vw, 36px);
+  align-items: start;
+}
+
+.ov-edu-head__ko {
+  margin: 0;
+  font-size: clamp(30px, 3.4vw, 44px);
+  letter-spacing: -0.05em;
+  line-height: 1.05;
+  color: var(--ov-edu-primary);
+  font-weight: 900;
+  white-space: pre-line;
+}
+
+.ov-edu-head__en {
+  margin: 0;
+  font-size: clamp(18px, 2.1vw, 24px);
+  letter-spacing: -0.02em;
+  color: rgba(17, 17, 17, 0.86);
+  font-weight: 900;
+}
+
+.ov-edu-head__p {
+  margin: 10px 0 0;
+  color: var(--ov-edu-muted);
+  line-height: 1.85;
+}
+
+/* Table-like grid */
+.ov-edu-table {
+  margin-top: clamp(18px, 2.6vw, 26px);
+  border: 1px solid var(--ov-edu-line);
+  background: #fff;
+}
+
+.ov-edu-table__row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.ov-edu-table__row--2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.ov-edu-cell {
+  padding: 16px 16px 18px;
+  border-left: 1px solid var(--ov-edu-line);
+}
+
+.ov-edu-cell:first-child {
+  border-left: 0;
+}
+
+.ov-edu-cell__head {
+  margin: 0 0 10px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: rgba(17, 17, 17, 0.86);
+  background: rgba(178, 8, 56, 0.06);
+  border: 1px solid rgba(178, 8, 56, 0.12);
+  padding: 10px 12px;
+  text-align: center;
+}
+
+.ov-edu-cell__p {
+  margin: 0;
+  color: var(--ov-edu-muted);
+  line-height: 1.75;
+}
+
+/* Image strip (uses placeholders) */
+.ov-edu-strip {
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.ov-edu-img {
+  border-radius: 0;
+  border: 1px solid var(--ov-edu-line);
+  background: #111;
+  position: relative;
+  min-height: 140px;
+  overflow: hidden;
+}
+
+.ov-edu-img::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(820px 340px at 30% 35%, rgba(178, 8, 56, 0.26), transparent 58%),
+    radial-gradient(820px 380px at 78% 70%, rgba(178, 8, 56, 0.14), transparent 60%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.02));
+}
+
+.ov-edu-img__cap {
+  position: absolute;
+  left: 12px;
+  bottom: 10px;
+  z-index: 1;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: rgba(255, 255, 255, 0.82);
+  background: rgba(0, 0, 0, 0.34);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  padding: 8px 10px;
+  border-radius: 0;
+  backdrop-filter: blur(10px);
+}
+
+/* Variant section (different layout) */
+.ov-edu-quality {
+  margin-top: clamp(18px, 2.6vw, 26px);
+  border: 1px solid var(--ov-edu-line);
+  background: var(--ov-edu-surface);
+  padding: clamp(18px, 2.6vw, 26px);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(14px, 2.2vw, 22px);
+}
+
+.ov-edu-qcard {
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  padding: 16px 16px 18px;
+}
+
+.ov-edu-qcard__title {
+  margin: 0 0 8px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: rgba(17, 17, 17, 0.86);
+}
+
+.ov-edu-qcard__p {
+  margin: 0;
+  color: var(--ov-edu-muted);
+  line-height: 1.75;
+}
+
+@media (max-width: 960px) {
+  .ov-edu-head {
+    grid-template-columns: 1fr;
+  }
+  .ov-edu-head__ko {
+    white-space: normal;
+  }
+  .ov-edu-table__row {
+    grid-template-columns: 1fr;
+  }
+  .ov-edu-cell {
+    border-left: 0;
+    border-top: 1px solid var(--ov-edu-line);
+  }
+  .ov-edu-cell:first-child {
+    border-top: 0;
+  }
+  .ov-edu-strip {
+    grid-template-columns: 1fr;
+  }
+  .ov-edu-quality {
+    grid-template-columns: 1fr;
+  }
+}
+
