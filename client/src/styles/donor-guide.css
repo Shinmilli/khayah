@@ -82,14 +82,15 @@
   z-index: 1;
 }
 
-.page-content-wrapper .page-body .sg-hero__lead {
+.page-content-wrapper .page-body .sg-page .sg-hero__lead {
   margin: 0 auto;
-  max-width: 22em;
+  max-width: 28em;
+  text-align: center;
   font-size: clamp(1.15rem, 2.4vw, 1.45rem);
   font-weight: 800;
   letter-spacing: -0.03em;
   line-height: 1.55;
-  color: rgba(17, 17, 17, 0.9);
+  color: #111;
 }
 
 .page-content-wrapper .page-body .sg-section {
@@ -422,6 +423,11 @@
   text-align: center;
 }
 
+.page-content-wrapper .page-body .sg-band p {
+  margin: 0;
+  color: #fff;
+}
+
 .page-content-wrapper .page-body .sg-band::after {
   content: '';
   position: absolute;
@@ -438,21 +444,23 @@
 }
 
 .page-content-wrapper .page-body .sg-band__en {
-  margin: 0 0 10px;
-  font-size: 0.82rem;
-  font-weight: 800;
-  letter-spacing: 0.28em;
+  margin: 0 0 clamp(10px, 2vw, 16px);
+  font-size: clamp(1.85rem, 4.8vw, 2.65rem);
+  font-weight: 900;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.45);
+  line-height: 1.15;
+  color: #fff;
 }
 
 .page-content-wrapper .page-body .sg-band__ko {
-  margin: 0;
-  font-size: clamp(1.1rem, 2.5vw, 1.45rem);
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  line-height: 1.55;
-  color: rgba(255, 255, 255, 0.94);
+  margin: 0 auto;
+  max-width: 36em;
+  font-size: clamp(0.92rem, 2vw, 1.05rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.65;
+  color: #fff;
 }
 
 .page-content-wrapper .page-body .sg-step {

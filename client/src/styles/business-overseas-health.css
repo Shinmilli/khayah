@@ -374,11 +374,27 @@
   }
   .ovh-block--ltr .ovh-block__head--cols-4 {
     display: grid;
+    grid-template-columns: 1fr;
   }
   .ovh-block__head--cols-4,
   .ovh-block__head--cols-5 {
     grid-template-columns: 1fr;
     gap: 14px;
+  }
+  /* 데스크톱용 grid-column/row가 남아 암시 열이 생기며 옆으로 붙는 문제 제거 */
+  .ovh-block--ltr .ovh-block__head--cols-4 .ovh-block__title,
+  .ovh-block--ltr .ovh-block__head--cols-4 .ovh-block__desc {
+    grid-column: 1 / -1;
+    grid-row: auto;
+    width: 100%;
+    max-width: 100%;
+  }
+  .ovh-block--rtl .ovh-block__head--cols-5 .ovh-block__title,
+  .ovh-block--rtl .ovh-block__head--cols-5 .ovh-block__desc {
+    grid-column: 1 / -1;
+    grid-row: auto;
+    width: 100%;
+    max-width: 100%;
   }
   /* 모바일: 제목 → 서브 문구 순 (모자보건은 DOM이 desc 먼저라 order로 맞춤) */
   .ovh-block--rtl .ovh-block__head--cols-5 .ovh-block__title {
@@ -390,7 +406,6 @@
   }
   .ovh-block--ltr .ovh-block__head--cols-4 .ovh-block__desc,
   .ovh-block--rtl .ovh-block__head--cols-5 .ovh-block__desc {
-    grid-column: span 1;
     margin-top: 4px;
     padding-top: 0;
     font-weight: 500;
@@ -406,11 +421,50 @@
     white-space: normal;
   }
   .ovh-block--ltr .ovh-cards--scroll {
-    grid-column: auto;
+    grid-column: unset;
+    grid-row: unset;
+    width: 100%;
+    margin-top: clamp(8px, 2vw, 16px);
   }
   .ovh-cards--cols-4,
   .ovh-cards--cols-5 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* 보건의료 스크롤 카드 행: 가로 스크롤 대신 줄바꿈·축소로 모두 노출 */
+@media (max-width: 1200px) {
+  .ovh-cards--scroll {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
+    overflow-x: visible;
+    scroll-snap-type: none;
+    cursor: default;
+    padding-bottom: 0;
+    gap: clamp(10px, 2vw, 14px);
+  }
+  .ovh-cards--scroll:active {
+    cursor: default;
+  }
+  .ovh-cards--scroll > .ovh-card {
+    width: 100%;
+    min-width: 0;
+    flex: unset;
+    scroll-snap-align: unset;
+  }
+  .ovh-cards--scroll .ovh-card {
+    min-height: 128px;
+    padding: 14px 8px 12px;
+    gap: 10px;
+  }
+  .ovh-cards--scroll .ovh-card__icon {
+    width: 38px;
+    height: 38px;
+  }
+  .ovh-cards--scroll .ovh-card__label {
+    font-size: 0.78rem;
+    line-height: 1.32;
+    padding-left: 7px;
   }
 }
 
