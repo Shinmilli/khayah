@@ -380,11 +380,23 @@
     grid-template-columns: 1fr;
     gap: 14px;
   }
+  /* 모바일: 제목 → 서브 문구 순 (모자보건은 DOM이 desc 먼저라 order로 맞춤) */
+  .ovh-block--rtl .ovh-block__head--cols-5 .ovh-block__title {
+    order: -1;
+  }
   .ovh-block--ltr .ovh-block__head--cols-4 .ovh-block__title,
+  .ovh-block--rtl .ovh-block__head--cols-5 .ovh-block__title {
+    margin-bottom: 0;
+  }
   .ovh-block--ltr .ovh-block__head--cols-4 .ovh-block__desc,
-  .ovh-block--rtl .ovh-block__head--cols-5 .ovh-block__title,
   .ovh-block--rtl .ovh-block__head--cols-5 .ovh-block__desc {
     grid-column: span 1;
+    margin-top: 4px;
+    padding-top: 0;
+    font-weight: 500;
+    font-size: 0.92rem;
+    line-height: 1.68;
+    color: rgba(17, 17, 17, 0.7);
   }
   .ovh-block--rtl .ovh-block__title {
     text-align: left;

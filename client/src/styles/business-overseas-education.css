@@ -15,6 +15,22 @@
 .ov-edu-hero {
   padding: clamp(52px, 5.8vw, 86px) 0 clamp(28px, 3.4vw, 46px);
   text-align: center;
+  position: relative;
+}
+
+.ov-edu-hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 100vw;
+  transform: translateX(-50%);
+  background:
+    radial-gradient(920px 420px at 30% 25%, rgba(178, 8, 56, 0.12), transparent 60%),
+    radial-gradient(860px 380px at 78% 70%, rgba(178, 8, 56, 0.08), transparent 62%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.018), transparent 60%);
+  z-index: -1;
 }
 
 .ov-edu-kicker {

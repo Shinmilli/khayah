@@ -157,6 +157,14 @@ async function seed() {
     })
   }
 
+  const activityCoverSamples = [
+    'https://images.unsplash.com/photo-1488521787991-ed7bbaae773f?w=800&h=800&fit=crop',
+    'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=800&h=800&fit=crop',
+    'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&h=800&fit=crop',
+    'https://images.unsplash.com/photo-1509099836639-18ba1795216d?w=800&h=800&fit=crop',
+    'https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=800&h=800&fit=crop',
+  ]
+
   // 활동소식
   for (let i = 1; i <= 5; i++) {
     await createPost({
@@ -165,13 +173,18 @@ async function seed() {
       title: `활동소식 시드 ${i} — 현장 스케치`,
       contentHtml: baseContent(`활동소식 시드 ${i}`, '활동소식 시드 데이터'),
       date: isoDaysAgo(20 + i * 4),
-      meta: [{ key: 'khayah_activity_tag', value: i % 2 ? '현장' : '캠페인' }],
+      meta: [
+        { key: 'khayah_activity_tag', value: i % 2 ? '현장' : '캠페인' },
+        { key: 'khayah_cover_url', value: activityCoverSamples[(i - 1) % activityCoverSamples.length] },
+      ],
     })
   }
 
-  // 연간소식지 (2가지 모드 힌트용 메타 포함)
+  // 연간소식지 (2가지 모드 힌트용 메타 포함, 연도·호수 필터용 khayah_newsletter_year / issue)
   for (let i = 1; i <= 5; i++) {
     const mode = i % 2 ? '글쓰기 모드' : 'PDF 업로드 모드'
+    const archiveYear = i <= 3 ? 2025 : 2026
+    const issueVal = i <= 3 ? String(4 - i) : String(i - 3)
     await createPost({
       authorId,
       kind: '연간소식지',
@@ -185,6 +198,8 @@ async function seed() {
         { key: 'khayah_newsletter_mode', value: mode },
         { key: 'khayah_pdf_url', value: '/uploads/sample.pdf' },
         { key: 'khayah_cover_url', value: 'https://images.unsplash.com/photo-1542810634-71277d95dcbb?w=1200&h=800&fit=crop' },
+        { key: 'khayah_newsletter_year', value: String(archiveYear) },
+        { key: 'khayah_newsletter_issue', value: issueVal },
       ],
     })
   }

@@ -15,7 +15,7 @@ The seed script will:
   - `khayah_kind`
   - `khayah_story_scope`
   - `khayah_press_publisher`, `khayah_press_url`, `khayah_press_date`
-  - `khayah_newsletter_mode`, `khayah_pdf_url`, `khayah_cover_url`
+  - `khayah_newsletter_mode`, `khayah_pdf_url`, `khayah_cover_url`, `khayah_newsletter_year`, `khayah_newsletter_issue`
 
 ### Run
 

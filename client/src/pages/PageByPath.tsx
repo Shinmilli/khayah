@@ -14,6 +14,9 @@ import '../styles/business-overseas.css'
 import '../styles/business-overseas-education.css'
 import '../styles/business-overseas-health.css'
 import '../styles/business-advocacy.css'
+import '../styles/donor-guide.css'
+
+const NANUM_DONATE_URL = 'https://www.ihappynanum.com/Nanum/B/RAA98AKVRQ'
 
 function storyCtaForPathKey(pathKey: string): { label: string; to: string } | null {
   if (!pathKey) return null
@@ -104,6 +107,33 @@ export function PageByPath() {
     }, 80)
     return () => clearTimeout(timer)
   }, [hashId, pathKey, staticPage, apiPage])
+
+  useEffect(() => {
+    if (pathKey !== '후원가이드/후원자-가이드') return
+    const btn = document.getElementById('sg-copy-nanum')
+    const toast = document.getElementById('sg-toast')
+    if (!btn || !toast) return
+    let hideTimer: number
+    const showToast = (message: string) => {
+      toast.textContent = message
+      toast.removeAttribute('hidden')
+      window.clearTimeout(hideTimer)
+      hideTimer = window.setTimeout(() => {
+        toast.setAttribute('hidden', '')
+      }, 2800)
+    }
+    const onClick = () => {
+      void navigator.clipboard.writeText(NANUM_DONATE_URL).then(
+        () => showToast('후원 링크가 복사되었습니다. 카톡·문자에 붙여넣어 주세요.'),
+        () => showToast('복사에 실패했습니다. 링크를 길게 눌러 복사하거나 주소창에서 다시 시도해 주세요.')
+      )
+    }
+    btn.addEventListener('click', onClick)
+    return () => {
+      btn.removeEventListener('click', onClick)
+      window.clearTimeout(hideTimer)
+    }
+  }, [pathKey, location.pathname])
 
   if (isNewsArchive) return <NewsArchivePage />
 

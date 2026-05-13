@@ -209,8 +209,12 @@
     gap: 12px;
   }
   .adv-block--rtl .adv-block__title-wrap {
+    order: 1;
     align-items: flex-start;
     text-align: left;
+  }
+  .adv-block--rtl .adv-block__desc {
+    order: 2;
   }
   .adv-block__title {
     white-space: normal;

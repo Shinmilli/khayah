@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { AdminRichTextEditor } from '../components/AdminRichTextEditor'
 import type { AdminRichTextEditorHandle } from '../components/AdminRichTextEditor'
 import {
@@ -8,6 +8,7 @@ import {
   adminFetchPostsByKind,
   adminUpdatePost,
   uploadDocumentPdf,
+  uploadReportImage,
 } from '../../../services/api'
 import type { AdminPost } from '../../../services/api'
 
@@ -24,6 +25,12 @@ const projectRegions = ['네팔', '키르기즈스탄', '미얀마', '국내'] a
 type ProjectRegion = (typeof projectRegions)[number]
 
 type View = 'list' | 'editor'
+
+function adminPressMetaDate(row: AdminPost): string {
+  const d = row.meta?.khayah_press_date?.trim()
+  if (d && /^\d{4}-\d{2}-\d{2}/.test(d)) return d.slice(0, 10)
+  return row.publishedAt.slice(0, 10)
+}
 
 function PostTypeSegmentedSection({
   headingId,
@@ -99,6 +106,7 @@ function PostEditorForm({
   const [docUploading, setDocUploading] = useState(false)
   const [coverFile, setCoverFile] = useState<File | null>(null)
   const [coverPreviewUrl, setCoverPreviewUrl] = useState<string>('')
+  const [coverImageUploading, setCoverImageUploading] = useState(false)
   const [pressTitle, setPressTitle] = useState<string>('')
   const [pressPublisher, setPressPublisher] = useState<string>('')
   const [pressUrl, setPressUrl] = useState<string>('')
@@ -106,6 +114,13 @@ function PostEditorForm({
   const prevPostType = useRef(postType)
   const richRef = useRef<AdminRichTextEditorHandle | null>(null)
   const [shortBody, setShortBody] = useState<string>('') // yearly pdf mode short body
+  const [newsletterIssue, setNewsletterIssue] = useState<string>('') // khayah_newsletter_issue
+  const [newsletterYear, setNewsletterYear] = useState<string>(() => {
+    const y = (initialMeta.khayah_newsletter_year ?? '').trim()
+    if (/^\d{4}$/.test(y)) return y
+    if (initialPostType === '연간소식지') return String(new Date().getFullYear())
+    return ''
+  })
 
   useEffect(() => {
     if (postType !== '스토리') {
@@ -123,6 +138,12 @@ function PostEditorForm({
       setDocFile(null)
       setDocUrl('')
       setDocStatus('PDF 업로드 가능 (최대 25MB)')
+      setNewsletterIssue('')
+      setNewsletterYear('')
+    } else if (prevPostType.current !== '연간소식지') {
+      setNewsletterYear(String(new Date().getFullYear()))
+    }
+    if (postType !== '연간소식지' && postType !== '활동소식' && postType !== '스토리') {
       setCoverFile(null)
       setCoverPreviewUrl('')
     }
@@ -142,6 +163,12 @@ function PostEditorForm({
       if (m === 'PDF 업로드 모드' || m === 'PDF소식지') setYearlyMode('PDF소식지')
       if (m === '글쓰기 모드' || m === '글쓰기') setYearlyMode('글쓰기')
       if (initialMeta.khayah_pdf_url) setDocUrl(initialMeta.khayah_pdf_url)
+      if (initialMeta.khayah_cover_url) setCoverPreviewUrl(initialMeta.khayah_cover_url)
+      if (initialMeta.khayah_newsletter_issue) setNewsletterIssue(initialMeta.khayah_newsletter_issue)
+      const yy = (initialMeta.khayah_newsletter_year ?? '').trim()
+      if (/^\d{4}$/.test(yy)) setNewsletterYear(yy)
+    }
+    if (initialPostType === '활동소식' || initialPostType === '스토리') {
       if (initialMeta.khayah_cover_url) setCoverPreviewUrl(initialMeta.khayah_cover_url)
     }
     if (initialPostType === '언론보도') {
@@ -163,10 +190,7 @@ function PostEditorForm({
   }, [])
 
   useEffect(() => {
-    if (!coverFile) {
-      setCoverPreviewUrl('')
-      return
-    }
+    if (!coverFile) return
     const url = URL.createObjectURL(coverFile)
     setCoverPreviewUrl(url)
     return () => URL.revokeObjectURL(url)
@@ -197,9 +221,25 @@ function PostEditorForm({
     }
   }
 
+  const onPickCoverImageUpload = async (file: File | null) => {
+    if (!file) return
+    setCoverImageUploading(true)
+    setSaveError('')
+    try {
+      const result = await uploadReportImage(file)
+      setCoverPreviewUrl(result.url)
+      setCoverFile(null)
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : '이미지 업로드 실패'
+      setSaveError(msg)
+    } finally {
+      setCoverImageUploading(false)
+    }
+  }
+
   const onSave = async () => {
     setSaveError('')
-    if (!title.trim()) {
+    if (postType !== '언론보도' && !title.trim()) {
       setSaveError('제목을 입력해 주세요.')
       return
     }
@@ -214,6 +254,28 @@ function PostEditorForm({
     if (postType === '연간소식지' && yearlyMode === 'PDF소식지' && !docUrl) {
       setSaveError('PDF 업로드 후 링크가 생성되어야 합니다.')
       return
+    }
+    if (postType === '연간소식지' && !/^\d{4}$/.test(newsletterYear.trim())) {
+      setSaveError('소식지 연도는 네 자리 숫자(예: 2026)로 입력해 주세요.')
+      return
+    }
+    if (postType === '언론보도') {
+      if (!pressTitle.trim()) {
+        setSaveError('기사 제목을 입력해 주세요.')
+        return
+      }
+      if (!pressPublisher.trim()) {
+        setSaveError('신문사를 입력해 주세요.')
+        return
+      }
+      if (!pressUrl.trim()) {
+        setSaveError('기사 URL을 입력해 주세요.')
+        return
+      }
+      if (!pressDate.trim()) {
+        setSaveError('기사 날짜를 선택해 주세요.')
+        return
+      }
     }
 
     setSaving(true)
@@ -235,16 +297,25 @@ function PostEditorForm({
         meta.khayah_newsletter_mode = yearlyMode === '글쓰기' ? '글쓰기 모드' : 'PDF 업로드 모드'
         if (docUrl) meta.khayah_pdf_url = docUrl
         if (coverPreviewUrl) meta.khayah_cover_url = coverPreviewUrl
+        meta.khayah_newsletter_year = newsletterYear.trim()
+        meta.khayah_newsletter_issue = newsletterIssue.trim()
+      }
+      if (postType === '활동소식' || postType === '스토리') {
+        meta.khayah_cover_url = coverPreviewUrl.trim()
       }
       if (postType === '언론보도') {
-        if (pressTitle.trim()) meta.khayah_press_title = pressTitle.trim()
-        if (pressPublisher.trim()) meta.khayah_press_publisher = pressPublisher.trim()
-        if (pressUrl.trim()) meta.khayah_press_url = pressUrl.trim()
-        if (pressDate.trim()) meta.khayah_press_date = pressDate.trim()
+        meta.khayah_press_title = pressTitle.trim()
+        meta.khayah_press_publisher = pressPublisher.trim()
+        meta.khayah_press_url = pressUrl.trim()
+        meta.khayah_press_date = pressDate.trim()
       }
 
       const content =
-        postType === '연간소식지' && yearlyMode === 'PDF소식지' ? shortBody : richRef.current?.getHtml() ?? ''
+        postType === '언론보도'
+          ? ''
+          : postType === '연간소식지' && yearlyMode === 'PDF소식지'
+            ? shortBody
+            : richRef.current?.getHtml() ?? ''
 
       const deriveExcerpt = (html: string): string => {
         const text = html
@@ -256,12 +327,17 @@ function PostEditorForm({
         return text.slice(0, 60)
       }
 
-      const excerptAuto = deriveExcerpt(content)
+      const excerptAuto = postType === '언론보도' ? '' : deriveExcerpt(content)
+
+      const resolvedTitle =
+        postType === '언론보도'
+          ? `[${pressPublisher.trim()}] ${pressTitle.trim()}`
+          : title.trim()
 
       if (mode === 'new') {
         await adminCreatePost({
           kind: postType,
-          title: title.trim(),
+          title: resolvedTitle,
           excerpt: excerptAuto,
           content,
           status: 'publish',
@@ -270,7 +346,7 @@ function PostEditorForm({
       } else {
         if (!initialPostId) throw new Error('Missing post id')
         await adminUpdatePost(initialPostId, {
-          title: title.trim(),
+          title: resolvedTitle,
           excerpt: excerptAuto,
           content,
           status: 'publish',
@@ -347,6 +423,37 @@ function PostEditorForm({
                   ? '일반 게시글처럼 제목/본문만 작성합니다.'
                   : '제목 + 짧은 부내용 + PDF 업로드(보기 버튼) 형태로 노출됩니다.'}
               </p>
+              <label className="admin-field admin-field--full" style={{ marginTop: 12 }}>
+                <span className="admin-field__label">소식지 연도 (khayah_newsletter_year)</span>
+                <input
+                  className="admin-input"
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={4}
+                  placeholder="예: 2026"
+                  value={newsletterYear}
+                  onChange={(e) => setNewsletterYear(e.currentTarget.value.replace(/\D/g, '').slice(0, 4))}
+                  disabled={isEditLocked}
+                />
+                <span className="admin-fieldset__hint admin-fieldset__hint--flush">
+                  공개 목록의 연도 필터에 사용됩니다. 게시일과 달라도 됩니다.
+                </span>
+              </label>
+              <label className="admin-field admin-field--full" style={{ marginTop: 12 }}>
+                <span className="admin-field__label">소식지 호수 (선택, khayah_newsletter_issue)</span>
+                <input
+                  className="admin-input"
+                  type="text"
+                  inputMode="numeric"
+                  placeholder="예: 3 (목록에서 3호로 표시)"
+                  value={newsletterIssue}
+                  onChange={(e) => setNewsletterIssue(e.currentTarget.value)}
+                  disabled={isEditLocked}
+                />
+                <span className="admin-fieldset__hint admin-fieldset__hint--flush">
+                  숫자만 입력해도 됩니다. 선택한 연도 안에서만 호수 필터에 나타납니다.
+                </span>
+              </label>
             </div>
           ) : null}
 
@@ -485,7 +592,12 @@ function PostEditorForm({
               {postType === '공지사항' ? null : (
                 <label className="admin-field admin-field--full">
                   <span className="admin-field__label">
-                    대표 이미지{postType === '연간소식지' && yearlyMode === 'PDF소식지' ? ' (PDF 표지 또는 이미지)' : ''}
+                    대표 이미지
+                    {postType === '연간소식지' && yearlyMode === 'PDF소식지'
+                      ? ' (PDF 표지 또는 이미지)'
+                      : postType === '활동소식' || postType === '스토리'
+                        ? ' (목록 왼쪽 썸네일)'
+                        : ''}
                   </span>
                   <div className="admin-upload">
                     <div className="admin-upload__preview" aria-hidden>
@@ -519,18 +631,65 @@ function PostEditorForm({
                           >
                             이미지 제거
                           </button>
-                        <label className="admin-field admin-field--full" style={{ marginTop: 10 }}>
-                          <span className="admin-field__label">표지 이미지 URL (임시)</span>
-                          <input
-                            className="admin-input"
-                            type="url"
-                            placeholder="https://..."
-                            value={coverPreviewUrl}
-                            onChange={(e) => setCoverPreviewUrl(e.currentTarget.value)}
-                          />
-                        </label>
+                          <label className="admin-field admin-field--full" style={{ marginTop: 10 }}>
+                            <span className="admin-field__label">표지 이미지 URL (임시)</span>
+                            <input
+                              className="admin-input"
+                              type="url"
+                              placeholder="https://..."
+                              value={coverPreviewUrl}
+                              onChange={(e) => setCoverPreviewUrl(e.currentTarget.value)}
+                            />
+                          </label>
                           <p className="admin-upload__hint">
-                            {docUrl ? 'PDF 업로드됨: 표지가 없으면 PDF 표지(대체)로 표시됩니다.' : 'PDF 업로드 후 표지를 지정할 수 있습니다.'}
+                            {docUrl
+                              ? 'PDF 업로드됨: 표지가 없으면 PDF 표지(대체)로 표시됩니다.'
+                              : 'PDF 업로드 후 표지를 지정할 수 있습니다.'}
+                          </p>
+                        </>
+                      ) : postType === '활동소식' || postType === '스토리' ? (
+                        <>
+                          <label
+                            className="admin-btn admin-btn--ghost"
+                            style={{ cursor: coverImageUploading ? 'not-allowed' : 'pointer' }}
+                          >
+                            이미지 업로드
+                            <input
+                              type="file"
+                              accept="image/*"
+                              style={{ display: 'none' }}
+                              disabled={coverImageUploading}
+                              onChange={(e) => {
+                                const f = e.currentTarget.files?.[0] ?? null
+                                e.currentTarget.value = ''
+                                void onPickCoverImageUpload(f)
+                              }}
+                            />
+                          </label>
+                          <button
+                            type="button"
+                            className="admin-btn admin-btn--ghost"
+                            disabled={!coverPreviewUrl}
+                            onClick={() => {
+                              setCoverPreviewUrl('')
+                              setCoverFile(null)
+                            }}
+                          >
+                            대표 이미지 제거
+                          </button>
+                          <label className="admin-field admin-field--full" style={{ marginTop: 10 }}>
+                            <span className="admin-field__label">대표 이미지 URL (khayah_cover_url)</span>
+                            <input
+                              className="admin-input"
+                              type="url"
+                              placeholder="https://..."
+                              value={coverPreviewUrl}
+                              onChange={(e) => setCoverPreviewUrl(e.currentTarget.value)}
+                            />
+                          </label>
+                          <p className="admin-upload__hint">
+                            공개 목록에서 제목 왼쪽 네모 썸네일로 표시됩니다. 업로드하거나 URL을 직접 입력할 수
+                            있습니다.
                           </p>
                         </>
                       ) : (
@@ -643,6 +802,11 @@ export function AdminPostsPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(false)
 
+  const sortedRows = useMemo(() => {
+    if (filterType !== '언론보도') return rows
+    return [...rows].sort((a, b) => adminPressMetaDate(b).localeCompare(adminPressMetaDate(a)))
+  }, [rows, filterType])
+
   const load = async () => {
     setLoading(true)
     setError(false)
@@ -749,10 +913,10 @@ export function AdminPostsPage() {
               <li className="admin-table__empty">불러오는 중…</li>
             ) : error ? (
               <li className="admin-table__empty">목록을 불러오지 못했습니다.</li>
-            ) : rows.length === 0 ? (
+            ) : sortedRows.length === 0 ? (
               <li className="admin-table__empty">등록된 공지가 없습니다.</li>
             ) : (
-              rows.map((row) => (
+              sortedRows.map((row) => (
                 <li key={row.id} className="admin-notice-item">
                   <div className="admin-notice-item__title">{row.title}</div>
                   <div className="admin-notice-item__date">{new Date(row.publishedAt).toISOString().slice(0, 10)}</div>
@@ -774,6 +938,63 @@ export function AdminPostsPage() {
                   </div>
                 </li>
               ))
+            )}
+          </ul>
+        ) : filterType === '언론보도' ? (
+          <ul className="admin-press-list" aria-label="언론보도 목록">
+            {loading ? (
+              <li className="admin-table__empty">불러오는 중…</li>
+            ) : error ? (
+              <li className="admin-table__empty">목록을 불러오지 못했습니다.</li>
+            ) : sortedRows.length === 0 ? (
+              <li className="admin-table__empty">등록된 언론보도가 없습니다.</li>
+            ) : (
+              sortedRows.map((row) => {
+                const pub = row.meta?.khayah_press_publisher?.trim() ?? ''
+                const ptitle = row.meta?.khayah_press_title?.trim() ?? row.title
+                const purl = row.meta?.khayah_press_url?.trim() ?? ''
+                const pdate = adminPressMetaDate(row)
+                return (
+                  <li key={row.id} className="admin-press-item">
+                    <div className="admin-press-item__main">
+                      <div className="admin-press-item__headline">
+                        {pub ? (
+                          <span className="admin-press-item__source">
+                            [{pub}]{' '}
+                          </span>
+                        ) : null}
+                        <span className="admin-press-item__title">{ptitle}</span>
+                      </div>
+                      <div className="admin-press-item__meta">
+                        <span className="admin-press-item__date">{pdate}</span>
+                        {purl ? (
+                          <a className="admin-press-item__link" href={purl} target="_blank" rel="noreferrer">
+                            {purl.length > 56 ? `${purl.slice(0, 54)}…` : purl}
+                          </a>
+                        ) : (
+                          <span className="admin-press-item__link admin-press-item__link--empty">URL 없음</span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="admin-row-actions">
+                      <button
+                        type="button"
+                        className="admin-btn admin-btn--sm admin-btn--ghost"
+                        onClick={() => openEdit(row.id)}
+                      >
+                        수정
+                      </button>
+                      <button
+                        type="button"
+                        className="admin-btn admin-btn--sm admin-btn--danger-ghost"
+                        onClick={() => onDelete(row.id)}
+                      >
+                        삭제
+                      </button>
+                    </div>
+                  </li>
+                )
+              })
             )}
           </ul>
         ) : (
@@ -802,14 +1023,14 @@ export function AdminPostsPage() {
                       목록을 불러오지 못했습니다.
                     </td>
                   </tr>
-                ) : rows.length === 0 ? (
+                ) : sortedRows.length === 0 ? (
                   <tr>
                     <td colSpan={6} className="admin-table__empty">
                       이 유형에 해당하는 샘플 글이 없습니다.
                     </td>
                   </tr>
                 ) : (
-                  rows.map((row) => (
+                  sortedRows.map((row) => (
                     <tr key={row.id}>
                       <td>{filterType}</td>
                       <td>{row.title}</td>

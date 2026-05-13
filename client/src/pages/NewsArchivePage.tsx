@@ -5,6 +5,7 @@ import { normalizePathKey } from '../constants/pagesContent'
 import { fetchPostsByKind } from '../services/api'
 import type { Post } from '../types/post'
 import '../styles/page.css'
+import '../styles/newsletter.css'
 
 function formatDate(iso: string): string {
   const d = new Date(iso)
@@ -13,6 +14,60 @@ function formatDate(iso: string): string {
   const m = d.getMonth() + 1
   const day = d.getDate()
   return `${y}년 ${m}월 ${day}일`
+}
+
+function pressArticleTitle(post: Post): string {
+  return post.meta?.khayah_press_title?.trim() || post.title
+}
+
+function pressPublisher(post: Post): string {
+  return post.meta?.khayah_press_publisher?.trim() || ''
+}
+
+function pressArticleUrl(post: Post): string {
+  return post.meta?.khayah_press_url?.trim() || ''
+}
+
+/** 기사 날짜 메타(YYYY-MM-DD) 우선, 없으면 게시일 */
+function pressDisplayYmd(post: Post): string {
+  const raw = post.meta?.khayah_press_date?.trim()
+  if (raw && /^\d{4}-\d{2}-\d{2}/.test(raw)) return raw.slice(0, 10)
+  return post.publishedAt.slice(0, 10)
+}
+
+function pressSortKey(post: Post): string {
+  return pressDisplayYmd(post)
+}
+
+/** 목록·필터용 연도: 메타 khayah_newsletter_year(YYYY) 우선, 없으면 게시일 연도 */
+function newsletterArchiveYear(post: Post): number {
+  const raw = post.meta?.khayah_newsletter_year?.trim() ?? ''
+  if (/^\d{4}$/.test(raw)) return parseInt(raw, 10)
+  return new Date(post.publishedAt).getFullYear()
+}
+
+function newsletterIsPdfMode(post: Post): boolean {
+  const m = post.meta?.khayah_newsletter_mode ?? ''
+  return m === 'PDF 업로드 모드' || m === 'PDF소식지'
+}
+
+/** 호수 표시용 (숫자만 있으면 ○○호) */
+function newsletterIssueLabel(raw: string | undefined): string {
+  const t = (raw ?? '').trim()
+  if (!t) return ''
+  if (t.includes('호')) return t
+  const digits = t.replace(/\D/g, '')
+  return digits ? `${digits}호` : `${t}호`
+}
+
+function newsletterPdfUrl(post: Post): string {
+  return post.meta?.khayah_pdf_url?.trim() || ''
+}
+
+/** 연간소식지·활동소식 등 `meta.khayah_cover_url` 기반 썸네일 */
+function coverMetaUrl(post: Post): string | undefined {
+  const u = post.meta?.khayah_cover_url?.trim()
+  return u || undefined
 }
 
 function usePathKey(): string {
@@ -53,6 +108,61 @@ export function NewsArchivePage() {
     }
   }, [kind])
 
+  const sortedPosts = useMemo(() => {
+    if (kind !== '언론보도') return posts
+    return [...posts].sort((a, b) => pressSortKey(b).localeCompare(pressSortKey(a)))
+  }, [posts, kind])
+
+  const newsletterSorted = useMemo(() => {
+    if (kind !== '연간소식지') return []
+    return [...posts].sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
+  }, [posts, kind])
+
+  const [filterYear, setFilterYear] = useState<number>(() => new Date().getFullYear())
+  const [filterIssue, setFilterIssue] = useState<string>('all')
+
+  useEffect(() => {
+    if (kind === '연간소식지') {
+      setFilterYear(new Date().getFullYear())
+      setFilterIssue('all')
+    }
+  }, [kind])
+
+  useEffect(() => {
+    setFilterIssue('all')
+  }, [filterYear])
+
+  const newsletterYears = useMemo(() => {
+    const cy = new Date().getFullYear()
+    const ys = new Set<number>()
+    for (const p of newsletterSorted) ys.add(newsletterArchiveYear(p))
+    ys.add(cy)
+    return Array.from(ys).sort((a, b) => b - a)
+  }, [newsletterSorted])
+
+  const newsletterIssueValues = useMemo(() => {
+    const pool = newsletterSorted.filter((p) => newsletterArchiveYear(p) === filterYear)
+    const issues = new Set<string>()
+    for (const p of pool) {
+      const v = p.meta?.khayah_newsletter_issue?.trim()
+      if (v) issues.add(v)
+    }
+    return Array.from(issues).sort((a, b) => {
+      const na = parseInt(a.replace(/\D/g, ''), 10)
+      const nb = parseInt(b.replace(/\D/g, ''), 10)
+      if (Number.isFinite(na) && Number.isFinite(nb)) return nb - na
+      return b.localeCompare(a)
+    })
+  }, [newsletterSorted, filterYear])
+
+  const newsletterVisible = useMemo(() => {
+    return newsletterSorted.filter((p) => {
+      if (newsletterArchiveYear(p) !== filterYear) return false
+      if (filterIssue !== 'all' && (p.meta?.khayah_newsletter_issue ?? '').trim() !== filterIssue) return false
+      return true
+    })
+  }, [newsletterSorted, filterYear, filterIssue])
+
   useEffect(() => {
     document.title = `${title} | 사단법인 카야 인터내셔널`
     return () => {
@@ -60,8 +170,16 @@ export function NewsArchivePage() {
     }
   }, [title])
 
+  const isPress = kind === '언론보도'
+  const isNewsletter = kind === '연간소식지'
+  const isActivity = kind === '활동소식'
+
   return (
-    <div className="page-content-wrapper notice-archive-page">
+    <div
+      className={`page-content-wrapper notice-archive-page${isPress ? ' press-archive-page' : ''}${
+        isNewsletter ? ' yearly-nl-page' : ''
+      }${isActivity ? ' activity-archive-page' : ''}`}
+    >
       <PageHero title={title} />
       <div className="section">
         <div className="section_wrapper clearfix">
@@ -73,13 +191,185 @@ export function NewsArchivePage() {
               </p>
             )}
 
-            {!loading && !error && posts.length === 0 && (
+            {!loading && !error && (isNewsletter ? newsletterSorted : sortedPosts).length === 0 && (
               <p className="notice-archive__status">등록된 글이 없습니다.</p>
             )}
 
-            {!loading && !error && posts.length > 0 && (
+            {!loading && !error && isNewsletter && newsletterSorted.length > 0 && (
+              <div className="yearly-nl-archive">
+                <div className="yearly-nl-toolbar" role="search" aria-label="연간소식지 필터">
+                  <label className="yearly-nl-filter">
+                    <select
+                      className="yearly-nl-select"
+                      aria-label="연도"
+                      value={String(filterYear)}
+                      onChange={(e) => setFilterYear(Number(e.currentTarget.value))}
+                    >
+                      {newsletterYears.map((y) => (
+                        <option key={y} value={String(y)}>
+                          {y}년
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <label className="yearly-nl-filter">
+                    <select
+                      className="yearly-nl-select"
+                      aria-label="호수"
+                      value={filterIssue}
+                      onChange={(e) => setFilterIssue(e.currentTarget.value)}
+                    >
+                      <option value="all">전체 호수</option>
+                      {newsletterIssueValues.map((issueRaw) => (
+                        <option key={issueRaw} value={issueRaw}>
+                          {newsletterIssueLabel(issueRaw)}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                </div>
+
+                <div className="yearly-nl-cards" aria-label="연간소식지 목록">
+                  {newsletterVisible.length === 0 ? (
+                    <p className="notice-archive__status">선택한 조건에 해당하는 소식지가 없습니다.</p>
+                  ) : (
+                    newsletterVisible.map((post) => {
+                      const pdf = newsletterPdfUrl(post)
+                      const isPdf = newsletterIsPdfMode(post)
+                      const cover = coverMetaUrl(post)
+                      const issueRaw = post.meta?.khayah_newsletter_issue?.trim() ?? ''
+                      const issueHo = newsletterIssueLabel(issueRaw)
+                      const excerpt = (post.excerpt || '')
+                        .replace(/<[^>]+>/g, ' ')
+                        .replace(/\s+/g, ' ')
+                        .trim()
+                      const detailPath = `/posts/${encodeURIComponent(post.slug)}`
+                      const ctaPdf = isPdf && pdf
+                      return (
+                        <article key={post.id} className="yearly-nl-card">
+                          <div className="yearly-nl-card__text">
+                            <h2 className="yearly-nl-card__title">{post.title}</h2>
+                            {excerpt ? <p className="yearly-nl-card__desc">{excerpt}</p> : null}
+                            {ctaPdf ? (
+                              <a
+                                className="yearly-nl-cta"
+                                href={pdf}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                자세히 보기
+                                <span className="yearly-nl-cta__icon" aria-hidden>
+                                  →
+                                </span>
+                              </a>
+                            ) : (
+                              <Link className="yearly-nl-cta" to={detailPath}>
+                                자세히 보기
+                                <span className="yearly-nl-cta__icon" aria-hidden>
+                                  →
+                                </span>
+                              </Link>
+                            )}
+                          </div>
+                          <div className="yearly-nl-card__cover-wrap">
+                            {cover ? (
+                              <img className="yearly-nl-card__cover" src={cover} alt="" loading="lazy" />
+                            ) : (
+                              <div className="yearly-nl-card__cover yearly-nl-card__cover--placeholder" aria-hidden />
+                            )}
+                            {issueHo ? (
+                              <span className="yearly-nl-card__issue">{issueHo}</span>
+                            ) : null}
+                          </div>
+                        </article>
+                      )
+                    })
+                  )}
+                </div>
+              </div>
+            )}
+
+            {!loading && !error && isPress && sortedPosts.length > 0 && (
+              <ul className="press-archive__list" aria-label={`${title} 목록`}>
+                {sortedPosts.map((post) => {
+                  const url = pressArticleUrl(post)
+                  const ymd = pressDisplayYmd(post)
+                  const pub = pressPublisher(post)
+                  const articleTitle = pressArticleTitle(post)
+                  return (
+                    <li key={post.id} className="press-archive__item">
+                      <div className="press-archive__text">
+                        <p className="press-archive__headline">
+                          {pub ? (
+                            <span className="press-archive__source-wrap" aria-label={`매체 ${pub}`}>
+                              <span className="press-archive__bracket">[</span>
+                              <span className="press-archive__source">{pub}</span>
+                              <span className="press-archive__bracket">]</span>
+                            </span>
+                          ) : null}
+                          {pub ? ' ' : null}
+                          <span className="press-archive__article-title">{articleTitle}</span>
+                        </p>
+                        <time className="press-archive__ymd" dateTime={ymd}>
+                          {ymd}
+                        </time>
+                      </div>
+                      {url ? (
+                        <a
+                          className="press-archive__btn"
+                          href={url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          기사 바로보기
+                        </a>
+                      ) : (
+                        <span className="press-archive__btn press-archive__btn--disabled">링크 없음</span>
+                      )}
+                    </li>
+                  )
+                })}
+              </ul>
+            )}
+
+            {!loading && !error && isActivity && sortedPosts.length > 0 && (
+              <ul className="activity-archive__list" aria-label={`${title} 목록`}>
+                {sortedPosts.map((post) => {
+                  const cover = coverMetaUrl(post)
+                  return (
+                    <li key={post.id} className="activity-archive__item">
+                      <Link to={`/posts/${encodeURIComponent(post.slug)}`} className="activity-archive__link">
+                        <div className="activity-archive__thumb-wrap">
+                          {cover ? (
+                            <img
+                              className="activity-archive__thumb"
+                              src={cover}
+                              alt=""
+                              loading="lazy"
+                            />
+                          ) : (
+                            <div
+                              className="activity-archive__thumb activity-archive__thumb--placeholder"
+                              aria-hidden
+                            />
+                          )}
+                        </div>
+                        <div className="activity-archive__body">
+                          <time className="activity-archive__date" dateTime={post.publishedAt}>
+                            {formatDate(post.publishedAt)}
+                          </time>
+                          <h2 className="activity-archive__title">{post.title}</h2>
+                        </div>
+                      </Link>
+                    </li>
+                  )
+                })}
+              </ul>
+            )}
+
+            {!loading && !error && !isPress && !isNewsletter && !isActivity && sortedPosts.length > 0 && (
               <ul className="notice-archive__list" aria-label={`${title} 목록`}>
-                {posts.map((post) => (
+                {sortedPosts.map((post) => (
                   <li key={post.id} className="notice-archive__item">
                     <Link to={`/posts/${encodeURIComponent(post.slug)}`} className="notice-archive__link">
                       <div className="notice-archive__date">

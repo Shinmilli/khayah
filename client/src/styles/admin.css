@@ -958,6 +958,81 @@ body.admin-route {
   white-space: nowrap;
 }
 
+/* 언론보도 목록 (관리자) — 메타만, 요약·썸네일 컬럼 없음 */
+.admin-press-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid #eef0f3;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.admin-press-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 16px;
+  border-bottom: 1px solid #eef0f3;
+}
+
+.admin-press-item:last-child {
+  border-bottom: none;
+}
+
+.admin-press-item__main {
+  min-width: 0;
+  flex: 1;
+}
+
+.admin-press-item__headline {
+  font-size: 14px;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1.45;
+  letter-spacing: -0.02em;
+}
+
+.admin-press-item__source {
+  color: var(--khayah-red, #b20838);
+  font-weight: 800;
+}
+
+.admin-press-item__title {
+  color: #111827;
+}
+
+.admin-press-item__meta {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.admin-press-item__date {
+  font-weight: 600;
+  color: #4b5563;
+}
+
+.admin-press-item__link {
+  color: #1d4ed8;
+  text-decoration: none;
+  word-break: break-all;
+}
+
+.admin-press-item__link:hover {
+  text-decoration: underline;
+}
+
+.admin-press-item__link--empty {
+  color: #9ca3af;
+  font-style: italic;
+}
+
 .admin-tag {
   display: inline-flex;
   align-items: center;

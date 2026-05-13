@@ -61,6 +61,8 @@ body.has-overlay-header .home-page {
 
 .container--board {
   padding-top: 0 !important;
+  /* 기본 .container 하단 패딩(60px)이 협력기관 블록과 푸터 사이 흰 띠로 보임 */
+  padding-bottom: 0 !important;
 }
 
 /* ----- Hero ----- */

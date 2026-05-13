@@ -1,6 +1,7 @@
 import { KHAYAH_ORG_BOARD_MERGED_HTML } from './khayahOrgBoardHtml'
 import { KHAYAH_LOCATION_PAGE_HTML } from './khayahLocationPageHtml'
 import { KHAYAH_HISTORY_PAGE_HTML } from './khayahHistoryHtml'
+import { DONOR_GUIDE_PAGE_HTML } from './donorGuidePageHtml'
 
 /**
  * 워드프레스 페이지별 정적 콘텐츠 (DB 마이그레이션 전 fallback)
@@ -648,7 +649,7 @@ export const PAGES_STATIC: Record<string, StaticPage> = {
         <div class="domestic-card">
           <div class="domestic-card__icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 2a2 2 0 0 1 2 2v1.1a6.9 6.9 0 0 1 4.3 2.5l.8-.4a2 2 0 1 1 1.8 3.6l-.8.4c.1.5.2 1 .2 1.5A8.1 8.1 0 1 1 12 5.6V4a2 2 0 0 1 2-2h-2Zm0 6.4a1 1 0 0 1 1 1v3.2l2.6 1.5a1 1 0 1 1-1 1.7l-3.1-1.8a1 1 0 0 1-.5-.9V9.4a1 1 0 0 1 1-1Z"/>
+              <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM18.92 8h-2.95c-.32-1.25-.78-2.45-1.38-3.56 1.84.63 3.37 1.91 4.33 3.56zM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82c.43-1.43 1.08-2.76 1.91-3.96zM4.26 14C4.1 13.36 4 12.69 4 12s.1-1.36.26-2h3.38c-.08.66-.14 1.32-.14 2 0 .68.06 1.34.14 2H4.26zm.82 2h2.95c.32 1.25.78 2.45 1.38 3.56-1.84-.63-3.37-1.9-4.33-3.56zm2.95-8H5.08c.96-1.66 2.49-2.93 4.33-3.56C8.81 5.55 8.35 6.75 8.03 8zM12 19.96c-.83-1.2-1.48-2.53-1.91-3.96h3.82c-.43 1.43-1.08 2.76-1.91 3.96zM18.49 14h-3.38c.08-.66.14-1.32.14-2 0-.68-.06-1.34-.14-2h3.38c.16.64.26 1.31.26 2s-.1 1.36-.26 2zm-1.23-4h-2.95c-.32-1.25-.78-2.45-1.38-3.56 1.84.63 3.37 1.9 4.33 3.56z"/>
             </svg>
           </div>
           <h2 class="domestic-card__title">지원사업</h2>
@@ -830,17 +831,7 @@ export const PAGES_STATIC: Record<string, StaticPage> = {
   },
   '후원가이드/후원자-가이드': {
     title: '후원자 가이드',
-    content: `
-<p>카야를 후원해 주시는 분들을 위한 안내입니다.</p>
-<h3>후원 방법</h3>
-<p>정기후원, 일시후원, 지정기부금 등 다양한 방법으로 참여하실 수 있습니다.</p>
-<h3>후원계좌</h3>
-<p><strong>예금주</strong> (사)카야인터내셔널<br/>
-<strong>우리</strong> 1005 403 029492　 <strong>농협</strong> 301 1122 4444 01<br/>
-<strong>국민</strong> 584101 01 286346　 <strong>신한</strong> 100 034 744590</p>
-<h3>문의</h3>
-<p>T 031 689 3639 | E khayahkorea@gmail.com</p>
-`,
+    content: DONOR_GUIDE_PAGE_HTML,
   },
   '후원가이드/후원신청': {
     title: '후원신청',
