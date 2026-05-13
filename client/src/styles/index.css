@@ -22,6 +22,11 @@
   background-color: #fff;
 }
 
+/* 100vw 전폭 요소가 세로 스크롤바 너비만큼 뷰보다 커져 생기는 미세 가로 스크롤 방지 */
+html {
+  overflow-x: hidden;
+}
+
 body {
   padding-top: var(--site-header-height);
 }
@@ -67,6 +72,7 @@ a:hover {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  overflow-x: hidden;
 }
 
 #Header_wrapper {

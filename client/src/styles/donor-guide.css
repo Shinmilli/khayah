@@ -90,7 +90,7 @@
   font-weight: 800;
   letter-spacing: -0.03em;
   line-height: 1.55;
-  color: #111;
+  color: #333;
 }
 
 .page-content-wrapper .page-body .sg-section {
@@ -470,6 +470,11 @@
   align-items: center;
 }
 
+/* 그리드 항목 기본 min-width:auto 가 큰 이미지 고유폭을 최소로 잡아 열이 0으로 줄며 figure가 잘리는 현상 방지 */
+.page-content-wrapper .page-body .sg-step > * {
+  min-width: 0;
+}
+
 .page-content-wrapper .page-body .sg-step--reverse {
   grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
 }
@@ -524,6 +529,7 @@
 .page-content-wrapper .page-body .sg-step__fig img {
   display: block;
   width: 100%;
+  max-width: 100%;
   height: auto;
   vertical-align: middle;
 }

@@ -173,7 +173,7 @@ export const DONOR_GUIDE_PAGE_HTML = `
           <p class="sg-step__sub">정보 입력 시 회원으로 자동 등록됩니다.</p>
         </div>
         <figure class="sg-step__fig">
-          <img src="/images/donor-guide/step1-info.png" alt="후원 신청 화면 예시: 회원정보 입력 단계" width="640" height="420" loading="lazy" decoding="async" />
+          <img src="/images/donor-guide/step1-info.jpg" alt="후원 신청 화면 예시: 회원정보 입력 단계" width="640" height="420" loading="eager" decoding="async" />
         </figure>
       </div>
     </div>
@@ -192,7 +192,7 @@ export const DONOR_GUIDE_PAGE_HTML = `
           </ul>
         </div>
         <figure class="sg-step__fig">
-          <img src="/images/donor-guide/step2-payment.png" alt="후원 신청 화면 예시: 결제정보 입력 단계" width="640" height="420" loading="lazy" decoding="async" />
+          <img src="/images/donor-guide/step2-payment.jpg" alt="후원 신청 화면 예시: 결제정보 입력 단계" width="640" height="420" loading="eager" decoding="async" />
         </figure>
       </div>
     </div>
