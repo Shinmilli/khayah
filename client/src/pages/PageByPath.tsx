@@ -110,11 +110,12 @@ export function PageByPath() {
 
   useEffect(() => {
     if (pathKey !== '후원가이드/후원자-가이드') return
-    const btn = document.getElementById('sg-copy-nanum')
-    const toast = document.getElementById('sg-toast')
-    if (!btn || !toast) return
+    const root = document.querySelector<HTMLElement>('.page-content-wrapper .the_content_wrapper.page-body')
+    if (!root) return
     let hideTimer: number
     const showToast = (message: string) => {
+      const toast = document.getElementById('sg-toast')
+      if (!toast) return
       toast.textContent = message
       toast.removeAttribute('hidden')
       window.clearTimeout(hideTimer)
@@ -122,15 +123,18 @@ export function PageByPath() {
         toast.setAttribute('hidden', '')
       }, 2800)
     }
-    const onClick = () => {
+    const onClick = (e: MouseEvent) => {
+      const btn = (e.target as HTMLElement).closest('#sg-copy-nanum')
+      if (!btn) return
+      e.preventDefault()
       void navigator.clipboard.writeText(NANUM_DONATE_URL).then(
         () => showToast('후원 링크가 복사되었습니다. 카톡·문자에 붙여넣어 주세요.'),
         () => showToast('복사에 실패했습니다. 링크를 길게 눌러 복사하거나 주소창에서 다시 시도해 주세요.')
       )
     }
-    btn.addEventListener('click', onClick)
+    root.addEventListener('click', onClick)
     return () => {
-      btn.removeEventListener('click', onClick)
+      root.removeEventListener('click', onClick)
       window.clearTimeout(hideTimer)
     }
   }, [pathKey, location.pathname])
