@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
+import { NANUM_DONATE_URL } from '../constants/nanumDonate'
 
 const HERO_ID = 'home-hero-banner'
 
@@ -99,11 +100,13 @@ export function FloatingDonateButton() {
           </a>
         ))}
       </div>
-      <Link
-        to="/후원가이드/후원신청"
+      <a
+        href={NANUM_DONATE_URL}
         className="site-floating-fab__donate"
         aria-label="후원하기"
         tabIndex={showFab ? 0 : -1}
+        target="_blank"
+        rel="noopener noreferrer"
       >
         <span className="site-floating-fab__heart" aria-hidden>
           <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" focusable="false">
@@ -114,7 +117,7 @@ export function FloatingDonateButton() {
           </svg>
         </span>
         <span className="site-floating-fab__label">후원하기</span>
-      </Link>
+      </a>
     </div>
   )
 }

@@ -15,8 +15,7 @@ import '../styles/business-overseas-education.css'
 import '../styles/business-overseas-health.css'
 import '../styles/business-advocacy.css'
 import '../styles/donor-guide.css'
-
-const NANUM_DONATE_URL = 'https://www.ihappynanum.com/Nanum/B/RAA98AKVRQ'
+import { NANUM_DONATE_URL } from '../constants/nanumDonate'
 
 function storyCtaForPathKey(pathKey: string): { label: string; to: string } | null {
   if (!pathKey) return null
@@ -44,6 +43,25 @@ export function PageByPath() {
   if (pathKey === '소식/소식지') return <Navigate to="/소식/연간소식지" replace />
   if (pathKey === '카야/조직도') return <Navigate to="/카야/카야소개?tab=org#org-chart" replace />
   if (pathKey === '카야/이사회-전문위원') return <Navigate to="/카야/카야소개?tab=org#directors" replace />
+  if (pathKey === '소식') return <Navigate to="/stories" replace />
+  /** `/카야` 단독은 라우트 없음 → 카야 소개 허브 */
+  if (pathKey === '카야') return <Navigate to="/카야/카야소개" replace />
+  /** `/후원` 단독 → 후원 안내 */
+  if (pathKey === '후원') return <Navigate to="/후원/후원-안내" replace />
+  /** 구 경로 `후원가이드/…` → `후원/…` */
+  if (pathKey.startsWith('후원가이드')) {
+    const tail = pathKey === '후원가이드' ? '' : pathKey.slice('후원가이드/'.length)
+    const sub = !tail || tail === '후원자-가이드' || tail === '후원-안내' ? '후원-안내' : tail
+    return <Navigate to={`/후원/${sub}`} replace />
+  }
+  /** 구 WP 오타 `후원자가이드/…` → `후원/…` */
+  if (pathKey.startsWith('후원자가이드')) {
+    const tail = pathKey === '후원자가이드' ? '' : pathKey.slice('후원자가이드/'.length)
+    const sub = !tail || tail === '후원자-가이드' ? '후원-안내' : tail
+    return <Navigate to={`/후원/${sub}`} replace />
+  }
+  if (pathKey === '카야와-함께/카야소식') return <Navigate to="/소식/활동소식" replace />
+  if (pathKey === '카야와-함께/공지사항') return <Navigate to="/소식/공지사항" replace />
 
   const isNewsArchive =
     pathKey === '소식/공지사항' || pathKey === '소식/활동소식' || pathKey === '소식/연간소식지' || pathKey === '소식/언론보도'
@@ -109,7 +127,7 @@ export function PageByPath() {
   }, [hashId, pathKey, staticPage, apiPage])
 
   useEffect(() => {
-    if (pathKey !== '후원가이드/후원자-가이드') return
+    if (pathKey !== '후원/후원-안내') return
     const root = document.querySelector<HTMLElement>('.page-content-wrapper .the_content_wrapper.page-body')
     if (!root) return
     let hideTimer: number
@@ -149,21 +167,38 @@ export function PageByPath() {
         : kind === '연간소식지'
           ? '연간소식지'
           : kind || '소식'
+    const isNoticeOrActivity = kind === '공지사항' || kind === '활동소식'
     return (
       <div className="page-content-wrapper">
         <PageHero title={heroTitle} />
         <div className="section">
           <div className="section_wrapper clearfix">
             <div className="column one">
-              <div className="entry-meta" style={{ marginBottom: 16 }}>
-                <time dateTime={post.publishedAt}>
-                  {new Date(post.publishedAt).toLocaleDateString('ko-KR')}
-                </time>
-                {post.author && <span> · {post.author.displayName}</span>}
-              </div>
-              <h1 className="entry-title" style={{ marginBottom: 18 }}>
-                {post.title}
-              </h1>
+              {isNoticeOrActivity ? (
+                <>
+                  <h1 className="entry-title" style={{ marginBottom: 12 }}>
+                    {post.title}
+                  </h1>
+                  <div className="entry-meta" style={{ marginBottom: 18 }}>
+                    <time dateTime={post.publishedAt}>
+                      {new Date(post.publishedAt).toLocaleDateString('ko-KR')}
+                    </time>
+                    {post.author && <span> · {post.author.displayName}</span>}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="entry-meta" style={{ marginBottom: 16 }}>
+                    <time dateTime={post.publishedAt}>
+                      {new Date(post.publishedAt).toLocaleDateString('ko-KR')}
+                    </time>
+                    {post.author && <span> · {post.author.displayName}</span>}
+                  </div>
+                  <h1 className="entry-title" style={{ marginBottom: 18 }}>
+                    {post.title}
+                  </h1>
+                </>
+              )}
               <div
                 className="the_content_wrapper page-body"
                 dangerouslySetInnerHTML={{ __html: post.content || post.excerpt || '' }}

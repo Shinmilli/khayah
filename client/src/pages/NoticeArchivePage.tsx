@@ -87,11 +87,11 @@ export function NoticeArchivePage() {
                 {posts.map((post) => (
                   <li key={post.id} className="notice-archive__item">
                     <Link to={`/posts/${encodeURIComponent(post.slug)}`} className="notice-archive__link">
+                      <h2 className="notice-archive__title">{post.title}</h2>
                       <div className="notice-archive__date">
                         <ClockIcon />
                         <time dateTime={post.publishedAt}>{formatNoticeDate(post.publishedAt)}</time>
                       </div>
-                      <h2 className="notice-archive__title">{post.title}</h2>
                     </Link>
                   </li>
                 ))}

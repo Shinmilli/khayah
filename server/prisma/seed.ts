@@ -180,26 +180,48 @@ async function seed() {
     })
   }
 
-  // 연간소식지 (2가지 모드 힌트용 메타 포함, 연도·호수 필터용 khayah_newsletter_year / issue)
-  for (let i = 1; i <= 5; i++) {
-    const mode = i % 2 ? '글쓰기 모드' : 'PDF 업로드 모드'
-    const archiveYear = i <= 3 ? 2025 : 2026
-    const issueVal = i <= 3 ? String(4 - i) : String(i - 3)
+  const nlCoverSamples = [
+    'https://images.unsplash.com/photo-1542810634-71277d95dcbb?w=1200&h=800&fit=crop',
+    'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=1200&h=800&fit=crop',
+    'https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=1200&h=800&fit=crop',
+    'https://images.unsplash.com/photo-1516979187457-637abb4f9353?w=1200&h=800&fit=crop',
+  ]
+
+  /** 연간소식지: 연도(khayah_newsletter_year)·호수(khayah_newsletter_issue) 조합이 필터와 1:1로 매칭되도록 고정 시드 */
+  const newsletterSeeds: Array<{
+    year: number
+    issue: string
+    title: string
+    mode: '글쓰기 모드' | 'PDF 업로드 모드'
+    daysAgo: number
+  }> = [
+    { year: 2024, issue: '84', title: '연간소식지 2024년 겨울호 (84호)', mode: 'PDF 업로드 모드', daysAgo: 420 },
+    { year: 2024, issue: '83', title: '연간소식지 2024년 봄호 (83호)', mode: '글쓰기 모드', daysAgo: 440 },
+    { year: 2025, issue: '87', title: '연간소식지 2025년 연말호 (87호)', mode: 'PDF 업로드 모드', daysAgo: 25 },
+    { year: 2025, issue: '86', title: '연간소식지 2025년 가을호 (86호)', mode: '글쓰기 모드', daysAgo: 95 },
+    { year: 2025, issue: '85', title: '연간소식지 2025년 신년호 (85호)', mode: 'PDF 업로드 모드', daysAgo: 180 },
+    { year: 2026, issue: '2', title: '연간소식지 2026년 상반기 (2호)', mode: '글쓰기 모드', daysAgo: 8 },
+    { year: 2026, issue: '1', title: '연간소식지 2026년 창간 (1호)', mode: 'PDF 업로드 모드', daysAgo: 40 },
+  ]
+
+  for (let idx = 0; idx < newsletterSeeds.length; idx++) {
+    const row = newsletterSeeds[idx]!
+    const contentHtml =
+      row.mode === '글쓰기 모드'
+        ? baseContent(row.title, `${row.year}년 · ${row.issue}호 · 연간소식지(글쓰기 모드) 시드`)
+        : `<p>${row.year}년 ${row.issue}호 PDF 소식지입니다. (시드 데이터)</p>`
     await createPost({
       authorId,
       kind: '연간소식지',
-      title: `연간소식지 ${2025 - (i - 1)} 시드`,
-      contentHtml:
-        mode === '글쓰기 모드'
-          ? baseContent(`연간소식지 시드 ${i}`, '연간소식지(글쓰기 모드) 시드 데이터')
-          : `<p>소식지 PDF를 확인해 주세요. (시드 데이터)</p>`,
-      date: isoDaysAgo(60 + i * 10),
+      title: row.title,
+      contentHtml,
+      date: isoDaysAgo(row.daysAgo),
       meta: [
-        { key: 'khayah_newsletter_mode', value: mode },
+        { key: 'khayah_newsletter_mode', value: row.mode },
         { key: 'khayah_pdf_url', value: '/uploads/sample.pdf' },
-        { key: 'khayah_cover_url', value: 'https://images.unsplash.com/photo-1542810634-71277d95dcbb?w=1200&h=800&fit=crop' },
-        { key: 'khayah_newsletter_year', value: String(archiveYear) },
-        { key: 'khayah_newsletter_issue', value: issueVal },
+        { key: 'khayah_cover_url', value: nlCoverSamples[idx % nlCoverSamples.length]! },
+        { key: 'khayah_newsletter_year', value: String(row.year) },
+        { key: 'khayah_newsletter_issue', value: row.issue },
       ],
     })
   }

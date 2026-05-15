@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { NANUM_DONATE_URL } from '../../../constants/nanumDonate'
 import { HERO_BIZ_LINKS, HERO_SLIDES } from '../homeRedesignData'
 
 const BIZ_ICONS = [
@@ -50,7 +51,12 @@ export function HeroSection() {
                     <div className="hero-text-en" aria-hidden="true" />
                   </div>
 
-                  <a className="hero-cta-btn" href="#support">
+                  <a
+                    className="hero-cta-btn"
+                    href={NANUM_DONATE_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     후원하기
                   </a>
                 </div>

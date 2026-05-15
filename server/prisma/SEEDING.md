@@ -1,6 +1,6 @@
-## Seeding content (5 kinds × 5 items)
+## Seeding content
 
-This project stores content in WordPress-like tables (`posts`, `postmeta`).
+WordPress-like tables (`posts`, `postmeta`).
 
 The seed script will:
 
@@ -10,7 +10,9 @@ The seed script will:
   - 연간소식지
   - 언론보도
   - 스토리
-- Insert **5 items per kind**
+- Insert **5 items** each for: 공지사항, 활동소식, 언론보도 (스토리는 10건)
+- **연간소식지**는 연도(`khayah_newsletter_year`)·호수(`khayah_newsletter_issue`)별로 **7건** 고정 시드
+  - 예: 2024년 83·84호, 2025년 85·86·87호, 2026년 1·2호 — `/소식/연간소식지`에서 연도·호수 필터 조합마다 다른 카드만 보이도록 구성
 - Attach metadata in `postmeta` using keys like:
   - `khayah_kind`
   - `khayah_story_scope`

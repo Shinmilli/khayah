@@ -1,3 +1,7 @@
+import { NANUM_DONATE_URL } from './nanumDonate'
+
+export { NANUM_DONATE_URL }
+
 export const SITE_NAME = '사단법인 카야 인터내셔널'
 export const SITE_DESCRIPTION = '개발NGO, 해외후원, 국내후원, 옹호사업, 교육_보건의료'
 
@@ -5,7 +9,7 @@ export const API_BASE = import.meta.env.VITE_API_BASE ?? '/api'
 
 /** 푸터 상단 바로가기 (한 줄, | 구분) */
 export const FOOTER_TOP_LINKS = [
-  { label: '후원신청', to: '/후원가이드/후원신청' },
+  { label: '후원신청', href: NANUM_DONATE_URL },
   { label: '진행사업', to: '/사업/진행사업' },
   { label: '위치안내', to: '/카야/위치안내' },
   { label: '인스타그램', href: 'https://www.instagram.com/khayah_international' },

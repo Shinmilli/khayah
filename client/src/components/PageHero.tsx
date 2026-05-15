@@ -18,6 +18,10 @@ function safeDecode(segment: string): string {
   }
 }
 
+function encodePathSegments(segments: string[]): string {
+  return '/' + segments.map((s) => encodeURIComponent(s)).join('/')
+}
+
 function buildCrumbs(pathname: string): Array<{ label: string; to: string }> {
   const trimmed = pathname.replace(/^\/+|\/+$/g, '')
   if (!trimmed) return []
@@ -69,16 +73,93 @@ function buildCrumbs(pathname: string): Array<{ label: string; to: string }> {
     return crumbs
   }
 
-  // Friendly labels for news routes
-  if (parts[0] === '소식') {
-    const crumbs: Array<{ label: string; to: string }> = [{ label: '소식', to: '/소식' }]
+  /** 후원 섹션: 공개 URL은 `/후원/…`. 구 `후원가이드`·`후원자가이드` 경로는 브레드크럼에서 캐논 링크로 표시 */
+  if (parts[0] === '후원' || parts[0] === '후원가이드' || parts[0] === '후원자가이드') {
+    const supportHub = '/후원/후원-안내'
+    const guideLabels: Record<string, string> = {
+      '후원-안내': '후원 안내',
+      '후원자-가이드': '후원 안내',
+      '후원신청': '후원신청',
+      '정기후원': '정기후원',
+      '일시후원': '일시후원',
+      '물품후원': '물품후원',
+      '자원봉사': '자원봉사',
+    }
+    const crumbs: Array<{ label: string; to: string }> = [{ label: '후원', to: supportHub }]
     if (parts[1]) {
       const seg = parts[1]
-      crumbs.push({ label: mapNewsSegment(seg), to: `/소식/${encodeURIComponent(mapNewsToPath(seg))}` })
+      const canonicalSeg = seg === '후원자-가이드' ? '후원-안내' : seg
+      crumbs.push({
+        label: guideLabels[seg] ?? guideLabels[canonicalSeg] ?? seg,
+        to: encodePathSegments(['후원', canonicalSeg]),
+      })
+    }
+    return crumbs
+  }
+
+  // 소식 하위: 첫 crumb「소식」은 헤더 주요 메뉴와 같이 스토리 허브로 연결
+  if (parts[0] === '소식') {
+    const crumbs: Array<{ label: string; to: string }> = [{ label: '소식', to: '/stories' }]
+    if (parts[1]) {
+      const seg = parts[1]
+      crumbs.push({
+        label: mapNewsSegment(seg),
+        to: encodePathSegments(['소식', mapNewsToPath(seg)]),
+      })
     }
     if (parts[2]) {
-      // detail pages keep last segment as-is
       crumbs.push({ label: '상세', to: pathname })
+    }
+    return crumbs
+  }
+
+  /** 카야: 헤더 상위 메뉴와 동일 「카야」> 하위 (라벨은 헤더 서브메뉴 기준) */
+  if (parts[0] === '카야') {
+    const khayahHub = '/카야/카야소개'
+    const khayahLabels: Record<string, string> = {
+      '카야소개': '카야 소개',
+      '카야-스토리': '인사말',
+      '카야-연혁': '연혁',
+      '위치안내': '오시는 길',
+      '핵심사업': '핵심사업',
+    }
+    const crumbs: Array<{ label: string; to: string }> = [{ label: '카야', to: khayahHub }]
+    for (let i = 1; i < parts.length; i++) {
+      const seg = parts[i]
+      crumbs.push({
+        label: khayahLabels[seg] ?? seg,
+        to: encodePathSegments(parts.slice(0, i + 1)),
+      })
+    }
+    return crumbs
+  }
+
+  /** 국내·해외 사업: 첫 crumb「사업」은 국내사업으로 (헤더 주요 메뉴와 동일) */
+  if (parts[0] === '국내사업' || parts[0] === '해외사업') {
+    const businessHub = '/국내사업'
+    const rootLabel = parts[0] === '국내사업' ? '국내사업' : '해외사업'
+    const crumbs: Array<{ label: string; to: string }> = [
+      { label: '사업', to: businessHub },
+      { label: rootLabel, to: encodePathSegments([parts[0]]) },
+    ]
+    for (let i = 2; i < parts.length; i++) {
+      crumbs.push({
+        label: parts[i],
+        to: encodePathSegments(parts.slice(0, i + 1)),
+      })
+    }
+    return crumbs
+  }
+
+  /** /사업/진행사업 등 */
+  if (parts[0] === '사업') {
+    const crumbs: Array<{ label: string; to: string }> = [{ label: '사업', to: '/국내사업' }]
+    for (let i = 1; i < parts.length; i++) {
+      const seg = parts[i]
+      crumbs.push({
+        label: seg,
+        to: encodePathSegments(parts.slice(0, i + 1)),
+      })
     }
     return crumbs
   }

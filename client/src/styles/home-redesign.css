@@ -642,35 +642,64 @@ body.has-overlay-header .home-page {
   background: var(--primary-color);
 }
 
-/* Story "more" card (last card) */
-.story-card--more {
-  /* a bit darker burgundy */
-  background: var(--primary-hover);
+/* 마지막(8번째) 스토리: 실제 카드 위 메인색 반투명 + 더보기 버튼 */
+.story-card-wrap {
   position: relative;
+  width: 100%;
+  height: 340px;
+  border-radius: 18px;
   overflow: hidden;
+  box-shadow: 0 16px 46px rgba(0, 0, 0, 0.18);
 }
 
-.story-card--more::after {
-  display: none;
-}
-
-.story-card--more .story-card__overlay,
-.story-card--more .story-card__media,
-.story-card--more .story-card__content {
-  display: none;
-}
-
-.story-more__inner {
+.story-card-wrap--cta .story-card--under {
   position: absolute;
   inset: 0;
-  display: grid;
-  place-items: center;
-  transform: translateY(0);
-  z-index: 1;
+  pointer-events: none;
+  box-shadow: none;
+}
+
+.story-card__cta-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  text-decoration: none;
+  color: #fff;
+  background: rgba(178, 8, 56, 0.52);
+  background: color-mix(in srgb, var(--primary-color) 54%, transparent);
+  transition: background 0.2s ease;
+}
+
+.story-card__cta-layer:hover,
+.story-card__cta-layer:focus-visible {
+  background: rgba(178, 8, 56, 0.68);
+  background: color-mix(in srgb, var(--primary-color) 70%, transparent);
+}
+
+.story-card-wrap--cta:hover .story-card__media img,
+.story-card-wrap--cta:focus-within .story-card__media img {
+  transform: scale(1.06);
+}
+
+.story-card-wrap--cta:hover .story-card__overlay,
+.story-card-wrap--cta:focus-within .story-card__overlay {
+  transform: rotate(0deg);
+  bottom: -12%;
+  height: 62%;
+  left: -4%;
+  right: -2%;
+  border-radius: 0 28px 28px 0;
+  background: var(--primary-color);
 }
 
 /* small rounded button like hero donate CTA */
 .story-more__btn {
+  position: relative;
+  z-index: 1;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -685,26 +714,6 @@ body.has-overlay-header .home-page {
   font-weight: 700;
   letter-spacing: -0.01em;
   line-height: 1;
-}
-
-/* hover: subtle black overlay on the card */
-.story-card--more::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0);
-  transition: background 0.18s ease;
-  z-index: 0;
-}
-
-.story-card--more:hover::before,
-.story-card--more:focus-visible::before {
-  background: rgba(0, 0, 0, 0.14);
-}
-
-.story-more__btn {
-  position: relative;
-  z-index: 1;
 }
 
 /* 글로벌 a:hover(빨강) 방지 — 호버 시에도 본문은 흰색 유지 */

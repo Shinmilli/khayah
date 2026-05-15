@@ -1,4 +1,6 @@
-/** 후원자 가이드 정적 페이지 본문 (후원가이드/후원자-가이드) */
+import { NANUM_DONATE_URL } from './nanumDonate'
+
+/** 후원 안내 정적 페이지 본문 (경로: 후원/후원-안내) */
 export const DONOR_GUIDE_PAGE_HTML = `
 <div class="sg-page">
   <div id="sg-toast" class="sg-toast" hidden role="status" aria-live="polite"></div>
@@ -24,7 +26,7 @@ export const DONOR_GUIDE_PAGE_HTML = `
         <div class="sg-account"><dt>신한</dt><dd><span class="sg-mono">100-034-744590</span></dd></div>
       </dl>
       <div class="sg-cta-row">
-        <a class="sg-btn sg-btn--primary" href="https://www.ihappynanum.com/Nanum/B/RAA98AKVRQ" target="_blank" rel="noopener noreferrer">후원하기 ♥</a>
+        <a class="sg-btn sg-btn--primary" href="${NANUM_DONATE_URL}" target="_blank" rel="noopener noreferrer">후원하기 ♥</a>
       </div>
     </div>
   </section>
@@ -194,7 +196,7 @@ export const DONOR_GUIDE_PAGE_HTML = `
           <h2 id="sg-step1-heading" class="sg-step__title">정보 입력</h2>
           <p class="sg-step__lead">후원자님의 정보를 입력해 주세요.</p>
           <p class="sg-step__sub">정보 입력 시 회원으로 자동 등록됩니다.</p>
-          <span class="sg-step__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></span>
+          <span class="sg-step__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M6 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/></svg></span>
         </div>
         <figure class="sg-step__fig">
           <img src="/images/donor-guide/step1-info.jpg" alt="후원 신청 화면 예시: 회원정보 입력 단계" width="640" height="420" loading="eager" decoding="async" />
@@ -214,7 +216,7 @@ export const DONOR_GUIDE_PAGE_HTML = `
             <li>결제방식(정기·일시)과 결제수단(자동이체·카드결제·휴대폰)에 따라 결제정보 창이 조금씩 달라집니다.</li>
             <li>후원자님의 계좌번호 또는 카드 정보 등을 정확히 입력해 주세요.</li>
           </ul>
-          <span class="sg-step__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 24 24" fill="currentColor"><path d="M4 6h16a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2zm3 3h6v1.5H7V9zm0 2.5h4V13H7v-2.5zm8-4.5h6v9h-6V7z"/></svg></span>
+          <span class="sg-step__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2.55" y="2.6" width="18.9" height="18.8" rx="2.65" stroke-width="2.45"/><g stroke-width="1.72"><line x1="5.7" y1="8.05" x2="11.85" y2="8.05"/><line x1="5.7" y1="12" x2="11.85" y2="12"/><line x1="5.7" y1="15.95" x2="11.85" y2="15.95"/><circle cx="16.25" cy="12" r="2.25"/></g></svg></span>
         </div>
         <figure class="sg-step__fig">
           <img src="/images/donor-guide/step2-payment.jpg" alt="후원 신청 화면 예시: 결제정보 입력 단계" width="640" height="420" loading="eager" decoding="async" />
@@ -228,7 +230,7 @@ export const DONOR_GUIDE_PAGE_HTML = `
       <p class="sg-footer-cta__hint">온라인 신청이 어려우시면 전화로 문의해 주세요.</p>
       <p class="sg-footer-cta__phone-label">대표번호</p>
       <p class="sg-footer-cta__phone"><a href="tel:070-5121-2198">070-5121-2198</a></p>
-      <a class="sg-btn sg-btn--primary sg-btn--lg" href="https://www.ihappynanum.com/Nanum/B/RAA98AKVRQ" target="_blank" rel="noopener noreferrer">후원하기 ♥</a>
+      <a class="sg-btn sg-btn--primary sg-btn--lg" href="${NANUM_DONATE_URL}" target="_blank" rel="noopener noreferrer">후원하기 ♥</a>
     </div>
   </section>
 </div>

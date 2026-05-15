@@ -9,8 +9,8 @@ export function StorySection() {
   const progressRef = useRef<HTMLDivElement | null>(null)
   const [posts, setPosts] = useState<Post[]>([])
 
-  // Show up to 8 slots; last slot is always "more"
-  const storyItems = useMemo(() => posts.slice(0, 7), [posts])
+  /** 최대 8장 — 마지막(8번째)은 실제 스토리 카드 위에 반투명 CTA 오버레이 */
+  const storyItems = useMemo(() => posts.slice(0, 8), [posts])
 
   const updateStoryProgress = useCallback(() => {
     const storyTrack = trackRef.current
@@ -121,6 +121,12 @@ export function StorySection() {
     }
   }, [])
 
+  const storyCoverSrc = (p: Post): string => {
+    const u = p.meta?.khayah_cover_url?.trim()
+    if (u) return u
+    return 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=800&h=500&fit=crop'
+  }
+
   const chipLabel = (p: Post): string => {
     const scope = p.meta?.khayah_story_scope ?? ''
     switch (scope) {
@@ -146,15 +152,12 @@ export function StorySection() {
 
         <div className="story-slider">
           <div ref={trackRef} className="story-track" tabIndex={0} aria-label="스토리 목록">
-            {storyItems.map((p) => (
-              <article key={p.id} className="story-slide">
-                <Link className="story-card" to={`/posts/${encodeURIComponent(p.slug)}`}>
+            {storyItems.map((p, idx) => {
+              const isLastCta = idx === storyItems.length - 1
+              const cardInner = (
+                <>
                   <div className="story-card__media">
-                    <img
-                      src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=800&h=500&fit=crop"
-                      alt=""
-                      loading="lazy"
-                    />
+                    <img src={storyCoverSrc(p)} alt="" loading="lazy" />
                   </div>
                   <div className="story-card__overlay" aria-hidden="true" />
                   <div className="story-card__content">
@@ -164,18 +167,33 @@ export function StorySection() {
                     </h3>
                     <p className="story-card__text">{p.excerpt || ''}</p>
                   </div>
-                </Link>
-              </article>
-            ))}
-            <article className="story-slide">
-              <Link className="story-card story-card--more" to="/stories" aria-label="스토리 더보기">
-                <div className="story-more__inner">
-                  <span className="story-more__btn">
-                    스토리 더보기 <span aria-hidden="true">›</span>
-                  </span>
-                </div>
-              </Link>
-            </article>
+                </>
+              )
+              return (
+                <article key={p.id} className="story-slide">
+                  {isLastCta ? (
+                    <div className="story-card-wrap story-card-wrap--cta">
+                      <div className="story-card story-card--under" aria-hidden="true">
+                        {cardInner}
+                      </div>
+                      <Link
+                        className="story-card__cta-layer"
+                        to="/stories"
+                        aria-label={`스토리 더보기. 미리보기: ${p.title}`}
+                      >
+                        <span className="story-more__btn">
+                          스토리 더보기 <span aria-hidden="true">›</span>
+                        </span>
+                      </Link>
+                    </div>
+                  ) : (
+                    <Link className="story-card" to={`/posts/${encodeURIComponent(p.slug)}`}>
+                      {cardInner}
+                    </Link>
+                  )}
+                </article>
+              )
+            })}
           </div>
 
           <div className="story-controls" aria-label="스토리 슬라이더 컨트롤">

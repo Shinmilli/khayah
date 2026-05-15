@@ -67,17 +67,18 @@ const NAV_COLUMNS: NavColumn[] = [
     id: 'support-col',
     label: '후원',
     links: [
-      { label: '후원안내', to: '/후원가이드/후원자-가이드' },
-      { label: '정기후원', to: '/후원가이드/정기후원' },
-      { label: '일시후원', to: '/후원가이드/일시후원' },
-      { label: '물품후원', to: '/후원가이드/물품후원' },
-      { label: '자원봉사', to: '/후원가이드/자원봉사' },
+      { label: '후원 안내', to: '/후원/후원-안내' },
+      { label: '정기후원', to: '/후원/정기후원' },
+      { label: '일시후원', to: '/후원/일시후원' },
+      { label: '물품후원', to: '/후원/물품후원' },
+      { label: '자원봉사', to: '/후원/자원봉사' },
     ],
   },
   {
     id: 'news-col',
     label: '소식',
     links: [
+      { label: '스토리', to: '/stories' },
       { label: '공지사항', to: '/소식/공지사항' },
       { label: '활동소식', to: '/소식/활동소식' },
       { label: '연간소식지', to: '/소식/연간소식지' },
@@ -90,8 +91,8 @@ const NAV_COLUMNS: NavColumn[] = [
 const TOP_LINKS = [
   { label: '카야', to: '/카야/카야소개' },
   { label: '사업', to: '/국내사업' },
-  { label: '후원', to: '/후원가이드/후원자-가이드' },
-  { label: '소식', to: '/소식' },
+  { label: '후원', to: '/후원/후원-안내' },
+  { label: '소식', to: '/stories' },
 ]
 
 const NAV_BY_LABEL = new Map(NAV_COLUMNS.map((c) => [c.label, c]))

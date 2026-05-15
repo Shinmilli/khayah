@@ -39,10 +39,12 @@ function pressSortKey(post: Post): string {
   return pressDisplayYmd(post)
 }
 
-/** 목록·필터용 연도: 메타 khayah_newsletter_year(YYYY) 우선, 없으면 게시일 연도 */
+/** 목록·필터용 연도: 메타 khayah_newsletter_year(YYYY) 우선, 없으면 제목의 첫 4자리 연도(레거시), 마지막으로 게시일 연도 */
 function newsletterArchiveYear(post: Post): number {
   const raw = post.meta?.khayah_newsletter_year?.trim() ?? ''
   if (/^\d{4}$/.test(raw)) return parseInt(raw, 10)
+  const titleYear = post.title.match(/(19|20)\d{2}/)
+  if (titleYear) return parseInt(titleYear[0], 10)
   return new Date(post.publishedAt).getFullYear()
 }
 
@@ -355,10 +357,10 @@ export function NewsArchivePage() {
                           )}
                         </div>
                         <div className="activity-archive__body">
+                          <h2 className="activity-archive__title">{post.title}</h2>
                           <time className="activity-archive__date" dateTime={post.publishedAt}>
                             {formatDate(post.publishedAt)}
                           </time>
-                          <h2 className="activity-archive__title">{post.title}</h2>
                         </div>
                       </Link>
                     </li>
@@ -372,10 +374,10 @@ export function NewsArchivePage() {
                 {sortedPosts.map((post) => (
                   <li key={post.id} className="notice-archive__item">
                     <Link to={`/posts/${encodeURIComponent(post.slug)}`} className="notice-archive__link">
+                      <h2 className="notice-archive__title">{post.title}</h2>
                       <div className="notice-archive__date">
                         <time dateTime={post.publishedAt}>{formatDate(post.publishedAt)}</time>
                       </div>
-                      <h2 className="notice-archive__title">{post.title}</h2>
                     </Link>
                   </li>
                 ))}
