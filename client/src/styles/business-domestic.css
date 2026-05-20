@@ -181,6 +181,22 @@
   display: block;
 }
 
+/* 진행사업 카드: Material Symbols Outlined — public (index.html 폰트 링크 icon_names에 public 포함) */
+.domestic-card__icon .material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 28px;
+  line-height: 1;
+  display: inline-block;
+  color: var(--dom-primary);
+  font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 28;
+}
+
 .domestic-card__title {
   margin: 0;
   font-size: 1.18rem;

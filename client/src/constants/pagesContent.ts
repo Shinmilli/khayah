@@ -293,7 +293,7 @@ export const PAGES_STATIC: Record<string, StaticPage> = {
             </svg>
           </div>
           <h2 class="overseas-card__title">교육</h2>
-          <p class="overseas-card__desc">해외 현지 아동·청소년의 배움이 이어지도록 교육 지원 사업을 진행합니다.</p>
+          <p class="overseas-card__desc">카야는 해당 지역 주민들의 참여 의지와 변화에 대한 올바른 인식 확립의 토대를 위해 여러 교육 사업을 진행합니다.</p>
           <a class="overseas-card__btn" href="/해외사업/교육">자세히 보기</a>
         </div>
 
@@ -304,18 +304,16 @@ export const PAGES_STATIC: Record<string, StaticPage> = {
             </svg>
           </div>
           <h2 class="overseas-card__title">보건의료</h2>
-          <p class="overseas-card__desc">주민 스스로 공중위생과 건강을 개선할 수 있는 역량을 키우는 데 집중합니다.</p>
+          <p class="overseas-card__desc">카야는 주민 스스로 영양상태, 공중위생 및 주거환경을 개선하는 데 주도적인 역할을 수행할 수 있는 역량을 키우는 데 집중합니다.</p>
           <a class="overseas-card__btn" href="/해외사업/보건의료">자세히 보기</a>
         </div>
 
         <div class="overseas-card">
           <div class="overseas-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 2a10 10 0 1 1-7.07 2.93A9.96 9.96 0 0 1 12 2Zm6.6 9h-3.2a18 18 0 0 0-1-5 8 8 0 0 1 4.2 5ZM12 4c-1.2 1.6-2 4.2-2.2 7h4.4c-.2-2.8-1-5.4-2.2-7Zm-3.4 2a18 18 0 0 0-1 5H4.4a8 8 0 0 1 4.2-5ZM4.4 13h3.2c.2 1.8.6 3.5 1 5a8 8 0 0 1-4.2-5Zm7.6 7c1.2-1.6 2-4.2 2.2-7H9.8c.2 2.8 1 5.4 2.2 7Zm3.4-2c.4-1.5.8-3.2 1-5h3.2a8 8 0 0 1-4.2 5Z"/>
-            </svg>
+            <span class="material-symbols-outlined">public</span>
           </div>
           <h2 class="overseas-card__title">진행사업</h2>
-          <p class="overseas-card__desc">카야의 해외 프로젝트가 현장에서 어떻게 진행되는지 한눈에 확인할 수 있습니다.</p>
+          <p class="overseas-card__desc">카야의 모든 해외 프로젝트는 ‘사람’ 곧 참여자 중심으로 지역과 주민이 ‘궁극적 자립’에 이를 때까지를 목표로 연구하며 진행하고 있습니다.</p>
           <a class="overseas-card__btn" href="/사업/진행사업">자세히 보기</a>
         </div>
       </div>
@@ -597,10 +595,9 @@ export const PAGES_STATIC: Record<string, StaticPage> = {
         <li class="domestic-item">
           <div class="domestic-num" aria-hidden="true">01</div>
           <div class="domestic-body">
-            <h2 class="domestic-h2">가치창출형 · 미래지향적 교육</h2>
+            <h2 class="domestic-h2">가치지향적 &amp; 미래지향적 교육</h2>
             <p class="domestic-desc">
-              현장 중심의 사업 구조를 만들고, 도움이 필요한 이웃을 발굴해 삶의 변화를 돕습니다.
-              자립을 위한 역량을 키우고, 지속 가능한 성장을 준비하는 교육 프로그램을 진행합니다.
+              현재 한국 사회 구조와 교육 시스템 하에서 드러나지 않고 있는 문제와 이슈들을 발견하고, 이를 개선할 수 있는 방안을 마련하여 새로운 ‘가치 창출’과 ‘미래’를 준비하는 교육개발 프로젝트를 진행합니다.
             </p>
           </div>
         </li>
@@ -608,10 +605,9 @@ export const PAGES_STATIC: Record<string, StaticPage> = {
         <li class="domestic-item">
           <div class="domestic-num" aria-hidden="true">02</div>
           <div class="domestic-body">
-            <h2 class="domestic-h2">민간 중심의 복지 사각지대 지원</h2>
+            <h2 class="domestic-h2">인간 중심 &amp; 자연친화적 교육</h2>
             <p class="domestic-desc">
-              공공 지원만으로는 닿기 어려운 영역의 필요를 살피고, 지역과 연대하여 실제적인 도움을 연결합니다.
-              위기 상황에서 다시 일어설 수 있도록, 생활·교육·심리적 지원의 통로를 함께 만듭니다.
+              인간 존엄에 무게를 두지만 인간 또한 대자연의 일부임을 잊지 않습니다. 카야는 ‘인적자원’ 등의 사람을 자원화 &amp; 도구화 시키는 기존의 프레임을 지양하며, 모든 프로젝트는 자연환경보호 정신을 토대로 개발합니다.
             </p>
           </div>
         </li>
@@ -619,10 +615,9 @@ export const PAGES_STATIC: Record<string, StaticPage> = {
         <li class="domestic-item">
           <div class="domestic-num" aria-hidden="true">03</div>
           <div class="domestic-body">
-            <h2 class="domestic-h2">지역사회와 함께 만드는 사회적 가치</h2>
+            <h2 class="domestic-h2">국내 사업이 해외 개발협력사업으로 이어가는 연계</h2>
             <p class="domestic-desc">
-              문제를 ‘해결해 주는’ 방식이 아니라, 당사자가 자신의 삶을 주도할 수 있도록 돕는 접근을 지향합니다.
-              교육과 참여를 통해 공동체가 스스로 변화할 수 있는 기반을 확장해 나갑니다.
+              ‘외국인 노동자 기술 &amp; 창업 교육’, ‘남북한 청년이 함께하는 소셜 비지니스 첫걸음’ 등, 카야의 국내 사업은 참여자들이 해외개발도상국에서 활동할 시 해당 지역 발전에 도움 되는 사회적 가치 기반 기술과 창업 교육이라는 점에서 해외개발협력 사업의 연속성을 갖고 있습니다.
             </p>
           </div>
         </li>
@@ -642,20 +637,18 @@ export const PAGES_STATIC: Record<string, StaticPage> = {
           </div>
           <h2 class="domestic-card__title">교육</h2>
           <p class="domestic-card__desc">
-            국내 현장에서 필요한 역량을 키우고, 배움이 실천으로 이어지도록 돕는 교육 프로그램을 진행합니다.
+            카야는 소외된 이웃이 사회와 자연의 일원으로의 성취 방법과 가치를 지향하며 성장할 수 있도록 혁신적인 교육 사업을 진행합니다.
           </p>
           <a class="domestic-card__btn" href="/국내사업/교육">자세히 보기</a>
         </div>
 
         <div class="domestic-card">
           <div class="domestic-card__icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-              <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM18.92 8h-2.95c-.32-1.25-.78-2.45-1.38-3.56 1.84.63 3.37 1.91 4.33 3.56zM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82c.43-1.43 1.08-2.76 1.91-3.96zM4.26 14C4.1 13.36 4 12.69 4 12s.1-1.36.26-2h3.38c-.08.66-.14 1.32-.14 2 0 .68.06 1.34.14 2H4.26zm.82 2h2.95c.32 1.25.78 2.45 1.38 3.56-1.84-.63-3.37-1.9-4.33-3.56zm2.95-8H5.08c.96-1.66 2.49-2.93 4.33-3.56C8.81 5.55 8.35 6.75 8.03 8zM12 19.96c-.83-1.2-1.48-2.53-1.91-3.96h3.82c-.43 1.43-1.08 2.76-1.91 3.96zM18.49 14h-3.38c.08-.66.14-1.32.14-2 0-.68-.06-1.34-.14-2h3.38c.16.64.26 1.31.26 2s-.1 1.36-.26 2zm-1.23-4h-2.95c-.32-1.25-.78-2.45-1.38-3.56 1.84.63 3.37 1.9 4.33 3.56z"/>
-            </svg>
+            <span class="material-symbols-outlined">public</span>
           </div>
-          <h2 class="domestic-card__title">지원사업</h2>
+          <h2 class="domestic-card__title">진행사업</h2>
           <p class="domestic-card__desc">
-            국내에서 진행 중인 사업을 한눈에 확인하고, 현장에서 이어지는 변화의 과정을 함께 살펴볼 수 있습니다.
+            카야의 모든 국내 프로젝트는 그 속에 ‘사람’과 ‘자연’ 그리고 ‘미래’가 모두 담기도록 연구하며 진행하고 있습니다.
           </p>
           <a class="domestic-card__btn" href="/사업/진행사업">자세히 보기</a>
         </div>
