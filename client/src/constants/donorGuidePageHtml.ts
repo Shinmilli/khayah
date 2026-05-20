@@ -9,7 +9,7 @@ export const DONOR_GUIDE_PAGE_HTML = `
     <div class="sg-wrap">
       <p class="sg-hero__lead">
         카야는 단순 일회성지원이 아닌<br />
-        지속적이고 자발적인 변혁이<br />
+        <span class="sg-hero__strong">지속적이고 자발적인 변혁</span>이<br />
         일어날 수 있는 개발을 지원합니다.
       </p>
     </div>

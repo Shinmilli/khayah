@@ -150,7 +150,7 @@
 
 .domestic-card {
   border: 0;
-  border-radius: 18px;
+  border-radius: 0;
   background: #fff;
   padding: 20px 20px 18px;
   display: grid;
@@ -166,7 +166,7 @@
 .domestic-card__icon {
   width: 56px;
   height: 56px;
-  border-radius: 16px;
+  border-radius: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -222,7 +222,7 @@
   justify-content: center;
   height: 40px;
   padding: 0 14px;
-  border-radius: 12px;
+  border-radius: 0;
   border: 1px solid rgba(178, 8, 56, 0.25);
   background: rgba(178, 8, 56, 0.06);
   color: var(--dom-primary);
