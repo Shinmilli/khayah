@@ -56,16 +56,33 @@ Supabase → **Table Editor**에 `posts`, `users` 등이 보이면 OK.
 
 ---
 
-## 2. Cloudinary — 파일 저장
+## 2. Cloudinary — 파일 저장 (≤10MB)
 
 1. Cloudinary 가입 → Dashboard  
 2. **Cloud name / API Key / API Secret** 복사  
-3. 나중에 Render Environment에 넣음  
+3. Render Environment에 넣음  
 
-업로드 API: `POST /api/uploads/document` (PDF), `POST /api/uploads/image`  
-→ 응답 `url`이 `https://res.cloudinary.com/...` 형태.
+업로드: `POST /api/uploads/document` (PDF), `POST /api/uploads/image`  
+- **10MB 이하** → Cloudinary  
+- **10MB 초과** → Supabase Storage (`uploads` 버킷)
 
-무료(약 25 credits/월)는 NGO·소규모 사이트에 보통 충분합니다.
+### Supabase Storage (>10MB)
+
+1. Supabase → **Storage → New bucket**  
+   - Name: `uploads`  
+   - **Public bucket**: ON  
+2. Settings → API 에서 복사:  
+   - **Project URL** → `SUPABASE_URL`  
+   - **service_role** key → `SUPABASE_SERVICE_ROLE_KEY` (서버/Render만, 프론트·GitHub 금지)  
+3. Render Environment에 추가:
+
+```env
+SUPABASE_URL=https://xxxx.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=eyJ...
+SUPABASE_STORAGE_BUCKET=uploads
+```
+
+무료(약 25 credits/월 Cloudinary + Storage ~1GB)는 NGO·소규모에 보통 충분합니다.
 
 ---
 
