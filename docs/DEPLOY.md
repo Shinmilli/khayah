@@ -187,10 +187,12 @@ npm run dev
 ```
 [ ] Supabase Table Editor에 posts 있음
 [ ] /health → ok
+[ ] /health/db → {"status":"ok","db":"ok"}
 [ ] /api/posts 목록 JSON
 [ ] 관리자에서 이미지/PDF 업로드 → cloudinary.com URL
 [ ] 공개 페이지에서 공지·뉴스 표시
 [ ] CORS: 프론트에서 API 호출 에러 없음
+[ ] GitHub Actions Keepalive (아래 9번)
 ```
 
 ---
@@ -199,6 +201,32 @@ npm run dev
 
 Supabase로만 쓸 때 → 예전 Render PostgreSQL 인스턴스 **Delete** (비용 절감).  
 Web Service / Static Site는 유지.
+
+---
+
+## 9. Cron — sleep / pause 방지
+
+| 서비스 | 문제 | cron으로 |
+|--------|------|----------|
+| Render Free Web | ~15분 미사용 → sleep (첫 요청 느림) | **10분마다** `/health/db` 호출 |
+| Supabase Free | ~7일 무활동 → pause | 같은 ping이 DB도 깨움 |
+
+코드에 이미 있음:
+
+- 엔드포인트: `GET /health/db` → `SELECT 1` (Render 깨우기 + Supabase ping)
+- 워크플로: `.github/workflows/keepalive.yml` (10분마다)
+
+### 설정 (API 배포 후)
+
+1. GitHub 레포 → **Settings → Secrets and variables → Actions**
+2. **New repository secret**
+   - Name: `KEEP_ALIVE_URL`
+   - Value: `https://내-api.onrender.com/health/db`
+3. **Actions → Keepalive → Run workflow** 로 한 번 수동 실행해 보기
+4. 이후 10분마다 자동 실행
+
+> Private 레포는 GitHub Actions 무료 분이 제한될 수 있습니다.  
+> 대안: [cron-job.org](https://cron-job.org) 에서 같은 URL을 10분마다 GET (가입만 하면 됨).
 
 ---
 
@@ -211,5 +239,6 @@ Web Service / Static Site는 유지.
 | Render API | `CLOUDINARY_*` | 파일 업로드 |
 | Render Static | `VITE_API_BASE` | `https://api.../api` |
 | 로컬 client | `VITE_API_BASE` | `http://localhost:3001/api` |
+| GitHub Actions | `KEEP_ALIVE_URL` (secret) | `https://api.../health/db` |
 
 **프론트에 Supabase URL/anon key는 필요 없습니다.** DB는 서버만 연결합니다.

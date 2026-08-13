@@ -7,6 +7,7 @@ import { youtubeRouter } from './routes/youtube'
 import { uploadsRouter } from './routes/uploads'
 import { adminPostsRouter } from './routes/adminPosts'
 import { financialReportsRouter } from './routes/financialReports'
+import { prisma } from './utils/prisma'
 
 const app = express()
 const PORT = process.env.PORT ?? 3001
@@ -24,6 +25,20 @@ app.use('/api', financialReportsRouter)
 
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok' })
+})
+
+/** Cron keep-alive: wakes Render + pings Supabase (lightweight SELECT) */
+app.get('/health/db', async (_req, res) => {
+  if (!prisma) {
+    return res.status(503).json({ status: 'error', db: 'unavailable' })
+  }
+  try {
+    await prisma.$queryRaw`SELECT 1`
+    return res.json({ status: 'ok', db: 'ok' })
+  } catch (e) {
+    console.error('[health/db]', e)
+    return res.status(503).json({ status: 'error', db: 'error' })
+  }
 })
 
 app.listen(PORT, () => {
