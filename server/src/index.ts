@@ -7,7 +7,7 @@ import { youtubeRouter } from './routes/youtube'
 import { uploadsRouter } from './routes/uploads'
 import { adminPostsRouter } from './routes/adminPosts'
 import { financialReportsRouter } from './routes/financialReports'
-import { prisma } from './utils/prisma'
+import { prisma, prismaInitStatus } from './utils/prisma'
 
 const app = express()
 const PORT = process.env.PORT ?? 3001
@@ -30,14 +30,26 @@ app.get('/health', (_req, res) => {
 /** Cron keep-alive: wakes Render + pings Supabase (lightweight SELECT) */
 async function healthDb(_req: express.Request, res: express.Response) {
   if (!prisma) {
-    return res.status(503).json({ status: 'error', db: 'unavailable' })
+    return res.status(503).json({
+      status: 'error',
+      db: 'unavailable',
+      reason: prismaInitStatus.reason ?? 'unknown',
+      message: prismaInitStatus.message,
+      hint:
+        prismaInitStatus.reason === 'missing_database_url'
+          ? 'Set DATABASE_URL in Render Environment (no surrounding quotes), then Manual Deploy.'
+          : prismaInitStatus.reason === 'mock_data'
+            ? 'Set MOCK_DATA=false (or delete MOCK_DATA) and redeploy.'
+            : 'Check Render Logs for [WARN] Prisma client could not be initialized.',
+    })
   }
   try {
     await prisma.$queryRaw`SELECT 1`
     return res.json({ status: 'ok', db: 'ok' })
   } catch (e) {
     console.error('[health/db]', e)
-    return res.status(503).json({ status: 'error', db: 'error' })
+    const message = e instanceof Error ? e.message : String(e)
+    return res.status(503).json({ status: 'error', db: 'error', message })
   }
 }
 

@@ -30,7 +30,17 @@ app.get('/health', (_req, res) => {
 /** Cron keep-alive: wakes Render + pings Supabase (lightweight SELECT) */
 async function healthDb(_req, res) {
     if (!prisma_1.prisma) {
-        return res.status(503).json({ status: 'error', db: 'unavailable' });
+        return res.status(503).json({
+            status: 'error',
+            db: 'unavailable',
+            reason: prisma_1.prismaInitStatus.reason ?? 'unknown',
+            message: prisma_1.prismaInitStatus.message,
+            hint: prisma_1.prismaInitStatus.reason === 'missing_database_url'
+                ? 'Set DATABASE_URL in Render Environment (no surrounding quotes), then Manual Deploy.'
+                : prisma_1.prismaInitStatus.reason === 'mock_data'
+                    ? 'Set MOCK_DATA=false (or delete MOCK_DATA) and redeploy.'
+                    : 'Check Render Logs for [WARN] Prisma client could not be initialized.',
+        });
     }
     try {
         await prisma_1.prisma.$queryRaw `SELECT 1`;
@@ -38,7 +48,8 @@ async function healthDb(_req, res) {
     }
     catch (e) {
         console.error('[health/db]', e);
-        return res.status(503).json({ status: 'error', db: 'error' });
+        const message = e instanceof Error ? e.message : String(e);
+        return res.status(503).json({ status: 'error', db: 'error', message });
     }
 }
 app.get('/health/db', healthDb);
