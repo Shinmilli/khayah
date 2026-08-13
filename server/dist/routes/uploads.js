@@ -5,4 +5,5 @@ const express_1 = require("express");
 const uploadsController_1 = require("../controllers/uploadsController");
 exports.uploadsRouter = (0, express_1.Router)();
 exports.uploadsRouter.post('/uploads/document', uploadsController_1.postDocumentUpload);
+exports.uploadsRouter.post('/uploads/image', uploadsController_1.postImageUpload);
 //# sourceMappingURL=uploads.js.map

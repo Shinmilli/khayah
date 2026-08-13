@@ -1,2 +1,4 @@
-export declare const postDocumentUpload: import("express").RequestHandler<import("express-serve-static-core").ParamsDictionary, any, any, import("qs").ParsedQs, Record<string, any>>[];
+import type { NextFunction, Request, Response } from 'express';
+export declare const postDocumentUpload: ((req: Request, res: Response, next: NextFunction) => void)[];
+export declare const postImageUpload: ((req: Request, res: Response, next: NextFunction) => void)[];
 //# sourceMappingURL=uploadsController.d.ts.map

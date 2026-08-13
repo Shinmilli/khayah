@@ -1,1 +1,1 @@
-{"version":3,"file":"uploadsController.d.ts","sourceRoot":"","sources":["../../src/controllers/uploadsController.ts"],"names":[],"mappings":"AAgDA,eAAO,MAAM,kBAAkB,gJAmB9B,CAAA"}
+{"version":3,"file":"uploadsController.d.ts","sourceRoot":"","sources":["../../src/controllers/uploadsController.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,YAAY,EAAE,OAAO,EAAE,QAAQ,EAAE,MAAM,SAAS,CAAA;AAiF9D,eAAO,MAAM,kBAAkB,SA/ChB,OAAO,OAAO,QAAQ,QAAQ,YAAY,YAoDxD,CAAA;AAED,eAAO,MAAM,eAAe,SAtDb,OAAO,OAAO,QAAQ,QAAQ,YAAY,YA2DxD,CAAA"}

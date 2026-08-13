@@ -112,7 +112,7 @@ exports.postRepository = {
             const postsPage = publishedPosts.slice(skip, skip + perPage);
             return { posts: postsPage, total: publishedPosts.length };
         }
-        const { page, perPage, kind } = options;
+        const { page, perPage, kind, region } = options;
         const skip = (page - 1) * perPage;
         const kindFilter = kind
             ? {
@@ -124,12 +124,23 @@ exports.postRepository = {
                 },
             }
             : {};
+        const regionFilter = kind === '진행사업' && region
+            ? {
+                postMeta: {
+                    some: {
+                        metaKey: 'khayah_project_region',
+                        metaValue: region,
+                    },
+                },
+            }
+            : {};
         const [posts, total] = await Promise.all([
             prisma_1.prisma.post.findMany({
                 where: {
                     postStatus: 'publish',
                     postType: 'post',
                     ...kindFilter,
+                    ...regionFilter,
                 },
                 orderBy: { postDate: 'desc' },
                 skip,
@@ -146,6 +157,7 @@ exports.postRepository = {
                     postStatus: 'publish',
                     postType: 'post',
                     ...kindFilter,
+                    ...regionFilter,
                 },
             }),
         ]);
@@ -166,18 +178,16 @@ exports.postRepository = {
                 return b.postDate.getTime() - a.postDate.getTime();
             });
             const pagesPage = publishedPages.slice(skip, skip + perPage);
-            return {
-                pages: pagesPage.map((p) => ({
-                    id: p.id,
-                    postTitle: p.postTitle,
-                    postName: p.postName,
-                    postExcerpt: p.postExcerpt,
-                    postContent: p.postContent,
-                    postParent: p.postParent,
-                    menuOrder: p.menuOrder,
-                })),
-                total: publishedPages.length,
-            };
+            const pages = pagesPage.map((p) => ({
+                id: p.id,
+                postTitle: p.postTitle,
+                postName: p.postName,
+                postExcerpt: p.postExcerpt,
+                postContent: p.postContent,
+                postParent: p.postParent,
+                menuOrder: p.menuOrder,
+            }));
+            return { pages, total: publishedPages.length };
         }
         const [pages, total] = await Promise.all([
             prisma_1.prisma.post.findMany({

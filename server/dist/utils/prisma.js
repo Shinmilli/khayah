@@ -1,4 +1,11 @@
 "use strict";
+/**
+ * Allows the server to boot without a `DATABASE_URL`.
+ *
+ * IMPORTANT:
+ * - `@prisma/client` is conditionally loaded to avoid runtime failures when the
+ *   Prisma Client hasn't been generated yet (common during early setup).
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.prisma = void 0;
 const connectionString = process.env.DATABASE_URL;
@@ -9,7 +16,7 @@ exports.prisma = (() => {
         return null;
     try {
         // eslint-disable-next-line @typescript-eslint/no-var-requires
-        const { PrismaClient: PrismaClientRuntime } = require('@prisma/client');
+        const PrismaClientRuntime = require('@prisma/client').PrismaClient;
         // eslint-disable-next-line @typescript-eslint/no-var-requires
         const { PrismaPg } = require('@prisma/adapter-pg');
         // eslint-disable-next-line @typescript-eslint/no-var-requires

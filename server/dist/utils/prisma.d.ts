@@ -5,6 +5,5 @@
  * - `@prisma/client` is conditionally loaded to avoid runtime failures when the
  *   Prisma Client hasn't been generated yet (common during early setup).
  */
-import type { PrismaClient } from '@prisma/client';
-export declare const prisma: PrismaClient | null;
+export declare const prisma: any | null;
 //# sourceMappingURL=prisma.d.ts.map
