@@ -12,6 +12,7 @@ const youtube_1 = require("./routes/youtube");
 const uploads_1 = require("./routes/uploads");
 const adminPosts_1 = require("./routes/adminPosts");
 const financialReports_1 = require("./routes/financialReports");
+const prisma_1 = require("./utils/prisma");
 const app = (0, express_1.default)();
 const PORT = process.env.PORT ?? 3001;
 app.set('trust proxy', 1);
@@ -26,6 +27,22 @@ app.use('/api', financialReports_1.financialReportsRouter);
 app.get('/health', (_req, res) => {
     res.json({ status: 'ok' });
 });
+/** Cron keep-alive: wakes Render + pings Supabase (lightweight SELECT) */
+async function healthDb(_req, res) {
+    if (!prisma_1.prisma) {
+        return res.status(503).json({ status: 'error', db: 'unavailable' });
+    }
+    try {
+        await prisma_1.prisma.$queryRaw `SELECT 1`;
+        return res.json({ status: 'ok', db: 'ok' });
+    }
+    catch (e) {
+        console.error('[health/db]', e);
+        return res.status(503).json({ status: 'error', db: 'error' });
+    }
+}
+app.get('/health/db', healthDb);
+app.get('/api/health/db', healthDb);
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
 });

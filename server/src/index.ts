@@ -28,7 +28,7 @@ app.get('/health', (_req, res) => {
 })
 
 /** Cron keep-alive: wakes Render + pings Supabase (lightweight SELECT) */
-app.get('/health/db', async (_req, res) => {
+async function healthDb(_req: express.Request, res: express.Response) {
   if (!prisma) {
     return res.status(503).json({ status: 'error', db: 'unavailable' })
   }
@@ -39,7 +39,10 @@ app.get('/health/db', async (_req, res) => {
     console.error('[health/db]', e)
     return res.status(503).json({ status: 'error', db: 'error' })
   }
-})
+}
+
+app.get('/health/db', healthDb)
+app.get('/api/health/db', healthDb)
 
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`)
