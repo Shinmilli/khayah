@@ -84,7 +84,13 @@ export async function uploadDocumentPdf(file: File): Promise<DocumentUploadResul
   const res = await fetch(`${API_BASE}/uploads/document`, { method: 'POST', body: form })
   if (!res.ok) {
     const text = await res.text().catch(() => '')
-    throw new Error(text || 'Failed to upload document')
+    try {
+      const json = JSON.parse(text) as { error?: string; hint?: string }
+      throw new Error([json.error, json.hint].filter(Boolean).join(' — ') || text || 'Failed to upload document')
+    } catch (e) {
+      if (e instanceof Error && e.message !== text) throw e
+      throw new Error(text || 'Failed to upload document')
+    }
   }
   return res.json()
 }

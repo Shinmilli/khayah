@@ -61,9 +61,13 @@ export async function uploadBufferToCloudinary(options: {
       {
         folder,
         resource_type: resourceType,
-        use_filename: true,
+        // 한글/특수문자 파일명은 public_id로 쓰지 않음 (Cloudinary 오류 방지)
+        use_filename: false,
         unique_filename: true,
         overwrite: false,
+        // PDF raw도 공개 URL로 바로 열리게
+        type: 'upload',
+        access_mode: 'public',
       },
       (err, uploaded) => {
         if (err || !uploaded?.secure_url || !uploaded.public_id) {

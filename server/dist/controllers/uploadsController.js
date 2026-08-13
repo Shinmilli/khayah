@@ -74,8 +74,16 @@ async function handleCloudinaryUpload(req, res, kind) {
     }
     catch (e) {
         console.error('[uploads] Cloudinary error', e);
-        const message = e instanceof Error ? e.message : 'Cloudinary upload failed';
-        return res.status(500).json({ error: message });
+        const anyErr = e;
+        const message = anyErr?.message ||
+            (e instanceof Error ? e.message : 'Cloudinary upload failed');
+        return res.status(500).json({
+            error: message,
+            http_code: anyErr?.http_code,
+            hint: /File size too large|maximum|10.?MB|25.?MB/i.test(message)
+                ? 'Cloudinary free tier often limits uploads to about 10MB. Try a smaller PDF.'
+                : undefined,
+        });
     }
 }
 exports.postDocumentUpload = [

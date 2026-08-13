@@ -102,7 +102,7 @@ function PostEditorForm({
   const [saveError, setSaveError] = useState<string>('')
   const [docFile, setDocFile] = useState<File | null>(null)
   const [docUrl, setDocUrl] = useState<string>('')
-  const [docStatus, setDocStatus] = useState<string>('PDF 업로드 가능 (최대 25MB)')
+  const [docStatus, setDocStatus] = useState<string>('PDF 업로드 가능 (최대 10MB 권장)')
   const [docUploading, setDocUploading] = useState(false)
   const [coverFile, setCoverFile] = useState<File | null>(null)
   const [coverPreviewUrl, setCoverPreviewUrl] = useState<string>('')
@@ -137,7 +137,7 @@ function PostEditorForm({
       setYearlyMode('글쓰기')
       setDocFile(null)
       setDocUrl('')
-      setDocStatus('PDF 업로드 가능 (최대 25MB)')
+      setDocStatus('PDF 업로드 가능 (최대 10MB 권장)')
       setNewsletterIssue('')
       setNewsletterYear('')
     } else if (prevPostType.current !== '연간소식지') {
@@ -196,22 +196,19 @@ function PostEditorForm({
     return () => URL.revokeObjectURL(url)
   }, [coverFile])
 
-  const onPickPdf = (file: File | null) => {
+  const onPickPdf = async (file: File | null) => {
     setDocFile(file)
     if (!file) {
-      setDocStatus('PDF 업로드 가능 (최대 25MB)')
+      setDocStatus('PDF 업로드 가능 (최대 10MB 권장)')
       return
     }
-    setDocStatus(`선택됨: ${file.name}`)
-  }
-
-  const onUploadPdf = async () => {
-    if (!docFile) return
+    // 선택과 동시에 업로드 (이미지와 동일 UX)
     setDocUploading(true)
-    setDocStatus('업로드 중…')
+    setDocStatus(`업로드 중… ${file.name}`)
     try {
-      const result = await uploadDocumentPdf(docFile)
+      const result = await uploadDocumentPdf(file)
       setDocUrl(result.url)
+      setDocFile(null)
       setDocStatus(`업로드 완료: ${result.originalName}`)
     } catch (e) {
       const msg = e instanceof Error ? e.message : '업로드 실패'
@@ -734,26 +731,27 @@ function PostEditorForm({
                       className="admin-btn admin-btn--ghost"
                       style={{ cursor: docUploading ? 'not-allowed' : 'pointer' }}
                     >
-                      파일 선택
+                      {docUploading ? '업로드 중…' : 'PDF 선택·업로드'}
                       <input
                         type="file"
                         accept="application/pdf,.pdf"
                         disabled={docUploading}
                         style={{ display: 'none' }}
-                        onChange={(e) => onPickPdf(e.currentTarget.files?.[0] ?? null)}
+                        onChange={(e) => {
+                          const f = e.currentTarget.files?.[0] ?? null
+                          e.currentTarget.value = ''
+                          void onPickPdf(f)
+                        }}
                       />
                     </label>
-                    <button type="button" className="admin-btn admin-btn--ghost" disabled={!docFile || docUploading} onClick={onUploadPdf}>
-                      업로드
-                    </button>
                     <button
                       type="button"
                       className="admin-btn admin-btn--ghost"
-                      disabled={docUploading && docUrl.length === 0}
+                      disabled={docUploading || (!docFile && !docUrl)}
                       onClick={() => {
                         setDocFile(null)
                         setDocUrl('')
-                        setDocStatus('PDF 업로드 가능 (최대 25MB)')
+                        setDocStatus('PDF 업로드 가능 (최대 10MB 권장)')
                       }}
                     >
                       제거
