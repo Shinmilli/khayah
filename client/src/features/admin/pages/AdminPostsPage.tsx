@@ -102,7 +102,9 @@ function PostEditorForm({
   const [saveError, setSaveError] = useState<string>('')
   const [docFile, setDocFile] = useState<File | null>(null)
   const [docUrl, setDocUrl] = useState<string>('')
-  const [docStatus, setDocStatus] = useState<string>('PDF 업로드 가능 (최대 10MB 권장)')
+  const [docStatus, setDocStatus] = useState<string>(
+    'PDF 선택 시 자동 업로드 (10MB 이하는 Cloudinary, 초과는 Supabase)',
+  )
   const [docUploading, setDocUploading] = useState(false)
   const [coverFile, setCoverFile] = useState<File | null>(null)
   const [coverPreviewUrl, setCoverPreviewUrl] = useState<string>('')
@@ -137,7 +139,7 @@ function PostEditorForm({
       setYearlyMode('글쓰기')
       setDocFile(null)
       setDocUrl('')
-      setDocStatus('PDF 업로드 가능 (최대 10MB 권장)')
+      setDocStatus('PDF 선택 시 자동 업로드 (10MB 이하는 Cloudinary, 초과는 Supabase)')
       setNewsletterIssue('')
       setNewsletterYear('')
     } else if (prevPostType.current !== '연간소식지') {
@@ -199,7 +201,7 @@ function PostEditorForm({
   const onPickPdf = async (file: File | null) => {
     setDocFile(file)
     if (!file) {
-      setDocStatus('PDF 업로드 가능 (최대 10MB 권장)')
+      setDocStatus('PDF 선택 시 자동 업로드 (10MB 이하는 Cloudinary, 초과는 Supabase)')
       return
     }
     // 선택과 동시에 업로드 (이미지와 동일 UX)
@@ -751,7 +753,7 @@ function PostEditorForm({
                       onClick={() => {
                         setDocFile(null)
                         setDocUrl('')
-                        setDocStatus('PDF 업로드 가능 (최대 10MB 권장)')
+                        setDocStatus('PDF 선택 시 자동 업로드 (10MB 이하는 Cloudinary, 초과는 Supabase)')
                       }}
                     >
                       제거
