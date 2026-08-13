@@ -11,9 +11,10 @@ import { prisma, prismaInitStatus } from './utils/prisma'
 
 const app = express()
 const PORT = process.env.PORT ?? 3001
+const clientOrigin = (process.env.CLIENT_ORIGIN ?? '').trim().replace(/\/$/, '') || undefined
 
 app.set('trust proxy', 1)
-app.use(cors({ origin: process.env.CLIENT_ORIGIN }))
+app.use(cors({ origin: clientOrigin }))
 app.use(express.json())
 
 app.use('/api', postsRouter)
