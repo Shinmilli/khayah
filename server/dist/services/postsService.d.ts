@@ -3,6 +3,7 @@ interface GetPublishedOptions {
     page: number;
     perPage: number;
     kind?: string;
+    region?: string;
 }
 export declare const postsService: {
     getPublishedPosts(options: GetPublishedOptions): Promise<{
@@ -10,17 +11,17 @@ export declare const postsService: {
         total: number;
     }>;
     getPostBySlug(slug: string): Promise<{
-        id: number;
-        title: string;
-        excerpt: string;
-        content: string;
-        slug: string;
-        status: string;
-        postType: string;
-        publishedAt: string;
+        id: any;
+        title: any;
+        excerpt: any;
+        content: any;
+        slug: any;
+        status: any;
+        postType: any;
+        publishedAt: any;
         author: {
-            id: number;
-            displayName: string;
+            id: any;
+            displayName: any;
         } | undefined;
         meta: Record<string, string>;
     } | null>;

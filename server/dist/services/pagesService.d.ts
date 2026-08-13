@@ -5,12 +5,12 @@ export declare const pagesService: {
         total: number;
     }>;
     getPageBySlug(slug: string): Promise<{
-        id: number;
-        title: string;
-        slug: string;
-        excerpt: string;
-        content: string;
-        postParent: number;
+        id: any;
+        title: any;
+        slug: any;
+        excerpt: any;
+        content: any;
+        postParent: any;
     } | null>;
 };
 //# sourceMappingURL=pagesService.d.ts.map
