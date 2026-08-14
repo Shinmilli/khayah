@@ -1,5 +1,14 @@
 import { prisma } from '../utils/prisma'
 
+/** YYYY-MM-DD → 그날 정오 UTC (KST에서 날짜가 하루 밀리지 않도록) */
+function parsePublishedAt(raw?: string): Date | undefined {
+  if (!raw || typeof raw !== 'string') return undefined
+  const t = raw.trim()
+  if (/^\d{4}-\d{2}-\d{2}$/.test(t)) return new Date(`${t}T12:00:00.000Z`)
+  const d = new Date(t)
+  return Number.isNaN(d.getTime()) ? undefined : d
+}
+
 function slugify(input: string): string {
   return input
     .trim()
@@ -129,16 +138,18 @@ export const adminPostsService = {
     content: string
     status: 'publish' | 'draft'
     meta: AdminPostMeta
+    publishedAt?: string
   }) {
     const authorId = await ensureAuthorId()
     const now = new Date()
+    const postDate = parsePublishedAt(params.publishedAt) ?? now
     const postName = slugify(`${params.kind}-${params.title}`)
 
     const created = await prisma!.post.create({
       data: {
         postAuthorId: authorId,
-        postDate: now,
-        postDateGmt: now,
+        postDate,
+        postDateGmt: postDate,
         postModified: now,
         postModifiedGmt: now,
         postTitle: params.title,
@@ -176,7 +187,14 @@ export const adminPostsService = {
 
   async update(
     id: number,
-    params: { title?: string; excerpt?: string; content?: string; status?: 'publish' | 'draft'; meta?: AdminPostMeta },
+    params: {
+      title?: string
+      excerpt?: string
+      content?: string
+      status?: 'publish' | 'draft'
+      meta?: AdminPostMeta
+      publishedAt?: string
+    },
   ) {
     const existing = await prisma!.post.findFirst({
       where: { id, postType: 'post' },
@@ -185,6 +203,7 @@ export const adminPostsService = {
     if (!existing) return null
 
     const now = new Date()
+    const postDate = parsePublishedAt(params.publishedAt)
     await prisma!.post.update({
       where: { id },
       data: {
@@ -194,6 +213,7 @@ export const adminPostsService = {
         postStatus: params.status,
         postModified: now,
         postModifiedGmt: now,
+        ...(postDate ? { postDate, postDateGmt: postDate } : {}),
       },
     })
 

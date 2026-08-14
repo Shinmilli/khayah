@@ -4,6 +4,11 @@ import { PageHero } from '../components/PageHero'
 import { normalizePathKey } from '../constants/pagesContent'
 import { fetchPostsByKind } from '../services/api'
 import type { Post } from '../types/post'
+import {
+  newsletterListingYear,
+  newsletterYearLabel,
+  parseNewsletterYearSpec,
+} from '../utils/newsletterYear'
 import '../styles/page.css'
 import '../styles/newsletter.css'
 
@@ -39,13 +44,19 @@ function pressSortKey(post: Post): string {
   return pressDisplayYmd(post)
 }
 
-/** 목록·필터용 연도: 메타 khayah_newsletter_year(YYYY) 우선, 없으면 제목의 첫 4자리 연도(레거시), 마지막으로 게시일 연도 */
+/** 목록·필터용 연도: 범위면 종료 연도에만 표시. 없으면 제목 연도, 마지막으로 게시일 연도 */
 function newsletterArchiveYear(post: Post): number {
-  const raw = post.meta?.khayah_newsletter_year?.trim() ?? ''
-  if (/^\d{4}$/.test(raw)) return parseInt(raw, 10)
+  const spec = parseNewsletterYearSpec(post.meta?.khayah_newsletter_year?.trim() ?? '')
+  if (spec) return newsletterListingYear(spec)
   const titleYear = post.title.match(/(19|20)\d{2}/)
   if (titleYear) return parseInt(titleYear[0], 10)
   return new Date(post.publishedAt).getFullYear()
+}
+
+function newsletterCoverageLabel(post: Post): string {
+  const spec = parseNewsletterYearSpec(post.meta?.khayah_newsletter_year?.trim() ?? '')
+  if (!spec) return ''
+  return newsletterYearLabel(spec)
 }
 
 function newsletterIsPdfMode(post: Post): boolean {
@@ -241,6 +252,7 @@ export function NewsArchivePage() {
                       const cover = coverMetaUrl(post)
                       const issueRaw = post.meta?.khayah_newsletter_issue?.trim() ?? ''
                       const issueHo = newsletterIssueLabel(issueRaw)
+                      const yearLabel = newsletterCoverageLabel(post)
                       const excerpt = (post.excerpt || '')
                         .replace(/<[^>]+>/g, ' ')
                         .replace(/\s+/g, ' ')
@@ -251,6 +263,7 @@ export function NewsArchivePage() {
                         <article key={post.id} className="yearly-nl-card">
                           <div className="yearly-nl-card__text">
                             <h2 className="yearly-nl-card__title">{post.title}</h2>
+                            {yearLabel ? <p className="yearly-nl-card__years">{yearLabel}</p> : null}
                             {excerpt ? <p className="yearly-nl-card__desc">{excerpt}</p> : null}
                             {ctaPdf ? (
                               <a

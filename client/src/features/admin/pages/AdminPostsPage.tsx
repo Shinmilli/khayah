@@ -11,6 +11,10 @@ import {
   uploadReportImage,
 } from '../../../services/api'
 import type { AdminPost } from '../../../services/api'
+import {
+  formatNewsletterYearMeta,
+  parseNewsletterYearSpec,
+} from '../../../utils/newsletterYear'
 
 const contentTypes = ['스토리', '공지사항', '활동소식', '연간소식지', '언론보도', '진행사업'] as const
 type ContentType = (typeof contentTypes)[number]
@@ -68,6 +72,19 @@ function PostTypeSegmentedSection({
   )
 }
 
+function todayYmd(): string {
+  const d = new Date()
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${y}-${m}-${day}`
+}
+
+function publishedAtYmd(iso?: string): string {
+  if (iso && /^\d{4}-\d{2}-\d{2}/.test(iso)) return iso.slice(0, 10)
+  return todayYmd()
+}
+
 function PostEditorForm({
   mode,
   initialPostType,
@@ -76,6 +93,7 @@ function PostEditorForm({
   initialPostId,
   initialMeta,
   initialContentHtml,
+  initialPublishedAt,
   onClose,
   onSaved,
 }: {
@@ -86,6 +104,7 @@ function PostEditorForm({
   initialPostId: number | null
   initialMeta: Record<string, string>
   initialContentHtml: string
+  initialPublishedAt: string
   onClose: () => void
   onSaved: () => void
 }) {
@@ -117,10 +136,22 @@ function PostEditorForm({
   const richRef = useRef<AdminRichTextEditorHandle | null>(null)
   const [shortBody, setShortBody] = useState<string>('') // yearly pdf mode short body
   const [newsletterIssue, setNewsletterIssue] = useState<string>('') // khayah_newsletter_issue
+  const [publishedDate, setPublishedDate] = useState<string>(() =>
+    mode === 'edit' ? publishedAtYmd(initialPublishedAt) : todayYmd(),
+  )
+  const [newsletterYearRange, setNewsletterYearRange] = useState<boolean>(() => {
+    const spec = parseNewsletterYearSpec((initialMeta.khayah_newsletter_year ?? '').trim())
+    return Boolean(spec && spec.start !== spec.end)
+  })
   const [newsletterYear, setNewsletterYear] = useState<string>(() => {
-    const y = (initialMeta.khayah_newsletter_year ?? '').trim()
-    if (/^\d{4}$/.test(y)) return y
+    const spec = parseNewsletterYearSpec((initialMeta.khayah_newsletter_year ?? '').trim())
+    if (spec) return String(spec.start)
     if (initialPostType === '연간소식지') return String(new Date().getFullYear())
+    return ''
+  })
+  const [newsletterYearEnd, setNewsletterYearEnd] = useState<string>(() => {
+    const spec = parseNewsletterYearSpec((initialMeta.khayah_newsletter_year ?? '').trim())
+    if (spec && spec.start !== spec.end) return String(spec.end)
     return ''
   })
 
@@ -142,8 +173,12 @@ function PostEditorForm({
       setDocStatus('PDF 선택 시 자동 업로드 (10MB 이하는 Cloudinary, 초과는 Supabase)')
       setNewsletterIssue('')
       setNewsletterYear('')
+      setNewsletterYearEnd('')
+      setNewsletterYearRange(false)
     } else if (prevPostType.current !== '연간소식지') {
       setNewsletterYear(String(new Date().getFullYear()))
+      setNewsletterYearEnd('')
+      setNewsletterYearRange(false)
     }
     if (postType !== '연간소식지' && postType !== '활동소식' && postType !== '스토리') {
       setCoverFile(null)
@@ -168,7 +203,14 @@ function PostEditorForm({
       if (initialMeta.khayah_cover_url) setCoverPreviewUrl(initialMeta.khayah_cover_url)
       if (initialMeta.khayah_newsletter_issue) setNewsletterIssue(initialMeta.khayah_newsletter_issue)
       const yy = (initialMeta.khayah_newsletter_year ?? '').trim()
-      if (/^\d{4}$/.test(yy)) setNewsletterYear(yy)
+      const spec = parseNewsletterYearSpec(yy)
+      if (spec) {
+        setNewsletterYear(String(spec.start))
+        if (spec.start !== spec.end) {
+          setNewsletterYearRange(true)
+          setNewsletterYearEnd(String(spec.end))
+        }
+      }
     }
     if (initialPostType === '활동소식' || initialPostType === '스토리') {
       if (initialMeta.khayah_cover_url) setCoverPreviewUrl(initialMeta.khayah_cover_url)
@@ -254,8 +296,24 @@ function PostEditorForm({
       setSaveError('PDF 업로드 후 링크가 생성되어야 합니다.')
       return
     }
-    if (postType === '연간소식지' && !/^\d{4}$/.test(newsletterYear.trim())) {
-      setSaveError('소식지 연도는 네 자리 숫자(예: 2026)로 입력해 주세요.')
+    if (postType === '연간소식지') {
+      if (!/^\d{4}$/.test(newsletterYear.trim())) {
+        setSaveError('소식지 연도는 네 자리 숫자(예: 2026)로 입력해 주세요.')
+        return
+      }
+      if (newsletterYearRange) {
+        if (!/^\d{4}$/.test(newsletterYearEnd.trim())) {
+          setSaveError('종료 연도를 네 자리 숫자로 입력해 주세요.')
+          return
+        }
+        if (parseInt(newsletterYearEnd, 10) < parseInt(newsletterYear, 10)) {
+          setSaveError('종료 연도는 시작 연도보다 같거나 커야 합니다.')
+          return
+        }
+      }
+    }
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(publishedDate.trim())) {
+      setSaveError('게시 날짜를 선택해 주세요.')
       return
     }
     if (postType === '언론보도') {
@@ -296,7 +354,9 @@ function PostEditorForm({
         meta.khayah_newsletter_mode = yearlyMode === '글쓰기' ? '글쓰기 모드' : 'PDF 업로드 모드'
         if (docUrl) meta.khayah_pdf_url = docUrl
         if (coverPreviewUrl) meta.khayah_cover_url = coverPreviewUrl
-        meta.khayah_newsletter_year = newsletterYear.trim()
+        const yStart = parseInt(newsletterYear.trim(), 10)
+        const yEnd = newsletterYearRange ? parseInt(newsletterYearEnd.trim(), 10) : yStart
+        meta.khayah_newsletter_year = formatNewsletterYearMeta(yStart, yEnd)
         meta.khayah_newsletter_issue = newsletterIssue.trim()
       }
       if (postType === '활동소식' || postType === '스토리') {
@@ -341,6 +401,7 @@ function PostEditorForm({
           content,
           status: 'publish',
           meta,
+          publishedAt: publishedDate.trim(),
         })
       } else {
         if (!initialPostId) throw new Error('Missing post id')
@@ -350,6 +411,7 @@ function PostEditorForm({
           content,
           status: 'publish',
           meta,
+          publishedAt: publishedDate.trim(),
         })
       }
       onSaved()
@@ -398,6 +460,18 @@ function PostEditorForm({
           등록·수정
         </h2>
         <div className="admin-form-grid">
+          <label className="admin-field">
+            <span className="admin-field__label">게시 날짜</span>
+            <input
+              className="admin-input"
+              type="date"
+              value={publishedDate}
+              onChange={(e) => setPublishedDate(e.currentTarget.value)}
+            />
+            <span className="admin-fieldset__hint admin-fieldset__hint--flush">
+              목록·상세의 등록일로 표시됩니다. 기본값은 오늘이며 달력에서 바꿀 수 있습니다.
+            </span>
+          </label>
           {postType === '연간소식지' ? (
             <div className="admin-field admin-field--full">
               <span className="admin-field__label">연간소식지 작성 방식</span>
@@ -423,19 +497,51 @@ function PostEditorForm({
                   : '제목 + 짧은 부내용 + PDF 업로드(보기 버튼) 형태로 노출됩니다.'}
               </p>
               <label className="admin-field admin-field--full" style={{ marginTop: 12 }}>
-                <span className="admin-field__label">소식지 연도 (khayah_newsletter_year)</span>
-                <input
-                  className="admin-input"
-                  type="text"
-                  inputMode="numeric"
-                  maxLength={4}
-                  placeholder="예: 2026"
-                  value={newsletterYear}
-                  onChange={(e) => setNewsletterYear(e.currentTarget.value.replace(/\D/g, '').slice(0, 4))}
-                  disabled={isEditLocked}
-                />
+                <span className="admin-field__label">소식지 연도</span>
+                <div className="admin-year-row">
+                  <input
+                    className="admin-input"
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={4}
+                    placeholder="예: 2026"
+                    aria-label="시작 연도"
+                    value={newsletterYear}
+                    onChange={(e) => setNewsletterYear(e.currentTarget.value.replace(/\D/g, '').slice(0, 4))}
+                  />
+                  {newsletterYearRange ? (
+                    <>
+                      <span className="admin-year-row__sep" aria-hidden>
+                        –
+                      </span>
+                      <input
+                        className="admin-input"
+                        type="text"
+                        inputMode="numeric"
+                        maxLength={4}
+                        placeholder="종료 연도"
+                        aria-label="종료 연도"
+                        value={newsletterYearEnd}
+                        onChange={(e) => setNewsletterYearEnd(e.currentTarget.value.replace(/\D/g, '').slice(0, 4))}
+                      />
+                    </>
+                  ) : null}
+                </div>
+                <label className="admin-field--check" style={{ marginTop: 8 }}>
+                  <input
+                    type="checkbox"
+                    checked={newsletterYearRange}
+                    onChange={(e) => {
+                      const on = e.currentTarget.checked
+                      setNewsletterYearRange(on)
+                      if (on && !newsletterYearEnd) setNewsletterYearEnd(newsletterYear)
+                    }}
+                  />
+                  <span>여러 연도에 걸침 (예: 2017–2020)</span>
+                </label>
                 <span className="admin-fieldset__hint admin-fieldset__hint--flush">
-                  공개 목록의 연도 필터에 사용됩니다. 게시일과 달라도 됩니다.
+                  기본은 한 해입니다. 범위를 켜면 메타에 2017-2020처럼 저장되어 검색에 잡히고, 공개
+                  목록 연도 탭에는 종료 연도에만 한 번 나타납니다.
                 </span>
               </label>
               <label className="admin-field admin-field--full" style={{ marginTop: 12 }}>
@@ -447,7 +553,6 @@ function PostEditorForm({
                   placeholder="예: 3 (목록에서 3호로 표시)"
                   value={newsletterIssue}
                   onChange={(e) => setNewsletterIssue(e.currentTarget.value)}
-                  disabled={isEditLocked}
                 />
                 <span className="admin-fieldset__hint admin-fieldset__hint--flush">
                   숫자만 입력해도 됩니다. 선택한 연도 안에서만 호수 필터에 나타납니다.
@@ -564,18 +669,7 @@ function PostEditorForm({
                 </p>
               ) : null}
             </div>
-          ) : (
-            <label className="admin-field">
-              <span className="admin-field__label">카테고리</span>
-              <select className="admin-input" defaultValue="">
-                <option value="">선택</option>
-                <option>일정</option>
-                <option>현장</option>
-                <option>보도자료</option>
-                <option>소식지</option>
-              </select>
-            </label>
-          )}
+          ) : null}
           {postType === '언론보도' ? null : (
             <>
               <label className="admin-field admin-field--full">
@@ -873,6 +967,7 @@ export function AdminPostsPage() {
         initialPostId={editingId}
         initialMeta={initialMeta}
         initialContentHtml={initialContentHtml}
+        initialPublishedAt={row?.publishedAt ?? ''}
         onClose={closeEditor}
         onSaved={load}
       />

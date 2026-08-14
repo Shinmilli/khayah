@@ -1257,3 +1257,21 @@ body.admin-route {
   padding-top: 1.25rem;
   border-top: 1px solid #e8e8e8;
 }
+
+.admin-year-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 360px;
+}
+
+.admin-year-row .admin-input {
+  flex: 1;
+  min-width: 0;
+}
+
+.admin-year-row__sep {
+  flex-shrink: 0;
+  color: #6b7280;
+  font-weight: 700;
+}

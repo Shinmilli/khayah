@@ -52,6 +52,7 @@ export async function adminCreatePost(req: Request, res: Response) {
       content?: string
       meta?: Record<string, string>
       status?: 'publish' | 'draft'
+      publishedAt?: string
     }
 
     if (!body?.kind || !body?.title) {
@@ -66,6 +67,7 @@ export async function adminCreatePost(req: Request, res: Response) {
       content: body.content ?? '',
       status: body.status ?? 'publish',
       meta: body.meta ?? {},
+      publishedAt: body.publishedAt,
     })
     res.status(201).json(created)
   } catch (e) {
@@ -88,6 +90,7 @@ export async function adminUpdatePost(req: Request, res: Response) {
       content?: string
       meta?: Record<string, string>
       status?: 'publish' | 'draft'
+      publishedAt?: string
     }
     const updated = await adminPostsService.update(id, {
       title: body.title,
@@ -95,6 +98,7 @@ export async function adminUpdatePost(req: Request, res: Response) {
       content: body.content,
       status: body.status,
       meta: body.meta,
+      publishedAt: body.publishedAt,
     })
     if (!updated) {
       res.status(404).json({ error: 'Post not found' })

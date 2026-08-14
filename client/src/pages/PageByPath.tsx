@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, Navigate, useLocation } from 'react-router-dom'
 import { fetchPageBySlug, fetchPostBySlug } from '../services/api'
+import { PostDetail, heroTitleForKind } from '../components/PostDetail'
 import { PAGES_STATIC, normalizePathKey, pathToSlug } from '../constants/pagesContent'
 import type { Page } from '../types/page'
 import type { Post } from '../types/post'
@@ -161,48 +162,13 @@ export function PageByPath() {
 
   if (post) {
     const kind = post.meta?.khayah_kind ?? ''
-    const heroTitle =
-      kind === '활동소식'
-        ? '활동소식'
-        : kind === '연간소식지'
-          ? '연간소식지'
-          : kind || '소식'
-    const isNoticeOrActivity = kind === '공지사항' || kind === '활동소식'
     return (
       <div className="page-content-wrapper">
-        <PageHero title={heroTitle} />
+        <PageHero title={heroTitleForKind(kind)} />
         <div className="section">
           <div className="section_wrapper clearfix">
             <div className="column one">
-              {isNoticeOrActivity ? (
-                <>
-                  <h1 className="entry-title" style={{ marginBottom: 12 }}>
-                    {post.title}
-                  </h1>
-                  <div className="entry-meta" style={{ marginBottom: 18 }}>
-                    <time dateTime={post.publishedAt}>
-                      {new Date(post.publishedAt).toLocaleDateString('ko-KR')}
-                    </time>
-                    {post.author && <span> · {post.author.displayName}</span>}
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="entry-meta" style={{ marginBottom: 16 }}>
-                    <time dateTime={post.publishedAt}>
-                      {new Date(post.publishedAt).toLocaleDateString('ko-KR')}
-                    </time>
-                    {post.author && <span> · {post.author.displayName}</span>}
-                  </div>
-                  <h1 className="entry-title" style={{ marginBottom: 18 }}>
-                    {post.title}
-                  </h1>
-                </>
-              )}
-              <div
-                className="the_content_wrapper page-body"
-                dangerouslySetInnerHTML={{ __html: post.content || post.excerpt || '' }}
-              />
+              <PostDetail post={post} />
             </div>
           </div>
         </div>

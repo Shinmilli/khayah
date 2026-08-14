@@ -128,6 +128,7 @@ export async function adminCreatePost(input: {
   content?: string
   status?: 'publish' | 'draft'
   meta?: Record<string, string>
+  publishedAt?: string
 }): Promise<AdminPost> {
   const res = await fetch(`${API_BASE}/admin/posts`, {
     method: 'POST',
@@ -146,6 +147,7 @@ export async function adminUpdatePost(
     content?: string
     status?: 'publish' | 'draft'
     meta?: Record<string, string>
+    publishedAt?: string
   },
 ): Promise<AdminPost> {
   const res = await fetch(`${API_BASE}/admin/posts/${id}`, {
