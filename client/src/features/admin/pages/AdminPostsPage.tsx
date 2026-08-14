@@ -7,10 +7,13 @@ import {
   adminDeletePost,
   adminFetchPostsByKind,
   adminUpdatePost,
+  deleteUploadedMedia,
   uploadDocumentPdf,
   uploadReportImage,
 } from '../../../services/api'
-import type { AdminPost } from '../../../services/api'
+import type { AdminPost, DocumentUploadResult } from '../../../services/api'
+import { PdfFirstPagePreview } from '../../../components/PdfFirstPagePreview'
+import { coverIsBlank, parsePdfAttachments, type PdfAttachment } from '../../../utils/pdfAttachments'
 import {
   formatNewsletterYearMeta,
   parseNewsletterYearSpec,
@@ -85,6 +88,18 @@ function publishedAtYmd(iso?: string): string {
   return todayYmd()
 }
 
+function attachmentFromUpload(result: DocumentUploadResult): PdfAttachment {
+  return {
+    url: result.url,
+    name: result.originalName || result.filename || '문서.pdf',
+    publicId: result.publicId,
+    path: result.path,
+    provider: result.provider,
+    resourceType: result.resourceType,
+    size: result.size,
+  }
+}
+
 function PostEditorForm({
   mode,
   initialPostType,
@@ -119,12 +134,14 @@ function PostEditorForm({
   const [title, setTitle] = useState<string>(initialTitle)
   const [saving, setSaving] = useState(false)
   const [saveError, setSaveError] = useState<string>('')
-  const [docFile, setDocFile] = useState<File | null>(null)
-  const [docUrl, setDocUrl] = useState<string>('')
   const [docStatus, setDocStatus] = useState<string>(
     'PDF 선택 시 자동 업로드 (10MB 이하는 Cloudinary, 초과는 Supabase)',
   )
   const [docUploading, setDocUploading] = useState(false)
+  const [pdfFiles, setPdfFiles] = useState<PdfAttachment[]>(() => parsePdfAttachments(initialMeta))
+  const [selectedPdfUrls, setSelectedPdfUrls] = useState<string[]>([])
+  const [pdfDropOver, setPdfDropOver] = useState(false)
+  const [coverBlank, setCoverBlank] = useState(() => coverIsBlank(initialMeta))
   const [coverFile, setCoverFile] = useState<File | null>(null)
   const [coverPreviewUrl, setCoverPreviewUrl] = useState<string>('')
   const [coverImageUploading, setCoverImageUploading] = useState(false)
@@ -134,6 +151,7 @@ function PostEditorForm({
   const [pressDate, setPressDate] = useState<string>('') // YYYY-MM-DD
   const prevPostType = useRef(postType)
   const richRef = useRef<AdminRichTextEditorHandle | null>(null)
+  const pdfInputRef = useRef<HTMLInputElement | null>(null)
   const [shortBody, setShortBody] = useState<string>('') // yearly pdf mode short body
   const [newsletterIssue, setNewsletterIssue] = useState<string>('') // khayah_newsletter_issue
   const [publishedDate, setPublishedDate] = useState<string>(() =>
@@ -168,13 +186,8 @@ function PostEditorForm({
     }
     if (postType !== '연간소식지') {
       setYearlyMode('글쓰기')
-      setDocFile(null)
-      setDocUrl('')
       setDocStatus('PDF 선택 시 자동 업로드 (10MB 이하는 Cloudinary, 초과는 Supabase)')
       setNewsletterIssue('')
-      setNewsletterYear('')
-      setNewsletterYearEnd('')
-      setNewsletterYearRange(false)
     } else if (prevPostType.current !== '연간소식지') {
       setNewsletterYear(String(new Date().getFullYear()))
       setNewsletterYearEnd('')
@@ -199,7 +212,6 @@ function PostEditorForm({
       const m = initialMeta.khayah_newsletter_mode
       if (m === 'PDF 업로드 모드' || m === 'PDF소식지') setYearlyMode('PDF소식지')
       if (m === '글쓰기 모드' || m === '글쓰기') setYearlyMode('글쓰기')
-      if (initialMeta.khayah_pdf_url) setDocUrl(initialMeta.khayah_pdf_url)
       if (initialMeta.khayah_cover_url) setCoverPreviewUrl(initialMeta.khayah_cover_url)
       if (initialMeta.khayah_newsletter_issue) setNewsletterIssue(initialMeta.khayah_newsletter_issue)
       const yy = (initialMeta.khayah_newsletter_year ?? '').trim()
@@ -241,25 +253,72 @@ function PostEditorForm({
   }, [coverFile])
 
   const onPickPdf = async (file: File | null) => {
-    setDocFile(file)
-    if (!file) {
-      setDocStatus('PDF 선택 시 자동 업로드 (10MB 이하는 Cloudinary, 초과는 Supabase)')
-      return
-    }
-    // 선택과 동시에 업로드 (이미지와 동일 UX)
+    if (!file) return
     setDocUploading(true)
     setDocStatus(`업로드 중… ${file.name}`)
     try {
       const result = await uploadDocumentPdf(file)
-      setDocUrl(result.url)
-      setDocFile(null)
-      setDocStatus(`업로드 완료: ${result.originalName}`)
+      const att = attachmentFromUpload(result)
+      if (postType === '연간소식지') {
+        const prev = pdfFiles[0]
+        if (prev?.url && prev.url !== att.url) {
+          void deleteUploadedMedia(prev).catch(() => undefined)
+        }
+        setPdfFiles([att])
+        setSelectedPdfUrls([])
+      } else {
+        setPdfFiles((list) => [...list, att])
+      }
+      setDocStatus(`업로드 완료: ${att.name}`)
     } catch (e) {
       const msg = e instanceof Error ? e.message : '업로드 실패'
       setDocStatus(msg)
     } finally {
       setDocUploading(false)
     }
+  }
+
+  const onRemoveSelectedPdfs = async () => {
+    const pick = new Set(selectedPdfUrls)
+    if (pick.size === 0) return
+    const removing = pdfFiles.filter((f) => pick.has(f.url))
+    setDocUploading(true)
+    try {
+      await Promise.all(removing.map((f) => deleteUploadedMedia(f).catch(() => undefined)))
+      setPdfFiles((list) => list.filter((f) => !pick.has(f.url)))
+      setSelectedPdfUrls([])
+      setDocStatus('선택한 PDF를 제거했습니다.')
+    } finally {
+      setDocUploading(false)
+    }
+  }
+
+  const onPdfFilesFromDrop = (list: FileList | null) => {
+    if (!list?.length || docUploading) return
+    const pdfs = Array.from(list).filter(
+      (f) => f.type === 'application/pdf' || f.name.toLowerCase().endsWith('.pdf'),
+    )
+    if (pdfs.length === 0) {
+      setDocStatus('PDF 파일만 올릴 수 있습니다.')
+      return
+    }
+    if (postType === '연간소식지') {
+      void onPickPdf(pdfs[0] ?? null)
+      return
+    }
+    void (async () => {
+      for (const f of pdfs) {
+        await onPickPdf(f)
+      }
+    })()
+  }
+
+  const onRemoveAllNewsletterPdf = async () => {
+    const prev = pdfFiles[0]
+    if (prev) void deleteUploadedMedia(prev).catch(() => undefined)
+    setPdfFiles([])
+    setSelectedPdfUrls([])
+    setDocStatus('PDF 선택 시 자동 업로드 (10MB 이하는 Cloudinary, 초과는 Supabase)')
   }
 
   const onPickCoverImageUpload = async (file: File | null) => {
@@ -270,6 +329,7 @@ function PostEditorForm({
       const result = await uploadReportImage(file)
       setCoverPreviewUrl(result.url)
       setCoverFile(null)
+      setCoverBlank(false)
     } catch (e) {
       const msg = e instanceof Error ? e.message : '이미지 업로드 실패'
       setSaveError(msg)
@@ -292,7 +352,7 @@ function PostEditorForm({
       setSaveError('진행사업 지역(네팔/키르기즈스탄/미얀마/국내)을 선택해 주세요.')
       return
     }
-    if (postType === '연간소식지' && yearlyMode === 'PDF소식지' && !docUrl) {
+    if (postType === '연간소식지' && yearlyMode === 'PDF소식지' && pdfFiles.length === 0) {
       setSaveError('PDF 업로드 후 링크가 생성되어야 합니다.')
       return
     }
@@ -352,15 +412,22 @@ function PostEditorForm({
       }
       if (postType === '연간소식지') {
         meta.khayah_newsletter_mode = yearlyMode === '글쓰기' ? '글쓰기 모드' : 'PDF 업로드 모드'
-        if (docUrl) meta.khayah_pdf_url = docUrl
-        if (coverPreviewUrl) meta.khayah_cover_url = coverPreviewUrl
         const yStart = parseInt(newsletterYear.trim(), 10)
         const yEnd = newsletterYearRange ? parseInt(newsletterYearEnd.trim(), 10) : yStart
         meta.khayah_newsletter_year = formatNewsletterYearMeta(yStart, yEnd)
         meta.khayah_newsletter_issue = newsletterIssue.trim()
       }
-      if (postType === '활동소식' || postType === '스토리') {
-        meta.khayah_cover_url = coverPreviewUrl.trim()
+      const storedCover =
+        coverPreviewUrl.trim() && !coverPreviewUrl.startsWith('blob:') ? coverPreviewUrl.trim() : ''
+      if (postType === '연간소식지' || postType === '활동소식' || postType === '스토리') {
+        meta.khayah_cover_url = storedCover
+        meta.khayah_cover_blank = coverBlank ? 'true' : ''
+      }
+      if (postType !== '언론보도') {
+        const filesToStore = postType === '연간소식지' ? pdfFiles.slice(0, 1) : pdfFiles
+        meta.khayah_pdf_files = JSON.stringify(filesToStore)
+        meta.khayah_pdf_url = filesToStore[0]?.url ?? ''
+        meta.khayah_pdf_name = filesToStore[0]?.name ?? ''
       }
       if (postType === '언론보도') {
         meta.khayah_press_title = pressTitle.trim()
@@ -460,18 +527,6 @@ function PostEditorForm({
           등록·수정
         </h2>
         <div className="admin-form-grid">
-          <label className="admin-field">
-            <span className="admin-field__label">게시 날짜</span>
-            <input
-              className="admin-input"
-              type="date"
-              value={publishedDate}
-              onChange={(e) => setPublishedDate(e.currentTarget.value)}
-            />
-            <span className="admin-fieldset__hint admin-fieldset__hint--flush">
-              목록·상세의 등록일로 표시됩니다. 기본값은 오늘이며 달력에서 바꿀 수 있습니다.
-            </span>
-          </label>
           {postType === '연간소식지' ? (
             <div className="admin-field admin-field--full">
               <span className="admin-field__label">연간소식지 작성 방식</span>
@@ -545,12 +600,12 @@ function PostEditorForm({
                 </span>
               </label>
               <label className="admin-field admin-field--full" style={{ marginTop: 12 }}>
-                <span className="admin-field__label">소식지 호수 (선택, khayah_newsletter_issue)</span>
+                <span className="admin-field__label">소식지 호수</span>
                 <input
                   className="admin-input"
                   type="text"
                   inputMode="numeric"
-                  placeholder="예: 3 (목록에서 3호로 표시)"
+                  placeholder="예: 3"
                   value={newsletterIssue}
                   onChange={(e) => setNewsletterIssue(e.currentTarget.value)}
                 />
@@ -569,7 +624,7 @@ function PostEditorForm({
               </p>
               <div className="admin-form-grid">
                 <label className="admin-field admin-field--full">
-                  <span className="admin-field__label">기사 제목 (khayah_press_title)</span>
+                  <span className="admin-field__label">기사 제목</span>
                   <input
                     className="admin-input"
                     type="text"
@@ -580,7 +635,7 @@ function PostEditorForm({
                   />
                 </label>
                 <label className="admin-field">
-                  <span className="admin-field__label">신문사 (khayah_press_publisher)</span>
+                  <span className="admin-field__label">신문사</span>
                   <input
                     className="admin-input"
                     type="text"
@@ -591,7 +646,7 @@ function PostEditorForm({
                   />
                 </label>
                 <label className="admin-field">
-                  <span className="admin-field__label">기사 URL (khayah_press_url)</span>
+                  <span className="admin-field__label">기사 URL</span>
                   <input
                     className="admin-input"
                     type="url"
@@ -602,7 +657,7 @@ function PostEditorForm({
                   />
                 </label>
                 <label className="admin-field">
-                  <span className="admin-field__label">기사 날짜 (khayah_press_date)</span>
+                  <span className="admin-field__label">기사 날짜</span>
                   <input
                     className="admin-input"
                     type="date"
@@ -700,6 +755,8 @@ function PostEditorForm({
                           alt=""
                           style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 8 }}
                         />
+                      ) : !coverBlank && pdfFiles[0]?.url ? (
+                        <PdfFirstPagePreview url={pdfFiles[0].url} className="admin-upload__pdf-thumb" />
                       ) : (
                         <span>미리보기</span>
                       )}
@@ -707,37 +764,38 @@ function PostEditorForm({
                     <div className="admin-upload__actions">
                       {postType === '연간소식지' && yearlyMode === 'PDF소식지' ? (
                         <>
-                          <label className="admin-btn admin-btn--ghost" style={{ cursor: 'pointer' }}>
+                          <label
+                            className="admin-btn admin-btn--ghost"
+                            style={{ cursor: coverImageUploading ? 'not-allowed' : 'pointer' }}
+                          >
                             이미지 선택
                             <input
                               type="file"
                               accept="image/*"
                               style={{ display: 'none' }}
-                              onChange={(e) => setCoverFile(e.currentTarget.files?.[0] ?? null)}
+                              disabled={coverImageUploading}
+                              onChange={(e) => {
+                                const f = e.currentTarget.files?.[0] ?? null
+                                e.currentTarget.value = ''
+                                void onPickCoverImageUpload(f)
+                              }}
                             />
                           </label>
                           <button
                             type="button"
                             className="admin-btn admin-btn--ghost"
-                            disabled={!coverFile}
-                            onClick={() => setCoverFile(null)}
+                            disabled={!coverPreviewUrl && coverBlank}
+                            onClick={() => {
+                              setCoverFile(null)
+                              setCoverPreviewUrl('')
+                              setCoverBlank(true)
+                            }}
                           >
                             이미지 제거
                           </button>
-                          <label className="admin-field admin-field--full" style={{ marginTop: 10 }}>
-                            <span className="admin-field__label">표지 이미지 URL (임시)</span>
-                            <input
-                              className="admin-input"
-                              type="url"
-                              placeholder="https://..."
-                              value={coverPreviewUrl}
-                              onChange={(e) => setCoverPreviewUrl(e.currentTarget.value)}
-                            />
-                          </label>
                           <p className="admin-upload__hint">
-                            {docUrl
-                              ? 'PDF 업로드됨: 표지가 없으면 PDF 표지(대체)로 표시됩니다.'
-                              : 'PDF 업로드 후 표지를 지정할 수 있습니다.'}
+                            표지 이미지가 없으면 PDF 첫 장이 미리보기에 나옵니다. 이미지 제거를 누르면 빈
+                            칸으로 둡니다.
                           </p>
                         </>
                       ) : postType === '활동소식' || postType === '스토리' ? (
@@ -766,23 +824,13 @@ function PostEditorForm({
                             onClick={() => {
                               setCoverPreviewUrl('')
                               setCoverFile(null)
+                              setCoverBlank(true)
                             }}
                           >
                             대표 이미지 제거
                           </button>
-                          <label className="admin-field admin-field--full" style={{ marginTop: 10 }}>
-                            <span className="admin-field__label">대표 이미지 URL (khayah_cover_url)</span>
-                            <input
-                              className="admin-input"
-                              type="url"
-                              placeholder="https://..."
-                              value={coverPreviewUrl}
-                              onChange={(e) => setCoverPreviewUrl(e.currentTarget.value)}
-                            />
-                          </label>
                           <p className="admin-upload__hint">
-                            공개 목록에서 제목 왼쪽 네모 썸네일로 표시됩니다. 업로드하거나 URL을 직접 입력할 수
-                            있습니다.
+                            공개 목록에서 제목 왼쪽 네모 썸네일로 표시됩니다.
                           </p>
                         </>
                       ) : (
@@ -816,58 +864,138 @@ function PostEditorForm({
               </div>
               <div className="admin-field admin-field--full">
                 <span className="admin-field__label">
-                  첨부 문서 (PDF){postType === '연간소식지' && yearlyMode === 'PDF소식지' ? ' · PDF 보기 버튼용' : ''}
+                  첨부 문서 PDF
+                  {postType === '연간소식지' ? ' · 1개만' : ' · 여러 개 가능'}
                 </span>
                 <div className="admin-upload">
-                  <div className="admin-upload__preview" aria-hidden>
-                    <span>PDF</span>
+                  <div
+                    className={`admin-upload__preview admin-upload__preview--pdf${pdfDropOver ? ' admin-upload__preview--drop' : ''}`}
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => pdfInputRef.current?.click()}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault()
+                        pdfInputRef.current?.click()
+                      }
+                    }}
+                    onDragEnter={(e) => {
+                      e.preventDefault()
+                      setPdfDropOver(true)
+                    }}
+                    onDragOver={(e) => {
+                      e.preventDefault()
+                      setPdfDropOver(true)
+                    }}
+                    onDragLeave={(e) => {
+                      if (!e.currentTarget.contains(e.relatedTarget as Node)) setPdfDropOver(false)
+                    }}
+                    onDrop={(e) => {
+                      e.preventDefault()
+                      setPdfDropOver(false)
+                      onPdfFilesFromDrop(e.dataTransfer.files)
+                    }}
+                  >
+                    <span>{docUploading ? '업로드 중…' : 'PDF를 끌어다 놓기'}</span>
                   </div>
-                  <div className="admin-upload__actions">
+                  <div className="admin-upload__actions" style={{ width: '100%' }}>
                     <label
                       className="admin-btn admin-btn--ghost"
                       style={{ cursor: docUploading ? 'not-allowed' : 'pointer' }}
                     >
-                      {docUploading ? '업로드 중…' : 'PDF 선택·업로드'}
+                      {docUploading
+                        ? '업로드 중…'
+                        : postType === '연간소식지'
+                          ? 'PDF 선택·업로드'
+                          : 'PDF 추가 업로드'}
                       <input
+                        ref={pdfInputRef}
                         type="file"
                         accept="application/pdf,.pdf"
+                        multiple={postType !== '연간소식지'}
                         disabled={docUploading}
                         style={{ display: 'none' }}
                         onChange={(e) => {
-                          const f = e.currentTarget.files?.[0] ?? null
+                          const files = e.currentTarget.files
                           e.currentTarget.value = ''
-                          void onPickPdf(f)
+                          onPdfFilesFromDrop(files)
                         }}
                       />
                     </label>
-                    <button
-                      type="button"
-                      className="admin-btn admin-btn--ghost"
-                      disabled={docUploading || (!docFile && !docUrl)}
-                      onClick={() => {
-                        setDocFile(null)
-                        setDocUrl('')
-                        setDocStatus('PDF 선택 시 자동 업로드 (10MB 이하는 Cloudinary, 초과는 Supabase)')
-                      }}
-                    >
-                      제거
-                    </button>
+                    {postType === '연간소식지' ? (
+                      <button
+                        type="button"
+                        className="admin-btn admin-btn--ghost"
+                        disabled={docUploading || pdfFiles.length === 0}
+                        onClick={() => void onRemoveAllNewsletterPdf()}
+                      >
+                        제거
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        className="admin-btn admin-btn--ghost"
+                        disabled={docUploading || selectedPdfUrls.length === 0}
+                        onClick={() => void onRemoveSelectedPdfs()}
+                      >
+                        선택 항목 제거
+                      </button>
+                    )}
                     <p className="admin-upload__hint" role="status">
                       {docStatus}
                     </p>
-                    {docUrl ? (
-                      <p className="admin-upload__hint">
-                        링크:{' '}
-                        <a href={docUrl} target="_blank" rel="noreferrer">
-                          {docUrl}
-                        </a>
-                      </p>
+                    {pdfFiles.length > 0 ? (
+                      <ul className="admin-pdf-list">
+                        {pdfFiles.map((f) => (
+                          <li key={f.url} className="admin-pdf-list__row">
+                            {postType === '연간소식지' ? null : (
+                              <input
+                                type="checkbox"
+                                checked={selectedPdfUrls.includes(f.url)}
+                                onChange={(e) => {
+                                  const on = e.currentTarget.checked
+                                  setSelectedPdfUrls((cur) =>
+                                    on ? [...cur, f.url] : cur.filter((u) => u !== f.url),
+                                  )
+                                }}
+                                aria-label={`${f.name} 선택`}
+                              />
+                            )}
+                            <a className="admin-pdf-list__name" href={f.url} target="_blank" rel="noreferrer">
+                              {f.name}
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
                     ) : null}
                   </div>
                 </div>
               </div>
+              <label className="admin-field">
+                <span className="admin-field__label">게시 날짜</span>
+                <input
+                  className="admin-input"
+                  type="date"
+                  value={publishedDate}
+                  onChange={(e) => setPublishedDate(e.currentTarget.value)}
+                />
+                <span className="admin-fieldset__hint admin-fieldset__hint--flush">
+                  목록·상세의 등록일로 표시됩니다. 기본값은 오늘이며 달력에서 바꿀 수 있습니다.
+                </span>
+              </label>
             </>
           )}
+          {postType === '언론보도' ? (
+            <label className="admin-field">
+              <span className="admin-field__label">게시 날짜</span>
+              <input
+                className="admin-input"
+                type="date"
+                value={publishedDate}
+                onChange={(e) => setPublishedDate(e.currentTarget.value)}
+              />
+            </label>
+          ) : null}
         </div>
         {saveError ? (
           <p className="admin-panel__foot admin-panel__subnote" style={{ color: '#b42318' }}>

@@ -3,6 +3,8 @@ import path from 'path'
 import multer from 'multer'
 import { isCloudinaryConfigured, uploadBufferToCloudinary } from '../utils/cloudinary'
 import { isSupabaseStorageConfigured, uploadBufferToSupabase } from '../utils/supabaseStorage'
+import { decodeOriginalFilename } from '../utils/uploadFilename'
+import { deleteStoredMedia, type StoredMediaRef } from '../utils/storedMedia'
 
 /** Cloudinary free ~10MB — larger files go to Supabase Storage */
 const CLOUDINARY_MAX_BYTES = 10 * 1024 * 1024
@@ -52,6 +54,8 @@ async function handleUpload(req: Request, res: Response, kind: 'document' | 'ima
     return res.status(400).json({ error: 'No file uploaded (field name: file)' })
   }
 
+  const originalName = decodeOriginalFilename(file.originalname, kind === 'document' ? 'file.pdf' : 'image')
+
   const useSupabase = file.size > CLOUDINARY_MAX_BYTES
 
   try {
@@ -65,7 +69,7 @@ async function handleUpload(req: Request, res: Response, kind: 'document' | 'ima
       }
       const uploaded = await uploadBufferToSupabase({
         buffer: file.buffer,
-        originalName: file.originalname,
+        originalName,
         mimeType: file.mimetype,
         kind,
       })
@@ -73,7 +77,7 @@ async function handleUpload(req: Request, res: Response, kind: 'document' | 'ima
         url: uploaded.url,
         path: uploaded.path,
         filename: uploaded.filename,
-        originalName: file.originalname,
+        originalName,
         mimeType: file.mimetype,
         size: uploaded.bytes || file.size,
         publicId: uploaded.publicId,
@@ -91,7 +95,7 @@ async function handleUpload(req: Request, res: Response, kind: 'document' | 'ima
 
     const uploaded = await uploadBufferToCloudinary({
       buffer: file.buffer,
-      originalName: file.originalname,
+      originalName,
       mimeType: file.mimetype,
       kind,
     })
@@ -100,7 +104,7 @@ async function handleUpload(req: Request, res: Response, kind: 'document' | 'ima
       url: uploaded.url,
       path: uploaded.path,
       filename: uploaded.filename,
-      originalName: file.originalname,
+      originalName,
       mimeType: file.mimetype,
       size: uploaded.bytes || file.size,
       publicId: uploaded.publicId,
@@ -133,3 +137,24 @@ export const postImageUpload = [
     void handleUpload(req, res, 'image')
   },
 ]
+
+export async function deleteUpload(req: Request, res: Response) {
+  const body = req.body as StoredMediaRef | undefined
+  const url = typeof body?.url === 'string' ? body.url.trim() : ''
+  if (!url && !body?.publicId && !body?.path) {
+    return res.status(400).json({ error: 'url, publicId, or path is required' })
+  }
+  try {
+    await deleteStoredMedia({
+      url,
+      publicId: typeof body?.publicId === 'string' ? body.publicId : undefined,
+      path: typeof body?.path === 'string' ? body.path : undefined,
+      provider: typeof body?.provider === 'string' ? body.provider : undefined,
+      resourceType: typeof body?.resourceType === 'string' ? body.resourceType : undefined,
+    })
+    return res.json({ ok: true })
+  } catch (e) {
+    console.error('[uploads] delete error', e)
+    return res.status(500).json({ error: e instanceof Error ? e.message : 'Delete failed' })
+  }
+}

@@ -76,6 +76,24 @@ export type DocumentUploadResult = {
   originalName: string
   mimeType: string
   size: number
+  publicId?: string
+  resourceType?: string
+  provider?: string
+}
+
+export async function deleteUploadedMedia(ref: {
+  url: string
+  publicId?: string
+  path?: string
+  provider?: string
+  resourceType?: string
+}): Promise<void> {
+  const res = await fetch(`${API_BASE}/uploads/delete`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(ref),
+  })
+  if (!res.ok) throw new Error('Failed to delete uploaded file')
 }
 
 export async function uploadDocumentPdf(file: File): Promise<DocumentUploadResult> {

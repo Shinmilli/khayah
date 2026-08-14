@@ -67,3 +67,13 @@ export async function uploadBufferToSupabase(options: {
     provider: 'supabase',
   }
 }
+
+export async function removeFromSupabase(objectPath: string): Promise<void> {
+  const p = objectPath.trim()
+  if (!p || !isSupabaseStorageConfigured()) return
+  const supabase = getAdminClient()
+  const { error } = await supabase.storage.from(BUCKET).remove([p])
+  if (error) {
+    console.error('[supabase storage] remove failed', error.message)
+  }
+}

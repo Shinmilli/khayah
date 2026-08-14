@@ -1,4 +1,9 @@
 import { prisma } from '../utils/prisma'
+import {
+  collectPostMedia,
+  deleteStoredMediaMany,
+  mediaNotIn,
+} from '../utils/storedMedia'
 
 /** YYYY-MM-DD → 그날 정오 UTC (KST에서 날짜가 하루 밀리지 않도록) */
 function parsePublishedAt(raw?: string): Date | undefined {
@@ -198,10 +203,11 @@ export const adminPostsService = {
   ) {
     const existing = await prisma!.post.findFirst({
       where: { id, postType: 'post' },
-      select: { id: true },
+      include: { postMeta: { select: { metaKey: true, metaValue: true } } },
     })
     if (!existing) return null
 
+    const prevMeta = metaArrayToObject(existing.postMeta)
     const now = new Date()
     const postDate = parsePublishedAt(params.publishedAt)
     await prisma!.post.update({
@@ -225,14 +231,20 @@ export const adminPostsService = {
           data: keys.map((k) => ({ postId: id, metaKey: k, metaValue: String(params.meta?.[k] ?? '') })),
         })
       }
+      const removed = mediaNotIn(collectPostMedia(prevMeta), collectPostMedia(params.meta))
+      await deleteStoredMediaMany(removed)
     }
 
     return this.getById(id)
   },
 
   async remove(id: number): Promise<boolean> {
-    const existing = await prisma!.post.findFirst({ where: { id, postType: 'post' }, select: { id: true } })
+    const existing = await prisma!.post.findFirst({
+      where: { id, postType: 'post' },
+      include: { postMeta: { select: { metaKey: true, metaValue: true } } },
+    })
     if (!existing) return false
+    await deleteStoredMediaMany(collectPostMedia(metaArrayToObject(existing.postMeta)))
     // delete dependents first
     await prisma!.commentMeta.deleteMany({ where: { comment: { postId: id } } })
     await prisma!.comment.deleteMany({ where: { postId: id } })

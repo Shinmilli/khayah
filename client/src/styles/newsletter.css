@@ -164,10 +164,10 @@
   cursor: pointer;
 }
 
-.yearly-nl-cards {
-  display: flex;
-  flex-direction: column;
-  gap: clamp(22px, 3vw, 32px);
+.yearly-nl-cards > .notice-archive__status {
+  border: none;
+  padding: 2.75rem 8px;
+  text-align: left;
 }
 
 .yearly-nl-card {
@@ -261,6 +261,13 @@
   min-height: 220px;
   object-fit: cover;
   display: block;
+}
+
+.yearly-nl-card__cover--pdf {
+  width: 100%;
+  height: auto;
+  min-height: 220px;
+  object-fit: cover;
 }
 
 .yearly-nl-card__cover--placeholder {

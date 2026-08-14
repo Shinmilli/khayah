@@ -93,3 +93,18 @@ export async function uploadBufferToCloudinary(options: {
     format: result.format,
   }
 }
+
+export async function destroyCloudinaryAsset(publicId: string, resourceTypeHint?: string): Promise<void> {
+  if (!publicId.trim() || !isCloudinaryConfigured()) return
+  configureCloudinary()
+  const order =
+    resourceTypeHint === 'image' ? (['image', 'raw'] as const) : (['raw', 'image'] as const)
+  for (const resource_type of order) {
+    try {
+      const r = await cloudinary.uploader.destroy(publicId, { resource_type, invalidate: true })
+      if (r?.result === 'ok' || r?.result === 'not found') return
+    } catch {
+      // try next resource type
+    }
+  }
+}

@@ -4,6 +4,8 @@ import { PageHero } from '../components/PageHero'
 import { normalizePathKey } from '../constants/pagesContent'
 import { fetchPostsByKind } from '../services/api'
 import type { Post } from '../types/post'
+import { PdfFirstPagePreview } from '../components/PdfFirstPagePreview'
+import { coverIsBlank } from '../utils/pdfAttachments'
 import {
   newsletterListingYear,
   newsletterYearLabel,
@@ -66,7 +68,7 @@ function newsletterIsPdfMode(post: Post): boolean {
 
 /** 호수 표시용 (숫자만 있으면 ○○호) */
 function newsletterIssueLabel(raw: string | undefined): string {
-  const t = (raw ?? '').trim()
+  const t = (raw ?? '').replace(/\([^)]*\)/g, '').trim()
   if (!t) return ''
   if (t.includes('호')) return t
   const digits = t.replace(/\D/g, '')
@@ -131,27 +133,27 @@ export function NewsArchivePage() {
     return [...posts].sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
   }, [posts, kind])
 
-  const [filterYear, setFilterYear] = useState<number>(() => new Date().getFullYear())
+  const [filterYear, setFilterYear] = useState<number | null>(null)
   const [filterIssue, setFilterIssue] = useState<string>('all')
 
+  const newsletterYears = useMemo(() => {
+    const ys = new Set<number>()
+    for (const p of newsletterSorted) ys.add(newsletterArchiveYear(p))
+    return Array.from(ys).sort((a, b) => b - a)
+  }, [newsletterSorted])
+
   useEffect(() => {
-    if (kind === '연간소식지') {
-      setFilterYear(new Date().getFullYear())
-      setFilterIssue('all')
+    if (kind !== '연간소식지') return
+    if (newsletterYears.length === 0) {
+      setFilterYear(null)
+      return
     }
-  }, [kind])
+    setFilterYear((prev) => (prev != null && newsletterYears.includes(prev) ? prev : newsletterYears[0]))
+  }, [kind, newsletterYears])
 
   useEffect(() => {
     setFilterIssue('all')
   }, [filterYear])
-
-  const newsletterYears = useMemo(() => {
-    const cy = new Date().getFullYear()
-    const ys = new Set<number>()
-    for (const p of newsletterSorted) ys.add(newsletterArchiveYear(p))
-    ys.add(cy)
-    return Array.from(ys).sort((a, b) => b - a)
-  }, [newsletterSorted])
 
   const newsletterIssueValues = useMemo(() => {
     const pool = newsletterSorted.filter((p) => newsletterArchiveYear(p) === filterYear)
@@ -204,7 +206,10 @@ export function NewsArchivePage() {
               </p>
             )}
 
-            {!loading && !error && (isNewsletter ? newsletterSorted : sortedPosts).length === 0 && (
+            {!loading && !error && isNewsletter && newsletterSorted.length === 0 && (
+              <p className="notice-archive__status">등록된 소식지가 없습니다.</p>
+            )}
+            {!loading && !error && !isNewsletter && sortedPosts.length === 0 && (
               <p className="notice-archive__status">등록된 글이 없습니다.</p>
             )}
 
@@ -289,6 +294,8 @@ export function NewsArchivePage() {
                           <div className="yearly-nl-card__cover-wrap">
                             {cover ? (
                               <img className="yearly-nl-card__cover" src={cover} alt="" loading="lazy" />
+                            ) : !coverIsBlank(post.meta) && pdf ? (
+                              <PdfFirstPagePreview url={pdf} className="yearly-nl-card__cover yearly-nl-card__cover--pdf" />
                             ) : (
                               <div className="yearly-nl-card__cover yearly-nl-card__cover--placeholder" aria-hidden />
                             )}

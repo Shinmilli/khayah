@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { fetchPostsByKind } from '../services/api'
 import type { Post } from '../types/post'
+import { parsePdfAttachments } from '../utils/pdfAttachments'
 
 function formatDotDate(iso: string): string {
   const d = new Date(iso)
@@ -67,6 +68,8 @@ export function PostDetail({ post }: { post: Post }) {
     }
   }, [kind, post.id])
 
+  const attachments = useMemo(() => parsePdfAttachments(post.meta), [post.meta])
+
   const { newer, older } = useMemo(() => {
     const ordered = [...siblings].sort(
       (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime(),
@@ -93,6 +96,18 @@ export function PostDetail({ post }: { post: Post }) {
         dangerouslySetInnerHTML={{ __html: post.content || post.excerpt || '' }}
       />
 
+      {attachments.length > 0 ? (
+        <ul className="post-board__files" aria-label="첨부 문서">
+          {attachments.map((f) => (
+            <li key={f.url}>
+              <a href={f.url} target="_blank" rel="noopener noreferrer">
+                {f.name}
+              </a>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+
       <div className="post-board__toolbar">
         <Link className="post-board__list-btn" to={listTo}>
           목록
@@ -100,38 +115,56 @@ export function PostDetail({ post }: { post: Post }) {
       </div>
 
       <nav className="post-board__nav" aria-label="이전글 다음글">
-        <div className="post-board__nav-row">
-          <span className="post-board__nav-label">
-            <span className="post-board__chevron post-board__chevron--up" aria-hidden />
-            다음글
-          </span>
-          {newer ? (
-            <Link className="post-board__nav-link" to={`/posts/${encodeURIComponent(newer.slug)}`}>
+        {newer ? (
+          <Link
+            className="post-board__nav-row post-board__nav-row--link"
+            to={`/posts/${encodeURIComponent(newer.slug)}`}
+          >
+            <span className="post-board__nav-label">
+              <span className="post-board__chevron post-board__chevron--up" aria-hidden />
+              다음글
+            </span>
+            <span className="post-board__nav-main">
               <span className="post-board__nav-title">{newer.title}</span>
               <time className="post-board__nav-date" dateTime={newer.publishedAt}>
                 {formatDotDate(newer.publishedAt)}
               </time>
-            </Link>
-          ) : (
+            </span>
+          </Link>
+        ) : (
+          <div className="post-board__nav-row">
+            <span className="post-board__nav-label">
+              <span className="post-board__chevron post-board__chevron--up" aria-hidden />
+              다음글
+            </span>
             <span className="post-board__nav-empty">다음글이 존재하지 않습니다.</span>
-          )}
-        </div>
-        <div className="post-board__nav-row">
-          <span className="post-board__nav-label">
-            <span className="post-board__chevron post-board__chevron--down" aria-hidden />
-            이전글
-          </span>
-          {older ? (
-            <Link className="post-board__nav-link" to={`/posts/${encodeURIComponent(older.slug)}`}>
+          </div>
+        )}
+        {older ? (
+          <Link
+            className="post-board__nav-row post-board__nav-row--link"
+            to={`/posts/${encodeURIComponent(older.slug)}`}
+          >
+            <span className="post-board__nav-label">
+              <span className="post-board__chevron post-board__chevron--down" aria-hidden />
+              이전글
+            </span>
+            <span className="post-board__nav-main">
               <span className="post-board__nav-title">{older.title}</span>
               <time className="post-board__nav-date" dateTime={older.publishedAt}>
                 {formatDotDate(older.publishedAt)}
               </time>
-            </Link>
-          ) : (
+            </span>
+          </Link>
+        ) : (
+          <div className="post-board__nav-row">
+            <span className="post-board__nav-label">
+              <span className="post-board__chevron post-board__chevron--down" aria-hidden />
+              이전글
+            </span>
             <span className="post-board__nav-empty">이전글이 존재하지 않습니다.</span>
-          )}
-        </div>
+          </div>
+        )}
       </nav>
     </article>
   )
