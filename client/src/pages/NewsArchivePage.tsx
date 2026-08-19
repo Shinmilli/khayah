@@ -6,7 +6,7 @@ import { fetchPostsByKind } from '../services/api'
 import type { Post } from '../types/post'
 import { PdfFirstPagePreview } from '../components/PdfFirstPagePreview'
 import { Pagination } from '../components/Pagination'
-import { coverIsBlank } from '../utils/pdfAttachments'
+import { coverIsBlank, pdfOpenHref } from '../utils/pdfAttachments'
 import { paginate } from '../utils/paginate'
 import {
   newsletterListingYear,
@@ -283,6 +283,13 @@ export function NewsArchivePage() {
                         (!yearLabel || norm(excerpt) !== norm(yearLabel))
                       const detailPath = `/posts/${encodeURIComponent(post.slug)}`
                       const ctaPdf = isPdf && pdf
+                      const pdfFileName = (() => {
+                        const original = post.meta?.khayah_pdf_name?.trim()
+                        if (original) return original.toLowerCase().endsWith('.pdf') ? original : `${original}.pdf`
+                        const title = post.title.trim() || '소식지'
+                        return title.toLowerCase().endsWith('.pdf') ? title : `${title}.pdf`
+                      })()
+                      const pdfHref = pdfOpenHref(pdf, pdfFileName)
                       return (
                         <article key={post.id} className="yearly-nl-card">
                           <div className="yearly-nl-card__text">
@@ -293,7 +300,7 @@ export function NewsArchivePage() {
                             {ctaPdf ? (
                               <a
                                 className="yearly-nl-cta"
-                                href={pdf}
+                                href={pdfHref}
                                 target="_blank"
                                 rel="noopener noreferrer"
                               >

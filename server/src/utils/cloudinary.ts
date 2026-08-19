@@ -55,17 +55,19 @@ export async function uploadBufferToCloudinary(options: {
 
   const folder = `${folderPrefix()}/${options.kind === 'document' ? 'documents' : 'images'}`
   const resourceType = options.kind === 'document' ? 'raw' : 'image'
+  const rawId = `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`
+  const publicId = options.kind === 'document' ? `${rawId}.pdf` : undefined
 
   const result = await new Promise<UploadApiLike>((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
       {
         folder,
         resource_type: resourceType,
+        ...(publicId ? { public_id: publicId } : {}),
         // 한글/특수문자 파일명은 public_id로 쓰지 않음 (Cloudinary 오류 방지)
         use_filename: false,
-        unique_filename: true,
+        unique_filename: !publicId,
         overwrite: false,
-        // PDF raw도 공개 URL로 바로 열리게
         type: 'upload',
         access_mode: 'public',
       },

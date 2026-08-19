@@ -14,7 +14,7 @@ import {
 import type { AdminPost, DocumentUploadResult } from '../../../services/api'
 import { PdfFirstPagePreview } from '../../../components/PdfFirstPagePreview'
 import { Pagination } from '../../../components/Pagination'
-import { coverIsBlank, parsePdfAttachments, type PdfAttachment } from '../../../utils/pdfAttachments'
+import { coverIsBlank, parsePdfAttachments, pdfOpenHref, type PdfAttachment } from '../../../utils/pdfAttachments'
 import {
   formatNewsletterYearMeta,
   parseNewsletterYearSpec,
@@ -965,7 +965,7 @@ function PostEditorForm({
                                 aria-label={`${f.name} 선택`}
                               />
                             )}
-                            <a className="admin-pdf-list__name" href={f.url} target="_blank" rel="noreferrer">
+                            <a className="admin-pdf-list__name" href={pdfOpenHref(f.url, f.name)} target="_blank" rel="noreferrer">
                               {f.name}
                             </a>
                           </li>

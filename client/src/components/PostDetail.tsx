@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { fetchPostsByKind } from '../services/api'
 import type { Post } from '../types/post'
-import { parsePdfAttachments, type PdfAttachment } from '../utils/pdfAttachments'
+import { parsePdfAttachments, pdfOpenHref, type PdfAttachment } from '../utils/pdfAttachments'
 
 function PaperclipIcon() {
   return (
@@ -21,7 +21,7 @@ function PostFileBar({ files }: { files: PdfAttachment[] }) {
     <ul className="post-board__files" aria-label="첨부 문서">
       {files.map((f) => (
         <li key={f.url}>
-          <a href={f.url} target="_blank" rel="noopener noreferrer">
+          <a href={pdfOpenHref(f.url, f.name)} target="_blank" rel="noopener noreferrer">
             <PaperclipIcon />
             <span>{f.name}</span>
           </a>
