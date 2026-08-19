@@ -274,14 +274,22 @@ export function NewsArchivePage() {
                         .replace(/<[^>]+>/g, ' ')
                         .replace(/\s+/g, ' ')
                         .trim()
+                      const norm = (s: string) => s.replace(/[–—]/g, '-').replace(/\s+/g, '').trim()
+                      const titleNorm = norm(post.title)
+                      const showYears = Boolean(yearLabel) && norm(yearLabel) !== titleNorm
+                      const showExcerpt =
+                        Boolean(excerpt) &&
+                        norm(excerpt) !== titleNorm &&
+                        (!yearLabel || norm(excerpt) !== norm(yearLabel))
                       const detailPath = `/posts/${encodeURIComponent(post.slug)}`
                       const ctaPdf = isPdf && pdf
                       return (
                         <article key={post.id} className="yearly-nl-card">
                           <div className="yearly-nl-card__text">
+                            <div className="yearly-nl-card__text-inner">
                             <h2 className="yearly-nl-card__title">{post.title}</h2>
-                            {yearLabel ? <p className="yearly-nl-card__years">{yearLabel}</p> : null}
-                            {excerpt ? <p className="yearly-nl-card__desc">{excerpt}</p> : null}
+                            {showYears ? <p className="yearly-nl-card__years">{yearLabel}</p> : null}
+                            {showExcerpt ? <p className="yearly-nl-card__desc">{excerpt}</p> : null}
                             {ctaPdf ? (
                               <a
                                 className="yearly-nl-cta"
@@ -302,6 +310,7 @@ export function NewsArchivePage() {
                                 </span>
                               </Link>
                             )}
+                            </div>
                           </div>
                           <div className="yearly-nl-card__cover-wrap">
                             {cover ? (

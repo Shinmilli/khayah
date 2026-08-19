@@ -456,11 +456,15 @@ body.has-overlay-header .home-page {
   scroll-snap-align: start;
 }
 
+.story-section {
+  --story-card-h: 340px;
+}
+
 .story-card {
   position: relative;
   display: block;
   width: 100%;
-  height: 340px;
+  height: var(--story-card-h);
   border-radius: 18px;
   overflow: hidden;
   text-decoration: none;
@@ -646,7 +650,7 @@ body.has-overlay-header .home-page {
 .story-card-wrap {
   position: relative;
   width: 100%;
-  height: 340px;
+  height: var(--story-card-h);
   border-radius: 18px;
   overflow: hidden;
   box-shadow: 0 16px 46px rgba(0, 0, 0, 0.18);
@@ -1905,9 +1909,37 @@ body.has-overlay-header .home-page {
     width: min(320px, 86vw);
   }
 
+  .story-section {
+    --story-card-h: 240px;
+  }
+
   .story-card {
-    height: 240px;
     border-radius: 14px;
+  }
+
+  .story-card-wrap {
+    border-radius: 14px;
+  }
+
+  .story-card__overlay {
+    height: 82%;
+    bottom: -12%;
+    left: -10%;
+    right: -14%;
+    transform: rotate(-5deg);
+  }
+
+  .story-card:hover .story-card__overlay,
+  .story-card-wrap--cta:hover .story-card__overlay,
+  .story-card-wrap--cta:focus-within .story-card__overlay {
+    height: 78%;
+    bottom: -8%;
+  }
+
+  .story-more__btn {
+    padding: 12px 22px;
+    min-height: 44px;
+    font-size: 0.95rem;
   }
 
   .story-progress__fill {
