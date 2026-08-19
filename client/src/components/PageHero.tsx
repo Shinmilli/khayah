@@ -82,10 +82,6 @@ function buildCrumbs(pathname: string): Array<{ label: string; to: string }> {
       '후원-안내': '후원 안내',
       '후원자-가이드': '후원 안내',
       '후원신청': '후원신청',
-      '정기후원': '정기후원',
-      '일시후원': '일시후원',
-      '물품후원': '물품후원',
-      '자원봉사': '자원봉사',
     }
     const crumbs: Array<{ label: string; to: string }> = [{ label: '후원', to: supportHub }]
     if (parts[1]) {
@@ -123,7 +119,6 @@ function buildCrumbs(pathname: string): Array<{ label: string; to: string }> {
       '카야-스토리': '인사말',
       '카야-연혁': '연혁',
       '위치안내': '오시는 길',
-      '핵심사업': '핵심사업',
     }
     const crumbs: Array<{ label: string; to: string }> = [{ label: '카야', to: khayahHub }]
     for (let i = 1; i < parts.length; i++) {

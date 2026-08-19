@@ -18,8 +18,6 @@ function tabTitle(id: KhayahAboutTabId): string {
       return '카야 소개'
     case 'ci':
       return 'CI'
-    case 'programs':
-      return '핵심사업'
     case 'org':
       return '조직도 · 이사회 · 전문위원'
     default:
@@ -49,6 +47,10 @@ export function KhayahAboutHubPage() {
       navigate({ pathname: '/카야/카야소개', search: '?tab=ci', hash: '' }, { replace: true })
       return
     }
+    if (new URLSearchParams(location.search).get('tab') === 'programs') {
+      navigate({ pathname: '/카야/카야소개' }, { replace: true })
+      return
+    }
     if ((h === 'directors' || h === 'experts' || h === 'org-chart') && activeTab !== 'org') {
       navigate({ pathname: '/카야/카야소개', search: '?tab=org', hash: `#${h}` }, { replace: true })
       return
@@ -68,7 +70,6 @@ export function KhayahAboutHubPage() {
   }
 
   const introHtml = PAGES_STATIC['카야/카야소개']?.content ?? ''
-  const programsHtml = PAGES_STATIC['카야/핵심사업']?.content ?? ''
   const orgBoardMergedHtml = PAGES_STATIC['카야/조직도']?.content ?? ''
 
   return (
@@ -111,12 +112,6 @@ export function KhayahAboutHubPage() {
           )}
           {activeTab === 'ci' && (
             <div className="the_content_wrapper page-body khayah-about-hub__html" dangerouslySetInnerHTML={{ __html: KHAYAH_CI_PAGE_HTML }} />
-          )}
-          {activeTab === 'programs' && (
-            <div
-              className="the_content_wrapper page-body khayah-about-hub__html"
-              dangerouslySetInnerHTML={{ __html: programsHtml }}
-            />
           )}
           {activeTab === 'org' && (
             <div

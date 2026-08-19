@@ -97,6 +97,13 @@ const icons = {
       <path d="M21 15l-5-5L5 21" />
     </Ico>
   ),
+  textColor: (
+    <Ico>
+      <path d="M8 17L12 5l4 12" />
+      <line x1="9.2" y1="13" x2="14.8" y2="13" />
+      <line x1="4" y1="20" x2="20" y2="20" />
+    </Ico>
+  ),
   highlight: (
     <Ico>
       <path d="M4 20h16" />
@@ -178,6 +185,11 @@ export const AdminRichTextEditor = forwardRef<AdminRichTextEditorHandle, { initi
       focusAndExec(editorRef.current, 'backColor', hex)
     }, [])
 
+    const applyTextColor = useCallback((hex: string) => {
+      focusAndExec(editorRef.current, 'styleWithCSS', 'true')
+      focusAndExec(editorRef.current, 'foreColor', hex)
+    }, [])
+
     const highlightColors = [
       { hex: 'transparent', label: '해제' },
       { hex: '#FFF59D', label: '노랑' },
@@ -186,6 +198,14 @@ export const AdminRichTextEditor = forwardRef<AdminRichTextEditorHandle, { initi
       { hex: '#B3E5FC', label: '하늘' },
       { hex: '#D1C4E9', label: '보라' },
       { hex: '#F8BBD0', label: '핑크' },
+    ] as const
+
+    const textColors = [
+      { hex: '#111111', label: '검정' },
+      { hex: '#b20838', label: '카야 레드' },
+      { hex: '#1d4ed8', label: '파랑' },
+      { hex: '#15803d', label: '초록' },
+      { hex: '#6b7280', label: '회색' },
     ] as const
 
     const groups: ToolbarBtn[][] = [
@@ -283,6 +303,37 @@ export const AdminRichTextEditor = forwardRef<AdminRichTextEditorHandle, { initi
           </div>
         ))}
         <div className="admin-rich__toolbar-group" role="presentation">
+          <span className="admin-rich__hl" aria-label="글자색">
+            <span className="admin-rich__hl-ico" aria-hidden>
+              {icons.textColor}
+            </span>
+            <div className="admin-rich__hl-swatches" role="group" aria-label="글자색">
+              {textColors.map((c) => (
+                <button
+                  key={c.hex}
+                  type="button"
+                  className="admin-rich__hl-swatch"
+                  title={`글자색: ${c.label}`}
+                  aria-label={`글자색: ${c.label}`}
+                  style={{ backgroundColor: c.hex }}
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => applyTextColor(c.hex)}
+                />
+              ))}
+              <label className="admin-rich__color-pick" title="글자색 직접 선택">
+                <span className="sr-only">글자색 직접 선택</span>
+                <input
+                  type="color"
+                  defaultValue="#111111"
+                  aria-label="글자색 직접 선택"
+                  onMouseDown={(e) => e.preventDefault()}
+                  onChange={(e) => applyTextColor(e.currentTarget.value)}
+                />
+              </label>
+            </div>
+          </span>
+        </div>
+        <div className="admin-rich__toolbar-group" role="presentation">
           <span className="admin-rich__hl" aria-label="형광펜">
             <span className="admin-rich__hl-ico" aria-hidden>
               {icons.highlight}
@@ -305,7 +356,7 @@ export const AdminRichTextEditor = forwardRef<AdminRichTextEditorHandle, { initi
         </div>
       </div>
       <p className="admin-rich__hint">
-        아이콘에 마우스를 올리면 기능 설명이 나옵니다. Enter로 줄 바꿈 · 정렬은 단락·블록에 적용됩니다.
+        아이콘에 마우스를 올리면 기능 설명이 나옵니다. 글자를 선택한 뒤 글자색·형광펜을 적용합니다.
       </p>
       <div
         ref={editorRef}

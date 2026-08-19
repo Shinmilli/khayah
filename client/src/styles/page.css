@@ -1343,6 +1343,10 @@
   min-height: 8rem;
 }
 
+.page-content-wrapper .page-body.post-board__body {
+  color: #111;
+}
+
 .post-board__files {
   list-style: none;
   margin: 0 0 24px;

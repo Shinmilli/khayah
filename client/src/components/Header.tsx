@@ -41,7 +41,6 @@ const NAV_COLUMNS: NavColumn[] = [
       [
         { label: '카야 소개', to: '/카야/카야소개' },
         { label: 'CI', to: '/카야/카야소개?tab=ci' },
-        { label: '핵심사업', to: '/카야/핵심사업' },
         { label: '조직도 · 이사회 · 전문위원', to: '/카야/카야소개?tab=org' },
       ],
     ],
@@ -68,10 +67,6 @@ const NAV_COLUMNS: NavColumn[] = [
     label: '후원',
     links: [
       { label: '후원 안내', to: '/후원/후원-안내' },
-      { label: '정기후원', to: '/후원/정기후원' },
-      { label: '일시후원', to: '/후원/일시후원' },
-      { label: '물품후원', to: '/후원/물품후원' },
-      { label: '자원봉사', to: '/후원/자원봉사' },
     ],
   },
   {

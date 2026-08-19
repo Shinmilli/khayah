@@ -2,7 +2,6 @@ import { KHAYAH_ORG_BOARD_MERGED_HTML } from './khayahOrgBoardHtml'
 import { KHAYAH_LOCATION_PAGE_HTML } from './khayahLocationPageHtml'
 import { KHAYAH_HISTORY_PAGE_HTML } from './khayahHistoryHtml'
 import { DONOR_GUIDE_PAGE_HTML } from './donorGuidePageHtml'
-import { NANUM_DONATE_URL } from './nanumDonate'
 
 /**
  * 워드프레스 페이지별 정적 콘텐츠 (DB 마이그레이션 전 fallback)
@@ -216,10 +215,6 @@ export const PAGES_STATIC: Record<string, StaticPage> = {
   '카야/이사회-전문위원': {
     title: '이사회 / 전문위원',
     content: KHAYAH_ORG_BOARD_MERGED_HTML,
-  },
-  '카야/핵심사업': {
-    title: '핵심사업',
-    content: '<p>카야의 핵심 사업을 소개합니다. <a href="/사업/진행사업">진행사업</a>에서 상세 내용을 확인하실 수 있습니다.</p>',
   },
   '해외사업': {
     title: '해외사업',
@@ -830,22 +825,6 @@ export const PAGES_STATIC: Record<string, StaticPage> = {
   '후원/후원신청': {
     title: '후원신청',
     content: '<p>후원 신청 및 정기후원 안내 페이지입니다. 문의: khayahkorea@gmail.com / 031 689 3639</p>',
-  },
-  '후원/정기후원': {
-    title: '정기후원',
-    content: `<p>정기 후원 참여 방법을 안내합니다. <a href="${NANUM_DONATE_URL}" target="_blank" rel="noopener noreferrer">후원 신청</a> · 문의: 031 689 3639</p>`,
-  },
-  '후원/일시후원': {
-    title: '일시후원',
-    content: '<p>일시 후원 및 계좌 안내입니다. <a href="/후원/후원-안내">후원 안내</a>를 함께 확인해 주세요.</p>',
-  },
-  '후원/물품후원': {
-    title: '물품후원',
-    content: '<p>물품 후원 절차 및 문의 안내입니다.</p>',
-  },
-  '후원/자원봉사': {
-    title: '자원봉사',
-    content: '<p>자원봉사 참여 및 신청 안내입니다.</p>',
   },
   '소식': {
     title: '소식',

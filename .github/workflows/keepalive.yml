@@ -1,6 +1,7 @@
 # Render Free sleep(~15분) + Supabase Free pause(~7일) 방지
-# API 배포 URL을 GitHub Secrets KEEP_ALIVE_URL 에 넣으세요.
-# 예: https://khayah-api-xxxx.onrender.com/health/db
+# GitHub Secrets KEEP_ALIVE_URL 예: https://khayah-s8iw.onrender.com/health/db
+#
+# Render 슬립 해제는 60초를 넘는 경우가 많아, 타임아웃·재시도가 필요합니다.
 
 name: Keepalive
 
@@ -13,6 +14,7 @@ on:
 jobs:
   ping:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - name: Ping API (Render + Supabase)
         env:
@@ -22,6 +24,22 @@ jobs:
             echo "KEEP_ALIVE_URL secret is not set. Skip."
             exit 0
           fi
-          curl -fsS --max-time 60 "$KEEP_ALIVE_URL"
-          echo
-          echo "OK $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+
+          # 슬립 중인 인스턴스는 첫 요청이 70~90초 걸릴 수 있음
+          attempt=1
+          max_attempts=3
+          while [ "$attempt" -le "$max_attempts" ]; do
+            echo "Attempt ${attempt}/${max_attempts}: $KEEP_ALIVE_URL"
+            if curl -fsS --retry 2 --retry-all-errors --retry-delay 8 --max-time 120 "$KEEP_ALIVE_URL"; then
+              echo
+              echo "OK $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+              exit 0
+            fi
+            echo
+            echo "Attempt ${attempt} failed; waiting before retry…"
+            attempt=$((attempt + 1))
+            sleep 10
+          done
+
+          echo "Keepalive failed after ${max_attempts} attempts"
+          exit 1

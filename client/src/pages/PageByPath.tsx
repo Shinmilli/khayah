@@ -61,6 +61,15 @@ export function PageByPath() {
     const sub = !tail || tail === '후원자-가이드' ? '후원-안내' : tail
     return <Navigate to={`/후원/${sub}`} replace />
   }
+  if (pathKey === '카야/핵심사업') return <Navigate to="/카야/카야소개" replace />
+  if (
+    pathKey === '후원/정기후원' ||
+    pathKey === '후원/일시후원' ||
+    pathKey === '후원/물품후원' ||
+    pathKey === '후원/자원봉사'
+  ) {
+    return <Navigate to="/후원/후원-안내" replace />
+  }
   if (pathKey === '카야와-함께/카야소식') return <Navigate to="/소식/활동소식" replace />
   if (pathKey === '카야와-함께/공지사항') return <Navigate to="/소식/공지사항" replace />
 
