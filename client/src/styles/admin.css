@@ -405,6 +405,23 @@ body.admin-route {
   margin-bottom: 0;
 }
 
+.admin-list-foot {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid #eef0f3;
+}
+
+.admin-list-foot__count {
+  margin: 0 0 4px;
+  text-align: center;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.admin-list-foot .pager {
+  margin: 8px 0 0;
+}
+
 .admin-segmented {
   display: flex;
   flex-wrap: wrap;

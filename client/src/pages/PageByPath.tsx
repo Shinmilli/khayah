@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, Navigate, useLocation } from 'react-router-dom'
 import { fetchPageBySlug, fetchPostBySlug } from '../services/api'
-import { PostDetail, heroTitleForKind } from '../components/PostDetail'
+import { PostDetail, crumbsForPost, heroTitleForKind } from '../components/PostDetail'
 import { PAGES_STATIC, normalizePathKey, pathToSlug } from '../constants/pagesContent'
 import type { Page } from '../types/page'
 import type { Post } from '../types/post'
@@ -164,7 +164,7 @@ export function PageByPath() {
     const kind = post.meta?.khayah_kind ?? ''
     return (
       <div className="page-content-wrapper">
-        <PageHero title={heroTitleForKind(kind)} />
+        <PageHero title={heroTitleForKind(kind)} crumbs={crumbsForPost(post)} />
         <div className="section">
           <div className="section_wrapper clearfix">
             <div className="column one">

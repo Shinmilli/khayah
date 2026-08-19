@@ -13,14 +13,18 @@ import {
 } from '../../../services/api'
 import type { AdminPost, DocumentUploadResult } from '../../../services/api'
 import { PdfFirstPagePreview } from '../../../components/PdfFirstPagePreview'
+import { Pagination } from '../../../components/Pagination'
 import { coverIsBlank, parsePdfAttachments, type PdfAttachment } from '../../../utils/pdfAttachments'
 import {
   formatNewsletterYearMeta,
   parseNewsletterYearSpec,
 } from '../../../utils/newsletterYear'
+import { paginate } from '../../../utils/paginate'
 
 const contentTypes = ['스토리', '공지사항', '활동소식', '연간소식지', '언론보도', '진행사업'] as const
 type ContentType = (typeof contentTypes)[number]
+
+const ADMIN_POSTS_PER_PAGE = 10
 
 type YearlyNewsletterMode = '글쓰기' | 'PDF소식지'
 
@@ -1021,20 +1025,37 @@ export function AdminPostsPage() {
   const [editorMode, setEditorMode] = useState<'new' | 'edit'>('new')
   const [editingId, setEditingId] = useState<number | null>(null)
   const [rows, setRows] = useState<AdminPost[]>([])
+  const [listPage, setListPage] = useState(1)
+  const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(false)
 
-  const sortedRows = useMemo(() => {
-    if (filterType !== '언론보도') return rows
-    return [...rows].sort((a, b) => adminPressMetaDate(b).localeCompare(adminPressMetaDate(a)))
-  }, [rows, filterType])
+  const isPressList = filterType === '언론보도'
 
-  const load = async () => {
+  const sortedRows = useMemo(() => {
+    if (!isPressList) return rows
+    return [...rows].sort((a, b) => adminPressMetaDate(b).localeCompare(adminPressMetaDate(a)))
+  }, [rows, isPressList])
+
+  const pagedPress = paginate(sortedRows, listPage, ADMIN_POSTS_PER_PAGE)
+  const listItems = isPressList ? pagedPress.items : rows
+  const totalCount = isPressList ? sortedRows.length : total
+  const totalPages = Math.max(1, Math.ceil(totalCount / ADMIN_POSTS_PER_PAGE) || 1)
+  const currentPage = Math.min(Math.max(1, listPage), totalPages)
+
+  const load = async (page: number) => {
     setLoading(true)
     setError(false)
     try {
-      const res = await adminFetchPostsByKind(filterType, 1, 100)
-      setRows(res.posts)
+      if (filterType === '언론보도') {
+        const res = await adminFetchPostsByKind(filterType, 1, 100)
+        setRows(res.posts)
+        setTotal(res.total)
+      } else {
+        const res = await adminFetchPostsByKind(filterType, page, ADMIN_POSTS_PER_PAGE)
+        setRows(res.posts)
+        setTotal(res.total)
+      }
     } catch {
       setError(true)
     } finally {
@@ -1043,9 +1064,13 @@ export function AdminPostsPage() {
   }
 
   useEffect(() => {
-    load()
+    void load(listPage)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filterType])
+  }, [filterType, listPage])
+
+  useEffect(() => {
+    if (listPage > totalPages) setListPage(totalPages)
+  }, [listPage, totalPages])
 
   const closeEditor = () => {
     setView('list')
@@ -1068,7 +1093,7 @@ export function AdminPostsPage() {
     if (!window.confirm('정말 삭제하시겠습니까?')) return
     try {
       await adminDeletePost(id)
-      await load()
+      await load(currentPage)
     } catch {
       window.alert('삭제에 실패했습니다.')
     }
@@ -1097,7 +1122,7 @@ export function AdminPostsPage() {
         initialContentHtml={initialContentHtml}
         initialPublishedAt={row?.publishedAt ?? ''}
         onClose={closeEditor}
-        onSaved={load}
+        onSaved={() => void load(currentPage)}
       />
     )
   }
@@ -1120,7 +1145,10 @@ export function AdminPostsPage() {
       <PostTypeSegmentedSection
         headingId="posts-filter-heading"
         value={filterType}
-        onChange={setFilterType}
+        onChange={(t) => {
+          setFilterType(t)
+          setListPage(1)
+        }}
         footer={
           <>선택한 유형의 글만 아래 목록에 표시됩니다. 새 글 작성 화면에서도 동일한 UI로 유형을 고릅니다.</>
         }
@@ -1139,7 +1167,7 @@ export function AdminPostsPage() {
             ) : sortedRows.length === 0 ? (
               <li className="admin-table__empty">등록된 공지가 없습니다.</li>
             ) : (
-              sortedRows.map((row) => (
+              listItems.map((row) => (
                 <li key={row.id} className="admin-notice-item">
                   <div className="admin-notice-item__title">{row.title}</div>
                   <div className="admin-notice-item__date">{new Date(row.publishedAt).toISOString().slice(0, 10)}</div>
@@ -1172,7 +1200,7 @@ export function AdminPostsPage() {
             ) : sortedRows.length === 0 ? (
               <li className="admin-table__empty">등록된 언론보도가 없습니다.</li>
             ) : (
-              sortedRows.map((row) => {
+              listItems.map((row) => {
                 const pub = row.meta?.khayah_press_publisher?.trim() ?? ''
                 const ptitle = row.meta?.khayah_press_title?.trim() ?? row.title
                 const purl = row.meta?.khayah_press_url?.trim() ?? ''
@@ -1253,7 +1281,7 @@ export function AdminPostsPage() {
                     </td>
                   </tr>
                 ) : (
-                  sortedRows.map((row) => (
+                  listItems.map((row) => (
                     <tr key={row.id}>
                       <td>{filterType}</td>
                       <td>{row.title}</td>
@@ -1289,6 +1317,19 @@ export function AdminPostsPage() {
             </table>
           </div>
         )}
+        {!loading && !error && totalCount > 0 ? (
+          <div className="admin-list-foot">
+            <p className="admin-list-foot__count">
+              총 {totalCount}건 · {currentPage}/{totalPages}페이지
+            </p>
+            <Pagination
+              page={currentPage}
+              totalPages={totalPages}
+              onChange={setListPage}
+              label="게시글 목록 페이지"
+            />
+          </div>
+        ) : null}
       </section>
     </div>
   )

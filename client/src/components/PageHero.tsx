@@ -8,6 +8,8 @@ interface PageHeroProps {
   showBreadcrumbs?: boolean
   /** 하단 스크롤 유도 라인 애니메이션 */
   showScrollHint?: boolean
+  /** 경로 대신 직접 지정 (게시글 상세 등) */
+  crumbs?: Array<{ label: string; to: string }>
 }
 
 function safeDecode(segment: string): string {
@@ -164,13 +166,6 @@ function buildCrumbs(pathname: string): Array<{ label: string; to: string }> {
     return crumbs
   }
 
-  // 게시글 상세(/posts/:slug)는 slug가 의미 없는 경우가 많아 제목 대신 "상세"로 표시
-  if (parts[0] === 'posts') {
-    const base = [{ label: 'posts', to: '/posts' }]
-    if (parts.length > 1) base.push({ label: '상세', to: pathname })
-    return base
-  }
-
   const crumbs: Array<{ label: string; to: string }> = []
   let acc = ''
   for (const label of parts) {
@@ -185,9 +180,11 @@ export function PageHero({
   backgroundImageUrl = null,
   showBreadcrumbs = true,
   showScrollHint = true,
+  crumbs: crumbsProp,
 }: PageHeroProps) {
   const location = useLocation()
-  const crumbs = buildCrumbs(location.pathname)
+  const crumbs =
+    crumbsProp && crumbsProp.length > 0 ? crumbsProp : buildCrumbs(location.pathname)
 
   return (
     <>
@@ -220,7 +217,7 @@ export function PageHero({
               </svg>
             </Link>
             {crumbs.map((c, idx) => (
-              <span key={c.to} className="page-crumbs__item">
+              <span key={`${c.to}-${idx}`} className="page-crumbs__item">
                 <span className="page-crumbs__sep" aria-hidden="true">
                   ›
                 </span>

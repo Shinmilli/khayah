@@ -5,7 +5,9 @@ import { normalizePathKey } from '../constants/pagesContent'
 import { fetchPostsByKind } from '../services/api'
 import type { Post } from '../types/post'
 import { PdfFirstPagePreview } from '../components/PdfFirstPagePreview'
+import { Pagination } from '../components/Pagination'
 import { coverIsBlank } from '../utils/pdfAttachments'
+import { paginate } from '../utils/paginate'
 import {
   newsletterListingYear,
   newsletterYearLabel,
@@ -170,6 +172,10 @@ export function NewsArchivePage() {
     })
   }, [newsletterSorted, filterYear])
 
+  const isPress = kind === '언론보도'
+  const isNewsletter = kind === '연간소식지'
+  const isActivity = kind === '활동소식'
+
   const newsletterVisible = useMemo(() => {
     return newsletterSorted.filter((p) => {
       if (newsletterArchiveYear(p) !== filterYear) return false
@@ -178,16 +184,22 @@ export function NewsArchivePage() {
     })
   }, [newsletterSorted, filterYear, filterIssue])
 
+  const perPage = isNewsletter ? 4 : isActivity ? 8 : isPress ? 8 : 10
+  const archiveAll = isNewsletter ? newsletterVisible : sortedPosts
+  const [listPage, setListPage] = useState(1)
+
+  useEffect(() => {
+    setListPage(1)
+  }, [kind, filterYear, filterIssue])
+
+  const paged = paginate(archiveAll, listPage, perPage)
+
   useEffect(() => {
     document.title = `${title} | 사단법인 카야 인터내셔널`
     return () => {
       document.title = '사단법인 카야 인터내셔널 | 개발NGO'
     }
   }, [title])
-
-  const isPress = kind === '언론보도'
-  const isNewsletter = kind === '연간소식지'
-  const isActivity = kind === '활동소식'
 
   return (
     <div
@@ -248,10 +260,10 @@ export function NewsArchivePage() {
                 </div>
 
                 <div className="yearly-nl-cards" aria-label="연간소식지 목록">
-                  {newsletterVisible.length === 0 ? (
+                  {paged.items.length === 0 ? (
                     <p className="notice-archive__status">선택한 조건에 해당하는 소식지가 없습니다.</p>
                   ) : (
-                    newsletterVisible.map((post) => {
+                    paged.items.map((post) => {
                       const pdf = newsletterPdfUrl(post)
                       const isPdf = newsletterIsPdfMode(post)
                       const cover = coverMetaUrl(post)
@@ -308,12 +320,24 @@ export function NewsArchivePage() {
                     })
                   )}
                 </div>
+                <Pagination
+                  page={paged.page}
+                  totalPages={paged.totalPages}
+                  onChange={setListPage}
+                  label="연간소식지 페이지"
+                />
               </div>
             )}
 
             {!loading && !error && isPress && sortedPosts.length > 0 && (
+              <div className="archive-board">
+              <div className="archive-board__head" aria-hidden="true">
+                <span>제목</span>
+                <span>등록일</span>
+                <span className="archive-board__head-action">바로보기</span>
+              </div>
               <ul className="press-archive__list" aria-label={`${title} 목록`}>
-                {sortedPosts.map((post) => {
+                {paged.items.map((post) => {
                   const url = pressArticleUrl(post)
                   const ymd = pressDisplayYmd(post)
                   const pub = pressPublisher(post)
@@ -332,10 +356,10 @@ export function NewsArchivePage() {
                           {pub ? ' ' : null}
                           <span className="press-archive__article-title">{articleTitle}</span>
                         </p>
-                        <time className="press-archive__ymd" dateTime={ymd}>
-                          {ymd}
-                        </time>
                       </div>
+                      <time className="press-archive__ymd" dateTime={ymd}>
+                        {ymd}
+                      </time>
                       {url ? (
                         <a
                           className="press-archive__btn"
@@ -352,11 +376,22 @@ export function NewsArchivePage() {
                   )
                 })}
               </ul>
+              </div>
             )}
 
+            {!loading && !error && isPress && sortedPosts.length > 0 ? (
+              <Pagination
+                page={paged.page}
+                totalPages={paged.totalPages}
+                onChange={setListPage}
+                label="언론보도 페이지"
+              />
+            ) : null}
+
             {!loading && !error && isActivity && sortedPosts.length > 0 && (
+              <>
               <ul className="activity-archive__list" aria-label={`${title} 목록`}>
-                {sortedPosts.map((post) => {
+                {paged.items.map((post) => {
                   const cover = coverMetaUrl(post)
                   return (
                     <li key={post.id} className="activity-archive__item">
@@ -387,21 +422,42 @@ export function NewsArchivePage() {
                   )
                 })}
               </ul>
+              <Pagination
+                page={paged.page}
+                totalPages={paged.totalPages}
+                onChange={setListPage}
+                label="활동소식 페이지"
+              />
+              </>
             )}
 
             {!loading && !error && !isPress && !isNewsletter && !isActivity && sortedPosts.length > 0 && (
+              <>
+              <div className="archive-board">
+              <div className="archive-board__head" aria-hidden="true">
+                <span>제목</span>
+                <span>등록일</span>
+              </div>
               <ul className="notice-archive__list" aria-label={`${title} 목록`}>
-                {sortedPosts.map((post) => (
+                {paged.items.map((post) => (
                   <li key={post.id} className="notice-archive__item">
                     <Link to={`/posts/${encodeURIComponent(post.slug)}`} className="notice-archive__link">
                       <h2 className="notice-archive__title">{post.title}</h2>
-                      <div className="notice-archive__date">
-                        <time dateTime={post.publishedAt}>{formatDate(post.publishedAt)}</time>
-                      </div>
+                      <time className="notice-archive__date" dateTime={post.publishedAt}>
+                        {formatDate(post.publishedAt)}
+                      </time>
                     </Link>
                   </li>
                 ))}
               </ul>
+              </div>
+              <Pagination
+                page={paged.page}
+                totalPages={paged.totalPages}
+                onChange={setListPage}
+                label="공지사항 페이지"
+              />
+              </>
             )}
           </div>
         </div>

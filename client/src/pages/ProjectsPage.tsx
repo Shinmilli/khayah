@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { PageHero } from '../components/PageHero'
+import { Pagination } from '../components/Pagination'
 import { fetchPostsByKindAndRegion } from '../services/api'
 import type { Post } from '../types/post'
+import { paginate } from '../utils/paginate'
 import '../styles/projects.css'
 
 const REGIONS = ['전체', '네팔', '키르기즈스탄', '미얀마', '국내'] as const
@@ -19,6 +21,7 @@ export function ProjectsPage() {
   const params = useParams()
   const region = useMemo(() => normalizeRegion(params.region), [params.region])
   const [rows, setRows] = useState<Post[]>([])
+  const [listPage, setListPage] = useState(1)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string>('')
 
@@ -26,6 +29,7 @@ export function ProjectsPage() {
     let cancelled = false
     setLoading(true)
     setError('')
+    setListPage(1)
     fetchPostsByKindAndRegion('진행사업', region === '전체' ? null : region, 1, 50)
       .then((res) => {
         if (!cancelled) setRows(res.posts)
@@ -41,6 +45,8 @@ export function ProjectsPage() {
       cancelled = true
     }
   }, [region])
+
+  const paged = paginate(rows, listPage, 6)
 
   return (
     <div className="projects-page">
@@ -66,8 +72,9 @@ export function ProjectsPage() {
         ) : rows.length === 0 ? (
           <p className="projects-state">등록된 진행사업 콘텐츠가 없습니다.</p>
         ) : (
+          <>
           <ul className="projects-list" aria-label="진행사업 목록">
-            {rows.map((p) => (
+            {paged.items.map((p) => (
               <li key={p.id} className="projects-item">
                 <div className="projects-thumb" aria-hidden="true" />
                 <div className="projects-meta">
@@ -87,6 +94,13 @@ export function ProjectsPage() {
               </li>
             ))}
           </ul>
+          <Pagination
+            page={paged.page}
+            totalPages={paged.totalPages}
+            onChange={setListPage}
+            label="진행사업 페이지"
+          />
+          </>
         )}
       </div>
     </div>

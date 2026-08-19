@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom'
 import { fetchPostsByKind } from '../services/api'
 import type { Post } from '../types/post'
 import { PageHero } from '../components/PageHero'
+import { Pagination } from '../components/Pagination'
+import { paginate } from '../utils/paginate'
 import '../styles/story.css'
 
 type StoryScopeKey = 'all' | 'domestic' | 'overseas' | 'advocacy' | 'support'
@@ -72,7 +74,7 @@ export function StoryArchivePage() {
   const initialScope = parseScope(params.scope ?? query.get('scope'))
 
   const [scope, setScope] = useState<StoryScopeKey>(initialScope)
-  const [visibleCount, setVisibleCount] = useState(12)
+  const [listPage, setListPage] = useState(1)
   const [posts, setPosts] = useState<Post[]>([])
 
   useEffect(() => {
@@ -95,8 +97,8 @@ export function StoryArchivePage() {
     return posts.filter((p) => (p.meta?.khayah_story_scope ?? '') === meta || (meta === '지원' && (p.meta?.khayah_story_scope ?? '') === '진행'))
   }, [posts, scope])
 
-  const visibleItems = items.slice(0, visibleCount)
-  const canLoadMore = visibleCount < items.length
+  const STORY_PER_PAGE = 9
+  const paged = paginate(items, listPage, STORY_PER_PAGE)
 
   const scopeTabs: Array<{ key: StoryScopeKey; label: string }> = [
     { key: 'all', label: '전체' },
@@ -128,7 +130,7 @@ export function StoryArchivePage() {
                       className={`story-filter__btn${scope === t.key ? ' is-active' : ''}`}
                       onClick={() => {
                         setScope(t.key)
-                        setVisibleCount(12)
+                        setListPage(1)
                       }}
                     >
                       {t.label}
@@ -138,15 +140,13 @@ export function StoryArchivePage() {
               </header>
 
               <section className="story-archive__grid" aria-label="스토리 목록">
-                {visibleItems.map((p) => (
+                {paged.items.map((p) => (
                   <article key={p.id} className="story-archive__item">
                     <div className="story-list-card">
                       <div className="story-list-card__thumb">
-                        <img
-                          src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1200&h=800&fit=crop"
-                          alt=""
-                          loading="lazy"
-                        />
+                        {p.meta?.khayah_cover_url?.trim() ? (
+                          <img src={p.meta.khayah_cover_url.trim()} alt="" loading="lazy" />
+                        ) : null}
                       </div>
                       <div className="story-list-card__body">
                         <h3 className="story-list-card__title">
@@ -177,15 +177,12 @@ export function StoryArchivePage() {
               </section>
 
               <div className="story-archive__actions">
-                {canLoadMore ? (
-                  <button type="button" className="story-more-btn" onClick={() => setVisibleCount((n) => n + 12)}>
-                    스토리 더보기
-                  </button>
-                ) : (
-                  <p className="story-archive__hint" role="status">
-                    {scope === 'all' ? '모든 스토리를 확인했습니다.' : `${scopeLabels[scope]} 스토리를 모두 확인했습니다.`}
-                  </p>
-                )}
+                <Pagination
+                  page={paged.page}
+                  totalPages={paged.totalPages}
+                  onChange={setListPage}
+                  label="스토리 페이지"
+                />
               </div>
             </div>
           </div>

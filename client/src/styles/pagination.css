@@ -1,0 +1,44 @@
+.pager {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 28px 0 8px;
+}
+
+.pager__btn {
+  min-width: 40px;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  color: #374151;
+  font-size: 0.92rem;
+  font-weight: 600;
+  font-family: inherit;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.pager__btn:hover:not(:disabled):not(.is-active) {
+  border-color: #d1d5db;
+  background: #f9fafb;
+}
+
+.pager__btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.pager__num.is-active {
+  background: var(--khayah-red, #b20838);
+  border-color: var(--khayah-red, #b20838);
+  color: #fff;
+}
+
+.pager__gap {
+  min-width: 24px;
+  text-align: center;
+  color: #9ca3af;
+}

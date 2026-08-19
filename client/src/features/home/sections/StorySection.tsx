@@ -121,11 +121,7 @@ export function StorySection() {
     }
   }, [])
 
-  const storyCoverSrc = (p: Post): string => {
-    const u = p.meta?.khayah_cover_url?.trim()
-    if (u) return u
-    return 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=800&h=500&fit=crop'
-  }
+  const storyCoverSrc = (p: Post): string => p.meta?.khayah_cover_url?.trim() ?? ''
 
   const chipLabel = (p: Post): string => {
     const scope = p.meta?.khayah_story_scope ?? ''
@@ -157,7 +153,7 @@ export function StorySection() {
               const cardInner = (
                 <>
                   <div className="story-card__media">
-                    <img src={storyCoverSrc(p)} alt="" loading="lazy" />
+                    {storyCoverSrc(p) ? <img src={storyCoverSrc(p)} alt="" loading="lazy" /> : null}
                   </div>
                   <div className="story-card__overlay" aria-hidden="true" />
                   <div className="story-card__content">

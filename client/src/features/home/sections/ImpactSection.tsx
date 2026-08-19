@@ -1,4 +1,5 @@
 import { type CSSProperties, useEffect, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 
 const ROTATOR_TEXT = [
   '01. 투명하게 증명합니다',
@@ -66,9 +67,9 @@ export function ImpactSection() {
               </div>
             </div>
 
-            <a className="impact-card__cta" href="#support">
+            <Link className="impact-card__cta" to="/소식/재정보고">
               자세히보기
-            </a>
+            </Link>
           </article>
 
           <div className="impact-stats" role="list" aria-label="성과 지표">
