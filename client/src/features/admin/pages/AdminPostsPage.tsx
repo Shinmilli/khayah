@@ -17,6 +17,7 @@ import { Pagination } from '../../../components/Pagination'
 import { coverIsBlank, parsePdfAttachments, pdfOpenHref, type PdfAttachment } from '../../../utils/pdfAttachments'
 import {
   formatNewsletterYearMeta,
+  normalizeNewsletterIssueKey,
   parseNewsletterYearSpec,
 } from '../../../utils/newsletterYear'
 import { paginate } from '../../../utils/paginate'
@@ -419,7 +420,8 @@ function PostEditorForm({
         const yStart = parseInt(newsletterYear.trim(), 10)
         const yEnd = newsletterYearRange ? parseInt(newsletterYearEnd.trim(), 10) : yStart
         meta.khayah_newsletter_year = formatNewsletterYearMeta(yStart, yEnd)
-        meta.khayah_newsletter_issue = newsletterIssue.trim()
+        meta.khayah_newsletter_issue =
+          normalizeNewsletterIssueKey(newsletterIssue.trim()) || newsletterIssue.trim()
       }
       const storedCover =
         coverPreviewUrl.trim() && !coverPreviewUrl.startsWith('blob:') ? coverPreviewUrl.trim() : ''

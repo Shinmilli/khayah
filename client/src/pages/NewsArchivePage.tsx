@@ -9,7 +9,8 @@ import { Pagination } from '../components/Pagination'
 import { coverIsBlank, pdfOpenHref } from '../utils/pdfAttachments'
 import { paginate } from '../utils/paginate'
 import {
-  newsletterListingYear,
+  newsletterArchiveYearFromPost,
+  newsletterIssueKeyFromPost,
   newsletterYearLabel,
   parseNewsletterYearSpec,
 } from '../utils/newsletterYear'
@@ -50,11 +51,11 @@ function pressSortKey(post: Post): string {
 
 /** 목록·필터용 연도: 범위면 종료 연도에만 표시. 없으면 제목 연도, 마지막으로 게시일 연도 */
 function newsletterArchiveYear(post: Post): number {
-  const spec = parseNewsletterYearSpec(post.meta?.khayah_newsletter_year?.trim() ?? '')
-  if (spec) return newsletterListingYear(spec)
-  const titleYear = post.title.match(/(19|20)\d{2}/)
-  if (titleYear) return parseInt(titleYear[0], 10)
-  return new Date(post.publishedAt).getFullYear()
+  return newsletterArchiveYearFromPost(
+    post.meta?.khayah_newsletter_year,
+    post.title,
+    post.publishedAt,
+  )
 }
 
 function newsletterCoverageLabel(post: Post): string {
@@ -136,7 +137,7 @@ export function NewsArchivePage() {
   }, [posts, kind])
 
   const [filterYear, setFilterYear] = useState<number | null>(null)
-  const [filterIssue, setFilterIssue] = useState<string>('all')
+  const [filterIssue, setFilterIssue] = useState<string>('')
 
   const newsletterYears = useMemo(() => {
     const ys = new Set<number>()
@@ -153,24 +154,37 @@ export function NewsArchivePage() {
     setFilterYear((prev) => (prev != null && newsletterYears.includes(prev) ? prev : newsletterYears[0]))
   }, [kind, newsletterYears])
 
-  useEffect(() => {
-    setFilterIssue('all')
-  }, [filterYear])
-
   const newsletterIssueValues = useMemo(() => {
+    if (filterYear == null) return [] as string[]
     const pool = newsletterSorted.filter((p) => newsletterArchiveYear(p) === filterYear)
-    const issues = new Set<string>()
+    const keys = new Set<string>()
     for (const p of pool) {
-      const v = p.meta?.khayah_newsletter_issue?.trim()
-      if (v) issues.add(v)
+      const key = newsletterIssueKeyFromPost(p.meta?.khayah_newsletter_issue, p.title)
+      if (key) keys.add(key)
     }
-    return Array.from(issues).sort((a, b) => {
-      const na = parseInt(a.replace(/\D/g, ''), 10)
-      const nb = parseInt(b.replace(/\D/g, ''), 10)
+    return Array.from(keys).sort((a, b) => {
+      const na = parseInt(a, 10)
+      const nb = parseInt(b, 10)
       if (Number.isFinite(na) && Number.isFinite(nb)) return nb - na
-      return b.localeCompare(a)
+      return b.localeCompare(a, 'ko')
     })
   }, [newsletterSorted, filterYear])
+
+  const newsletterDefaultIssue = useMemo(() => {
+    if (filterYear == null) return ''
+    const pool = newsletterSorted.filter((p) => newsletterArchiveYear(p) === filterYear)
+    for (const p of pool) {
+      const key = newsletterIssueKeyFromPost(p.meta?.khayah_newsletter_issue, p.title)
+      if (key) return key
+    }
+    return newsletterIssueValues[0] ?? ''
+  }, [newsletterSorted, filterYear, newsletterIssueValues])
+
+  useEffect(() => {
+    setFilterIssue((prev) =>
+      prev && newsletterIssueValues.includes(prev) ? prev : newsletterDefaultIssue,
+    )
+  }, [filterYear, newsletterIssueValues, newsletterDefaultIssue])
 
   const isPress = kind === '언론보도'
   const isNewsletter = kind === '연간소식지'
@@ -178,8 +192,11 @@ export function NewsArchivePage() {
 
   const newsletterVisible = useMemo(() => {
     return newsletterSorted.filter((p) => {
-      if (newsletterArchiveYear(p) !== filterYear) return false
-      if (filterIssue !== 'all' && (p.meta?.khayah_newsletter_issue ?? '').trim() !== filterIssue) return false
+      if (filterYear == null || newsletterArchiveYear(p) !== filterYear) return false
+      if (filterIssue) {
+        const issueKey = newsletterIssueKeyFromPost(p.meta?.khayah_newsletter_issue, p.title)
+        if (issueKey !== filterIssue) return false
+      }
       return true
     })
   }, [newsletterSorted, filterYear, filterIssue])
@@ -242,21 +259,22 @@ export function NewsArchivePage() {
                       ))}
                     </select>
                   </label>
-                  <label className="yearly-nl-filter">
-                    <select
-                      className="yearly-nl-select"
-                      aria-label="호수"
-                      value={filterIssue}
-                      onChange={(e) => setFilterIssue(e.currentTarget.value)}
-                    >
-                      <option value="all">전체 호수</option>
-                      {newsletterIssueValues.map((issueRaw) => (
-                        <option key={issueRaw} value={issueRaw}>
-                          {newsletterIssueLabel(issueRaw)}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
+                  {newsletterIssueValues.length > 0 ? (
+                    <label className="yearly-nl-filter">
+                      <select
+                        className="yearly-nl-select"
+                        aria-label="호수"
+                        value={filterIssue}
+                        onChange={(e) => setFilterIssue(e.currentTarget.value)}
+                      >
+                        {newsletterIssueValues.map((issueKey) => (
+                          <option key={issueKey} value={issueKey}>
+                            {newsletterIssueLabel(issueKey)}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                  ) : null}
                 </div>
 
                 <div className="yearly-nl-cards" aria-label="연간소식지 목록">
