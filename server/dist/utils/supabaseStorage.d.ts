@@ -14,4 +14,5 @@ export declare function uploadBufferToSupabase(options: {
     mimeType: string;
     kind: 'document' | 'image';
 }): Promise<StorageUploadResult>;
+export declare function removeFromSupabase(objectPath: string): Promise<void>;
 //# sourceMappingURL=supabaseStorage.d.ts.map

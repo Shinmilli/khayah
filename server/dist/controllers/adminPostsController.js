@@ -65,6 +65,7 @@ async function adminCreatePost(req, res) {
             content: body.content ?? '',
             status: body.status ?? 'publish',
             meta: body.meta ?? {},
+            publishedAt: body.publishedAt,
         });
         res.status(201).json(created);
     }
@@ -89,6 +90,7 @@ async function adminUpdatePost(req, res) {
             content: body.content,
             status: body.status,
             meta: body.meta,
+            publishedAt: body.publishedAt,
         });
         if (!updated) {
             res.status(404).json({ error: 'Post not found' });

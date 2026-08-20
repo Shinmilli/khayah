@@ -4,10 +4,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.postImageUpload = exports.postDocumentUpload = void 0;
+exports.deleteUpload = deleteUpload;
 const path_1 = __importDefault(require("path"));
 const multer_1 = __importDefault(require("multer"));
 const cloudinary_1 = require("../utils/cloudinary");
 const supabaseStorage_1 = require("../utils/supabaseStorage");
+const uploadFilename_1 = require("../utils/uploadFilename");
+const storedMedia_1 = require("../utils/storedMedia");
 /** Cloudinary free ~10MB — larger files go to Supabase Storage */
 const CLOUDINARY_MAX_BYTES = 10 * 1024 * 1024;
 const memory = multer_1.default.memoryStorage();
@@ -52,6 +55,7 @@ async function handleUpload(req, res, kind) {
     if (!file?.buffer) {
         return res.status(400).json({ error: 'No file uploaded (field name: file)' });
     }
+    const originalName = (0, uploadFilename_1.decodeOriginalFilename)(file.originalname, kind === 'document' ? 'file.pdf' : 'image');
     const useSupabase = file.size > CLOUDINARY_MAX_BYTES;
     try {
         if (useSupabase) {
@@ -64,7 +68,7 @@ async function handleUpload(req, res, kind) {
             }
             const uploaded = await (0, supabaseStorage_1.uploadBufferToSupabase)({
                 buffer: file.buffer,
-                originalName: file.originalname,
+                originalName,
                 mimeType: file.mimetype,
                 kind,
             });
@@ -72,7 +76,7 @@ async function handleUpload(req, res, kind) {
                 url: uploaded.url,
                 path: uploaded.path,
                 filename: uploaded.filename,
-                originalName: file.originalname,
+                originalName,
                 mimeType: file.mimetype,
                 size: uploaded.bytes || file.size,
                 publicId: uploaded.publicId,
@@ -88,7 +92,7 @@ async function handleUpload(req, res, kind) {
         }
         const uploaded = await (0, cloudinary_1.uploadBufferToCloudinary)({
             buffer: file.buffer,
-            originalName: file.originalname,
+            originalName,
             mimeType: file.mimetype,
             kind,
         });
@@ -96,7 +100,7 @@ async function handleUpload(req, res, kind) {
             url: uploaded.url,
             path: uploaded.path,
             filename: uploaded.filename,
-            originalName: file.originalname,
+            originalName,
             mimeType: file.mimetype,
             size: uploaded.bytes || file.size,
             publicId: uploaded.publicId,
@@ -127,4 +131,25 @@ exports.postImageUpload = [
         void handleUpload(req, res, 'image');
     },
 ];
+async function deleteUpload(req, res) {
+    const body = req.body;
+    const url = typeof body?.url === 'string' ? body.url.trim() : '';
+    if (!url && !body?.publicId && !body?.path) {
+        return res.status(400).json({ error: 'url, publicId, or path is required' });
+    }
+    try {
+        await (0, storedMedia_1.deleteStoredMedia)({
+            url,
+            publicId: typeof body?.publicId === 'string' ? body.publicId : undefined,
+            path: typeof body?.path === 'string' ? body.path : undefined,
+            provider: typeof body?.provider === 'string' ? body.provider : undefined,
+            resourceType: typeof body?.resourceType === 'string' ? body.resourceType : undefined,
+        });
+        return res.json({ ok: true });
+    }
+    catch (e) {
+        console.error('[uploads] delete error', e);
+        return res.status(500).json({ error: e instanceof Error ? e.message : 'Delete failed' });
+    }
+}
 //# sourceMappingURL=uploadsController.js.map

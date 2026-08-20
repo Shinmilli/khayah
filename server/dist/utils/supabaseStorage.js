@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.isSupabaseStorageConfigured = isSupabaseStorageConfigured;
 exports.uploadBufferToSupabase = uploadBufferToSupabase;
+exports.removeFromSupabase = removeFromSupabase;
 const supabase_js_1 = require("@supabase/supabase-js");
 const BUCKET = process.env.SUPABASE_STORAGE_BUCKET?.trim() || 'uploads';
 function isSupabaseStorageConfigured() {
@@ -44,5 +45,15 @@ async function uploadBufferToSupabase(options) {
         resourceType: options.kind === 'document' ? 'raw' : 'image',
         provider: 'supabase',
     };
+}
+async function removeFromSupabase(objectPath) {
+    const p = objectPath.trim();
+    if (!p || !isSupabaseStorageConfigured())
+        return;
+    const supabase = getAdminClient();
+    const { error } = await supabase.storage.from(BUCKET).remove([p]);
+    if (error) {
+        console.error('[supabase storage] remove failed', error.message);
+    }
 }
 //# sourceMappingURL=supabaseStorage.js.map

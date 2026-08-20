@@ -15,4 +15,5 @@ export declare function uploadBufferToCloudinary(options: {
     mimeType: string;
     kind: 'document' | 'image';
 }): Promise<CloudinaryUploadResult>;
+export declare function destroyCloudinaryAsset(publicId: string, resourceTypeHint?: string): Promise<void>;
 //# sourceMappingURL=cloudinary.d.ts.map

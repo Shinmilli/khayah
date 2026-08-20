@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.isCloudinaryConfigured = isCloudinaryConfigured;
 exports.configureCloudinary = configureCloudinary;
 exports.uploadBufferToCloudinary = uploadBufferToCloudinary;
+exports.destroyCloudinaryAsset = destroyCloudinaryAsset;
 const cloudinary_1 = require("cloudinary");
 function isCloudinaryConfigured() {
     return Boolean(process.env.CLOUDINARY_CLOUD_NAME?.trim() &&
@@ -27,15 +28,17 @@ async function uploadBufferToCloudinary(options) {
     configureCloudinary();
     const folder = `${folderPrefix()}/${options.kind === 'document' ? 'documents' : 'images'}`;
     const resourceType = options.kind === 'document' ? 'raw' : 'image';
+    const rawId = `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`;
+    const publicId = options.kind === 'document' ? `${rawId}.pdf` : undefined;
     const result = await new Promise((resolve, reject) => {
         const stream = cloudinary_1.v2.uploader.upload_stream({
             folder,
             resource_type: resourceType,
+            ...(publicId ? { public_id: publicId } : {}),
             // 한글/특수문자 파일명은 public_id로 쓰지 않음 (Cloudinary 오류 방지)
             use_filename: false,
-            unique_filename: true,
+            unique_filename: !publicId,
             overwrite: false,
-            // PDF raw도 공개 URL로 바로 열리게
             type: 'upload',
             access_mode: 'public',
         }, (err, uploaded) => {
@@ -57,5 +60,21 @@ async function uploadBufferToCloudinary(options) {
         resourceType: result.resource_type,
         format: result.format,
     };
+}
+async function destroyCloudinaryAsset(publicId, resourceTypeHint) {
+    if (!publicId.trim() || !isCloudinaryConfigured())
+        return;
+    configureCloudinary();
+    const order = resourceTypeHint === 'image' ? ['image', 'raw'] : ['raw', 'image'];
+    for (const resource_type of order) {
+        try {
+            const r = await cloudinary_1.v2.uploader.destroy(publicId, { resource_type, invalidate: true });
+            if (r?.result === 'ok' || r?.result === 'not found')
+                return;
+        }
+        catch {
+            // try next resource type
+        }
+    }
 }
 //# sourceMappingURL=cloudinary.js.map

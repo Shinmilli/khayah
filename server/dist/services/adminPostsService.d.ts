@@ -44,6 +44,7 @@ export declare const adminPostsService: {
         content: string;
         status: "publish" | "draft";
         meta: AdminPostMeta;
+        publishedAt?: string;
     }): Promise<{
         id: any;
         title: any;
@@ -65,6 +66,7 @@ export declare const adminPostsService: {
         content?: string;
         status?: "publish" | "draft";
         meta?: AdminPostMeta;
+        publishedAt?: string;
     }): Promise<{
         id: any;
         title: any;

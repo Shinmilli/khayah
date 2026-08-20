@@ -2,6 +2,17 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.adminPostsService = void 0;
 const prisma_1 = require("../utils/prisma");
+const storedMedia_1 = require("../utils/storedMedia");
+/** YYYY-MM-DD → 그날 정오 UTC (KST에서 날짜가 하루 밀리지 않도록) */
+function parsePublishedAt(raw) {
+    if (!raw || typeof raw !== 'string')
+        return undefined;
+    const t = raw.trim();
+    if (/^\d{4}-\d{2}-\d{2}$/.test(t))
+        return new Date(`${t}T12:00:00.000Z`);
+    const d = new Date(t);
+    return Number.isNaN(d.getTime()) ? undefined : d;
+}
 function slugify(input) {
     return input
         .trim()
@@ -107,12 +118,13 @@ exports.adminPostsService = {
     async create(params) {
         const authorId = await ensureAuthorId();
         const now = new Date();
+        const postDate = parsePublishedAt(params.publishedAt) ?? now;
         const postName = slugify(`${params.kind}-${params.title}`);
         const created = await prisma_1.prisma.post.create({
             data: {
                 postAuthorId: authorId,
-                postDate: now,
-                postDateGmt: now,
+                postDate,
+                postDateGmt: postDate,
                 postModified: now,
                 postModifiedGmt: now,
                 postTitle: params.title,
@@ -147,11 +159,13 @@ exports.adminPostsService = {
     async update(id, params) {
         const existing = await prisma_1.prisma.post.findFirst({
             where: { id, postType: 'post' },
-            select: { id: true },
+            include: { postMeta: { select: { metaKey: true, metaValue: true } } },
         });
         if (!existing)
             return null;
+        const prevMeta = metaArrayToObject(existing.postMeta);
         const now = new Date();
+        const postDate = parsePublishedAt(params.publishedAt);
         await prisma_1.prisma.post.update({
             where: { id },
             data: {
@@ -161,6 +175,7 @@ exports.adminPostsService = {
                 postStatus: params.status,
                 postModified: now,
                 postModifiedGmt: now,
+                ...(postDate ? { postDate, postDateGmt: postDate } : {}),
             },
         });
         if (params.meta) {
@@ -171,13 +186,19 @@ exports.adminPostsService = {
                     data: keys.map((k) => ({ postId: id, metaKey: k, metaValue: String(params.meta?.[k] ?? '') })),
                 });
             }
+            const removed = (0, storedMedia_1.mediaNotIn)((0, storedMedia_1.collectPostMedia)(prevMeta), (0, storedMedia_1.collectPostMedia)(params.meta));
+            await (0, storedMedia_1.deleteStoredMediaMany)(removed);
         }
         return this.getById(id);
     },
     async remove(id) {
-        const existing = await prisma_1.prisma.post.findFirst({ where: { id, postType: 'post' }, select: { id: true } });
+        const existing = await prisma_1.prisma.post.findFirst({
+            where: { id, postType: 'post' },
+            include: { postMeta: { select: { metaKey: true, metaValue: true } } },
+        });
         if (!existing)
             return false;
+        await (0, storedMedia_1.deleteStoredMediaMany)((0, storedMedia_1.collectPostMedia)(metaArrayToObject(existing.postMeta)));
         // delete dependents first
         await prisma_1.prisma.commentMeta.deleteMany({ where: { comment: { postId: id } } });
         await prisma_1.prisma.comment.deleteMany({ where: { postId: id } });
