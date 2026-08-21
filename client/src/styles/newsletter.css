@@ -187,7 +187,13 @@
   grid-template-rows: minmax(0, 0.5fr) auto minmax(0, 2fr);
   min-width: 0;
   min-height: 100%;
-  padding-left: 40px;
+  padding-left: 0;
+}
+
+@media (min-width: 1100px) {
+  .yearly-nl-card__text {
+    padding-left: 40px;
+  }
 }
 
 .yearly-nl-card__text-inner {

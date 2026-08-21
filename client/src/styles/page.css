@@ -1281,6 +1281,8 @@
 .post-board {
   padding-top: clamp(28px, 4vw, 48px);
   padding-bottom: clamp(40px, 6vw, 72px);
+  max-width: 100%;
+  overflow-x: clip;
 }
 
 .post-board__head {
@@ -1350,32 +1352,54 @@
 .post-board__files {
   list-style: none;
   margin: 0 0 24px;
-  padding: 10px 18px;
+  padding: 10px 14px;
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px 28px;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+  max-width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
   background: #f2f3f5;
 }
 
+.post-board__files > li {
+  min-width: 0;
+  max-width: 100%;
+}
+
 .post-board__files a {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 6px;
+  min-width: 0;
   max-width: 100%;
   padding: 4px 0;
   background: none;
   border-radius: 0;
   color: #4b5563;
-  font-size: 0.92rem;
+  font-size: 0.84rem;
   line-height: 1.4;
   text-decoration: none;
+  overflow: hidden;
 }
 
 .post-board__files a span {
+  flex: 1 1 auto;
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .post-board__files {
+    padding: 8px 12px;
+  }
+
+  .post-board__files a {
+    font-size: 0.78rem;
+  }
 }
 
 .post-board__clip {
