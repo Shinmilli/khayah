@@ -846,9 +846,9 @@ export const PAGES_STATIC: Record<string, StaticPage> = {
     title: '언론보도',
     content: '<p>언론 보도 및 보도자료를 안내합니다.</p>',
   },
-  '소식/1대1문의': {
-    title: '1:1 문의',
-    content: '<p>1:1 문의 안내입니다. 이메일: khayahkorea@gmail.com · T 031 689 3639</p>',
+  '소식/고객문의': {
+    title: '고객 문의',
+    content: '',
   },
   '카야와-함께': {
     title: '카야와 함께',

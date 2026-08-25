@@ -6,6 +6,7 @@ import { PAGES_STATIC, normalizePathKey, pathToSlug } from '../constants/pagesCo
 import type { Page } from '../types/page'
 import type { Post } from '../types/post'
 import { NewsArchivePage } from './NewsArchivePage'
+import { InquiryPage } from './InquiryPage'
 import { PageHero } from '../components/PageHero'
 import '../styles/page.css'
 import '../styles/greeting-modern.css'
@@ -42,6 +43,7 @@ export function PageByPath() {
   // Backward compatibility redirects (old slugs)
   if (pathKey === '소식/카야소식') return <Navigate to="/소식/활동소식" replace />
   if (pathKey === '소식/소식지') return <Navigate to="/소식/연간소식지" replace />
+  if (pathKey === '소식/1대1문의') return <Navigate to="/소식/고객문의" replace />
   if (pathKey === '카야/조직도') return <Navigate to="/카야/카야소개?tab=org#org-chart" replace />
   if (pathKey === '카야/이사회-전문위원') return <Navigate to="/카야/카야소개?tab=org#directors" replace />
   if (pathKey === '소식') return <Navigate to="/stories" replace />
@@ -75,6 +77,7 @@ export function PageByPath() {
 
   const isNewsArchive =
     pathKey === '소식/공지사항' || pathKey === '소식/활동소식' || pathKey === '소식/연간소식지' || pathKey === '소식/언론보도'
+  const isInquiry = pathKey === '소식/고객문의'
 
   const hashId = location.hash.replace(/^#/, '')
   const [apiPage, setApiPage] = useState<Page | null | undefined>(undefined)
@@ -83,12 +86,12 @@ export function PageByPath() {
   const isPostPath = pathKey.startsWith('posts/')
   const postSlug = isPostPath ? pathKey.replace(/^posts\/?/, '') : ''
 
-  const staticPage = pathKey && !isPostPath ? PAGES_STATIC[pathKey] : null
+  const staticPage = pathKey && !isPostPath && !isInquiry ? PAGES_STATIC[pathKey] : null
 
   const slug = pathToSlug(location.pathname)
 
   useEffect(() => {
-    if (isNewsArchive) {
+    if (isNewsArchive || isInquiry) {
       setApiPage(null)
       setPost(null)
       return
@@ -120,9 +123,9 @@ export function PageByPath() {
         if (!cancelled) setApiPage(null)
       })
     return () => { cancelled = true }
-  }, [slug, staticPage, isPostPath, postSlug, isNewsArchive])
+  }, [slug, staticPage, isPostPath, postSlug, isNewsArchive, isInquiry])
 
-  const title = staticPage?.title ?? apiPage?.title ?? post?.title ?? null
+  const title = isInquiry ? null : (staticPage?.title ?? apiPage?.title ?? post?.title ?? null)
   useEffect(() => {
     if (title) document.title = `${title} | 사단법인 카야 인터내셔널`
     return () => { document.title = '사단법인 카야 인터내셔널 | 개발NGO' }
@@ -166,6 +169,8 @@ export function PageByPath() {
       window.clearTimeout(hideTimer)
     }
   }, [pathKey, location.pathname])
+
+  if (isInquiry) return <InquiryPage />
 
   if (isNewsArchive) return <NewsArchivePage />
 

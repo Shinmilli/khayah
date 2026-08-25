@@ -45,17 +45,18 @@
   cursor: pointer;
   color: #666;
   background: #eceff1;
+  /* 좌·우·상 모두 2px로 맞춤. 구분선은 색만 회색 (1px로 덮어쓰면 활성 탭 오른쪽이 얇아짐) */
   border: 2px solid transparent;
   border-bottom: none;
-  border-right: 1px solid #d5dce0;
+  border-right-color: #d5dce0;
   transition:
     background 0.15s ease,
     color 0.15s ease,
     border-color 0.15s ease;
 }
 
-.khayah-about-tabs__tab:last-child {
-  border-right: none;
+.khayah-about-tabs__tab:last-child:not(.is-active) {
+  border-right-color: transparent;
 }
 
 .khayah-about-tabs__tab:hover:not(.is-active) {
@@ -66,7 +67,7 @@
 .khayah-about-tabs__tab.is-active {
   color: var(--khayah-hub-accent);
   background: #fff;
-  border-color: var(--khayah-hub-accent);
+  border: 2px solid var(--khayah-hub-accent);
   border-bottom-color: #fff;
   margin-bottom: -2px;
   padding-bottom: calc(1.05rem + 2px);
@@ -102,24 +103,24 @@
   .khayah-about-tabs__tab {
     flex: 1 1 calc(50% - 1px);
     min-height: 52px;
-    border-bottom: 1px solid #d5dce0;
+    border-bottom: 2px solid #d5dce0;
   }
 
-  .khayah-about-tabs__tab:nth-child(even) {
-    border-right: none;
+  .khayah-about-tabs__tab:nth-child(even):not(.is-active) {
+    border-right-color: transparent;
   }
 
   .khayah-about-tabs__tab.is-active {
     margin-bottom: 0;
     padding-bottom: 1.05rem;
-    border-bottom-color: transparent;
+    border: 2px solid var(--khayah-hub-accent);
   }
 }
 
 @media (max-width: 520px) {
   .khayah-about-tabs__tab {
     flex: 1 1 100%;
-    border-right: none;
+    border-right-color: transparent;
   }
 
   .khayah-about-tabs__tab.is-active {

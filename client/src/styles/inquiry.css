@@ -1,0 +1,488 @@
+/* 고객 문의 허브 — 카야 소개와 동일 상단 탭 + 패널별 본문, 자세한 문의는 공통 */
+.inquiry-hub__inner {
+  padding-top: 1.5rem;
+}
+
+.inquiry-shell {
+  width: min(100%, 920px);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(28px, 4vw, 40px);
+}
+
+.inquiry-detail-contact {
+  padding-top: 0.5rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.inquiry-board {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.inquiry-section-head {
+  margin-bottom: 14px;
+}
+
+.inquiry-board > .inquiry-section-head {
+  margin-bottom: 0;
+}
+
+.inquiry-section-title {
+  margin: 0 0 6px;
+  font-size: clamp(1.2rem, 2.2vw, 1.45rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #111827;
+}
+
+.inquiry-count {
+  font-weight: 700;
+  color: #6b7280;
+  font-size: 0.92em;
+}
+
+.inquiry-section-sub {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: #6b7280;
+}
+
+/* FAQ */
+.inquiry-faq__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.inquiry-faq__list--empty {
+  padding: 28px 18px;
+  text-align: center;
+}
+
+.inquiry-faq__empty {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #6b7280;
+}
+
+.inquiry-faq__item + .inquiry-faq__item {
+  border-top: 1px solid #e5e7eb;
+}
+
+.inquiry-faq__q {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 18px;
+  border: none;
+  background: #fff;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+  color: #111827;
+}
+
+.inquiry-faq__q:hover {
+  background: #fafafa;
+}
+
+.inquiry-faq__item.is-open .inquiry-faq__q {
+  background: #f9fafb;
+}
+
+.inquiry-faq__q-text {
+  font-size: 0.98rem;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.inquiry-faq__chevron {
+  flex-shrink: 0;
+  width: 1.5rem;
+  height: 1.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: rgba(178, 8, 56, 0.08);
+  color: var(--khayah-red, #b20838);
+  font-weight: 800;
+  font-size: 1rem;
+}
+
+.inquiry-faq__a {
+  padding: 0 18px 16px;
+  background: #f9fafb;
+}
+
+.inquiry-faq__a p {
+  margin: 0;
+  padding-top: 2px;
+  font-size: 0.94rem;
+  line-height: 1.65;
+  color: #4b5563;
+  white-space: pre-wrap;
+}
+
+/* 회원가입 없이 문의 — 안내 박스 */
+.inquiry-guide {
+  padding: 20px 22px;
+  border-radius: 12px;
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+}
+
+.inquiry-guide__title {
+  margin: 0 0 12px;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #111827;
+}
+
+.inquiry-guide__steps {
+  margin: 0;
+  padding-left: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.94rem;
+  line-height: 1.6;
+  color: #374151;
+}
+
+.inquiry-guide__note {
+  margin: 14px 0 0;
+  font-size: 0.86rem;
+  line-height: 1.55;
+  color: #6b7280;
+}
+
+/* 자세한 문의 */
+.inquiry-detail-cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.inquiry-detail-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px 18px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.inquiry-detail-card:hover {
+  border-color: rgba(178, 8, 56, 0.35);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+  text-decoration: none;
+}
+
+.inquiry-detail-card__label {
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: var(--khayah-red, #b20838);
+  text-transform: uppercase;
+}
+
+.inquiry-detail-card__value {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #111827;
+  word-break: break-all;
+}
+
+/* 탭 + 폼 */
+.inquiry-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.inquiry-tab {
+  appearance: none;
+  border: none;
+  background: transparent;
+  padding: 14px 20px;
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: #6b7280;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+
+.inquiry-tab.is-active {
+  color: var(--khayah-red, #b20838);
+  border-bottom-color: var(--khayah-red, #b20838);
+}
+
+.inquiry-form {
+  width: 100%;
+  max-width: none;
+  margin-top: 8px;
+}
+
+.inquiry-rows {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.inquiry-row {
+  display: grid;
+  grid-template-columns: 160px minmax(0, 1fr);
+  align-items: stretch;
+  gap: 0;
+  margin: 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.inquiry-row:last-child {
+  border-bottom: none;
+}
+
+.inquiry-row__label {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 14px 16px;
+  background: #f9fafb;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #374151;
+  border-right: 1px solid #e5e7eb;
+}
+
+.inquiry-row--area .inquiry-row__label {
+  padding-top: 16px;
+}
+
+.inquiry-req {
+  color: var(--khayah-red, #b20838);
+  font-weight: 800;
+}
+
+.inquiry-row .inquiry-input {
+  border: none;
+  border-radius: 0;
+  padding: 14px 16px;
+  background: #fff;
+  box-shadow: none;
+}
+
+.inquiry-row .inquiry-input:focus {
+  outline: none;
+  background: #fffdf8;
+}
+
+.inquiry-input--area {
+  resize: vertical;
+  min-height: 180px;
+  line-height: 1.55;
+}
+
+.inquiry-actions {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.inquiry-btn {
+  appearance: none;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 28px;
+  background: var(--khayah-red, #b20838);
+  color: #fff;
+  font-size: 0.98rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.inquiry-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.inquiry-msg {
+  margin: 14px 0 0;
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.inquiry-msg--error {
+  background: #fef2f2;
+  color: #991b1b;
+}
+
+.inquiry-msg--ok {
+  background: #ecfdf5;
+  color: #065f46;
+}
+
+.inquiry-hp {
+  position: absolute;
+  left: -9999px;
+  height: 0;
+  overflow: hidden;
+}
+
+.inquiry-results {
+  list-style: none;
+  margin: 24px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.inquiry-card {
+  padding: 18px 18px 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.inquiry-card__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin-bottom: 8px;
+}
+
+.inquiry-card__meta {
+  font-size: 0.86rem;
+  color: #6b7280;
+}
+
+.inquiry-card__title {
+  margin: 0 0 10px;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #111827;
+}
+
+.inquiry-card__body {
+  margin: 0;
+  white-space: pre-wrap;
+  line-height: 1.6;
+  color: #374151;
+}
+
+.inquiry-card__reply {
+  margin-top: 14px;
+  padding: 14px;
+  background: #f9fafb;
+  border-radius: 8px;
+}
+
+.inquiry-card__reply h4 {
+  margin: 0 0 8px;
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: var(--khayah-red, #b20838);
+}
+
+.inquiry-card__reply p {
+  margin: 0;
+  white-space: pre-wrap;
+  line-height: 1.6;
+  color: #111827;
+}
+
+.inquiry-card__reply time {
+  display: block;
+  margin-top: 8px;
+  font-size: 0.82rem;
+  color: #6b7280;
+}
+
+.inquiry-card__pending {
+  margin: 12px 0 0;
+  font-size: 0.9rem;
+  color: #9ca3af;
+}
+
+.inquiry-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.inquiry-status--wait {
+  background: #fff7ed;
+  color: #c2410c;
+}
+
+.inquiry-status--progress {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.inquiry-status--done {
+  background: #ecfdf5;
+  color: #047857;
+}
+
+@media (max-width: 720px) {
+  .inquiry-detail-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .inquiry-row,
+  .inquiry-row--area {
+    grid-template-columns: 1fr;
+  }
+
+  .inquiry-row__label {
+    border-right: none;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 10px 14px 6px;
+  }
+
+  .inquiry-row .inquiry-input {
+    padding: 10px 14px 14px;
+  }
+
+  .inquiry-tab {
+    flex: 1;
+    text-align: center;
+    padding: 12px 10px;
+  }
+
+  .inquiry-actions {
+    justify-content: stretch;
+  }
+
+  .inquiry-btn {
+    width: 100%;
+  }
+}

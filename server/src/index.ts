@@ -7,6 +7,8 @@ import { youtubeRouter } from './routes/youtube'
 import { uploadsRouter } from './routes/uploads'
 import { adminPostsRouter } from './routes/adminPosts'
 import { financialReportsRouter } from './routes/financialReports'
+import { inquiriesRouter } from './routes/inquiries'
+import { inquiryFaqRouter } from './routes/inquiryFaq'
 import { prisma, prismaInitStatus } from './utils/prisma'
 
 const app = express()
@@ -23,6 +25,8 @@ app.use('/api', youtubeRouter)
 app.use('/api', uploadsRouter)
 app.use('/api', adminPostsRouter)
 app.use('/api', financialReportsRouter)
+app.use('/api', inquiriesRouter)
+app.use('/api', inquiryFaqRouter)
 
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok' })
@@ -59,4 +63,8 @@ app.get('/api/health/db', healthDb)
 
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`)
+  if (!prisma) {
+    console.warn('[prisma] not connected:', prismaInitStatus.reason ?? 'unknown', prismaInitStatus.message ?? '')
+    console.warn('[prisma] Set DATABASE_URL in server/.env (see .env.example), then restart.')
+  }
 })

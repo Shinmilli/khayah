@@ -36,6 +36,9 @@ function buildCrumbs(pathname: string): Array<{ label: string; to: string }> {
         return '활동소식'
       case '소식지':
         return '연간소식지'
+      case '1대1문의':
+      case '고객문의':
+        return '고객 문의'
       default:
         return s
     }
@@ -47,6 +50,8 @@ function buildCrumbs(pathname: string): Array<{ label: string; to: string }> {
         return '활동소식'
       case '소식지':
         return '연간소식지'
+      case '1대1문의':
+        return '고객문의'
       default:
         return s
     }

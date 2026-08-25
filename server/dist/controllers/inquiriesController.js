@@ -1,0 +1,135 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.createInquiry = createInquiry;
+exports.lookupInquiries = lookupInquiries;
+exports.adminListInquiries = adminListInquiries;
+exports.adminGetInquiry = adminGetInquiry;
+exports.adminUpdateInquiry = adminUpdateInquiry;
+exports.adminDeleteInquiry = adminDeleteInquiry;
+const inquiriesService_1 = require("../services/inquiriesService");
+const rateLimit_1 = require("../utils/rateLimit");
+function errStatus(e) {
+    const s = e?.status;
+    return typeof s === 'number' ? s : 500;
+}
+function errMessage(e, fallback) {
+    return e instanceof Error && e.message ? e.message : fallback;
+}
+async function createInquiry(req, res) {
+    const ip = (0, rateLimit_1.clientIp)(req);
+    if ((0, rateLimit_1.isRateLimited)(`inq:create:${ip}`, 8, 15 * 60 * 1000)) {
+        return res.status(429).json({ error: '요청이 너무 많습니다. 잠시 후 다시 시도해 주세요.' });
+    }
+    try {
+        const body = req.body ?? {};
+        const created = await inquiriesService_1.inquiriesService.create({
+            name: String(body.name ?? ''),
+            contact: String(body.contact ?? ''),
+            pin: String(body.pin ?? ''),
+            type: String(body.type ?? ''),
+            subject: String(body.subject ?? ''),
+            body: String(body.body ?? ''),
+        });
+        res.status(201).json(created);
+    }
+    catch (e) {
+        const status = errStatus(e);
+        if (status >= 400 && status < 500)
+            return res.status(status).json({ error: errMessage(e, 'Invalid request') });
+        console.error(e);
+        res.status(500).json({ error: 'Failed to create inquiry' });
+    }
+}
+async function lookupInquiries(req, res) {
+    const ip = (0, rateLimit_1.clientIp)(req);
+    if ((0, rateLimit_1.isRateLimited)(`inq:lookup:${ip}`, 20, 15 * 60 * 1000)) {
+        return res.status(429).json({ error: '조회 시도가 너무 많습니다. 잠시 후 다시 시도해 주세요.' });
+    }
+    try {
+        const body = req.body ?? {};
+        const inquiries = await inquiriesService_1.inquiriesService.lookup({
+            name: String(body.name ?? ''),
+            contact: String(body.contact ?? ''),
+            pin: String(body.pin ?? ''),
+        });
+        res.json({ inquiries });
+    }
+    catch (e) {
+        const status = errStatus(e);
+        if (status >= 400 && status < 500)
+            return res.status(status).json({ error: errMessage(e, 'Invalid request') });
+        console.error(e);
+        res.status(500).json({ error: 'Failed to look up inquiries' });
+    }
+}
+async function adminListInquiries(req, res) {
+    try {
+        const page = Math.max(1, parseInt(String(req.query.page ?? '1'), 10) || 1);
+        const perPage = Math.min(50, Math.max(1, parseInt(String(req.query.perPage ?? '20'), 10) || 20));
+        const result = await inquiriesService_1.inquiriesService.listAdmin(page, perPage);
+        res.json(result);
+    }
+    catch (e) {
+        console.error(e);
+        res.status(500).json({ error: 'Failed to list inquiries' });
+    }
+}
+function paramId(req) {
+    const raw = req.params.id;
+    const s = Array.isArray(raw) ? raw[0] : raw;
+    return parseInt(String(s ?? ''), 10);
+}
+async function adminGetInquiry(req, res) {
+    try {
+        const id = paramId(req);
+        if (!Number.isFinite(id))
+            return res.status(400).json({ error: 'Invalid id' });
+        const row = await inquiriesService_1.inquiriesService.getAdmin(id);
+        if (!row)
+            return res.status(404).json({ error: 'Not found' });
+        res.json(row);
+    }
+    catch (e) {
+        console.error(e);
+        res.status(500).json({ error: 'Failed to get inquiry' });
+    }
+}
+async function adminUpdateInquiry(req, res) {
+    try {
+        const id = paramId(req);
+        if (!Number.isFinite(id))
+            return res.status(400).json({ error: 'Invalid id' });
+        const body = req.body ?? {};
+        const updated = await inquiriesService_1.inquiriesService.updateAdmin(id, {
+            status: body.status != null ? String(body.status) : undefined,
+            reply: body.reply != null ? String(body.reply) : undefined,
+            memo: body.memo != null ? String(body.memo) : undefined,
+        });
+        if (!updated)
+            return res.status(404).json({ error: 'Not found' });
+        res.json(updated);
+    }
+    catch (e) {
+        const status = errStatus(e);
+        if (status >= 400 && status < 500)
+            return res.status(status).json({ error: errMessage(e, 'Invalid request') });
+        console.error(e);
+        res.status(500).json({ error: 'Failed to update inquiry' });
+    }
+}
+async function adminDeleteInquiry(req, res) {
+    try {
+        const id = paramId(req);
+        if (!Number.isFinite(id))
+            return res.status(400).json({ error: 'Invalid id' });
+        const ok = await inquiriesService_1.inquiriesService.removeAdmin(id);
+        if (!ok)
+            return res.status(404).json({ error: 'Not found' });
+        res.status(204).end();
+    }
+    catch (e) {
+        console.error(e);
+        res.status(500).json({ error: 'Failed to delete inquiry' });
+    }
+}
+//# sourceMappingURL=inquiriesController.js.map

@@ -1,0 +1,142 @@
+.list-status {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 0;
+  padding: 2.25rem 4px;
+  min-height: 7rem;
+  box-sizing: border-box;
+}
+
+.list-status--error .list-status__text {
+  color: #a94442;
+}
+
+.list-status__spinner {
+  width: 1.35rem;
+  height: 1.35rem;
+  border: 2px solid #e5e7eb;
+  border-top-color: var(--khayah-red, #b20838);
+  border-radius: 50%;
+  animation: list-status-spin 0.75s linear infinite;
+}
+
+.list-status__text {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #77818e;
+}
+
+.list-status__skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: min(100%, 520px);
+  margin-top: 4px;
+}
+
+.list-status__bone {
+  display: block;
+  height: 12px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #eef0f3 0%, #f7f8fa 45%, #eef0f3 100%);
+  background-size: 200% 100%;
+  animation: list-status-shimmer 1.2s ease-in-out infinite;
+}
+
+@keyframes list-status-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes list-status-shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+/* 홈 Notice 로딩 줄 */
+.board-item--loading {
+  pointer-events: none;
+}
+
+.board-item__bone {
+  display: block;
+  height: 14px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #eef0f3 0%, #f7f8fa 45%, #eef0f3 100%);
+  background-size: 200% 100%;
+  animation: list-status-shimmer 1.2s ease-in-out infinite;
+}
+
+.board-item__bone--title {
+  width: 72%;
+  margin-bottom: 8px;
+}
+
+.board-item__bone--date {
+  width: 28%;
+  height: 11px;
+}
+
+/* 홈 스토리 슬라이더 스켈레톤 */
+.story-slide--skeleton .story-card {
+  pointer-events: none;
+  background: #eef0f3;
+  min-height: var(--story-card-h, 340px);
+}
+
+.story-slide--skeleton .story-card__media {
+  background: linear-gradient(90deg, #e5e7eb 0%, #f3f4f6 45%, #e5e7eb 100%);
+  background-size: 200% 100%;
+  animation: list-status-shimmer 1.2s ease-in-out infinite;
+  width: 100%;
+  height: 100%;
+  min-height: inherit;
+}
+
+/* 스토리 아카이브 스켈레톤 카드 */
+.story-archive__item--skeleton .story-list-card__thumb {
+  background: linear-gradient(90deg, #eef0f3 0%, #f7f8fa 45%, #eef0f3 100%);
+  background-size: 200% 100%;
+  animation: list-status-shimmer 1.2s ease-in-out infinite;
+  min-height: 160px;
+}
+
+.story-archive__item--skeleton .story-list-card__title,
+.story-archive__item--skeleton .story-list-card__excerpt,
+.story-archive__item--skeleton .story-list-card__meta {
+  height: 12px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #eef0f3 0%, #f7f8fa 45%, #eef0f3 100%);
+  background-size: 200% 100%;
+  animation: list-status-shimmer 1.2s ease-in-out infinite;
+  color: transparent;
+}
+
+.story-archive__item--skeleton .story-list-card__title {
+  width: 70%;
+  height: 16px;
+  margin-bottom: 10px;
+}
+
+.story-archive__item--skeleton .story-list-card__excerpt {
+  width: 92%;
+  margin-bottom: 8px;
+}
+
+.story-archive__item--skeleton .story-list-card__meta {
+  width: 40%;
+  margin-top: 12px;
+}
+
+.post-board__nav-empty--loading {
+  color: #9ca3af;
+  font-style: normal;
+}

@@ -4,9 +4,22 @@ import type { PostsResponse } from '../types/post'
 import type { Page } from '../types/page'
 import type { Post } from '../types/post'
 import type { FinancialReportsDocument } from '../features/financial-report/financialReportTypes'
+import type { InquiryAdmin, InquiryPublic } from '../types/inquiry'
+import type { InquiryFaqDocument } from '../types/inquiryFaq'
 
 export type AdminPost = Post & { meta?: Record<string, string> }
 export type AdminPostsResponse = { posts: AdminPost[]; total: number }
+
+async function readApiError(res: Response, fallback: string): Promise<string> {
+  const text = await res.text().catch(() => '')
+  try {
+    const json = JSON.parse(text) as { error?: string }
+    if (json.error) return json.error
+  } catch {
+    /* ignore */
+  }
+  return text || fallback
+}
 
 /** slug에 %가 남아 있으면(이중 인코딩 등) 안정화할 때까지 디코드한 뒤 한 번만 인코드 */
 function encodeSlugForPath(slug: string): string {
@@ -199,4 +212,94 @@ export async function adminPutFinancialReports(doc: FinancialReportsDocument): P
     throw new Error(text || 'Failed to save financial reports')
   }
   return res.json()
+}
+
+export async function createInquiry(input: {
+  name: string
+  contact: string
+  pin: string
+  type: string
+  subject: string
+  body: string
+}): Promise<InquiryPublic> {
+  const res = await fetch(`${API_BASE}/inquiries`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(input),
+  })
+  if (!res.ok) throw new Error(await readApiError(res, '문의 접수에 실패했습니다.'))
+  return res.json()
+}
+
+export async function fetchInquiryFaq(): Promise<InquiryFaqDocument> {
+  const res = await fetch(`${API_BASE}/inquiry-faq`)
+  if (!res.ok) throw new Error(await readApiError(res, 'FAQ를 불러오지 못했습니다.'))
+  return res.json()
+}
+
+export async function adminFetchInquiryFaq(): Promise<InquiryFaqDocument> {
+  const res = await fetch(`${API_BASE}/admin/inquiry-faq`)
+  if (!res.ok) throw new Error(await readApiError(res, 'FAQ를 불러오지 못했습니다.'))
+  return res.json()
+}
+
+export async function adminPutInquiryFaq(doc: InquiryFaqDocument): Promise<InquiryFaqDocument> {
+  const res = await fetch(`${API_BASE}/admin/inquiry-faq`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(doc),
+  })
+  if (!res.ok) throw new Error(await readApiError(res, 'FAQ 저장에 실패했습니다.'))
+  return res.json()
+}
+
+export async function lookupInquiries(input: {
+  name: string
+  contact: string
+  pin: string
+}): Promise<InquiryPublic[]> {
+  const res = await fetch(`${API_BASE}/inquiries/lookup`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(input),
+  })
+  if (!res.ok) throw new Error(await readApiError(res, '문의 조회에 실패했습니다.'))
+  const data = (await res.json()) as { inquiries: InquiryPublic[] }
+  return data.inquiries ?? []
+}
+
+export async function adminFetchInquiries(
+  page = 1,
+  perPage = 20,
+  filters: { name?: string; contact?: string } = {},
+): Promise<{ inquiries: InquiryAdmin[]; total: number }> {
+  const params = new URLSearchParams({
+    page: String(page),
+    perPage: String(perPage),
+  })
+  const name = filters.name?.trim()
+  const contact = filters.contact?.trim()
+  if (name) params.set('name', name)
+  if (contact) params.set('contact', contact)
+  const res = await fetch(`${API_BASE}/admin/inquiries?${params}`)
+  if (!res.ok) throw new Error(await readApiError(res, '문의 목록을 불러오지 못했습니다.'))
+  return res.json()
+}
+
+export async function adminUpdateInquiry(
+  id: number,
+  input: { status?: string; reply?: string; memo?: string },
+): Promise<InquiryAdmin> {
+  const res = await fetch(`${API_BASE}/admin/inquiries/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(input),
+  })
+  if (!res.ok) throw new Error(await readApiError(res, '문의 저장에 실패했습니다.'))
+  return res.json()
+}
+
+export async function adminDeleteInquiry(id: number): Promise<void> {
+  const res = await fetch(`${API_BASE}/admin/inquiries/${id}`, { method: 'DELETE' })
+  if (!res.ok) throw new Error(await readApiError(res, '문의 삭제에 실패했습니다.'))
 }

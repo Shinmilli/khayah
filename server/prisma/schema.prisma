@@ -143,3 +143,23 @@ model TermRelationship {
   @@index([termTaxonomyId])
   @@map("term_relationships")
 }
+
+model Inquiry {
+  id        Int       @id @default(autoincrement())
+  name      String    @db.VarChar(80)
+  contact   String    @db.VarChar(120)
+  pinHash   String    @map("pin_hash") @db.VarChar(255)
+  type      String    @db.VarChar(40)
+  subject   String    @db.VarChar(200)
+  body      String    @db.Text
+  status    String    @default("대기") @db.VarChar(20)
+  reply     String    @default("") @db.Text
+  memo      String    @default("") @db.Text
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  repliedAt DateTime? @map("replied_at")
+
+  @@index([name, contact])
+  @@index([status, createdAt])
+  @@map("inquiries")
+}
