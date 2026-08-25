@@ -1030,7 +1030,7 @@ export function AdminPostsPage() {
   const [listPage, setListPage] = useState(1)
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(false)
+  const [error, setError] = useState('')
 
   const isPressList = filterType === '언론보도'
 
@@ -1047,7 +1047,7 @@ export function AdminPostsPage() {
 
   const load = async (page: number) => {
     setLoading(true)
-    setError(false)
+    setError('')
     try {
       if (filterType === '언론보도') {
         const res = await adminFetchPostsByKind(filterType, 1, 100)
@@ -1058,8 +1058,8 @@ export function AdminPostsPage() {
         setRows(res.posts)
         setTotal(res.total)
       }
-    } catch {
-      setError(true)
+    } catch (e) {
+      setError(e instanceof Error ? e.message : '목록을 불러오지 못했습니다.')
     } finally {
       setLoading(false)
     }
@@ -1165,7 +1165,7 @@ export function AdminPostsPage() {
             {loading ? (
               <li className="admin-table__empty">불러오는 중…</li>
             ) : error ? (
-              <li className="admin-table__empty">목록을 불러오지 못했습니다.</li>
+              <li className="admin-table__empty">{error}</li>
             ) : sortedRows.length === 0 ? (
               <li className="admin-table__empty">등록된 공지가 없습니다.</li>
             ) : (
@@ -1198,7 +1198,7 @@ export function AdminPostsPage() {
             {loading ? (
               <li className="admin-table__empty">불러오는 중…</li>
             ) : error ? (
-              <li className="admin-table__empty">목록을 불러오지 못했습니다.</li>
+              <li className="admin-table__empty">{error}</li>
             ) : sortedRows.length === 0 ? (
               <li className="admin-table__empty">등록된 언론보도가 없습니다.</li>
             ) : (
@@ -1273,7 +1273,7 @@ export function AdminPostsPage() {
                 ) : error ? (
                   <tr>
                     <td colSpan={6} className="admin-table__empty">
-                      목록을 불러오지 못했습니다.
+                      {error}
                     </td>
                   </tr>
                 ) : sortedRows.length === 0 ? (

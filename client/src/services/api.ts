@@ -13,8 +13,9 @@ export type AdminPostsResponse = { posts: AdminPost[]; total: number }
 async function readApiError(res: Response, fallback: string): Promise<string> {
   const text = await res.text().catch(() => '')
   try {
-    const json = JSON.parse(text) as { error?: string }
-    if (json.error) return json.error
+    const json = JSON.parse(text) as { error?: string; hint?: string }
+    const parts = [json.error, json.hint].filter(Boolean)
+    if (parts.length > 0) return parts.join(' — ')
   } catch {
     /* ignore */
   }
@@ -142,7 +143,7 @@ export async function adminFetchPostsByKind(kind: string, page = 1, perPage = 20
   const res = await fetch(
     `${API_BASE}/admin/posts?kind=${encodeURIComponent(kind)}&page=${page}&perPage=${perPage}`,
   )
-  if (!res.ok) throw new Error('Failed to fetch admin posts')
+  if (!res.ok) throw new Error(await readApiError(res, '게시글 목록을 불러오지 못했습니다.'))
   return res.json()
 }
 

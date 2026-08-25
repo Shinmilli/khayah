@@ -1,6 +1,7 @@
 import type { Request, Response } from 'express'
 import { inquiriesService } from '../services/inquiriesService'
 import { clientIp, isRateLimited } from '../utils/rateLimit'
+import { prismaInitStatus } from '../utils/prisma'
 
 function errStatus(e: unknown): number {
   const s = (e as { status?: number })?.status
@@ -9,6 +10,17 @@ function errStatus(e: unknown): number {
 
 function errMessage(e: unknown, fallback: string): string {
   return e instanceof Error && e.message ? e.message : fallback
+}
+
+function dbUnavailablePayload() {
+  return {
+    error: 'Database unavailable',
+    reason: prismaInitStatus.reason ?? 'unknown',
+    hint:
+      prismaInitStatus.reason === 'missing_database_url'
+        ? 'server/.env에 DATABASE_URL을 설정한 뒤 API 서버를 재시art하세요.'
+        : 'DATABASE_URL과 Supabase 연결을 확인한 뒤 API 서버를 재시art하세요.',
+  }
 }
 
 export async function createInquiry(req: Request, res: Response) {
@@ -66,6 +78,9 @@ export async function adminListInquiries(req: Request, res: Response) {
     res.json(result)
   } catch (e) {
     const status = errStatus(e)
+    if (status === 503) {
+      return res.status(503).json(dbUnavailablePayload())
+    }
     if (status >= 400 && status < 500) {
       return res.status(status).json({ error: errMessage(e, 'Invalid request') })
     }

@@ -4,7 +4,10 @@ import { adminPostsService } from '../services/adminPostsService'
 
 function requireDb(res: Response): boolean {
   if (prisma) return true
-  res.status(503).json({ error: 'DB is not available. Disable MOCK_DATA and set DATABASE_URL.' })
+  res.status(503).json({
+    error: 'Database unavailable',
+    hint: 'server/.env에 DATABASE_URL을 설정한 뒤 API 서버를 재시art하세요.',
+  })
   return false
 }
 
