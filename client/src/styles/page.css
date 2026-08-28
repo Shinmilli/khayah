@@ -365,9 +365,18 @@
 }
 
 /* 활동소식 목록 — 왼쪽 정사각 썸네일, 오른쪽 제목·날짜 */
+.activity-archive-page .activity-archive__list,
+.activity-archive-page .pager,
+.activity-archive-page .notice-archive__status {
+  max-width: 900px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .activity-archive-page .activity-archive__list {
   list-style: none;
-  margin: 0;
+  margin: 0 auto;
   padding: 0;
 }
 
