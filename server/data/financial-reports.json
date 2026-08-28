@@ -1,0 +1,190 @@
+{
+  "version": 1,
+  "settings": {
+    "showBalanceSheet": true,
+    "showOperationsStatement": true,
+    "showActionButtons": true
+  },
+  "reports": [
+    {
+      "year": 2025,
+      "incomeSegments": [
+        {
+          "id": "misc",
+          "label": "기타수입",
+          "percent": 25.2,
+          "color": "#2a9d8f"
+        },
+        {
+          "id": "brought_forward",
+          "label": "전기이월금",
+          "percent": 14.11,
+          "color": "#e9c46a"
+        },
+        {
+          "id": "subsidy",
+          "label": "보조금",
+          "percent": 41.18,
+          "color": "#8b1538"
+        },
+        {
+          "id": "donation",
+          "label": "기부금",
+          "percent": 19.51,
+          "color": "#457b9d"
+        }
+      ],
+      "expenseSegments": [
+        {
+          "id": "fundraising",
+          "label": "모금비용",
+          "percent": 0.04,
+          "color": "#5c1a2e"
+        },
+        {
+          "id": "carried_next",
+          "label": "차기이월금",
+          "percent": 6.04,
+          "color": "#e9c46a"
+        },
+        {
+          "id": "admin",
+          "label": "일반관리비",
+          "percent": 5.39,
+          "color": "#8b1538"
+        },
+        {
+          "id": "programs",
+          "label": "사업수행비용",
+          "percent": 88.53,
+          "color": "#457b9d"
+        }
+      ],
+      "incomeTotalWon": 2754856299,
+      "expenseTotalWon": 2754856299,
+      "balanceSheetImageUrl": null,
+      "operationsStatementImageUrl": null,
+      "donationDisclosurePdfUrl": null
+    },
+    {
+      "year": 2023,
+      "incomeSegments": [
+        {
+          "id": "misc",
+          "label": "기타수입",
+          "percent": 0.12,
+          "color": "#2a9d8f"
+        },
+        {
+          "id": "brought_forward",
+          "label": "전기이월금",
+          "percent": 4.63,
+          "color": "#e9c46a"
+        },
+        {
+          "id": "subsidy",
+          "label": "보조금",
+          "percent": 23.36,
+          "color": "#6c7a89"
+        },
+        {
+          "id": "donation",
+          "label": "기부금",
+          "percent": 71.89,
+          "color": "#8b1538"
+        }
+      ],
+      "expenseSegments": [
+        {
+          "id": "fundraising",
+          "label": "모금비용",
+          "percent": 0.31,
+          "color": "#2a9d8f"
+        },
+        {
+          "id": "carried_next",
+          "label": "차기이월금",
+          "percent": 13.18,
+          "color": "#e9c46a"
+        },
+        {
+          "id": "admin",
+          "label": "일반관리비",
+          "percent": 9.21,
+          "color": "#8b1538"
+        },
+        {
+          "id": "programs",
+          "label": "사업수행비용",
+          "percent": 77.3,
+          "color": "#457b9d"
+        }
+      ],
+      "incomeTotalWon": 460659841,
+      "expenseTotalWon": 460659841,
+      "balanceSheetImageUrl": null,
+      "operationsStatementImageUrl": null,
+      "donationDisclosurePdfUrl": null
+    },
+    {
+      "year": 2022,
+      "incomeSegments": [
+        {
+          "id": "misc",
+          "label": "기타수입",
+          "percent": 0.2,
+          "color": "#2a9d8f"
+        },
+        {
+          "id": "brought_forward",
+          "label": "전기이월금",
+          "percent": 5.1,
+          "color": "#e9c46a"
+        },
+        {
+          "id": "subsidy",
+          "label": "보조금",
+          "percent": 22,
+          "color": "#6c7a89"
+        },
+        {
+          "id": "donation",
+          "label": "기부금",
+          "percent": 72.7,
+          "color": "#8b1538"
+        }
+      ],
+      "expenseSegments": [
+        {
+          "id": "fundraising",
+          "label": "모금비용",
+          "percent": 0.4,
+          "color": "#2a9d8f"
+        },
+        {
+          "id": "carried_next",
+          "label": "차기이월금",
+          "percent": 12.5,
+          "color": "#e9c46a"
+        },
+        {
+          "id": "admin",
+          "label": "일반관리비",
+          "percent": 10,
+          "color": "#8b1538"
+        },
+        {
+          "id": "programs",
+          "label": "사업수행비용",
+          "percent": 77.1,
+          "color": "#457b9d"
+        }
+      ],
+      "incomeTotalWon": 412000000,
+      "expenseTotalWon": 412000000,
+      "balanceSheetImageUrl": null,
+      "operationsStatementImageUrl": null,
+      "donationDisclosurePdfUrl": null
+    }
+  ]
+}

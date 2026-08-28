@@ -6,6 +6,7 @@ import type { Post } from '../types/post'
 import type { FinancialReportsDocument } from '../features/financial-report/financialReportTypes'
 import type { InquiryAdmin, InquiryPublic } from '../types/inquiry'
 import type { InquiryFaqDocument } from '../types/inquiryFaq'
+import type { ImpactStatsDocument } from '../features/home/impactStatsTypes'
 
 export type AdminPost = Post & { meta?: Record<string, string> }
 export type AdminPostsResponse = { posts: AdminPost[]; total: number }
@@ -130,7 +131,11 @@ export async function uploadReportImage(file: File): Promise<DocumentUploadResul
   form.append('file', file)
   const res = await fetch(`${API_BASE}/uploads/image`, { method: 'POST', body: form })
   if (!res.ok) throw new Error(await readApiError(res, '이미지 업로드에 실패했습니다.'))
-  return res.json()
+  const data = (await res.json()) as DocumentUploadResult
+  if (!data?.url?.trim()) {
+    throw new Error('업로드 응답에 URL이 없습니다. API 서버와 Cloudinary 설정을 확인하세요.')
+  }
+  return data
 }
 
 export async function adminFetchPostsByKind(kind: string, page = 1, perPage = 20): Promise<AdminPostsResponse> {
@@ -205,6 +210,25 @@ export async function adminPutFinancialReports(doc: FinancialReportsDocument): P
   if (!res.ok) {
     const text = await res.text().catch(() => '')
     throw new Error(text || 'Failed to save financial reports')
+  }
+  return res.json()
+}
+
+export async function fetchImpactStats(): Promise<ImpactStatsDocument> {
+  const res = await fetch(`${API_BASE}/impact-stats`)
+  if (!res.ok) throw new Error('Failed to fetch impact stats')
+  return res.json()
+}
+
+export async function adminPutImpactStats(doc: ImpactStatsDocument): Promise<ImpactStatsDocument> {
+  const res = await fetch(`${API_BASE}/admin/impact-stats`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(doc),
+  })
+  if (!res.ok) {
+    const text = await res.text().catch(() => '')
+    throw new Error(text || 'Failed to save impact stats')
   }
   return res.json()
 }

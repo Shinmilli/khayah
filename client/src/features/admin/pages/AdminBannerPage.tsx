@@ -1,7 +1,15 @@
 import { useState } from 'react'
+import { AdminMediaUpload } from '../components/AdminMediaUpload'
 
-/** 홈 `HeroSection` / `#home-hero-banner` 슬라이드와 동일한 구조(연동 시 참고) */
-const mockHeroSlides = [
+type HeroSlide = {
+  id: string
+  order: number
+  image: string
+  alt: string
+  lines: string[]
+}
+
+const initialHeroSlides: HeroSlide[] = [
   {
     id: 'h1',
     order: 1,
@@ -23,11 +31,17 @@ const mockHeroSlides = [
     alt: '작은 변화와 희망',
     lines: ['작은 변화가', '큰 희망을 만듭니다'],
   },
-] as const
+]
 
 export function AdminBannerPage() {
-  const [selectedHeroId, setSelectedHeroId] = useState<string>(mockHeroSlides[0].id)
-  const selectedHero = mockHeroSlides.find((s) => s.id === selectedHeroId) ?? mockHeroSlides[0]
+  const [slides, setSlides] = useState<HeroSlide[]>(() => initialHeroSlides.map((s) => ({ ...s, lines: [...s.lines] })))
+  const [selectedHeroId, setSelectedHeroId] = useState<string>(initialHeroSlides[0].id)
+  const selectedHero = slides.find((s) => s.id === selectedHeroId) ?? slides[0]
+
+  const updateSelectedSlide = (patch: Partial<HeroSlide>) => {
+    if (!selectedHero) return
+    setSlides((list) => list.map((s) => (s.id === selectedHero.id ? { ...s, ...patch } : s)))
+  }
 
   return (
     <div className="admin-page">
@@ -35,9 +49,8 @@ export function AdminBannerPage() {
         <div>
           <h1 className="admin-page__title">메인 배너 관리</h1>
           <p className="admin-page__desc">
-            홈 상단 <strong>히어로 배너</strong> — 메인 <code>#home-hero-banner</code> 슬라이드의{' '}
-            <strong>배경 이미지</strong>와 오버레이 <strong>문구(줄 단위)</strong>, <strong>alt</strong>를
-            관리합니다. (현재 홈은 <code>HERO_SLIDES</code> 정적 데이터)
+            홈 상단 히어로 슬라이드의 배경 이미지·문구·alt를 관리합니다. 이미지는 Cloudinary/Supabase에
+            업로드됩니다. (홈 연동 API는 추후 — 현재 이 화면에서의 변경은 미리보기·목업용)
           </p>
         </div>
       </div>
@@ -46,10 +59,6 @@ export function AdminBannerPage() {
         <h2 id="hero-heading" className="admin-panel__title">
           홈 히어로 슬라이드
         </h2>
-        <p className="admin-panel__foot admin-panel__subnote">
-          슬라이드별 <strong>배경 사진</strong>, <strong>한국어 문구</strong>, <strong>이미지 설명(alt)</strong>{' '}
-          수정 목업입니다.
-        </p>
 
         <div className="admin-split admin-split--hero">
           <div>
@@ -64,7 +73,7 @@ export function AdminBannerPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {mockHeroSlides.map((slide) => (
+                  {slides.map((slide) => (
                     <tr
                       key={slide.id}
                       className={slide.id === selectedHeroId ? 'admin-table__row--selected' : undefined}
@@ -90,37 +99,47 @@ export function AdminBannerPage() {
           </div>
 
           <div>
-            <h3 className="admin-subpanel__title">선택 슬라이드 편집 (목업)</h3>
+            <h3 className="admin-subpanel__title">선택 슬라이드 편집</h3>
             <p className="admin-fieldset__hint admin-fieldset__hint--flush">
               슬라이드: {selectedHero.order}번 · {selectedHero.alt}
             </p>
             <div className="admin-form-grid">
+              <AdminMediaUpload
+                label="배너 배경 이미지"
+                hint="16:9 권장 · 업로드 후 URL이 슬라이드에 반영됩니다."
+                variant="image"
+                layout="wide"
+                value={/^https?:\/\//i.test(selectedHero.image) ? selectedHero.image : null}
+                onChange={(url) => {
+                  if (url) updateSelectedSlide({ image: url })
+                }}
+              />
+              {!/^https?:\/\//i.test(selectedHero.image) ? (
+                <p className="admin-media-upload__hint">
+                  현재 정적 경로: {selectedHero.image} — 업로드하면 HTTPS URL로 교체됩니다.
+                </p>
+              ) : null}
               <label className="admin-field admin-field--full">
-                <span className="admin-field__label">배너 배경 이미지</span>
-                <div className="admin-upload">
-                  <div className="admin-upload__preview admin-upload__preview--wide" aria-hidden>
-                    <span>16:9 미리보기</span>
-                  </div>
-                  <div className="admin-upload__actions">
-                    <button type="button" className="admin-btn admin-btn--ghost" disabled>
-                      이미지 교체
-                    </button>
-                    <p className="admin-upload__hint">현재 경로: {selectedHero.image}</p>
-                  </div>
-                </div>
-              </label>
-              <label className="admin-field admin-field--full">
-                <span className="admin-field__label">배너 문구 (줄마다 한 블록 · 홈 hero-text-kr)</span>
+                <span className="admin-field__label">배너 문구 (줄마다 Enter)</span>
                 <textarea
                   className="admin-input admin-input--area"
-                  readOnly
                   rows={4}
                   value={selectedHero.lines.join('\n')}
+                  onChange={(e) =>
+                    updateSelectedSlide({
+                      lines: e.target.value.split('\n').map((l) => l.trimEnd()),
+                    })
+                  }
                 />
               </label>
               <label className="admin-field admin-field--full">
                 <span className="admin-field__label">이미지 설명 (alt)</span>
-                <input className="admin-input" type="text" readOnly value={selectedHero.alt} />
+                <input
+                  className="admin-input"
+                  type="text"
+                  value={selectedHero.alt}
+                  onChange={(e) => updateSelectedSlide({ alt: e.target.value })}
+                />
               </label>
             </div>
             <div className="admin-form-actions">
@@ -128,7 +147,7 @@ export function AdminBannerPage() {
                 미리보기
               </button>
               <button type="button" className="admin-btn admin-btn--primary" disabled>
-                배너 반영
+                배너 반영 (홈 API 연동 예정)
               </button>
             </div>
           </div>

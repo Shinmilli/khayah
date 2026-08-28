@@ -255,6 +255,21 @@ const icons = {
       <path d="M14 6l2 2" />
     </Ico>
   ),
+  palette: (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path
+        d="M12 22a1 1 0 0 1 0-20 10 9 0 0 1 10 9 5 5 0 0 1-5 5h-2.25a1.75 1.75 0 0 0-1.4 2.8l.3.4a1.75 1.75 0 0 1-1.4 2.8z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <circle cx="8" cy="9.5" r="1" fill="currentColor" stroke="none" />
+      <circle cx="11.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
+      <circle cx="15" cy="8.5" r="1" fill="currentColor" stroke="none" />
+    </svg>
+  ),
   hr: (
     <Ico>
       <line x1="4" y1="12" x2="20" y2="12" />
@@ -741,6 +756,9 @@ export const AdminRichTextEditor = forwardRef<
                   }}
                 >
                   <span className="sr-only">글자색 직접 선택</span>
+                  <span className="admin-rich__color-pick-badge" aria-hidden>
+                    {icons.palette}
+                  </span>
                   <input
                     type="color"
                     value={customTextColor}

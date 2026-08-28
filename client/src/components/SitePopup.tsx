@@ -5,6 +5,8 @@ import {
   buildVisiblePopupQueue,
   hidePopupToday,
   rememberPopupDismissedThisSession,
+  resolvePopupButtonLinkUrl,
+  resolvePopupImageLinkUrl,
   type PopupItem,
 } from '../utils/popup'
 import '../styles/popup.css'
@@ -21,10 +23,6 @@ function CloseIcon() {
       />
     </svg>
   )
-}
-
-function ctaHrefFor(item: PopupItem): string {
-  return item.buttonUrl?.trim() || item.linkUrl?.trim() || ''
 }
 
 export function SitePopup() {
@@ -75,7 +73,8 @@ export function SitePopup() {
 
   if (!loaded || location.pathname !== '/' || !current) return null
 
-  const ctaHref = current.buttonEnabled ? ctaHrefFor(current) : ''
+  const imageLinkHref = resolvePopupImageLinkUrl(current)
+  const ctaHref = current.buttonEnabled ? resolvePopupButtonLinkUrl(current) : ''
   const showCta = Boolean(ctaHref)
 
   const image = (
@@ -96,11 +95,11 @@ export function SitePopup() {
         </button>
 
         <div className="site-popup__media">
-          {current.linkUrl?.trim() ? (
+          {imageLinkHref ? (
             <a
-              href={current.linkUrl.trim()}
+              href={imageLinkHref}
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
               className="site-popup__link"
               aria-label="팝업 링크"
             >
@@ -117,7 +116,7 @@ export function SitePopup() {
           </button>
           <div className="site-popup__actions-end">
             {showCta ? (
-              <a className="site-popup__cta" href={ctaHref} target="_blank" rel="noreferrer">
+              <a className="site-popup__cta" href={ctaHref} target="_blank" rel="noopener noreferrer">
                 {current.buttonLabel?.trim() ? current.buttonLabel.trim() : '자세히 보기'}
               </a>
             ) : null}

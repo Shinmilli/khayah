@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { AdminMediaUpload } from '../components/AdminMediaUpload'
 import { getDefaultPopupConfig, getDefaultPopupItem, loadPopupConfig, savePopupConfig, type PopupConfig, type PopupItem } from '../../../utils/popup'
 
 export function AdminPopupPage() {
@@ -14,7 +15,8 @@ export function AdminPopupPage() {
   }, [])
 
   const save = () => {
-    savePopupConfig(config)
+    const saved = savePopupConfig(config)
+    setConfig(saved)
     setStatus('저장되었습니다. (일반 화면 새로고침 시 반영)')
     window.setTimeout(() => setStatus(''), 2500)
   }
@@ -94,32 +96,36 @@ export function AdminPopupPage() {
             <p className="admin-upload__hint">ON이면 일반 화면에서 접속 시 팝업이 표시됩니다. (오늘 그만보기 적용)</p>
           </div>
 
-          <label className="admin-field admin-field--full">
-            <span className="admin-field__label">팝업 이미지 URL</span>
-            <input
-              className="admin-input"
-              type="url"
-              placeholder="https://..."
-              value={selected?.imageUrl ?? ''}
-              onChange={(e) => updateSelected({ imageUrl: e.currentTarget.value })}
-            />
-          </label>
+          <AdminMediaUpload
+            label="팝업 이미지"
+            hint="JPEG · PNG · WebP · GIF — 업로드 후 「저장」을 누르면 일반 화면에 반영됩니다."
+            variant="image"
+            layout="wide"
+            value={selected?.imageUrl?.trim() ? selected.imageUrl : null}
+            onChange={(url) => updateSelected({ imageUrl: url ?? '' })}
+          />
 
           <label className="admin-field admin-field--full">
             <span className="admin-field__label">클릭 시 이동 URL (선택)</span>
             <input
               className="admin-input"
-              type="url"
-              placeholder="비워두면 클릭 이동 없음"
+              type="text"
+              inputMode="url"
+              autoComplete="url"
+              placeholder="https://example.com/..."
               value={selected?.linkUrl ?? ''}
               onChange={(e) => updateSelected({ linkUrl: e.currentTarget.value })}
             />
+            <p className="admin-upload__hint">
+              http:// 또는 https:// 로 시작하는 전체 주소만 적용됩니다. 비우면 이미지 클릭 이동이 없습니다.
+            </p>
           </label>
 
           <div className="admin-field admin-field--full">
             <span className="admin-field__label">버튼 링크 (선택)</span>
             <p className="admin-upload__hint">
-              원하면 팝업 하단에 링크 버튼을 추가할 수 있습니다. 버튼 URL을 비우면 위의「클릭 시 이동 URL」을 버튼 링크로 사용합니다.
+              원하면 팝업 하단에 링크 버튼을 추가할 수 있습니다. URL은 http:// 또는 https:// 로 시작하는 전체 주소만
+              적용됩니다. 버튼 URL을 비우면 위의「클릭 시 이동 URL」을 사용합니다.
             </p>
             <div className="admin-popup-cta-section">
               <div className="admin-form-grid">
@@ -156,8 +162,10 @@ export function AdminPopupPage() {
                   <span className="admin-field__label">버튼 URL</span>
                   <input
                     className="admin-input"
-                    type="url"
-                    placeholder="비우면 ‘클릭 시 이동 URL’ 사용"
+                    type="text"
+                    inputMode="url"
+                    autoComplete="url"
+                    placeholder="https://example.com/..."
                     value={selected?.buttonUrl ?? ''}
                     onChange={(e) => updateSelected({ buttonUrl: e.currentTarget.value })}
                   />
@@ -168,37 +176,34 @@ export function AdminPopupPage() {
 
           <div className="admin-field admin-field--full">
             <span className="admin-field__label">미리보기</span>
-            <div className="admin-upload">
-              <div className="admin-upload__preview admin-upload__preview--wide" aria-hidden>
-                {selected?.imageUrl ? (
-                  <img
-                    src={selected.imageUrl}
-                    alt=""
-                    style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 8 }}
-                  />
-                ) : (
-                  <span>이미지 URL을 입력하세요</span>
-                )}
-              </div>
-              <div className="admin-upload__actions">
-                <p className="admin-upload__hint">‘오늘 그만보기’는 방문자 브라우저(localStorage)에 저장됩니다.</p>
-                {status ? <p className="admin-upload__hint" role="status">{status}</p> : null}
-                {config.items.length > 1 && selected ? (
-                  <button
-                    type="button"
-                    className="admin-btn admin-btn--danger-ghost"
-                    onClick={() => {
-                      const next = config.items.filter((x) => x.id !== selected.id)
-                      const safe = next.length ? next : [getDefaultPopupItem()]
-                      setConfig({ items: safe })
-                      setSelectedId(safe[0]?.id ?? '')
-                    }}
-                  >
-                    이 팝업 삭제
-                  </button>
-                ) : null}
-              </div>
+            <div className="admin-media-upload__preview admin-media-upload__preview--wide">
+              {selected?.imageUrl ? (
+                <img src={selected.imageUrl} alt="" className="admin-media-upload__thumb" />
+              ) : (
+                <span className="admin-media-upload__empty">이미지를 업로드하세요</span>
+              )}
             </div>
+            <p className="admin-media-upload__hint">‘오늘 그만보기’는 방문자 브라우저(localStorage)에 저장됩니다.</p>
+            {status ? (
+              <p className="admin-media-upload__ok" role="status">
+                {status}
+              </p>
+            ) : null}
+            {config.items.length > 1 && selected ? (
+              <button
+                type="button"
+                className="admin-btn admin-btn--danger-ghost"
+                style={{ marginTop: 8 }}
+                onClick={() => {
+                  const next = config.items.filter((x) => x.id !== selected.id)
+                  const safe = next.length ? next : [getDefaultPopupItem()]
+                  setConfig({ items: safe })
+                  setSelectedId(safe[0]?.id ?? '')
+                }}
+              >
+                이 팝업 삭제
+              </button>
+            ) : null}
           </div>
         </div>
       </section>

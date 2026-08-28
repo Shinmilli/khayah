@@ -42,11 +42,32 @@ function uid(): string {
   return `p_${Math.random().toString(36).slice(2, 10)}${Date.now().toString(36).slice(-4)}`
 }
 
+/** 팝업 링크는 http:// 또는 https:// 로 시작하는 전체 URL만 허용 (사이트 내부 경로·상대 경로 불가) */
+export function resolvePopupExternalUrl(raw: string | undefined | null): string {
+  const s = raw?.trim() ?? ''
+  if (!s) return ''
+  try {
+    const u = new URL(s)
+    if (u.protocol === 'http:' || u.protocol === 'https:') return s
+  } catch {
+    /* invalid */
+  }
+  return ''
+}
+
+export function resolvePopupImageLinkUrl(item: PopupItem): string {
+  return resolvePopupExternalUrl(item.linkUrl)
+}
+
+export function resolvePopupButtonLinkUrl(item: PopupItem): string {
+  return resolvePopupExternalUrl(item.buttonUrl) || resolvePopupExternalUrl(item.linkUrl)
+}
+
 export function getDefaultPopupItem(): PopupItem {
   return {
     id: uid(),
     enabled: false,
-    imageUrl: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1200&h=800&fit=crop',
+    imageUrl: '',
     linkUrl: '',
     buttonEnabled: false,
     buttonLabel: '자세히 보기',
@@ -59,14 +80,26 @@ export function getDefaultPopupConfig(): PopupConfig {
 }
 
 function coerceItem(raw: Partial<PopupItem>): PopupItem {
+  const linkUrl = typeof raw.linkUrl === 'string' ? raw.linkUrl.trim() : ''
+  const buttonUrl = typeof raw.buttonUrl === 'string' ? raw.buttonUrl.trim() : ''
   return {
     id: typeof raw.id === 'string' && raw.id.trim() ? raw.id : uid(),
     enabled: Boolean(raw.enabled),
-    imageUrl: typeof raw.imageUrl === 'string' && raw.imageUrl.trim() ? raw.imageUrl : getDefaultPopupItem().imageUrl,
-    linkUrl: typeof raw.linkUrl === 'string' ? raw.linkUrl.trim() : '',
+    imageUrl: typeof raw.imageUrl === 'string' ? raw.imageUrl.trim() : '',
+    linkUrl: resolvePopupExternalUrl(linkUrl),
     buttonEnabled: Boolean(raw.buttonEnabled),
     buttonLabel: typeof raw.buttonLabel === 'string' ? raw.buttonLabel : getDefaultPopupItem().buttonLabel,
-    buttonUrl: typeof raw.buttonUrl === 'string' ? raw.buttonUrl.trim() : '',
+    buttonUrl: resolvePopupExternalUrl(buttonUrl),
+  }
+}
+
+export function normalizePopupConfig(config: PopupConfig): PopupConfig {
+  return {
+    items: config.items.map((item) => ({
+      ...item,
+      linkUrl: resolvePopupExternalUrl(item.linkUrl),
+      buttonUrl: resolvePopupExternalUrl(item.buttonUrl),
+    })).slice(0, 20),
   }
 }
 
@@ -91,9 +124,11 @@ export function loadPopupConfig(): PopupConfig {
   }
 }
 
-export function savePopupConfig(config: PopupConfig) {
-  localStorage.setItem(CONFIG_KEY, JSON.stringify(config))
+export function savePopupConfig(config: PopupConfig): PopupConfig {
+  const normalized = normalizePopupConfig(config)
+  localStorage.setItem(CONFIG_KEY, JSON.stringify(normalized))
   window.dispatchEvent(new Event(POPUP_CONFIG_CHANGED_EVENT))
+  return normalized
 }
 
 /** 홈에서 순차 표시할 팝업 목록(활성 + 오늘 그만보기 제외 + 이번 탭에서 닫은 항목 제외, 배열 순서 유지) */
@@ -101,7 +136,7 @@ export function buildVisiblePopupQueue(): PopupItem[] {
   const cfg = loadPopupConfig()
   const sessionSkip = readSessionDismissedIds()
   return cfg.items.filter(
-    (p) => p.enabled && !isPopupHiddenToday(p.id) && !sessionSkip.has(p.id),
+    (p) => p.enabled && p.imageUrl.trim() && !isPopupHiddenToday(p.id) && !sessionSkip.has(p.id),
   )
 }
 

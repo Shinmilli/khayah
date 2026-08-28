@@ -8,6 +8,7 @@ function isContentAdminPath(pathname: string): boolean {
     pathname.startsWith('/admin/app/popup') ||
     pathname.startsWith('/admin/app/posts') ||
     pathname.startsWith('/admin/app/financial-reports') ||
+    pathname.startsWith('/admin/app/impact-stats') ||
     pathname.startsWith('/admin/app/banner')
   )
 }
@@ -17,6 +18,7 @@ const contentChildren = [
   { to: '/admin/app/popup', label: '팝업 관리' },
   { to: '/admin/app/posts', label: '게시글 관리' },
   { to: '/admin/app/financial-reports', label: '재정보고' },
+  { to: '/admin/app/impact-stats', label: '나눔의 결실' },
 ] as const
 
 const otherNav = [

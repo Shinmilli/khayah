@@ -166,6 +166,7 @@ function PostEditorForm({
     'PDF 선택 시 자동 업로드 (10MB 이하는 Cloudinary, 초과는 Supabase)',
   )
   const [docUploading, setDocUploading] = useState(false)
+  const [pdfUploading, setPdfUploading] = useState(false)
   const [pdfFiles, setPdfFiles] = useState<PdfAttachment[]>(() => parsePdfAttachments(initialMeta))
   const [selectedPdfUrls, setSelectedPdfUrls] = useState<string[]>([])
   const [pdfDropOver, setPdfDropOver] = useState(false)
@@ -313,6 +314,7 @@ function PostEditorForm({
     const mb = (file.size / (1024 * 1024)).toFixed(1)
     const dest = file.size > 10 * 1024 * 1024 ? 'Supabase Storage' : 'Cloudinary'
     setDocUploading(true)
+    setPdfUploading(true)
     setSaveError('')
     setDocStatus(`업로드 중… ${file.name} (${mb}MB → ${dest})`)
     try {
@@ -343,11 +345,9 @@ function PostEditorForm({
       setDocStatus(msg)
       setSaveError(msg)
     } finally {
+      setPdfUploading(false)
       setDocUploading(false)
     }
-  }
-
-  const onRemoveSelectedPdfs = async () => {
     const pick = new Set(selectedPdfUrls)
     if (pick.size === 0) return
     const removing = pdfFiles.filter((f) => pick.has(f.url))
@@ -1011,10 +1011,14 @@ function PostEditorForm({
                 </span>
                 <div className="admin-upload">
                   <div
-                    className={`admin-upload__preview admin-upload__preview--pdf${pdfDropOver ? ' admin-upload__preview--drop' : ''}`}
+                    className={`admin-upload__preview admin-upload__preview--pdf${pdfDropOver ? ' admin-upload__preview--drop' : ''}${pdfUploading ? ' admin-upload__preview--busy' : ''}`}
                     role="button"
-                    tabIndex={0}
-                    onClick={() => pdfInputRef.current?.click()}
+                    tabIndex={pdfUploading ? -1 : 0}
+                    aria-busy={pdfUploading}
+                    onClick={() => {
+                      if (pdfUploading) return
+                      pdfInputRef.current?.click()
+                    }}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' || e.key === ' ') {
                         e.preventDefault()
@@ -1038,18 +1042,30 @@ function PostEditorForm({
                       onPdfFilesFromDrop(e.dataTransfer.files)
                     }}
                   >
-                    <span>{docUploading ? '업로드 중…' : 'PDF를 끌어다 놓기'}</span>
+                    {pdfUploading ? (
+                      <span className="admin-upload__busy">
+                        <span className="admin-spinner" aria-hidden />
+                        <span>업로드 중…</span>
+                      </span>
+                    ) : (
+                      <span>PDF를 끌어다 놓기</span>
+                    )}
                   </div>
                   <div className="admin-upload__actions" style={{ width: '100%' }}>
                     <label
                       className="admin-btn admin-btn--ghost"
                       style={{ cursor: docUploading ? 'not-allowed' : 'pointer' }}
                     >
-                      {docUploading
-                        ? '업로드 중…'
-                        : postType === '연간소식지'
-                          ? 'PDF 선택·업로드'
-                          : 'PDF 추가 업로드'}
+                      {pdfUploading ? (
+                        <span className="admin-inline-busy">
+                          <span className="admin-spinner" aria-hidden />
+                          <span>업로드 중…</span>
+                        </span>
+                      ) : postType === '연간소식지' ? (
+                        'PDF 선택·업로드'
+                      ) : (
+                        'PDF 추가 업로드'
+                      )}
                       <input
                         ref={pdfInputRef}
                         type="file"

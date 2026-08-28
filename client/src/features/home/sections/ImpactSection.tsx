@@ -1,5 +1,12 @@
 import { type CSSProperties, useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
+import {
+  DEFAULT_IMPACT_STATS,
+  formatImpactPercent,
+  visibleImpactStats,
+  type ImpactStatsDocument,
+} from '../impactStatsTypes'
+import { fetchImpactStats } from '../../../services/api'
 
 const ROTATOR_TEXT = [
   '01. 투명하게 증명합니다',
@@ -9,8 +16,23 @@ const ROTATOR_TEXT = [
 
 export function ImpactSection() {
   const [idx, setIdx] = useState(0)
+  const [content, setContent] = useState<ImpactStatsDocument>(DEFAULT_IMPACT_STATS)
   const visualRef = useRef<HTMLDivElement | null>(null)
   const bgRef = useRef<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    let cancelled = false
+    fetchImpactStats()
+      .then((doc) => {
+        if (!cancelled) setContent(doc)
+      })
+      .catch(() => {
+        if (!cancelled) setContent(DEFAULT_IMPACT_STATS)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   useEffect(() => {
     const timer = window.setInterval(() => {
@@ -22,10 +44,13 @@ export function ImpactSection() {
   useEffect(() => {
     const impactBannerBg = bgRef.current
     if (!impactBannerBg) return
-
-    // 요청사항: 임팩트 배너 배경은 움직이지 않고 고정된 한 장 이미지로 유지
     impactBannerBg.style.removeProperty('transform')
   }, [])
+
+  const { donut, stats } = content
+  const labelLines = donut.labelLines.map((line) => line.trim()).filter(Boolean)
+  const donutLabelText = labelLines.join(' ')
+  const statsVisible = visibleImpactStats(stats)
 
   return (
     <section className="impact-banner" id="support" aria-label="후원금 사용 요약">
@@ -56,14 +81,27 @@ export function ImpactSection() {
               </div>
             </div>
 
-            <div className="donut" style={{ '--p': 85.5 } as CSSProperties} aria-label="후원금의 85.5%는 수혜된 아동의 교육지원에 사용됩니다">
+            <div
+              className="donut"
+              style={{ '--p': donut.percent } as CSSProperties}
+              aria-label={
+                donutLabelText
+                  ? `후원금의 ${formatImpactPercent(donut.percent).replace('%', '')}%는 ${donutLabelText}에 사용됩니다`
+                  : `후원금의 ${formatImpactPercent(donut.percent)}`
+              }
+            >
               <div className="donut__center">
-                <div className="donut__value">85.5%</div>
-                <div className="donut__sub">
-                  수혜된 아동의
-                  <br />
-                  교육지원
-                </div>
+                <div className="donut__value">{formatImpactPercent(donut.percent)}</div>
+                {labelLines.length > 0 ? (
+                  <div className="donut__sub">
+                    {labelLines.map((line, i) => (
+                      <span key={`${line}-${i}`}>
+                        {i > 0 ? <br /> : null}
+                        {line}
+                      </span>
+                    ))}
+                  </div>
+                ) : null}
               </div>
             </div>
 
@@ -72,36 +110,25 @@ export function ImpactSection() {
             </Link>
           </article>
 
-          <div className="impact-stats" role="list" aria-label="성과 지표">
-            <div className="impact-stat" role="listitem">
-              <div className="impact-stat__text">
-                <div className="impact-stat__label">사업 참여자 수</div>
-                <div className="impact-stat__value">
-                  <span className="num">100,000</span>
-                  <span className="unit">명</span>
-                </div>
-              </div>
-              <div className="impact-stat__icon" aria-hidden="true" />
+          {statsVisible.length > 0 ? (
+            <div className="impact-stats" role="list" aria-label="성과 지표">
+              {statsVisible.map((row) => {
+                const unit = row.unit?.trim() ?? ''
+                return (
+                  <div key={row.id} className="impact-stat" role="listitem">
+                    <div className="impact-stat__text">
+                      <div className="impact-stat__label">{row.label}</div>
+                      <div className="impact-stat__value">
+                        <span className="num">{row.value.trim() || '—'}</span>
+                        {unit ? <span className="unit">{unit}</span> : null}
+                      </div>
+                    </div>
+                    <div className="impact-stat__icon" aria-hidden="true" />
+                  </div>
+                )
+              })}
             </div>
-            <div className="impact-stat" role="listitem">
-              <div className="impact-stat__text">
-                <div className="impact-stat__label">지원받은 지역/마을 수</div>
-                <div className="impact-stat__value">
-                  <span className="num">0000</span>
-                </div>
-              </div>
-              <div className="impact-stat__icon" aria-hidden="true" />
-            </div>
-            <div className="impact-stat" role="listitem">
-              <div className="impact-stat__text">
-                <div className="impact-stat__label">건설 지원 시설 혹은 제공한 카트 수</div>
-                <div className="impact-stat__value">
-                  <span className="num">0000</span>
-                </div>
-              </div>
-              <div className="impact-stat__icon" aria-hidden="true" />
-            </div>
-          </div>
+          ) : null}
         </div>
       </div>
     </section>

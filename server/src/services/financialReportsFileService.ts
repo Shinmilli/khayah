@@ -1,10 +1,23 @@
 import fs from 'fs/promises'
 import path from 'path'
 import seedDocument from '../seed/financial-reports.default.json'
+import { normalizeStoredMediaUrl } from '../utils/normalizeStoredMediaUrl'
 
 const DATA_FILE = path.resolve(process.cwd(), 'data', 'financial-reports.json')
 
 export type FinancialReportsDocument = typeof seedDocument
+
+function normalizeDocument(doc: FinancialReportsDocument): FinancialReportsDocument {
+  return {
+    ...doc,
+    reports: doc.reports.map((r) => ({
+      ...r,
+      balanceSheetImageUrl: normalizeStoredMediaUrl(r.balanceSheetImageUrl),
+      operationsStatementImageUrl: normalizeStoredMediaUrl(r.operationsStatementImageUrl),
+      donationDisclosurePdfUrl: normalizeStoredMediaUrl(r.donationDisclosurePdfUrl),
+    })),
+  } as FinancialReportsDocument
+}
 
 function isPlainObject(v: unknown): v is Record<string, unknown> {
   return typeof v === 'object' && v !== null && !Array.isArray(v)
@@ -38,13 +51,13 @@ export async function readFinancialReportsDocument(): Promise<FinancialReportsDo
   try {
     const raw = await fs.readFile(DATA_FILE, 'utf8')
     const parsed: unknown = JSON.parse(raw)
-    if (validateDocument(parsed)) return parsed
+    if (validateDocument(parsed)) return normalizeDocument(parsed)
     console.warn('[financial-reports] invalid file content, using seed')
   } catch (e) {
     const code = (e as NodeJS.ErrnoException)?.code
     if (code !== 'ENOENT') console.warn('[financial-reports] read failed, using seed:', e)
   }
-  return seedDocument as FinancialReportsDocument
+  return normalizeDocument(seedDocument as FinancialReportsDocument)
 }
 
 export async function writeFinancialReportsDocument(body: unknown): Promise<void> {

@@ -4,6 +4,7 @@ import { FinancialDonutChart } from '../features/financial-report/FinancialDonut
 import { formatWon } from '../features/financial-report/financialReportDefaults'
 import type { FinancialReportsDocument } from '../features/financial-report/financialReportTypes'
 import { fetchFinancialReports } from '../services/api'
+import { pdfOpenHref } from '../utils/pdfAttachments'
 import '../styles/financial-report.css'
 
 const HOMETAX_DISCLOSURE_URL =
@@ -138,8 +139,10 @@ export function FinancialReportPage() {
 
   const onDonationDisclosureClick = useCallback(() => {
     if (!report) return
-    if (report.donationDisclosurePdfUrl) {
-      window.open(report.donationDisclosurePdfUrl, '_blank', 'noopener,noreferrer')
+    const raw = report.donationDisclosurePdfUrl?.trim()
+    if (raw) {
+      const href = pdfOpenHref(raw, `${report.year}년 기부금 공시.pdf`)
+      window.open(href, '_blank', 'noopener,noreferrer')
       return
     }
     setPdfModalOpen(true)

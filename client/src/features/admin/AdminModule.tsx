@@ -9,6 +9,7 @@ import { AdminInquiriesPage } from './pages/AdminInquiriesPage'
 import { AdminOperationsPage } from './pages/AdminOperationsPage'
 import { AdminPopupPage } from './pages/AdminPopupPage'
 import { AdminFinancialReportsPage } from './pages/AdminFinancialReportsPage'
+import { AdminImpactStatsPage } from './pages/AdminImpactStatsPage'
 
 export function AdminModule() {
   return (
@@ -25,6 +26,7 @@ export function AdminModule() {
           <Route path="inquiries" element={<AdminInquiriesPage />} />
           <Route path="operations" element={<AdminOperationsPage />} />
           <Route path="financial-reports" element={<AdminFinancialReportsPage />} />
+          <Route path="impact-stats" element={<AdminImpactStatsPage />} />
         </Route>
       </Route>
     </Routes>

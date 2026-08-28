@@ -8,7 +8,7 @@ import type {
   FinancialReportYearData,
   FinancialReportsDocument,
 } from '../../financial-report/financialReportTypes'
-import { FinancialReportAssetDrop } from '../components/FinancialReportAssetDrop'
+import { AdminMediaUpload } from '../components/AdminMediaUpload'
 import { adminPutFinancialReports, fetchFinancialReports } from '../../../services/api'
 
 function deepClone<T>(v: T): T {
@@ -31,6 +31,34 @@ function emptyYearFromTemplate(year: number): FinancialReportYearData {
     operationsStatementImageUrl: null,
     donationDisclosurePdfUrl: null,
   }
+}
+
+function AdminOnOffToggle({
+  checked,
+  onChange,
+  ariaLabel,
+}: {
+  checked: boolean
+  onChange: (next: boolean) => void
+  ariaLabel: string
+}) {
+  return (
+    <label className="admin-onoff">
+      <span className={`admin-onoff__state${checked ? ' is-on' : ''}`} aria-hidden>
+        {checked ? 'ON' : 'OFF'}
+      </span>
+      <input
+        type="checkbox"
+        role="switch"
+        checked={checked}
+        onChange={(e) => onChange(e.target.checked)}
+        aria-label={ariaLabel}
+      />
+      <span className="admin-onoff__track" aria-hidden>
+        <span className="admin-onoff__thumb" />
+      </span>
+    </label>
+  )
 }
 
 function SegmentTableEditor({
@@ -265,56 +293,6 @@ export function AdminFinancialReportsPage() {
         </p>
       ) : null}
 
-      <section className="admin-panel" aria-labelledby="fr-display-heading">
-        <h2 id="fr-display-heading" className="admin-panel__title">
-          공개 페이지 표시
-        </h2>
-        <p className="admin-panel__foot admin-panel__subnote">
-          체크 해제 시 해당 블록 전체가 사이트에서 숨겨집니다.
-        </p>
-        <div className="admin-form-grid">
-          <label className="admin-field admin-field--check">
-            <input
-              type="checkbox"
-              checked={doc.settings.showBalanceSheet}
-              onChange={(e) =>
-                setDoc({
-                  ...doc,
-                  settings: { ...doc.settings, showBalanceSheet: e.target.checked },
-                })
-              }
-            />
-            <span>재무상태표 영역 표시</span>
-          </label>
-          <label className="admin-field admin-field--check">
-            <input
-              type="checkbox"
-              checked={doc.settings.showOperationsStatement}
-              onChange={(e) =>
-                setDoc({
-                  ...doc,
-                  settings: { ...doc.settings, showOperationsStatement: e.target.checked },
-                })
-              }
-            />
-            <span>운영성과표 영역 표시</span>
-          </label>
-          <label className="admin-field admin-field--check">
-            <input
-              type="checkbox"
-              checked={doc.settings.showActionButtons}
-              onChange={(e) =>
-                setDoc({
-                  ...doc,
-                  settings: { ...doc.settings, showActionButtons: e.target.checked },
-                })
-              }
-            />
-            <span>하단 링크·버튼 영역 표시 (국세청·기부금 공시·권익위)</span>
-          </label>
-        </div>
-      </section>
-
       <section className="admin-panel" aria-labelledby="fr-years-heading">
         <h2 id="fr-years-heading" className="admin-panel__title">
           연도
@@ -386,27 +364,6 @@ export function AdminFinancialReportsPage() {
                   }
                 />
               </label>
-              <FinancialReportAssetDrop
-                label="재무상태표 이미지"
-                hint="JPEG · PNG · WebP · GIF — 끌어다 놓거나 파일 선택 후 상단 저장을 누르면 공개 페이지에 반영됩니다."
-                variant="image"
-                value={selected.balanceSheetImageUrl ?? null}
-                onChange={(path) => updateSelected({ balanceSheetImageUrl: path })}
-              />
-              <FinancialReportAssetDrop
-                label="운영성과표 이미지"
-                hint="JPEG · PNG · WebP · GIF"
-                variant="image"
-                value={selected.operationsStatementImageUrl ?? null}
-                onChange={(path) => updateSelected({ operationsStatementImageUrl: path })}
-              />
-              <FinancialReportAssetDrop
-                label="기부금 모금액 및 활용 실적 공시 PDF"
-                hint="PDF 파일만 업로드 가능합니다."
-                variant="pdf"
-                value={selected.donationDisclosurePdfUrl ?? null}
-                onChange={(path) => updateSelected({ donationDisclosurePdfUrl: path })}
-              />
             </div>
 
             <SegmentTableEditor
@@ -419,6 +376,66 @@ export function AdminFinancialReportsPage() {
               rows={selected.expenseSegments}
               onChange={(expenseSegments) => updateSelected({ expenseSegments })}
             />
+
+            <div className="admin-fr-section">
+              <div className="admin-fr-section__head">
+                <span className="admin-fr-section__head-kicker">화면에 표시</span>
+                <AdminOnOffToggle
+                  checked={doc.settings.showBalanceSheet}
+                  onChange={(showBalanceSheet) =>
+                    setDoc({ ...doc, settings: { ...doc.settings, showBalanceSheet } })
+                  }
+                  ariaLabel="재무상태표 영역 공개 표시"
+                />
+              </div>
+              <AdminMediaUpload
+                label="재무상태표 이미지"
+                hint="JPEG · PNG · WebP · GIF — 업로드 후 상단 「저장」을 눌러야 공개 페이지에 반영됩니다."
+                variant="image"
+                value={selected.balanceSheetImageUrl ?? null}
+                onChange={(url) => updateSelected({ balanceSheetImageUrl: url })}
+              />
+            </div>
+
+            <div className="admin-fr-section">
+              <div className="admin-fr-section__head">
+                <span className="admin-fr-section__head-kicker">화면에 표시</span>
+                <AdminOnOffToggle
+                  checked={doc.settings.showOperationsStatement}
+                  onChange={(showOperationsStatement) =>
+                    setDoc({ ...doc, settings: { ...doc.settings, showOperationsStatement } })
+                  }
+                  ariaLabel="운영성과표 영역 공개 표시"
+                />
+              </div>
+              <AdminMediaUpload
+                label="운영성과표 이미지"
+                hint="JPEG · PNG · WebP · GIF"
+                variant="image"
+                value={selected.operationsStatementImageUrl ?? null}
+                onChange={(url) => updateSelected({ operationsStatementImageUrl: url })}
+              />
+            </div>
+
+            <div className="admin-fr-section">
+              <div className="admin-fr-section__head">
+                <span className="admin-fr-section__head-kicker">화면에 표시</span>
+                <AdminOnOffToggle
+                  checked={doc.settings.showActionButtons}
+                  onChange={(showActionButtons) =>
+                    setDoc({ ...doc, settings: { ...doc.settings, showActionButtons } })
+                  }
+                  ariaLabel="하단 링크·버튼 영역 공개 표시"
+                />
+              </div>
+              <AdminMediaUpload
+                label="기부금 모금액 및 활용 실적 공시 PDF"
+                hint="PDF만 업로드 · 공개 페이지 하단 「기부금 모금액 및 활용 실적 공시」 버튼에서 열립니다."
+                variant="pdf"
+                value={selected.donationDisclosurePdfUrl ?? null}
+                onChange={(url) => updateSelected({ donationDisclosurePdfUrl: url })}
+              />
+            </div>
           </>
         ) : (
           <p className="admin-panel__foot">연도를 추가한 뒤 편집할 수 있습니다.</p>
