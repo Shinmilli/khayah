@@ -124,10 +124,27 @@ function heroTitleForKind(kind: string): string {
   return kind || '소식'
 }
 
+function storyScopeChip(scope: string | undefined): string | null {
+  switch (scope) {
+    case '국내':
+      return '국내사업'
+    case '해외':
+      return '해외사업'
+    case '옹호':
+      return '옹호사업'
+    case '지원':
+    case '진행':
+      return '진행사업'
+    default:
+      return null
+  }
+}
+
 export function PostDetail({ post }: { post: Post }) {
   const kind = post.meta?.khayah_kind ?? ''
   const listTo = listPathForPost(post)
   const [siblings, setSiblings] = useState<Post[]>([])
+  const storyChip = kind === '스토리' ? storyScopeChip(post.meta?.khayah_story_scope) : null
 
   useEffect(() => {
     if (!kind) {
@@ -166,6 +183,7 @@ export function PostDetail({ post }: { post: Post }) {
   return (
     <article className={`post-board${isFeature ? ' post-board--feature' : ''}`}>
       <header className="post-board__head">
+        {storyChip ? <p className="post-board__scope">{storyChip}</p> : null}
         <h1 className="post-board__title">{post.title}</h1>
         <p className="post-board__meta">
           {isFeature ? null : '등록일 '}

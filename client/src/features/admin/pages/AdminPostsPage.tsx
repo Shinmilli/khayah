@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AdminRichTextEditor } from '../components/AdminRichTextEditor'
 import type { AdminRichTextEditorHandle } from '../components/AdminRichTextEditor'
 import {
@@ -12,6 +12,7 @@ import {
   uploadReportImage,
 } from '../../../services/api'
 import type { AdminPost, DocumentUploadResult } from '../../../services/api'
+import { API_BASE } from '../../../constants'
 import { PdfFirstPagePreview } from '../../../components/PdfFirstPagePreview'
 import { Pagination } from '../../../components/Pagination'
 import { coverIsBlank, parsePdfAttachments, pdfOpenHref, type PdfAttachment } from '../../../utils/pdfAttachments'
@@ -21,6 +22,12 @@ import {
   parseNewsletterYearSpec,
 } from '../../../utils/newsletterYear'
 import { paginate } from '../../../utils/paginate'
+import {
+  SessionUploadTracker,
+  sessionRefFromAttachment,
+  sessionRefFromUpload,
+  type SessionMediaRef,
+} from '../../../utils/sessionUploads'
 
 const contentTypes = ['스토리', '공지사항', '활동소식', '연간소식지', '언론보도', '진행사업'] as const
 type ContentType = (typeof contentTypes)[number]
@@ -105,6 +112,22 @@ function attachmentFromUpload(result: DocumentUploadResult): PdfAttachment {
   }
 }
 
+/** 새로고침/탭 닫기 시 저장 안 된 업로드를 keepalive로 삭제 */
+function deleteSessionUploadsKeepalive(refs: SessionMediaRef[]) {
+  for (const ref of refs) {
+    try {
+      void fetch(`${API_BASE}/uploads/delete`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(ref),
+        keepalive: true,
+      })
+    } catch {
+      /* ignore */
+    }
+  }
+}
+
 function PostEditorForm({
   mode,
   initialPostType,
@@ -157,6 +180,8 @@ function PostEditorForm({
   const prevPostType = useRef(postType)
   const richRef = useRef<AdminRichTextEditorHandle | null>(null)
   const pdfInputRef = useRef<HTMLInputElement | null>(null)
+  const sessionUploadsRef = useRef(new SessionUploadTracker())
+  const savedSuccessfullyRef = useRef(false)
   const [shortBody, setShortBody] = useState<string>('') // yearly pdf mode short body
   const [newsletterIssue, setNewsletterIssue] = useState<string>('') // khayah_newsletter_issue
   const [publishedDate, setPublishedDate] = useState<string>(() =>
@@ -177,6 +202,32 @@ function PostEditorForm({
     if (spec && spec.start !== spec.end) return String(spec.end)
     return ''
   })
+
+  const trackUpload = useCallback((result: DocumentUploadResult) => {
+    sessionUploadsRef.current.track(sessionRefFromUpload(result))
+  }, [])
+
+  const discardSessionUploads = useCallback(async () => {
+    if (savedSuccessfullyRef.current) return
+    const pending = sessionUploadsRef.current.takeAll()
+    if (pending.length === 0) return
+    await Promise.allSettled(pending.map((ref) => deleteUploadedMedia(ref)))
+  }, [])
+
+  const requestClose = useCallback(async () => {
+    await discardSessionUploads()
+    onClose()
+  }, [discardSessionUploads, onClose])
+
+  useEffect(() => {
+    const onPageHide = () => {
+      if (savedSuccessfullyRef.current) return
+      const pending = sessionUploadsRef.current.takeAll()
+      if (pending.length) deleteSessionUploadsKeepalive(pending)
+    }
+    window.addEventListener('pagehide', onPageHide)
+    return () => window.removeEventListener('pagehide', onPageHide)
+  }, [])
 
   useEffect(() => {
     if (postType !== '스토리') {
@@ -259,25 +310,38 @@ function PostEditorForm({
 
   const onPickPdf = async (file: File | null) => {
     if (!file) return
+    const mb = (file.size / (1024 * 1024)).toFixed(1)
+    const dest = file.size > 10 * 1024 * 1024 ? 'Supabase Storage' : 'Cloudinary'
     setDocUploading(true)
-    setDocStatus(`업로드 중… ${file.name}`)
+    setSaveError('')
+    setDocStatus(`업로드 중… ${file.name} (${mb}MB → ${dest})`)
     try {
       const result = await uploadDocumentPdf(file)
       const att = attachmentFromUpload(result)
+      if (!att.url?.trim()) {
+        throw new Error('업로드는 됐지만 공개 링크(URL)를 받지 못했습니다. 서버 로그를 확인하세요.')
+      }
+      const where = result.provider === 'supabase' ? 'Supabase Storage' : 'Cloudinary'
+      const prev = postType === '연간소식지' ? pdfFiles[0] : undefined
+      trackUpload(result)
       if (postType === '연간소식지') {
-        const prev = pdfFiles[0]
-        if (prev?.url && prev.url !== att.url) {
-          void deleteUploadedMedia(prev).catch(() => undefined)
-        }
         setPdfFiles([att])
         setSelectedPdfUrls([])
+        // 이번 세션에서 올린 이전 PDF만 즉시 삭제. 이미 저장된 PDF는 「저장」 시 서버가 정리.
+        if (prev?.url && prev.url !== att.url && sessionUploadsRef.current.has(prev.url)) {
+          sessionUploadsRef.current.untrack(prev.url)
+          void deleteUploadedMedia(sessionRefFromAttachment(prev)).catch(() => undefined)
+        }
       } else {
         setPdfFiles((list) => [...list, att])
       }
-      setDocStatus(`업로드 완료: ${att.name}`)
+      setDocStatus(
+        `업로드 완료 (${where}): ${att.name} — 「저장」해야 게시글에 반영됩니다. 취소·새로고침 시 이 파일은 스토리지에서 삭제됩니다.`,
+      )
     } catch (e) {
       const msg = e instanceof Error ? e.message : '업로드 실패'
       setDocStatus(msg)
+      setSaveError(msg)
     } finally {
       setDocUploading(false)
     }
@@ -289,10 +353,24 @@ function PostEditorForm({
     const removing = pdfFiles.filter((f) => pick.has(f.url))
     setDocUploading(true)
     try {
-      await Promise.all(removing.map((f) => deleteUploadedMedia(f).catch(() => undefined)))
+      const sessionOnes = removing.filter((f) => sessionUploadsRef.current.has(f.url))
+      const results = await Promise.allSettled(
+        sessionOnes.map((f) => {
+          sessionUploadsRef.current.untrack(f.url)
+          return deleteUploadedMedia(sessionRefFromAttachment(f))
+        }),
+      )
+      const failed = results.filter((r) => r.status === 'rejected').length
       setPdfFiles((list) => list.filter((f) => !pick.has(f.url)))
       setSelectedPdfUrls([])
-      setDocStatus('선택한 PDF를 제거했습니다.')
+      const keptForSave = removing.length - sessionOnes.length
+      setDocStatus(
+        failed > 0
+          ? `목록에서 제거했습니다. (세션 파일 삭제 실패 ${failed}건)`
+          : keptForSave > 0
+            ? '목록에서 제거했습니다. (기존 저장 파일은 「저장」 시 스토리지에서도 삭제됩니다.)'
+            : '선택한 PDF를 제거했습니다.',
+      )
     } finally {
       setDocUploading(false)
     }
@@ -320,21 +398,65 @@ function PostEditorForm({
 
   const onRemoveAllNewsletterPdf = async () => {
     const prev = pdfFiles[0]
-    if (prev) void deleteUploadedMedia(prev).catch(() => undefined)
-    setPdfFiles([])
-    setSelectedPdfUrls([])
-    setDocStatus('PDF 선택 시 자동 업로드 (10MB 이하는 Cloudinary, 초과는 Supabase)')
+    setDocUploading(true)
+    try {
+      if (prev && sessionUploadsRef.current.has(prev.url)) {
+        sessionUploadsRef.current.untrack(prev.url)
+        try {
+          await deleteUploadedMedia(sessionRefFromAttachment(prev))
+          setDocStatus('PDF를 제거했습니다.')
+        } catch {
+          setDocStatus('목록에서 제거했습니다. (스토리지 삭제 실패)')
+        }
+      } else if (prev) {
+        setDocStatus('목록에서 제거했습니다. 「저장」 시 스토리지에서도 삭제됩니다.')
+      } else {
+        setDocStatus('PDF 선택 시 자동 업로드 (10MB 이하는 Cloudinary, 초과는 Supabase)')
+      }
+      setPdfFiles([])
+      setSelectedPdfUrls([])
+    } finally {
+      setDocUploading(false)
+    }
+  }
+
+  const storedCoverUrl = () =>
+    coverPreviewUrl.trim() && !coverPreviewUrl.startsWith('blob:') ? coverPreviewUrl.trim() : ''
+
+  const onClearCoverImage = async () => {
+    const prev = storedCoverUrl()
+    setCoverFile(null)
+    setCoverPreviewUrl('')
+    setCoverBlank(true)
+    if (!prev) return
+    if (sessionUploadsRef.current.has(prev)) {
+      const ref = sessionUploadsRef.current.untrack(prev)
+      if (ref) {
+        try {
+          await deleteUploadedMedia(ref)
+        } catch {
+          setSaveError('표지 이미지는 비웠지만 스토리지 삭제에 실패했습니다.')
+        }
+      }
+    }
   }
 
   const onPickCoverImageUpload = async (file: File | null) => {
     if (!file) return
     setCoverImageUploading(true)
     setSaveError('')
+    const previousCover = storedCoverUrl()
     try {
       const result = await uploadReportImage(file)
+      trackUpload(result)
       setCoverPreviewUrl(result.url)
       setCoverFile(null)
       setCoverBlank(false)
+      // 세션에서 올린 이전 표지만 즉시 삭제. 기존 저장 표지는 저장 시 서버가 정리.
+      if (previousCover && previousCover !== result.url && sessionUploadsRef.current.has(previousCover)) {
+        const old = sessionUploadsRef.current.untrack(previousCover)
+        if (old) void deleteUploadedMedia(old).catch(() => undefined)
+      }
     } catch (e) {
       const msg = e instanceof Error ? e.message : '이미지 업로드 실패'
       setSaveError(msg)
@@ -358,7 +480,9 @@ function PostEditorForm({
       return
     }
     if (postType === '연간소식지' && yearlyMode === 'PDF소식지' && pdfFiles.length === 0) {
-      setSaveError('PDF 업로드 후 링크가 생성되어야 합니다.')
+      setSaveError(
+        'PDF가 없습니다. 「PDF 선택·업로드」로 올린 뒤, 아래에 파일 이름이 보이면 「저장」을 누르세요. (제거만 한 상태에서는 저장할 수 없습니다.)',
+      )
       return
     }
     if (postType === '연간소식지') {
@@ -487,6 +611,22 @@ function PostEditorForm({
           publishedAt: publishedDate.trim(),
         })
       }
+      savedSuccessfullyRef.current = true
+      // 저장에 포함되지 않은 세션 업로드(올렸다가 본문/목록에서 뺀 것)만 삭제
+      const keepUrls = new Set<string>()
+      for (const f of pdfFiles) {
+        if (f.url) keepUrls.add(f.url)
+      }
+      const coverKept =
+        coverPreviewUrl.trim() && !coverPreviewUrl.startsWith('blob:') ? coverPreviewUrl.trim() : ''
+      if (coverKept) keepUrls.add(coverKept)
+      for (const m of content.matchAll(/(?:src|href)=["']([^"']+)["']/gi)) {
+        if (m[1]) keepUrls.add(m[1])
+      }
+      const leftover = sessionUploadsRef.current.takeAll().filter((p) => p.url && !keepUrls.has(p.url))
+      if (leftover.length) {
+        void Promise.allSettled(leftover.map((p) => deleteUploadedMedia(p)))
+      }
       onSaved()
       onClose()
     } catch (e) {
@@ -500,7 +640,7 @@ function PostEditorForm({
   return (
     <div className="admin-page">
       <div className="admin-page__editor-top">
-        <button type="button" className="admin-btn admin-btn--ghost" onClick={onClose}>
+        <button type="button" className="admin-btn admin-btn--ghost" onClick={() => void requestClose()}>
           ← 목록으로
         </button>
       </div>
@@ -791,11 +931,7 @@ function PostEditorForm({
                             type="button"
                             className="admin-btn admin-btn--ghost"
                             disabled={!coverPreviewUrl && coverBlank}
-                            onClick={() => {
-                              setCoverFile(null)
-                              setCoverPreviewUrl('')
-                              setCoverBlank(true)
-                            }}
+                            onClick={() => void onClearCoverImage()}
                           >
                             이미지 제거
                           </button>
@@ -827,11 +963,7 @@ function PostEditorForm({
                             type="button"
                             className="admin-btn admin-btn--ghost"
                             disabled={!coverPreviewUrl}
-                            onClick={() => {
-                              setCoverPreviewUrl('')
-                              setCoverFile(null)
-                              setCoverBlank(true)
-                            }}
+                            onClick={() => void onClearCoverImage()}
                           >
                             대표 이미지 제거
                           </button>
@@ -865,7 +997,11 @@ function PostEditorForm({
                     onChange={(e) => setShortBody(e.currentTarget.value)}
                   />
                 ) : (
-                  <AdminRichTextEditor ref={richRef} initialHtml={initialContentHtml} />
+                  <AdminRichTextEditor
+                    ref={richRef}
+                    initialHtml={initialContentHtml}
+                    onImageUploaded={trackUpload}
+                  />
                 )}
               </div>
               <div className="admin-field admin-field--full">
@@ -922,9 +1058,15 @@ function PostEditorForm({
                         disabled={docUploading}
                         style={{ display: 'none' }}
                         onChange={(e) => {
-                          const files = e.currentTarget.files
+                          // value 비우기 전에 File을 복사 — 일부 브라우저에서 FileList가 즉시 비워짐
+                          const picked = e.currentTarget.files
+                            ? Array.from(e.currentTarget.files)
+                            : []
                           e.currentTarget.value = ''
-                          onPdfFilesFromDrop(files)
+                          if (picked.length === 0) return
+                          const dt = new DataTransfer()
+                          for (const f of picked) dt.items.add(f)
+                          onPdfFilesFromDrop(dt.files)
                         }}
                       />
                     </label>
@@ -1009,7 +1151,12 @@ function PostEditorForm({
           </p>
         ) : null}
         <div className="admin-form-actions">
-          <button type="button" className="admin-btn admin-btn--ghost" onClick={onClose} disabled={saving}>
+          <button
+            type="button"
+            className="admin-btn admin-btn--ghost"
+            onClick={() => void requestClose()}
+            disabled={saving}
+          >
             취소
           </button>
           <button type="button" className="admin-btn admin-btn--primary" onClick={onSave} disabled={saving}>

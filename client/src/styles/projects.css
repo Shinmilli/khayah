@@ -2,6 +2,7 @@
   max-width: 1120px;
   width: var(--content-width, 92%);
   margin: 0 auto;
+  padding-bottom: 64px;
 }
 
 .projects-tabs {

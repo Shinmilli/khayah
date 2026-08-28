@@ -56,9 +56,13 @@ export async function uploadBufferToSupabase(options: {
   }
 
   const { data } = supabase.storage.from(BUCKET).getPublicUrl(objectPath)
+  const publicUrl = data.publicUrl?.trim()
+  if (!publicUrl) {
+    throw new Error('Supabase public URL을 만들지 못했습니다. 버킷이 public인지 확인하세요.')
+  }
 
   return {
-    url: data.publicUrl,
+    url: publicUrl,
     path: objectPath,
     filename,
     publicId: objectPath,

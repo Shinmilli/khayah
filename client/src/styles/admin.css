@@ -335,6 +335,14 @@ body.admin-route {
   .admin-app__logout {
     width: auto;
   }
+
+  .admin-app__content {
+    padding: 16px 12px;
+  }
+
+  .admin-app__topbar {
+    padding: 10px 12px;
+  }
 }
 
 /* Page blocks */
@@ -915,25 +923,26 @@ body.admin-route {
 .admin-rich__color-pick {
   position: relative;
   display: inline-block;
-  width: 22px;
-  height: 22px;
+  width: 18px;
+  height: 18px;
   overflow: hidden;
   border-radius: 5px;
   border: 1px solid rgba(0, 0, 0, 0.18);
   cursor: pointer;
   flex-shrink: 0;
+  background: #b20838;
 }
 
 .admin-rich__color-pick input[type='color'] {
   position: absolute;
-  left: -6px;
-  top: -6px;
-  width: 34px;
-  height: 34px;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   padding: 0;
+  margin: 0;
   border: none;
   cursor: pointer;
-  background: none;
+  opacity: 0;
 }
 
 .admin-rich .sr-only {
@@ -956,6 +965,31 @@ body.admin-route {
   line-height: 1.4;
 }
 
+.admin-rich__file {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.admin-rich__btn.is-busy {
+  opacity: 0.55;
+  cursor: wait;
+}
+
+.admin-rich__status {
+  font-size: 12px;
+  color: #374151;
+  padding: 4px 12px 0;
+  margin: 0;
+  line-height: 1.4;
+}
+
 .admin-rich__editor {
   min-height: 240px;
   max-height: 480px;
@@ -965,6 +999,8 @@ body.admin-route {
   line-height: 1.6;
   color: #1f2937;
   outline: none;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .admin-rich__editor:focus {
@@ -977,30 +1013,71 @@ body.admin-route {
   pointer-events: none;
 }
 
+.admin-rich__editor h1,
+.admin-rich__editor h2,
+.admin-rich__editor h3,
+.admin-rich__editor h4 {
+  color: #111;
+  font-weight: 700;
+}
+
 .admin-rich__editor h1 {
   font-size: 1.65rem;
-  font-weight: 700;
   margin: 0.4em 0;
 }
 
 .admin-rich__editor h2 {
   font-size: 1.35rem;
-  font-weight: 700;
   margin: 0.4em 0;
 }
 
 .admin-rich__editor h3 {
   font-size: 1.15rem;
-  font-weight: 700;
   margin: 0.35em 0;
+}
+
+.admin-rich__editor h4 {
+  font-size: 1.05rem;
+  margin: 0.3em 0;
 }
 
 .admin-rich__editor blockquote {
   margin: 0.6em 0;
-  padding: 0.35em 0 0.35em 12px;
+  padding: 0.35em 0.75em 0.35em 12px;
   border-left: 4px solid var(--khayah-red, #b20838);
   color: #4b5563;
   background: #fafafa;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  text-align: center !important;
+}
+
+.admin-rich__editor blockquote + blockquote {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+.admin-rich__editor blockquote:has(+ blockquote) {
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.admin-rich__editor[style*='text-align: center'] blockquote,
+.admin-rich__editor[style*='text-align:center'] blockquote,
+.admin-rich__editor blockquote[data-quote-align='center'] {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.admin-rich__editor blockquote[data-quote-align='left'] {
+  margin-left: 0;
+  margin-right: auto;
+}
+
+.admin-rich__editor blockquote[data-quote-align='right'] {
+  margin-left: auto;
+  margin-right: 0;
 }
 
 .admin-rich__editor a {
@@ -1399,4 +1476,121 @@ body.admin-route {
   flex-shrink: 0;
   color: #6b7280;
   font-weight: 700;
+}
+
+/* 모바일: 공개 페이지와 비슷한 좌우 여백 + 게시글 수정 가로 넘침 방지 */
+@media (max-width: 768px) {
+  .admin-app {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .admin-app__main,
+  .admin-app__content,
+  .admin-page {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .admin-page {
+    overflow-x: hidden;
+  }
+
+  .admin-panel {
+    padding: 14px 12px;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
+  }
+
+  .admin-page__title {
+    font-size: 18px;
+    overflow-wrap: anywhere;
+  }
+
+  .admin-page__desc {
+    overflow-wrap: anywhere;
+  }
+
+  .admin-form-grid,
+  .admin-field,
+  .admin-field--full,
+  .admin-upload,
+  .admin-upload__actions,
+  .admin-pdf-list,
+  .admin-rich,
+  .admin-segmented {
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .admin-input {
+    box-sizing: border-box;
+    max-width: 100%;
+  }
+
+  .admin-segmented__btn {
+    padding: 7px 11px;
+    font-size: 12px;
+  }
+
+  .admin-rich__toolbar {
+    gap: 6px 8px;
+  }
+
+  .admin-rich__toolbar-group {
+    max-width: 100%;
+    padding-right: 6px;
+    margin-right: 2px;
+  }
+
+  .admin-rich__hl {
+    flex-wrap: wrap;
+    height: auto;
+    min-height: 34px;
+    max-width: 100%;
+  }
+
+  .admin-rich__editor {
+    padding: 10px 12px;
+  }
+
+  .admin-rich__hint,
+  .admin-rich__status {
+    padding-left: 10px;
+    padding-right: 10px;
+    overflow-wrap: anywhere;
+  }
+
+  .admin-year-row {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-app__content {
+    padding: 12px 10px;
+  }
+
+  .admin-app__topbar {
+    padding: 8px 10px;
+  }
+
+  .admin-app__sidebar {
+    padding: 14px 10px;
+  }
+
+  .admin-panel {
+    padding: 12px 10px;
+    border-radius: 10px;
+  }
+
+  .admin-login {
+    padding: 24px 10px;
+  }
+
+  .admin-login__card {
+    padding: 24px 16px 20px;
+  }
 }

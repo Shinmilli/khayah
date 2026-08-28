@@ -55,8 +55,11 @@ export async function uploadBufferToCloudinary(options: {
 
   const folder = `${folderPrefix()}/${options.kind === 'document' ? 'documents' : 'images'}`
   const resourceType = options.kind === 'document' ? 'raw' : 'image'
-  const rawId = `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`
-  const publicId = options.kind === 'document' ? `${rawId}.pdf` : undefined
+  // public_id에 .pdf를 넣으면 Cloudinary delivery URL이 401이 나는 경우가 있음 → 확장자 제외
+  const publicId =
+    options.kind === 'document'
+      ? `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`
+      : undefined
 
   const result = await new Promise<UploadApiLike>((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
@@ -96,17 +99,65 @@ export async function uploadBufferToCloudinary(options: {
   }
 }
 
-export async function destroyCloudinaryAsset(publicId: string, resourceTypeHint?: string): Promise<void> {
-  if (!publicId.trim() || !isCloudinaryConfigured()) return
+export type CloudinaryDestroyOutcome = 'ok' | 'not_found' | 'failed'
+
+/** public delivery가 401인 raw(특히 public_id에 .pdf 포함)용 인증 다운로드 */
+export async function downloadCloudinaryRawBuffer(publicId: string): Promise<Buffer | null> {
+  const id = publicId.trim()
+  if (!id || !isCloudinaryConfigured()) return null
   configureCloudinary()
-  const order =
-    resourceTypeHint === 'image' ? (['image', 'raw'] as const) : (['raw', 'image'] as const)
-  for (const resource_type of order) {
+
+  const candidates = id.toLowerCase().endsWith('.pdf')
+    ? [id, id.slice(0, -4)]
+    : [id, `${id}.pdf`]
+
+  for (const pid of candidates) {
     try {
-      const r = await cloudinary.uploader.destroy(publicId, { resource_type, invalidate: true })
-      if (r?.result === 'ok' || r?.result === 'not found') return
-    } catch {
-      // try next resource type
+      const dl = cloudinary.utils.private_download_url(pid, '', {
+        resource_type: 'raw',
+        type: 'upload',
+        expires_at: Math.floor(Date.now() / 1000) + 120,
+      })
+      const upstream = await fetch(dl, { redirect: 'follow' })
+      if (!upstream.ok) continue
+      const buf = Buffer.from(await upstream.arrayBuffer())
+      if (buf.length >= 5 && buf.subarray(0, 4).toString('utf8') === '%PDF') return buf
+    } catch (e) {
+      console.warn('[cloudinary] private download failed', { publicId: pid, e })
     }
   }
+  return null
+}
+
+export async function destroyCloudinaryAsset(
+  publicId: string,
+  resourceTypeHint?: string,
+): Promise<CloudinaryDestroyOutcome> {
+  if (!publicId.trim() || !isCloudinaryConfigured()) return 'failed'
+  configureCloudinary()
+  const order =
+    resourceTypeHint === 'image'
+      ? (['image', 'raw'] as const)
+      : resourceTypeHint === 'raw'
+        ? (['raw', 'image'] as const)
+        : (['raw', 'image'] as const)
+
+  let sawNotFound = false
+  for (const resource_type of order) {
+    try {
+      const r = await cloudinary.uploader.destroy(publicId, {
+        resource_type,
+        type: 'upload',
+        invalidate: true,
+      })
+      if (r?.result === 'ok') return 'ok'
+      if (r?.result === 'not found') {
+        sawNotFound = true
+        continue
+      }
+    } catch (e) {
+      console.warn('[cloudinary] destroy try failed', { publicId, resource_type, e })
+    }
+  }
+  return sawNotFound ? 'not_found' : 'failed'
 }

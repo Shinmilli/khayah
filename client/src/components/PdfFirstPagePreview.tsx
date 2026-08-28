@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { getDocument, GlobalWorkerOptions } from 'pdfjs-dist'
 import pdfWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url'
+import { pdfOpenHref } from '../utils/pdfAttachments'
 
 let workerReady = false
 function ensurePdfWorker() {
@@ -24,7 +25,9 @@ export function PdfFirstPagePreview({
     let cancelled = false
     setFailed(false)
     ensurePdfWorker()
-    const loading = getDocument({ url, withCredentials: false })
+    // Cloudinary/Supabase는 CORS로 브라우저 직접 로드가 막힐 수 있어 서버 프록시 사용
+    const fetchUrl = pdfOpenHref(url)
+    const loading = getDocument({ url: fetchUrl, withCredentials: false })
 
     void (async () => {
       try {

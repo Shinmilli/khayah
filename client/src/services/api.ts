@@ -107,7 +107,7 @@ export async function deleteUploadedMedia(ref: {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(ref),
   })
-  if (!res.ok) throw new Error('Failed to delete uploaded file')
+  if (!res.ok) throw new Error(await readApiError(res, '업로드 파일 삭제에 실패했습니다.'))
 }
 
 export async function uploadDocumentPdf(file: File): Promise<DocumentUploadResult> {
@@ -115,16 +115,13 @@ export async function uploadDocumentPdf(file: File): Promise<DocumentUploadResul
   form.append('file', file)
   const res = await fetch(`${API_BASE}/uploads/document`, { method: 'POST', body: form })
   if (!res.ok) {
-    const text = await res.text().catch(() => '')
-    try {
-      const json = JSON.parse(text) as { error?: string; hint?: string }
-      throw new Error([json.error, json.hint].filter(Boolean).join(' — ') || text || 'Failed to upload document')
-    } catch (e) {
-      if (e instanceof Error && e.message !== text) throw e
-      throw new Error(text || 'Failed to upload document')
-    }
+    throw new Error(await readApiError(res, 'PDF 업로드에 실패했습니다.'))
   }
-  return res.json()
+  const data = (await res.json()) as DocumentUploadResult
+  if (!data?.url?.trim()) {
+    throw new Error('업로드 응답에 URL이 없습니다. API 서버와 Supabase 설정을 확인하세요.')
+  }
+  return data
 }
 
 /** 재무상태표·운영성과표 등 이미지(JPEG/PNG/WebP/GIF) */
@@ -132,10 +129,7 @@ export async function uploadReportImage(file: File): Promise<DocumentUploadResul
   const form = new FormData()
   form.append('file', file)
   const res = await fetch(`${API_BASE}/uploads/image`, { method: 'POST', body: form })
-  if (!res.ok) {
-    const text = await res.text().catch(() => '')
-    throw new Error(text || 'Failed to upload image')
-  }
+  if (!res.ok) throw new Error(await readApiError(res, '이미지 업로드에 실패했습니다.'))
   return res.json()
 }
 

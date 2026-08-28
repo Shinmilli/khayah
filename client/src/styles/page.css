@@ -1298,6 +1298,8 @@
   letter-spacing: -0.03em;
   line-height: 1.4;
   color: #222;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .post-board__meta {
@@ -1309,6 +1311,23 @@
 .post-board--feature .post-board__head {
   border-top: none;
   text-align: center;
+}
+
+.post-board__scope {
+  margin: 0 0 10px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #8a8a8a;
+  text-transform: none;
+}
+
+.post-board--feature .post-board__scope {
+  display: block;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: none;
 }
 
 .post-board--feature .post-board__title {
@@ -1341,12 +1360,117 @@
 }
 
 .post-board__body {
-  padding: clamp(28px, 4vw, 48px) 0 clamp(36px, 5vw, 56px);
+  padding: clamp(28px, 4vw, 48px) clamp(16px, 3.5vw, 28px) clamp(36px, 5vw, 56px);
   min-height: 8rem;
+}
+
+/* 공지 등(비-feature): 양옆 여백 조금 더 */
+.post-board:not(.post-board--feature) .post-board__body {
+  padding-left: clamp(20px, 4vw, 40px);
+  padding-right: clamp(20px, 4vw, 40px);
 }
 
 .page-content-wrapper .page-body.post-board__body {
   color: #111;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  box-sizing: border-box;
+}
+
+.page-content-wrapper .page-body.post-board__body h1,
+.page-content-wrapper .page-body.post-board__body h2,
+.page-content-wrapper .page-body.post-board__body h3,
+.page-content-wrapper .page-body.post-board__body h4 {
+  color: #111;
+}
+
+.page-content-wrapper .page-body.post-board__body,
+.page-content-wrapper .page-body.post-board__body p,
+.page-content-wrapper .page-body.post-board__body h1,
+.page-content-wrapper .page-body.post-board__body h2,
+.page-content-wrapper .page-body.post-board__body h3,
+.page-content-wrapper .page-body.post-board__body h4,
+.page-content-wrapper .page-body.post-board__body li,
+.page-content-wrapper .page-body.post-board__body blockquote,
+.page-content-wrapper .page-body.post-board__body td,
+.page-content-wrapper .page-body.post-board__body span,
+.page-content-wrapper .page-body.post-board__body a {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.page-content-wrapper .page-body.post-board__body img,
+.page-content-wrapper .page-body.post-board__body video,
+.page-content-wrapper .page-body.post-board__body iframe {
+  max-width: min(100%, 720px);
+  height: auto;
+}
+
+/* 스토리·활동소식·연간소식지: 큰 화면에서 본문 720px / 공지사항 등은 전폭 */
+@media (min-width: 960px) {
+  .post-board--feature .page-body.post-board__body,
+  .post-board--feature .post-board__body {
+    max-width: 720px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+.page-content-wrapper .page-body.post-board__body blockquote,
+.page-content-wrapper .page-body blockquote {
+  margin: 0.85em 0;
+  padding: 0.55em 0.85em 0.55em 14px;
+  border-left: 4px solid var(--khayah-red, #b20838);
+  background: #fafafa;
+  color: #4b5563;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  text-align: center !important;
+}
+
+/* 연속된 인용은 하나의 블록처럼 보이게 */
+.page-content-wrapper .page-body.post-board__body blockquote + blockquote,
+.page-content-wrapper .page-body blockquote + blockquote {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+.page-content-wrapper .page-body.post-board__body blockquote:has(+ blockquote),
+.page-content-wrapper .page-body blockquote:has(+ blockquote) {
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.page-content-wrapper .page-body.post-board__body blockquote p,
+.page-content-wrapper .page-body blockquote p {
+  margin: 0.25em 0;
+  text-align: center;
+}
+
+/* feature 본문(가운데 정렬)에서 인용 박스도 가운데 */
+.post-board--feature .post-board__body blockquote {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.page-content-wrapper .page-body.post-board__body blockquote[data-quote-align='left'],
+.page-content-wrapper .page-body blockquote[data-quote-align='left'] {
+  margin-left: 0;
+  margin-right: auto;
+}
+
+.page-content-wrapper .page-body.post-board__body blockquote[data-quote-align='center'],
+.page-content-wrapper .page-body blockquote[data-quote-align='center'] {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.page-content-wrapper .page-body.post-board__body blockquote[data-quote-align='right'],
+.page-content-wrapper .page-body blockquote[data-quote-align='right'] {
+  margin-left: auto;
+  margin-right: 0;
 }
 
 .post-board__files {

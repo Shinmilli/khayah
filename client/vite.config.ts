@@ -13,10 +13,15 @@ export default defineConfig({
       '/api': {
         target: DEV_API_PROXY_TARGET,
         changeOrigin: true,
+        // 대용량 PDF(Supabase) 업로드가 프록시에서 끊기지 않도록
+        timeout: 10 * 60 * 1000,
+        proxyTimeout: 10 * 60 * 1000,
       },
       '/uploads': {
         target: DEV_API_PROXY_TARGET,
         changeOrigin: true,
+        timeout: 10 * 60 * 1000,
+        proxyTimeout: 10 * 60 * 1000,
       },
     },
   },
