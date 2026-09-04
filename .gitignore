@@ -1,2 +1,6 @@
 node_modules
 .env
+
+# WordPress backup / Duplicator (keep locally, do not track)
+20170227_khayah_*_archive/
+installer.php
