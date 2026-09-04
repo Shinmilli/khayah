@@ -8,6 +8,7 @@ import type { Page } from '../types/page'
 import type { Post } from '../types/post'
 import { NewsArchivePage } from './NewsArchivePage'
 import { InquiryPage } from './InquiryPage'
+import { HistoryPage } from './HistoryPage'
 import { PageHero } from '../components/PageHero'
 import '../styles/page.css'
 import '../styles/greeting-modern.css'
@@ -53,6 +54,7 @@ export function PageByPath() {
     pathKey === PATH.newsNewsletter ||
     pathKey === PATH.newsPress
   const isInquiry = pathKey === PATH.newsInquiry
+  const isHistory = pathKey === PATH.aboutHistory
 
   const hashId = location.hash.replace(/^#/, '')
   const [apiPage, setApiPage] = useState<Page | null | undefined>(undefined)
@@ -61,12 +63,13 @@ export function PageByPath() {
   const isPostPath = pathKey.startsWith('posts/')
   const postSlug = isPostPath ? pathKey.replace(/^posts\/?/, '') : ''
 
-  const staticPage = pathKey && !isPostPath && !isInquiry ? getStaticPage(pathKey, locale) : null
+  const staticPage =
+    pathKey && !isPostPath && !isInquiry && !isHistory ? getStaticPage(pathKey, locale) : null
 
   const slug = pathToSlug(location.pathname)
 
   useEffect(() => {
-    if (isNewsArchive || isInquiry) {
+    if (isNewsArchive || isInquiry || isHistory) {
       setApiPage(null)
       setPost(null)
       return
@@ -98,7 +101,7 @@ export function PageByPath() {
         if (!cancelled) setApiPage(null)
       })
     return () => { cancelled = true }
-  }, [slug, staticPage, isPostPath, postSlug, isNewsArchive, isInquiry])
+  }, [slug, staticPage, isPostPath, postSlug, isNewsArchive, isInquiry, isHistory])
 
   const title = isInquiry ? null : (staticPage?.title ?? apiPage?.title ?? post?.title ?? null)
   useEffect(() => {
@@ -146,6 +149,8 @@ export function PageByPath() {
   }, [pathKey, location.pathname, messages.pages.supportGuide])
 
   if (isInquiry) return <InquiryPage />
+
+  if (isHistory) return <HistoryPage />
 
   if (isNewsArchive) return <NewsArchivePage />
 

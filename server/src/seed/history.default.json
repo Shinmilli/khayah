@@ -1,0 +1,657 @@
+{
+  "version": 1,
+  "locales": {
+    "ko": {
+      "lead": "카야는 앞으로도 소외된 이웃들과 함께 걸어 가겠습니다.",
+      "years": [
+        {
+          "id": "year-2024",
+          "year": "2024",
+          "items": [
+            {
+              "id": "item-2024-01-1",
+              "month": "01",
+              "text": "WFK 해외 장기봉사단 파견기관 선정 '키르기스스탄'"
+            },
+            {
+              "id": "item-2024-05-2",
+              "month": "05",
+              "text": "경기도 국제개발협력사업 3년 연속 선정 '기후 위기 대응 청년 특사단'"
+            },
+            {
+              "id": "item-2024-07-3",
+              "month": "07",
+              "text": "삼성꿈장학재단 국외장학사업 선정 4년 연속 선정 '미얀마 도시빈민마을 청소년 꿈도서관 지원'"
+            },
+            {
+              "id": "item-2024-08-4",
+              "month": "08",
+              "text": "단기해외봉사단(기후특사단) 120명 파견 '몽골, 키르기스스탄, 우즈베키스탄'"
+            },
+            {
+              "id": "item-2024-09-5",
+              "month": "09",
+              "text": "지정기부금 공익법인 지정연장(6년)"
+            }
+          ]
+        },
+        {
+          "id": "year-2023",
+          "year": "2023",
+          "items": [
+            {
+              "id": "item-2023-01-1",
+              "month": "01",
+              "text": "사랑의열매 해외지원 다년도(3년) 사업 선정 '키르기스스탄 도시빈민학생 STEM 역량 강화 이러닝학습센터 운영'"
+            },
+            {
+              "id": "item-2023-07-2",
+              "month": "07",
+              "text": "경기도 국제개발협력사업 사업 2년 연속 선정 '키르기스스탄 청(소)년 프로젝트 기반 STEM 교육'"
+            },
+            {
+              "id": "item-2023-09-3",
+              "month": "09",
+              "text": "삼성꿈장학재단 국외장학사업 선정 3년 연속 선정"
+            },
+            {
+              "id": "item-2023-11-4",
+              "month": "11",
+              "text": "업무협약 체결(한국C&S)"
+            }
+          ]
+        },
+        {
+          "id": "year-2022",
+          "year": "2022",
+          "items": [
+            {
+              "id": "item-2022-01-1",
+              "month": "01",
+              "text": "바보의나눔재단 해외지역공동체개발 다년도(3년) 사업 선정 '미얀마 도시빈민마을 아동청소년 학습·놀이 교육'"
+            },
+            {
+              "id": "item-2022-04-2",
+              "month": "04",
+              "text": "경기도 비영리민간단체 공익활동 지원사업 선정 '지속가능한 지구, 생태적 전환의 삶 북클럽 운영'"
+            },
+            {
+              "id": "item-2022-05-3",
+              "month": "05",
+              "text": "경기도 국제개발협력 사업 선정 '키르기스스탄 청년 프로젝트 기반 STEM 교육'"
+            },
+            {
+              "id": "item-2022-09-4",
+              "month": "09",
+              "text": "삼성꿈장학재단 국외장학사업 2차년 연속 선정 '미얀마 강제 이주 마을 청소년 꿈도서관 지원'"
+            },
+            {
+              "id": "item-2022-09-5",
+              "month": "09",
+              "text": "삼성꿈장학재단 글로벌 국외장학사업 '미얀마 강제 이주마을 청소년 역량강화 도서관 설립 및 독서교육'"
+            },
+            {
+              "id": "item-2022-12-6",
+              "month": "12",
+              "text": "키르기스스탄 지부 설립"
+            },
+            {
+              "id": "item-2022-12-7",
+              "month": "12",
+              "text": "업무협약 체결(안산정의시민연대)"
+            }
+          ]
+        },
+        {
+          "id": "year-2021",
+          "year": "2021",
+          "items": [
+            {
+              "id": "item-2021-01-1",
+              "month": "01",
+              "text": "사회복지공동모금회 나눔과꿈 해외지원사업 '미얀마 도시빈민지역 기업맞춤형 직업훈련센터 운영'"
+            },
+            {
+              "id": "item-2021-02-2",
+              "month": "02",
+              "text": "비영리 사단법인 설립 허가 (경기도 제2021-01-014호)"
+            },
+            {
+              "id": "item-2021-05-3",
+              "month": "05",
+              "text": "미얀마 '봄날' 긴급구호(코로나-19 및 쿠데타)"
+            },
+            {
+              "id": "item-2021-06-4",
+              "month": "06",
+              "text": "사회복지공동모금회 지정기탁사업 '취약 청소년 자립 디저트 전문가 교육'"
+            },
+            {
+              "id": "item-2021-09-5",
+              "month": "09",
+              "text": "삼성꿈장학재단 글로벌 국외장학사업 '미얀마 강제 이주마을 청소년 역량강화 도서관 설립 및 독서교육'"
+            },
+            {
+              "id": "item-2021-09-6",
+              "month": "09",
+              "text": "국제개발협력민간협의회 정회원단체 가입 (KCOCM-1153)"
+            },
+            {
+              "id": "item-2021-09-7",
+              "month": "09",
+              "text": "지정기부금 공익법인 지정 (기획재정부 고시 제2021-28호)"
+            },
+            {
+              "id": "item-2021-12-8",
+              "month": "12",
+              "text": "비영리민간단체 등록 (경기도 제2021-1-48호)"
+            },
+            {
+              "id": "item-2021-12-9",
+              "month": "12",
+              "text": "매표화학 업무협약 체결 및 물품 후원"
+            }
+          ]
+        },
+        {
+          "id": "year-2020",
+          "year": "2020",
+          "items": [
+            {
+              "id": "item-2020-01-1",
+              "month": "01",
+              "text": "사회복지공동모금회 나눔과꿈 해외지원사업 '미얀마 도시빈민지역 기업맞춤형 직업훈련센터 운영'"
+            },
+            {
+              "id": "item-2020-06-2",
+              "month": "06",
+              "text": "미얀마 도시빈민지역 코로나-19 긴급구호"
+            },
+            {
+              "id": "item-2020-12-3",
+              "month": "12",
+              "text": "지속가능한 국제개발협력과 힐링 라이프스타일 비즈니스를 위한 'Color&Comfort' 기업 설립"
+            }
+          ]
+        },
+        {
+          "id": "year-2019",
+          "year": "2019",
+          "items": [
+            {
+              "id": "item-2019-01-1",
+              "month": "01",
+              "text": "사회복지공동모금회 나눔과꿈 해외지원사업 '미얀마 도시빈민지역 기업맞춤형 직업훈련센터 운영'"
+            },
+            {
+              "id": "item-2019-03-2",
+              "month": "03",
+              "text": "서울시 민간단체 지원사업 '외국인노동자 기술&창업 교육'"
+            },
+            {
+              "id": "item-2019-04-3",
+              "month": "04",
+              "text": "강원도 속초 화재 재난지역 긴급구호"
+            },
+            {
+              "id": "item-2019-06-4",
+              "month": "06",
+              "text": "통일과나눔재단 지원사업 '남북청년이 함께하는 소셜 비지니스 첫걸음'"
+            }
+          ]
+        },
+        {
+          "id": "year-2018",
+          "year": "2018",
+          "items": [
+            {
+              "id": "item-2018-01-1",
+              "month": "01",
+              "text": "Dream Parents Project '미얀마 도시빈민지역 청년 직업훈련'"
+            },
+            {
+              "id": "item-2018-02-2",
+              "month": "02",
+              "text": "우리복지재단 지원 '외국인 노동자와 함께 하는 기술탐방'"
+            },
+            {
+              "id": "item-2018-04-3",
+              "month": "04",
+              "text": "서울시 민간단체 지원사업 '외국인 노동자 기술&창업 탐방'"
+            },
+            {
+              "id": "item-2018-07-4",
+              "month": "07",
+              "text": "네팔 람중 지역 모자청소년보건증진사업 타당성 조사"
+            },
+            {
+              "id": "item-2018-12-5",
+              "month": "12",
+              "text": "LH 지원사업 '김해 이주민의 집 활성화를 위한 복합문화공간 리모델링 프로젝트'"
+            }
+          ]
+        },
+        {
+          "id": "year-2017",
+          "year": "2017",
+          "items": [
+            {
+              "id": "item-2017-03-1",
+              "month": "03",
+              "text": "소외계층 청소년(탈북 청소년) 학습 물품 지원"
+            },
+            {
+              "id": "item-2017-05-2",
+              "month": "05",
+              "text": "KOICA 민관협력 인큐베이팅 프로그램 미얀마"
+            },
+            {
+              "id": "item-2017-08-3",
+              "month": "08",
+              "text": "키르기즈스탄 러시아수업 교육비 지원"
+            },
+            {
+              "id": "item-2017-11-4",
+              "month": "11",
+              "text": "Dream Seekers Project 후원 모금"
+            }
+          ]
+        },
+        {
+          "id": "year-2016",
+          "year": "2016",
+          "items": [
+            {
+              "id": "item-2016-05-1",
+              "month": "05",
+              "text": "비영리민간단체 '카야' 로 단체명 변경, 새 대표이사 취임"
+            },
+            {
+              "id": "item-2016-10-2",
+              "month": "10",
+              "text": "소외계층 청소년(탈북청소년, 저소득 다문화 가정) 학습 물품 지원"
+            },
+            {
+              "id": "item-2016-10-3",
+              "month": "10",
+              "text": "네팔, 미얀마, 키르기즈스탄 해외 교육 지원 활동 시작"
+            }
+          ]
+        },
+        {
+          "id": "year-2013",
+          "year": "2013",
+          "items": [
+            {
+              "id": "item-2013-06-1",
+              "month": "06",
+              "text": "제2회 희망 서울엑스포 참가"
+            },
+            {
+              "id": "item-2013-07-2",
+              "month": "07",
+              "text": "코엑스 제1회 협동조합의 날 기념식 박람회 개최 및 홍보"
+            },
+            {
+              "id": "item-2013-09-3",
+              "month": "09",
+              "text": "서울시민과 함께하는 장터 참가 및 판매수익금 기부"
+            },
+            {
+              "id": "item-2013-10-4",
+              "month": "10",
+              "text": "행복나눔 콘서트 개최"
+            }
+          ]
+        },
+        {
+          "id": "year-2012",
+          "year": "2012",
+          "items": [
+            {
+              "id": "item-2012-04-1",
+              "month": "04",
+              "text": "서울시 비영리민간단체 '행복나눔세상' 등록"
+            },
+            {
+              "id": "item-2012-06-2",
+              "month": "06",
+              "text": "서대문구 인왕시장 도시락판매 희망가게 오픈"
+            },
+            {
+              "id": "item-2012-09-3",
+              "month": "09",
+              "text": "한국복지사이버대학과 산학교류협약"
+            }
+          ]
+        }
+      ]
+    },
+    "en": {
+      "lead": "Khayah will continue walking alongside marginalized neighbors.",
+      "years": [
+        {
+          "id": "year-2024",
+          "year": "2024",
+          "items": [
+            {
+              "id": "item-2024-01-1",
+              "month": "01",
+              "text": "Selected as WFK long-term overseas volunteer dispatch organization for Kyrgyzstan"
+            },
+            {
+              "id": "item-2024-05-2",
+              "month": "05",
+              "text": "Selected for Gyeonggi Province international development cooperation program for three consecutive years — Climate Crisis Response Youth Envoy Program"
+            },
+            {
+              "id": "item-2024-07-3",
+              "month": "07",
+              "text": "Selected for Samsung Dream Scholarship Foundation overseas scholarship program for four consecutive years — Dream Library Support for Urban Slum Youth in Myanmar"
+            },
+            {
+              "id": "item-2024-08-4",
+              "month": "08",
+              "text": "Dispatched 120 short-term overseas volunteers (Climate Envoy Program) to Mongolia, Kyrgyzstan, and Uzbekistan"
+            },
+            {
+              "id": "item-2024-09-5",
+              "month": "09",
+              "text": "Designated donation public benefit corporation status renewed (6 years)"
+            }
+          ]
+        },
+        {
+          "id": "year-2023",
+          "year": "2023",
+          "items": [
+            {
+              "id": "item-2023-01-1",
+              "month": "01",
+              "text": "Selected for Community Chest of Korea Love Fruit multi-year (3-year) overseas support program — STEM Capacity Building e-Learning Center for Urban Slum Students in Kyrgyzstan"
+            },
+            {
+              "id": "item-2023-07-2",
+              "month": "07",
+              "text": "Selected for Gyeonggi Province international development cooperation program for two consecutive years — Youth Project-Based STEM Education in Kyrgyzstan"
+            },
+            {
+              "id": "item-2023-09-3",
+              "month": "09",
+              "text": "Selected for Samsung Dream Scholarship Foundation overseas scholarship program for three consecutive years"
+            },
+            {
+              "id": "item-2023-11-4",
+              "month": "11",
+              "text": "Signed MOU with Korea C&S"
+            }
+          ]
+        },
+        {
+          "id": "year-2022",
+          "year": "2022",
+          "items": [
+            {
+              "id": "item-2022-01-1",
+              "month": "01",
+              "text": "Selected for Babo Nanum Foundation multi-year (3-year) overseas community development program — Learning & Play Education for Children and Youth in Urban Slum Villages, Myanmar"
+            },
+            {
+              "id": "item-2022-04-2",
+              "month": "04",
+              "text": "Selected for Gyeonggi Province nonprofit public activity support program — Sustainable Earth Book Club on Ecological Transition"
+            },
+            {
+              "id": "item-2022-05-3",
+              "month": "05",
+              "text": "Selected for Gyeonggi Province international development cooperation program — Youth Project-Based STEM Education in Kyrgyzstan"
+            },
+            {
+              "id": "item-2022-09-4",
+              "month": "09",
+              "text": "Selected for Samsung Dream Scholarship Foundation overseas scholarship program for second consecutive year — Dream Library Support for Youth in Forced Displacement Villages, Myanmar"
+            },
+            {
+              "id": "item-2022-09-5",
+              "month": "09",
+              "text": "Samsung Dream Scholarship Foundation Global Overseas Scholarship Program — Library Establishment and Reading Education for Youth Capacity Building in Forced Displacement Villages, Myanmar"
+            },
+            {
+              "id": "item-2022-12-6",
+              "month": "12",
+              "text": "Established Kyrgyzstan branch office"
+            },
+            {
+              "id": "item-2022-12-7",
+              "month": "12",
+              "text": "Signed MOU with Ansan Justice Citizens Coalition"
+            }
+          ]
+        },
+        {
+          "id": "year-2021",
+          "year": "2021",
+          "items": [
+            {
+              "id": "item-2021-01-1",
+              "month": "01",
+              "text": "Community Chest of Korea Nanum and Dream overseas support program — Enterprise-Tailored Vocational Training Center in Urban Slum Areas, Myanmar"
+            },
+            {
+              "id": "item-2021-02-2",
+              "month": "02",
+              "text": "Incorporated as nonprofit foundation (Gyeonggi Province No. 2021-01-014)"
+            },
+            {
+              "id": "item-2021-05-3",
+              "month": "05",
+              "text": "Myanmar Spring Day emergency relief (COVID-19 and coup)"
+            },
+            {
+              "id": "item-2021-06-4",
+              "month": "06",
+              "text": "Community Chest of Korea designated donation program — Dessert Specialist Training for Vulnerable Youth Self-Reliance"
+            },
+            {
+              "id": "item-2021-09-5",
+              "month": "09",
+              "text": "Samsung Dream Scholarship Foundation Global Overseas Scholarship Program — Library Establishment and Reading Education for Youth Capacity Building in Forced Displacement Villages, Myanmar"
+            },
+            {
+              "id": "item-2021-09-6",
+              "month": "09",
+              "text": "Joined KOICA Civil Society Partnership Council as full member (KCOCM-1153)"
+            },
+            {
+              "id": "item-2021-09-7",
+              "month": "09",
+              "text": "Designated as designated donation public benefit corporation (Ministry of Economy and Finance Notice No. 2021-28)"
+            },
+            {
+              "id": "item-2021-12-8",
+              "month": "12",
+              "text": "Registered as nonprofit private organization (Gyeonggi Province No. 2021-1-48)"
+            },
+            {
+              "id": "item-2021-12-9",
+              "month": "12",
+              "text": "Signed MOU with Maepyo Chemical and received in-kind donation"
+            }
+          ]
+        },
+        {
+          "id": "year-2020",
+          "year": "2020",
+          "items": [
+            {
+              "id": "item-2020-01-1",
+              "month": "01",
+              "text": "Community Chest of Korea Nanum and Dream overseas support program — Enterprise-Tailored Vocational Training Center in Urban Slum Areas, Myanmar"
+            },
+            {
+              "id": "item-2020-06-2",
+              "month": "06",
+              "text": "COVID-19 emergency relief in urban slum areas, Myanmar"
+            },
+            {
+              "id": "item-2020-12-3",
+              "month": "12",
+              "text": "Established Color&Comfort company for sustainable international development cooperation and healing lifestyle business"
+            }
+          ]
+        },
+        {
+          "id": "year-2019",
+          "year": "2019",
+          "items": [
+            {
+              "id": "item-2019-01-1",
+              "month": "01",
+              "text": "Community Chest of Korea Nanum and Dream overseas support program — Enterprise-Tailored Vocational Training Center in Urban Slum Areas, Myanmar"
+            },
+            {
+              "id": "item-2019-03-2",
+              "month": "03",
+              "text": "Seoul Metropolitan Government nonprofit support program — Skills & Entrepreneurship Training for Migrant Workers"
+            },
+            {
+              "id": "item-2019-04-3",
+              "month": "04",
+              "text": "Emergency relief for Sokcho wildfire disaster area, Gangwon Province"
+            },
+            {
+              "id": "item-2019-06-4",
+              "month": "06",
+              "text": "Unification and Sharing Foundation support program — First Steps in Social Business for North and South Korean Youth"
+            }
+          ]
+        },
+        {
+          "id": "year-2018",
+          "year": "2018",
+          "items": [
+            {
+              "id": "item-2018-01-1",
+              "month": "01",
+              "text": "Dream Parents Project — Vocational Training for Youth in Urban Slum Areas, Myanmar"
+            },
+            {
+              "id": "item-2018-02-2",
+              "month": "02",
+              "text": "Woori Welfare Foundation support — Skills Exploration with Migrant Workers"
+            },
+            {
+              "id": "item-2018-04-3",
+              "month": "04",
+              "text": "Seoul Metropolitan Government nonprofit support program — Skills & Entrepreneurship Exploration for Migrant Workers"
+            },
+            {
+              "id": "item-2018-07-4",
+              "month": "07",
+              "text": "Feasibility study for maternal and child health promotion project in Lamjung, Nepal"
+            },
+            {
+              "id": "item-2018-12-5",
+              "month": "12",
+              "text": "LH support program — Remodeling Project for Multicultural Community Space to Activate Migrant Housing in Gimhae"
+            }
+          ]
+        },
+        {
+          "id": "year-2017",
+          "year": "2017",
+          "items": [
+            {
+              "id": "item-2017-03-1",
+              "month": "03",
+              "text": "Learning supplies support for marginalized youth (North Korean defector youth)"
+            },
+            {
+              "id": "item-2017-05-2",
+              "month": "05",
+              "text": "KOICA public-private partnership incubating program, Myanmar"
+            },
+            {
+              "id": "item-2017-08-3",
+              "month": "08",
+              "text": "Russian language class tuition support, Kyrgyzstan"
+            },
+            {
+              "id": "item-2017-11-4",
+              "month": "11",
+              "text": "Dream Seekers Project fundraising campaign"
+            }
+          ]
+        },
+        {
+          "id": "year-2016",
+          "year": "2016",
+          "items": [
+            {
+              "id": "item-2016-05-1",
+              "month": "05",
+              "text": "Organization renamed to nonprofit private organization Khayah; new CEO inaugurated"
+            },
+            {
+              "id": "item-2016-10-2",
+              "month": "10",
+              "text": "Learning supplies support for marginalized youth (North Korean defector youth, low-income multicultural families)"
+            },
+            {
+              "id": "item-2016-10-3",
+              "month": "10",
+              "text": "Began overseas education support activities in Nepal, Myanmar, and Kyrgyzstan"
+            }
+          ]
+        },
+        {
+          "id": "year-2013",
+          "year": "2013",
+          "items": [
+            {
+              "id": "item-2013-06-1",
+              "month": "06",
+              "text": "Participated in 2nd Hope Seoul Expo"
+            },
+            {
+              "id": "item-2013-07-2",
+              "month": "07",
+              "text": "Hosted and promoted exhibition at 1st Cooperative Day ceremony at COEX"
+            },
+            {
+              "id": "item-2013-09-3",
+              "month": "09",
+              "text": "Participated in Seoul Citizens Market and donated sales proceeds"
+            },
+            {
+              "id": "item-2013-10-4",
+              "month": "10",
+              "text": "Held Happiness Sharing Concert"
+            }
+          ]
+        },
+        {
+          "id": "year-2012",
+          "year": "2012",
+          "items": [
+            {
+              "id": "item-2012-04-1",
+              "month": "04",
+              "text": "Registered as Seoul Metropolitan Government nonprofit private organization Happiness Sharing World"
+            },
+            {
+              "id": "item-2012-06-2",
+              "month": "06",
+              "text": "Opened Hope Store lunch box sales at Inwang Market, Seodaemun-gu"
+            },
+            {
+              "id": "item-2012-09-3",
+              "month": "09",
+              "text": "Industry-academia cooperation agreement with Korea Cyber University of Social Welfare"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

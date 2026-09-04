@@ -8,6 +8,7 @@ import type { InquiryAdmin, InquiryPublic } from '../types/inquiry'
 import type { InquiryFaqDocument, InquiryFaqPublicDocument } from '../types/inquiryFaq'
 import type { ImpactStatsDocument, ImpactStatsLocaleContent } from '../features/home/impactStatsTypes'
 import type { HeroBannerDocument, HeroBannerPublicDocument } from '../features/home/heroBannerTypes'
+import type { HistoryDocument, HistoryLocaleContent } from '../features/history/historyTypes'
 import type { Locale } from '../i18n/locale'
 
 export type AdminPost = Post & { meta?: Record<string, string> }
@@ -243,6 +244,31 @@ export async function adminPutImpactStats(doc: ImpactStatsDocument): Promise<Imp
   if (!res.ok) {
     const text = await res.text().catch(() => '')
     throw new Error(text || 'Failed to save impact stats')
+  }
+  return res.json()
+}
+
+export async function fetchHistory(locale: Locale = 'ko'): Promise<HistoryLocaleContent> {
+  const res = await fetch(`${API_BASE}/history?lang=${encodeURIComponent(locale)}`)
+  if (!res.ok) throw new Error('Failed to fetch history')
+  return res.json()
+}
+
+export async function adminFetchHistory(): Promise<HistoryDocument> {
+  const res = await fetch(`${API_BASE}/admin/history`)
+  if (!res.ok) throw new Error('Failed to fetch history')
+  return res.json()
+}
+
+export async function adminPutHistory(doc: HistoryDocument): Promise<HistoryDocument> {
+  const res = await fetch(`${API_BASE}/admin/history`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(doc),
+  })
+  if (!res.ok) {
+    const text = await res.text().catch(() => '')
+    throw new Error(text || 'Failed to save history')
   }
   return res.json()
 }

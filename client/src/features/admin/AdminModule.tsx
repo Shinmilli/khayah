@@ -11,6 +11,7 @@ import { AdminPopupPage } from './pages/AdminPopupPage'
 import { AdminFinancialReportsPage } from './pages/AdminFinancialReportsPage'
 import { AdminInquiryFaqPage } from './pages/AdminInquiryFaqPage'
 import { AdminImpactStatsPage } from './pages/AdminImpactStatsPage'
+import { AdminHistoryPage } from './pages/AdminHistoryPage'
 
 export function AdminModule() {
   return (
@@ -29,6 +30,7 @@ export function AdminModule() {
           <Route path="financial-reports" element={<AdminFinancialReportsPage />} />
           <Route path="inquiry-faq" element={<AdminInquiryFaqPage />} />
           <Route path="impact-stats" element={<AdminImpactStatsPage />} />
+          <Route path="history" element={<AdminHistoryPage />} />
         </Route>
       </Route>
     </Routes>

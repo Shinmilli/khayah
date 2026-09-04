@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "settings": {
     "showBalanceSheet": true,
     "showOperationsStatement": true,
@@ -11,53 +11,77 @@
       "incomeSegments": [
         {
           "id": "misc",
-          "label": "기타수입",
           "percent": 25.2,
-          "color": "#2a9d8f"
+          "color": "#2a9d8f",
+          "labels": {
+            "ko": "기타수입",
+            "en": "Other income"
+          }
         },
         {
           "id": "brought_forward",
-          "label": "전기이월금",
           "percent": 14.11,
-          "color": "#e9c46a"
+          "color": "#e9c46a",
+          "labels": {
+            "ko": "전기이월금",
+            "en": "Brought forward"
+          }
         },
         {
           "id": "subsidy",
-          "label": "보조금",
           "percent": 41.18,
-          "color": "#8b1538"
+          "color": "#8b1538",
+          "labels": {
+            "ko": "보조금",
+            "en": "Subsidies"
+          }
         },
         {
           "id": "donation",
-          "label": "기부금",
           "percent": 19.51,
-          "color": "#457b9d"
+          "color": "#457b9d",
+          "labels": {
+            "ko": "기부금",
+            "en": "Donations"
+          }
         }
       ],
       "expenseSegments": [
         {
           "id": "fundraising",
-          "label": "모금비용",
           "percent": 0.04,
-          "color": "#5c1a2e"
+          "color": "#5c1a2e",
+          "labels": {
+            "ko": "모금비용",
+            "en": "Fundraising costs"
+          }
         },
         {
           "id": "carried_next",
-          "label": "차기이월금",
           "percent": 6.04,
-          "color": "#e9c46a"
+          "color": "#e9c46a",
+          "labels": {
+            "ko": "차기이월금",
+            "en": "Carried forward"
+          }
         },
         {
           "id": "admin",
-          "label": "일반관리비",
           "percent": 5.39,
-          "color": "#8b1538"
+          "color": "#8b1538",
+          "labels": {
+            "ko": "일반관리비",
+            "en": "General administration"
+          }
         },
         {
           "id": "programs",
-          "label": "사업수행비용",
           "percent": 88.53,
-          "color": "#457b9d"
+          "color": "#457b9d",
+          "labels": {
+            "ko": "사업수행비용",
+            "en": "Program expenses"
+          }
         }
       ],
       "incomeTotalWon": 2754856299,
@@ -71,53 +95,77 @@
       "incomeSegments": [
         {
           "id": "misc",
-          "label": "기타수입",
           "percent": 0.12,
-          "color": "#2a9d8f"
+          "color": "#2a9d8f",
+          "labels": {
+            "ko": "기타수입",
+            "en": "Other income"
+          }
         },
         {
           "id": "brought_forward",
-          "label": "전기이월금",
           "percent": 4.63,
-          "color": "#e9c46a"
+          "color": "#e9c46a",
+          "labels": {
+            "ko": "전기이월금",
+            "en": "Brought forward"
+          }
         },
         {
           "id": "subsidy",
-          "label": "보조금",
           "percent": 23.36,
-          "color": "#6c7a89"
+          "color": "#6c7a89",
+          "labels": {
+            "ko": "보조금",
+            "en": "Subsidies"
+          }
         },
         {
           "id": "donation",
-          "label": "기부금",
           "percent": 71.89,
-          "color": "#8b1538"
+          "color": "#8b1538",
+          "labels": {
+            "ko": "기부금",
+            "en": "Donations"
+          }
         }
       ],
       "expenseSegments": [
         {
           "id": "fundraising",
-          "label": "모금비용",
           "percent": 0.31,
-          "color": "#2a9d8f"
+          "color": "#2a9d8f",
+          "labels": {
+            "ko": "모금비용",
+            "en": "Fundraising costs"
+          }
         },
         {
           "id": "carried_next",
-          "label": "차기이월금",
           "percent": 13.18,
-          "color": "#e9c46a"
+          "color": "#e9c46a",
+          "labels": {
+            "ko": "차기이월금",
+            "en": "Carried forward"
+          }
         },
         {
           "id": "admin",
-          "label": "일반관리비",
           "percent": 9.21,
-          "color": "#8b1538"
+          "color": "#8b1538",
+          "labels": {
+            "ko": "일반관리비",
+            "en": "General administration"
+          }
         },
         {
           "id": "programs",
-          "label": "사업수행비용",
           "percent": 77.3,
-          "color": "#457b9d"
+          "color": "#457b9d",
+          "labels": {
+            "ko": "사업수행비용",
+            "en": "Program expenses"
+          }
         }
       ],
       "incomeTotalWon": 460659841,
@@ -131,53 +179,77 @@
       "incomeSegments": [
         {
           "id": "misc",
-          "label": "기타수입",
           "percent": 0.2,
-          "color": "#2a9d8f"
+          "color": "#2a9d8f",
+          "labels": {
+            "ko": "기타수입",
+            "en": "Other income"
+          }
         },
         {
           "id": "brought_forward",
-          "label": "전기이월금",
           "percent": 5.1,
-          "color": "#e9c46a"
+          "color": "#e9c46a",
+          "labels": {
+            "ko": "전기이월금",
+            "en": "Brought forward"
+          }
         },
         {
           "id": "subsidy",
-          "label": "보조금",
           "percent": 22,
-          "color": "#6c7a89"
+          "color": "#6c7a89",
+          "labels": {
+            "ko": "보조금",
+            "en": "Subsidies"
+          }
         },
         {
           "id": "donation",
-          "label": "기부금",
           "percent": 72.7,
-          "color": "#8b1538"
+          "color": "#8b1538",
+          "labels": {
+            "ko": "기부금",
+            "en": "Donations"
+          }
         }
       ],
       "expenseSegments": [
         {
           "id": "fundraising",
-          "label": "모금비용",
           "percent": 0.4,
-          "color": "#2a9d8f"
+          "color": "#2a9d8f",
+          "labels": {
+            "ko": "모금비용",
+            "en": "Fundraising costs"
+          }
         },
         {
           "id": "carried_next",
-          "label": "차기이월금",
           "percent": 12.5,
-          "color": "#e9c46a"
+          "color": "#e9c46a",
+          "labels": {
+            "ko": "차기이월금",
+            "en": "Carried forward"
+          }
         },
         {
           "id": "admin",
-          "label": "일반관리비",
           "percent": 10,
-          "color": "#8b1538"
+          "color": "#8b1538",
+          "labels": {
+            "ko": "일반관리비",
+            "en": "General administration"
+          }
         },
         {
           "id": "programs",
-          "label": "사업수행비용",
           "percent": 77.1,
-          "color": "#457b9d"
+          "color": "#457b9d",
+          "labels": {
+            "ko": "사업수행비용",
+            "en": "Program expenses"
+          }
         }
       ],
       "incomeTotalWon": 412000000,
