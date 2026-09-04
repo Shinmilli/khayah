@@ -108,7 +108,12 @@ exports.postRepository = {
             const skip = (page - 1) * perPage;
             const publishedPosts = mockPosts
                 .filter((p) => p.postStatus === 'publish' && p.postType === 'post')
-                .sort((a, b) => b.postDate.getTime() - a.postDate.getTime());
+                .sort((a, b) => {
+                const byDate = b.postDate.getTime() - a.postDate.getTime();
+                if (byDate !== 0)
+                    return byDate;
+                return b.id - a.id;
+            });
             const postsPage = publishedPosts.slice(skip, skip + perPage);
             return { posts: postsPage, total: publishedPosts.length };
         }
@@ -142,7 +147,7 @@ exports.postRepository = {
                     ...kindFilter,
                     ...regionFilter,
                 },
-                orderBy: { postDate: 'desc' },
+                orderBy: [{ postDate: 'desc' }, { id: 'desc' }],
                 skip,
                 take: perPage,
                 include: {

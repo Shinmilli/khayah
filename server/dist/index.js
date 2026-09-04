@@ -12,6 +12,10 @@ const youtube_1 = require("./routes/youtube");
 const uploads_1 = require("./routes/uploads");
 const adminPosts_1 = require("./routes/adminPosts");
 const financialReports_1 = require("./routes/financialReports");
+const inquiries_1 = require("./routes/inquiries");
+const inquiryFaq_1 = require("./routes/inquiryFaq");
+const impactStats_1 = require("./routes/impactStats");
+const heroBanner_1 = require("./routes/heroBanner");
 const prisma_1 = require("./utils/prisma");
 const app = (0, express_1.default)();
 const PORT = process.env.PORT ?? 3001;
@@ -25,6 +29,10 @@ app.use('/api', youtube_1.youtubeRouter);
 app.use('/api', uploads_1.uploadsRouter);
 app.use('/api', adminPosts_1.adminPostsRouter);
 app.use('/api', financialReports_1.financialReportsRouter);
+app.use('/api', inquiries_1.inquiriesRouter);
+app.use('/api', inquiryFaq_1.inquiryFaqRouter);
+app.use('/api', impactStats_1.impactStatsRouter);
+app.use('/api', heroBanner_1.heroBannerRouter);
 app.get('/health', (_req, res) => {
     res.json({ status: 'ok' });
 });
@@ -57,5 +65,9 @@ app.get('/health/db', healthDb);
 app.get('/api/health/db', healthDb);
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
+    if (!prisma_1.prisma) {
+        console.warn('[prisma] not connected:', prisma_1.prismaInitStatus.reason ?? 'unknown', prisma_1.prismaInitStatus.message ?? '');
+        console.warn('[prisma] Set DATABASE_URL in server/.env (see .env.example), then restart.');
+    }
 });
 //# sourceMappingURL=index.js.map

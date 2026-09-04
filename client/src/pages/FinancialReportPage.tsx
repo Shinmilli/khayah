@@ -2,8 +2,9 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { PageHero } from '../components/PageHero'
 import { FinancialDonutChart } from '../features/financial-report/FinancialDonutChart'
 import { formatWon } from '../features/financial-report/financialReportDefaults'
-import type { FinancialReportsDocument } from '../features/financial-report/financialReportTypes'
+import type { FinancialReportsPublicDocument } from '../features/financial-report/financialReportTypes'
 import { fetchFinancialReports } from '../services/api'
+import { useLocale } from '../i18n/LocaleContext'
 import { pdfOpenHref } from '../utils/pdfAttachments'
 import '../styles/financial-report.css'
 
@@ -39,7 +40,10 @@ function ChevronRightIcon() {
 }
 
 export function FinancialReportPage() {
-  const [doc, setDoc] = useState<FinancialReportsDocument | null>(null)
+  const { locale, messages } = useLocale()
+  const fr = messages.pages.financialReport
+  const nav = messages.nav
+  const [doc, setDoc] = useState<FinancialReportsPublicDocument | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -47,15 +51,15 @@ export function FinancialReportPage() {
     setLoading(true)
     setError(null)
     try {
-      const d = await fetchFinancialReports()
+      const d = await fetchFinancialReports(locale)
       setDoc(d)
     } catch (e) {
       setDoc(null)
-      setError(e instanceof Error ? e.message : '재정보고를 불러오지 못했습니다.')
+      setError(e instanceof Error ? e.message : fr.loadError)
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [locale, fr.loadError])
 
   useEffect(() => {
     void load()
@@ -122,11 +126,11 @@ export function FinancialReportPage() {
 
   useEffect(() => {
     if (!report) return
-    document.title = `${report.year} 재정보고 | 사단법인 카야 인터내셔널`
+    document.title = messages.pages.documentTitle(fr.pageTitle(report.year))
     return () => {
-      document.title = '사단법인 카야 인터내셔널 | 개발NGO'
+      document.title = messages.pages.defaultTitle
     }
-  }, [report?.year])
+  }, [report?.year, fr, messages.pages])
 
   useEffect(() => {
     if (!pdfModalOpen) return
@@ -151,9 +155,9 @@ export function FinancialReportPage() {
   if (loading) {
     return (
       <div className="financial-report-page">
-        <PageHero title="재정보고" showScrollHint={false} />
+        <PageHero title={nav.links.financialReport} showScrollHint={false} />
         <div className="financial-report__inner">
-          <p className="financial-report__status">불러오는 중…</p>
+          <p className="financial-report__status">{fr.loading}</p>
         </div>
       </div>
     )
@@ -162,15 +166,13 @@ export function FinancialReportPage() {
   if (error) {
     return (
       <div className="financial-report-page">
-        <PageHero title="재정보고" showScrollHint={false} />
+        <PageHero title={nav.links.financialReport} showScrollHint={false} />
         <div className="financial-report__inner">
           <div className="financial-report__error" role="alert">
             <p>{error}</p>
-            <p className="financial-report__error-hint">
-              API 서버가 실행 중인지, <code>VITE_API_BASE</code>와 프록시 설정을 확인해 주세요.
-            </p>
+            <p className="financial-report__error-hint">{fr.loadErrorHint}</p>
             <button type="button" className="financial-report__retry" onClick={() => void load()}>
-              다시 시도
+              {fr.retry}
             </button>
           </div>
         </div>
@@ -181,10 +183,10 @@ export function FinancialReportPage() {
   if (!doc || !report || year === null || !settings) {
     return (
       <div className="financial-report-page">
-        <PageHero title="재정보고" showScrollHint={false} />
+        <PageHero title={nav.links.financialReport} showScrollHint={false} />
         <div className="financial-report__inner">
           <p className="financial-report__empty">
-            등록된 연도 데이터가 없습니다. 관리자 화면의 콘텐츠 관리 → 재정보고에서 연도를 추가해 주세요.
+            {fr.empty}
           </p>
         </div>
       </div>
@@ -195,7 +197,7 @@ export function FinancialReportPage() {
 
   return (
     <div className="financial-report-page">
-      <PageHero title={`${report.year} 재정보고`} showScrollHint={false} />
+      <PageHero title={fr.pageTitle(report.year)} showScrollHint={false} />
 
       <div className="financial-report__inner">
         <div className="financial-report__year-row">
@@ -206,7 +208,7 @@ export function FinancialReportPage() {
             <button
               type="button"
               className="financial-report__year-nav"
-              aria-label="더 최근 연도 보기"
+              aria-label={fr.yearNavNewer}
               disabled={years.length <= MAX_VISIBLE_YEARS || yearWindowStart <= 0}
               onClick={() => shiftYearWindow(-1)}
             >
@@ -234,7 +236,7 @@ export function FinancialReportPage() {
             <button
               type="button"
               className="financial-report__year-nav"
-              aria-label="더 오래된 연도 보기"
+              aria-label={fr.yearNavOlder}
               disabled={years.length <= MAX_VISIBLE_YEARS || yearWindowStart >= maxYearWindowStart}
               onClick={() => shiftYearWindow(1)}
             >
@@ -249,14 +251,16 @@ export function FinancialReportPage() {
             year={report.year}
             kind="income"
             segments={report.incomeSegments}
-            totalFormatted={formatWon(report.incomeTotalWon)}
+            totalFormatted={formatWon(report.incomeTotalWon, locale)}
+            incomeTitle={fr.incomeChart}
           />
           <FinancialDonutChart
             key={`fr-expense-${report.year}`}
             year={report.year}
             kind="expense"
             segments={report.expenseSegments}
-            totalFormatted={formatWon(report.expenseTotalWon)}
+            totalFormatted={formatWon(report.expenseTotalWon, locale)}
+            expenseTitle={fr.expenseChart}
           />
         </div>
 
@@ -268,14 +272,14 @@ export function FinancialReportPage() {
           >
             {settings.showBalanceSheet ? (
               <div className="financial-report__table-card">
-                <div className="financial-report__table-head">{report.year}년 재무상태표</div>
+                <div className="financial-report__table-head">{fr.balanceSheet(report.year)}</div>
                 {report.balanceSheetImageUrl ? (
-                  <img src={report.balanceSheetImageUrl} alt={`${report.year}년 재무상태표`} />
+                  <img src={report.balanceSheetImageUrl} alt={`${fr.balanceSheet(report.year)}`} />
                 ) : (
                   <div className="financial-report__table-placeholder">
-                    재무상태표 이미지 영역
+                    {fr.tablePlaceholderBalance}
                     <span style={{ fontSize: '0.8rem', marginTop: '0.5rem', color: '#999' }}>
-                      관리자 페이지에서 이미지 URL을 등록하면 표시됩니다.
+                      {fr.tablePlaceholderHint}
                     </span>
                   </div>
                 )}
@@ -283,14 +287,14 @@ export function FinancialReportPage() {
             ) : null}
             {settings.showOperationsStatement ? (
               <div className="financial-report__table-card">
-                <div className="financial-report__table-head">{report.year}년 운영성과표</div>
+                <div className="financial-report__table-head">{fr.operationsStatement(report.year)}</div>
                 {report.operationsStatementImageUrl ? (
-                  <img src={report.operationsStatementImageUrl} alt={`${report.year}년 운영성과표`} />
+                  <img src={report.operationsStatementImageUrl} alt={`${fr.operationsStatement(report.year)}`} />
                 ) : (
                   <div className="financial-report__table-placeholder">
-                    운영성과표 이미지 영역
+                    {fr.tablePlaceholderOps}
                     <span style={{ fontSize: '0.8rem', marginTop: '0.5rem', color: '#999' }}>
-                      관리자 페이지에서 이미지 URL을 등록하면 표시됩니다.
+                      {fr.tablePlaceholderHint}
                     </span>
                   </div>
                 )}
@@ -307,7 +311,7 @@ export function FinancialReportPage() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <span>공익법인 결산서류 등 공시</span>
+              <span>{fr.actionHometax}</span>
               <span className="financial-report__action-icon" aria-hidden="true">
                 <ArrowCircleIcon />
               </span>
@@ -317,7 +321,7 @@ export function FinancialReportPage() {
               className="financial-report__action financial-report__action--yellow"
               onClick={onDonationDisclosureClick}
             >
-              <span>기부금 모금액 및 활용 실적 공시</span>
+              <span>{fr.actionDonation}</span>
               <span className="financial-report__action-icon" aria-hidden="true">
                 <ArrowCircleIcon />
               </span>
@@ -329,9 +333,12 @@ export function FinancialReportPage() {
               rel="noopener noreferrer"
             >
               <span>
-                공공위반사항 제보
-                <br />
-                &quot;국민권익위원회&quot;
+                {fr.actionAcrc.split('\n').map((line, i) => (
+                  <span key={i}>
+                    {i > 0 ? <br /> : null}
+                    {line}
+                  </span>
+                ))}
               </span>
               <span className="financial-report__action-icon" aria-hidden="true">
                 <ArrowCircleIcon />
@@ -354,10 +361,9 @@ export function FinancialReportPage() {
             aria-labelledby="fr-pdf-modal-title"
             onClick={(e) => e.stopPropagation()}
           >
-            <h2 id="fr-pdf-modal-title">기부금 공시 PDF</h2>
+            <h2 id="fr-pdf-modal-title">{fr.pdfModalTitle}</h2>
             <p>
-              이 연도에 기부금 공시 PDF URL이 없습니다. 관리자 화면의 재정보고 메뉴에서 해당 연도의 PDF
-              주소를 등록하면 새 창으로 열립니다.
+              {fr.pdfModalBody}
             </p>
             <div className="financial-report__modal-actions">
               <button type="button" className="financial-report__modal-btn" onClick={() => setPdfModalOpen(false)}>

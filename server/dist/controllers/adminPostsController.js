@@ -10,7 +10,10 @@ const adminPostsService_1 = require("../services/adminPostsService");
 function requireDb(res) {
     if (prisma_1.prisma)
         return true;
-    res.status(503).json({ error: 'DB is not available. Disable MOCK_DATA and set DATABASE_URL.' });
+    res.status(503).json({
+        error: 'Database unavailable',
+        hint: 'server/.env에 DATABASE_URL을 설정한 뒤 API 서버를 재시art하세요.',
+    });
     return false;
 }
 async function adminListPosts(req, res) {

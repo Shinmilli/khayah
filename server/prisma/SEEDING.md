@@ -2,33 +2,29 @@
 
 WordPress-like tables (`posts`, `postmeta`).
 
-The seed script will:
+시드 실행 시 아래 유형의 기존 글을 **전부 삭제**한 뒤, 카야 실제 사업(교육·보건·네팔·키르기즈스탄·미얀마·국내)에 맞춘 샘플을 다시 넣습니다.
 
-- Delete existing seeded content for these kinds:
-  - 공지사항
-  - 활동소식
-  - 연간소식지
-  - 언론보도
-  - 스토리
-- Insert **5 items** each for: 공지사항, 활동소식, 언론보도 (스토리는 10건)
-- **연간소식지**는 연도(`khayah_newsletter_year`)·호수(`khayah_newsletter_issue`)별로 **7건** 고정 시드
-  - 예: 2024년 83·84호, 2025년 85·86·87호, 2026년 1·2호 — `/소식/연간소식지`에서 연도·호수 필터 조합마다 다른 카드만 보이도록 구성
-- Attach metadata in `postmeta` using keys like:
-  - `khayah_kind`
-  - `khayah_story_scope`
-  - `khayah_press_publisher`, `khayah_press_url`, `khayah_press_date`
-  - `khayah_newsletter_mode`, `khayah_pdf_url`, `khayah_cover_url`, `khayah_newsletter_year`, `khayah_newsletter_issue`
+- 공지사항 (8)
+- 활동소식 (10)
+- 연간소식지 (7 — 연도·호수 필터용)
+- 언론보도 (6)
+- 스토리 (12 — 국내/해외/옹호/진행 각 3)
+- 진행사업 (8 — 네팔/키르기즈스탄/미얀마/국내 각 2)
+
+메타 키:
+
+- `khayah_kind`
+- `khayah_story_scope`
+- `khayah_project_region`
+- `khayah_press_publisher`, `khayah_press_url`, `khayah_press_date`
+- `khayah_newsletter_mode`, `khayah_pdf_url`, `khayah_cover_url`, `khayah_newsletter_year`, `khayah_newsletter_issue`
 
 ### Run
 
-1) Ensure `DATABASE_URL` is set to a reachable Postgres URL (Render external/internal URL), e.g.
+1) `DATABASE_URL`이 설정된 `server/.env`를 확인합니다.
 
-`postgresql://USER:PASSWORD@HOST:5432/DB?schema=public`
-
-2) Run:
+2) `server` 디렉터리에서:
 
 ```bash
-npm run prisma:generate
 npm run prisma:seed
 ```
-

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { NANUM_DONATE_URL } from '../constants/nanumDonate'
+import { splitLocalePath } from '../i18n/locale'
 
 const HERO_ID = 'home-hero-banner'
 
@@ -55,7 +56,8 @@ const SOCIAL_LINKS = [
 
 export function FloatingDonateButton() {
   const location = useLocation()
-  const isHome = location.pathname === '/'
+  const { pathnameWithoutLocale } = splitLocalePath(location.pathname)
+  const isHome = pathnameWithoutLocale === '/'
   const [showFab, setShowFab] = useState(!isHome)
 
   useEffect(() => {

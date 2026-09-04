@@ -1,8 +1,11 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
+import { splitLocalePath } from '../i18n/locale'
+import { useLocale } from '../i18n/LocaleContext'
 import {
   POPUP_CONFIG_CHANGED_EVENT,
   buildVisiblePopupQueue,
+  getPopupButtonLabel,
   hidePopupToday,
   rememberPopupDismissedThisSession,
   resolvePopupButtonLinkUrl,
@@ -27,11 +30,14 @@ function CloseIcon() {
 
 export function SitePopup() {
   const location = useLocation()
+  const { locale, messages } = useLocale()
+  const popupMsg = messages.pages.popup
   const [loaded, setLoaded] = useState(false)
   const [queue, setQueue] = useState<PopupItem[]>([])
 
   const syncQueue = useCallback(() => {
-    if (location.pathname !== '/') {
+    const { pathnameWithoutLocale } = splitLocalePath(location.pathname)
+    if (pathnameWithoutLocale !== '/') {
       setQueue([])
       return
     }
@@ -71,26 +77,27 @@ export function SitePopup() {
     setQueue(buildVisiblePopupQueue())
   }
 
-  if (!loaded || location.pathname !== '/' || !current) return null
+  if (!loaded || splitLocalePath(location.pathname).pathnameWithoutLocale !== '/' || !current) return null
 
   const imageLinkHref = resolvePopupImageLinkUrl(current)
   const ctaHref = current.buttonEnabled ? resolvePopupButtonLinkUrl(current) : ''
   const showCta = Boolean(ctaHref)
+  const ctaLabel = getPopupButtonLabel(current, locale)
 
   const image = (
-    <img className="site-popup__img" src={current.imageUrl} alt="팝업 이미지" loading="eager" />
+    <img className="site-popup__img" src={current.imageUrl} alt={popupMsg.imageAlt} loading="eager" />
   )
 
   return (
-    <div className="site-popup" role="dialog" aria-modal="true" aria-label="공지 팝업">
+    <div className="site-popup" role="dialog" aria-modal="true" aria-label={popupMsg.aria}>
       <button
         type="button"
         className="site-popup__backdrop"
-        aria-label="팝업 닫기"
+        aria-label={popupMsg.closeBackdrop}
         onClick={advanceAfterClose}
       />
       <div className="site-popup__card">
-        <button type="button" className="site-popup__close" aria-label="닫기" onClick={advanceAfterClose}>
+        <button type="button" className="site-popup__close" aria-label={popupMsg.close} onClick={advanceAfterClose}>
           <CloseIcon />
         </button>
 
@@ -101,7 +108,7 @@ export function SitePopup() {
               target="_blank"
               rel="noopener noreferrer"
               className="site-popup__link"
-              aria-label="팝업 링크"
+              aria-label={popupMsg.linkAria}
             >
               {image}
             </a>
@@ -112,16 +119,16 @@ export function SitePopup() {
 
         <div className="site-popup__actions">
           <button type="button" className="site-popup__today" onClick={onHideToday}>
-            오늘 그만보기
+            {popupMsg.hideToday}
           </button>
           <div className="site-popup__actions-end">
             {showCta ? (
               <a className="site-popup__cta" href={ctaHref} target="_blank" rel="noopener noreferrer">
-                {current.buttonLabel?.trim() ? current.buttonLabel.trim() : '자세히 보기'}
+                {ctaLabel}
               </a>
             ) : null}
             <button type="button" className="site-popup__dismiss" onClick={advanceAfterClose}>
-              닫기
+              {popupMsg.close}
             </button>
           </div>
         </div>

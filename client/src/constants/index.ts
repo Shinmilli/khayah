@@ -7,14 +7,14 @@ export const SITE_DESCRIPTION = '개발NGO, 해외후원, 국내후원, 옹호�
 
 export const API_BASE = import.meta.env.VITE_API_BASE ?? '/api'
 
-/** 푸터 상단 바로가기 (한 줄, | 구분) */
+/** 푸터 상단 바로가기 (한 줄, | 구분) — 라벨은 i18n messages.footer.topLinks */
 export const FOOTER_TOP_LINKS = [
-  { label: '후원신청', href: NANUM_DONATE_URL },
-  { label: '진행사업', to: '/사업/진행사업' },
-  { label: '위치안내', to: '/카야/위치안내' },
-  { label: '인스타그램', href: 'https://www.instagram.com/khayah_international' },
-  { label: '블로그', href: 'https://blog.naver.com/khayah' },
-  { label: '카카오채널', href: 'https://pf.kakao.com/_TnWKK' },
+  { key: 'donate', href: NANUM_DONATE_URL },
+  { key: 'projects', to: '/business/projects' },
+  { key: 'location', to: '/about/location' },
+  { key: 'instagram', href: 'https://www.instagram.com/khayah_international' },
+  { key: 'blog', href: 'https://blog.naver.com/khayah' },
+  { key: 'kakao', href: 'https://pf.kakao.com/_TnWKK' },
 ] as const
 
 /** 푸터 브랜드 로고(다크그레이). 없으면 `FOOTER_LOGO_FALLBACK` + CSS 보정 */

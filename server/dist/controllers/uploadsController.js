@@ -11,6 +11,7 @@ const cloudinary_1 = require("../utils/cloudinary");
 const supabaseStorage_1 = require("../utils/supabaseStorage");
 const uploadFilename_1 = require("../utils/uploadFilename");
 const storedMedia_1 = require("../utils/storedMedia");
+const uploadSniff_1 = require("../utils/uploadSniff");
 /** Cloudinary free ~10MB — larger files go to Supabase Storage */
 const CLOUDINARY_MAX_BYTES = 10 * 1024 * 1024;
 const memory = multer_1.default.memoryStorage();
@@ -45,6 +46,11 @@ function runMulter(middleware) {
         middleware(req, res, (err) => {
             if (!err)
                 return next();
+            if (err instanceof multer_1.default.MulterError && err.code === 'LIMIT_FILE_SIZE') {
+                return res.status(400).json({
+                    error: '파일이 너무 큽니다. PDF는 최대 50MB까지 업로드할 수 있습니다.',
+                });
+            }
             const message = err instanceof Error ? err.message : 'Upload failed';
             return res.status(400).json({ error: message });
         });
@@ -55,7 +61,26 @@ async function handleUpload(req, res, kind) {
     if (!file?.buffer) {
         return res.status(400).json({ error: 'No file uploaded (field name: file)' });
     }
-    const originalName = (0, uploadFilename_1.decodeOriginalFilename)(file.originalname, kind === 'document' ? 'file.pdf' : 'image');
+    // 이미지가 documents(raw)로 들어가는 사고 방지
+    if (kind === 'document') {
+        if ((0, uploadSniff_1.looksLikeImageBuffer)(file.buffer, file.mimetype, file.originalname)) {
+            return res.status(400).json({
+                error: '이미지 파일은 PDF 업로드로 올릴 수 없습니다. 표지/본문 이미지 업로드를 사용하세요.',
+            });
+        }
+        if (!(0, uploadSniff_1.looksLikePdfBuffer)(file.buffer)) {
+            return res.status(400).json({
+                error: 'PDF 내용이 아닙니다. 올바른 PDF 파일인지 확인하세요.',
+            });
+        }
+    }
+    const resolvedKind = kind === 'image' || (0, uploadSniff_1.looksLikeImageBuffer)(file.buffer, file.mimetype, file.originalname)
+        ? 'image'
+        : 'document';
+    if (kind === 'image' && resolvedKind !== 'image') {
+        return res.status(400).json({ error: '이미지 파일만 업로드할 수 있습니다.' });
+    }
+    const originalName = (0, uploadFilename_1.decodeOriginalFilename)(file.originalname, resolvedKind === 'document' ? 'file.pdf' : 'image');
     const useSupabase = file.size > CLOUDINARY_MAX_BYTES;
     try {
         if (useSupabase) {
@@ -70,7 +95,7 @@ async function handleUpload(req, res, kind) {
                 buffer: file.buffer,
                 originalName,
                 mimeType: file.mimetype,
-                kind,
+                kind: resolvedKind,
             });
             return res.json({
                 url: uploaded.url,
@@ -94,7 +119,7 @@ async function handleUpload(req, res, kind) {
             buffer: file.buffer,
             originalName,
             mimeType: file.mimetype,
-            kind,
+            kind: resolvedKind,
         });
         return res.json({
             url: uploaded.url,

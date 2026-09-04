@@ -10,6 +10,7 @@ import { financialReportsRouter } from './routes/financialReports'
 import { inquiriesRouter } from './routes/inquiries'
 import { inquiryFaqRouter } from './routes/inquiryFaq'
 import { impactStatsRouter } from './routes/impactStats'
+import { heroBannerRouter } from './routes/heroBanner'
 import { prisma, prismaInitStatus } from './utils/prisma'
 
 const app = express()
@@ -29,6 +30,7 @@ app.use('/api', financialReportsRouter)
 app.use('/api', inquiriesRouter)
 app.use('/api', inquiryFaqRouter)
 app.use('/api', impactStatsRouter)
+app.use('/api', heroBannerRouter)
 
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok' })

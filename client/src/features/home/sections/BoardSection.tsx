@@ -4,6 +4,8 @@ import { PROMO_YOUTUBE_CHANNEL_URL } from '../../../constants/youtube'
 import { fetchPostsByKind, fetchYoutubeLatest } from '../../../services/api'
 import type { YoutubeLatestVideo } from '../../../types/youtube'
 import type { Post } from '../../../types/post'
+import { useLocale } from '../../../i18n/LocaleContext'
+import { PATH } from '../../../i18n/routes'
 
 function formatPublished(iso: string): string {
   const d = new Date(iso)
@@ -15,6 +17,8 @@ function formatPublished(iso: string): string {
 }
 
 export function BoardSection() {
+  const { messages, localize } = useLocale()
+  const m = messages.home.board
   const [promo, setPromo] = useState<YoutubeLatestVideo | null>(null)
   const [promoError, setPromoError] = useState(false)
   const [notices, setNotices] = useState<Post[]>([])
@@ -53,28 +57,28 @@ export function BoardSection() {
       <div className="board-grid">
         <div className="board-column board-column--notice">
           <div className="board-head">
-            <h2 className="board-head__title">Notice</h2>
+            <h2 className="board-head__title">{m.noticeTitle}</h2>
             <span className="board-head__badge" aria-hidden="true">
-              공지글
+              {m.noticeBadge}
             </span>
-            <Link className="board-more" to="/소식/공지사항" aria-label="더보기">
+            <Link className="board-more" to={localize(`/${PATH.newsAnnouncements}`)} aria-label={m.moreAria}>
               +
             </Link>
           </div>
 
-          <div className="board-list" role="list" aria-label="공지글 목록">
+          <div className="board-list" role="list" aria-label={m.listAria}>
             {noticeError ? (
               <article className="board-item board-item--notice" role="listitem">
-                <h3 className="board-item__title">공지사항을 불러오지 못했습니다.</h3>
+                <h3 className="board-item__title">{m.loadError}</h3>
               </article>
             ) : notices.length === 0 ? (
               <article className="board-item board-item--notice" role="listitem">
-                <h3 className="board-item__title">등록된 공지사항이 없습니다.</h3>
+                <h3 className="board-item__title">{m.empty}</h3>
               </article>
             ) : (
               notices.map((post) => (
                 <article key={post.id} className="board-item board-item--notice" role="listitem">
-                  <Link to={`/posts/${encodeURIComponent(post.slug)}`} className="board-item__title">
+                  <Link to={localize(`/posts/${encodeURIComponent(post.slug)}`)} className="board-item__title">
                     {post.title}
                   </Link>
                   <div className="board-item__meta">
@@ -88,13 +92,13 @@ export function BoardSection() {
 
         <div className="board-column promo-column">
           <div className="board-head board-head--promo">
-            <h2 className="board-head__title">홍보영상</h2>
+            <h2 className="board-head__title">{m.promoTitle}</h2>
             <a
               className="board-more"
               href={PROMO_YOUTUBE_CHANNEL_URL}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="유튜브 채널에서 홍보영상 더보기"
+              aria-label={m.promoMoreAria}
             >
               +
             </a>
@@ -111,9 +115,9 @@ export function BoardSection() {
                 />
               ) : promoError ? (
                 <div className="promo-video__fallback">
-                  <p className="promo-video__fallback-text">영상을 불러오지 못했습니다.</p>
+                  <p className="promo-video__fallback-text">{m.promoError}</p>
                   <a href={PROMO_YOUTUBE_CHANNEL_URL} target="_blank" rel="noopener noreferrer">
-                    유튜브 채널에서 보기
+                    {m.watchOnYoutube}
                   </a>
                 </div>
               ) : (
@@ -122,7 +126,7 @@ export function BoardSection() {
             </div>
             <div className="promo-video__caption">
               <span className="promo-video__title">
-                {promo?.title ?? (promoError ? '홍보영상' : '불러오는 중…')}
+                {promo?.title ?? (promoError ? m.promoTitle : m.promoLoading)}
               </span>
               <span className="promo-video__date">
                 {promo ? formatPublished(promo.publishedAt) : promoError ? '' : '—'}

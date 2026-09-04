@@ -1,10 +1,14 @@
+import type { Locale } from '../i18n/locale'
+
+export type PopupButtonLabels = { ko: string; en: string }
+
 export type PopupItem = {
   id: string
   enabled: boolean
   imageUrl: string
   linkUrl?: string
   buttonEnabled?: boolean
-  buttonLabel?: string
+  buttonLabels?: PopupButtonLabels
   buttonUrl?: string
 }
 
@@ -19,6 +23,8 @@ const HIDE_TODAY_PREFIX = 'khayah.popup.hideToday.'
 export const POPUP_CONFIG_CHANGED_EVENT = 'khayah-popups-config-changed'
 
 const SESSION_DISMISSED_KEY = 'khayah.popup.sessionDismissedIds'
+
+const DEFAULT_BUTTON_LABELS: PopupButtonLabels = { ko: '자세히 보기', en: 'Learn more' }
 
 function readSessionDismissedIds(): Set<string> {
   try {
@@ -63,6 +69,12 @@ export function resolvePopupButtonLinkUrl(item: PopupItem): string {
   return resolvePopupExternalUrl(item.buttonUrl) || resolvePopupExternalUrl(item.linkUrl)
 }
 
+export function getPopupButtonLabel(item: PopupItem, locale: Locale): string {
+  const labels = item.buttonLabels ?? DEFAULT_BUTTON_LABELS
+  const text = labels[locale]?.trim() || labels.ko?.trim() || DEFAULT_BUTTON_LABELS[locale]
+  return text || DEFAULT_BUTTON_LABELS.ko
+}
+
 export function getDefaultPopupItem(): PopupItem {
   return {
     id: uid(),
@@ -70,7 +82,7 @@ export function getDefaultPopupItem(): PopupItem {
     imageUrl: '',
     linkUrl: '',
     buttonEnabled: false,
-    buttonLabel: '자세히 보기',
+    buttonLabels: { ...DEFAULT_BUTTON_LABELS },
     buttonUrl: '',
   }
 }
@@ -79,7 +91,24 @@ export function getDefaultPopupConfig(): PopupConfig {
   return { items: [getDefaultPopupItem()] }
 }
 
-function coerceItem(raw: Partial<PopupItem>): PopupItem {
+function coerceButtonLabels(raw: Partial<PopupItem> & { buttonLabel?: string }): PopupButtonLabels {
+  if (raw.buttonLabels && typeof raw.buttonLabels === 'object') {
+    const ko =
+      typeof raw.buttonLabels.ko === 'string' && raw.buttonLabels.ko.trim()
+        ? raw.buttonLabels.ko.trim()
+        : DEFAULT_BUTTON_LABELS.ko
+    const en =
+      typeof raw.buttonLabels.en === 'string' && raw.buttonLabels.en.trim()
+        ? raw.buttonLabels.en.trim()
+        : DEFAULT_BUTTON_LABELS.en
+    return { ko, en }
+  }
+  const legacy = typeof raw.buttonLabel === 'string' && raw.buttonLabel.trim() ? raw.buttonLabel.trim() : ''
+  if (legacy) return { ko: legacy, en: DEFAULT_BUTTON_LABELS.en }
+  return { ...DEFAULT_BUTTON_LABELS }
+}
+
+function coerceItem(raw: Partial<PopupItem> & { buttonLabel?: string }): PopupItem {
   const linkUrl = typeof raw.linkUrl === 'string' ? raw.linkUrl.trim() : ''
   const buttonUrl = typeof raw.buttonUrl === 'string' ? raw.buttonUrl.trim() : ''
   return {
@@ -88,18 +117,21 @@ function coerceItem(raw: Partial<PopupItem>): PopupItem {
     imageUrl: typeof raw.imageUrl === 'string' ? raw.imageUrl.trim() : '',
     linkUrl: resolvePopupExternalUrl(linkUrl),
     buttonEnabled: Boolean(raw.buttonEnabled),
-    buttonLabel: typeof raw.buttonLabel === 'string' ? raw.buttonLabel : getDefaultPopupItem().buttonLabel,
+    buttonLabels: coerceButtonLabels(raw),
     buttonUrl: resolvePopupExternalUrl(buttonUrl),
   }
 }
 
 export function normalizePopupConfig(config: PopupConfig): PopupConfig {
   return {
-    items: config.items.map((item) => ({
-      ...item,
-      linkUrl: resolvePopupExternalUrl(item.linkUrl),
-      buttonUrl: resolvePopupExternalUrl(item.buttonUrl),
-    })).slice(0, 20),
+    items: config.items
+      .map((item) => ({
+        ...item,
+        linkUrl: resolvePopupExternalUrl(item.linkUrl),
+        buttonUrl: resolvePopupExternalUrl(item.buttonUrl),
+        buttonLabels: coerceButtonLabels(item),
+      }))
+      .slice(0, 20),
   }
 }
 
@@ -111,13 +143,13 @@ export function loadPopupConfig(): PopupConfig {
 
     // Backward compat: old shape {enabled,imageUrl,linkUrl}
     if (parsed && typeof parsed === 'object' && !('items' in (parsed as Record<string, unknown>))) {
-      const legacy = parsed as Partial<PopupItem>
+      const legacy = parsed as Partial<PopupItem> & { buttonLabel?: string }
       return { items: [coerceItem({ ...legacy, id: uid() })] }
     }
 
     const itemsRaw = (parsed as { items?: unknown }).items
     if (!Array.isArray(itemsRaw)) return getDefaultPopupConfig()
-    const items = itemsRaw.map((i) => coerceItem((i ?? {}) as Partial<PopupItem>)).slice(0, 20)
+    const items = itemsRaw.map((i) => coerceItem((i ?? {}) as Partial<PopupItem> & { buttonLabel?: string })).slice(0, 20)
     return { items: items.length ? items : [getDefaultPopupItem()] }
   } catch {
     return getDefaultPopupConfig()
@@ -154,4 +186,3 @@ export function isPopupHiddenToday(popupId: string): boolean {
 export function hidePopupToday(popupId: string) {
   localStorage.setItem(`${HIDE_TODAY_PREFIX}${popupId}`, todayKey())
 }
-

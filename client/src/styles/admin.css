@@ -482,6 +482,29 @@ body.admin-route {
   font-weight: 600;
 }
 
+.admin-locale-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.admin-locale-tabs__btn {
+  padding: 8px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.admin-locale-tabs__btn.is-active {
+  border-color: var(--khayah-red, #b20838);
+  background: rgba(178, 8, 56, 0.06);
+  color: var(--khayah-red, #b20838);
+  font-weight: 600;
+}
+
 .admin-segmented--readonly {
   pointer-events: none;
   user-select: none;

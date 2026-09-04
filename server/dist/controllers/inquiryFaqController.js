@@ -4,11 +4,12 @@ exports.getInquiryFaq = getInquiryFaq;
 exports.getAdminInquiryFaq = getAdminInquiryFaq;
 exports.putAdminInquiryFaq = putAdminInquiryFaq;
 const inquiryFaqFileService_1 = require("../services/inquiryFaqFileService");
-async function getInquiryFaq(_req, res) {
+async function getInquiryFaq(req, res) {
     try {
-        const doc = await (0, inquiryFaqFileService_1.readInquiryFaqDocument)();
-        const items = [...doc.items].filter((i) => i.published).sort((a, b) => a.order - b.order);
-        res.json({ version: 1, items });
+        const locale = (0, inquiryFaqFileService_1.parseInquiryFaqLocale)(req.query.lang);
+        const content = await (0, inquiryFaqFileService_1.readInquiryFaqForLocale)(locale);
+        const items = [...content.items].filter((i) => i.published).sort((a, b) => a.order - b.order);
+        res.json({ version: 2, items });
     }
     catch (e) {
         console.error(e);
@@ -18,8 +19,7 @@ async function getInquiryFaq(_req, res) {
 async function getAdminInquiryFaq(_req, res) {
     try {
         const doc = await (0, inquiryFaqFileService_1.readInquiryFaqDocument)();
-        const items = [...doc.items].sort((a, b) => a.order - b.order);
-        res.json({ version: 1, items });
+        res.json(doc);
     }
     catch (e) {
         console.error(e);

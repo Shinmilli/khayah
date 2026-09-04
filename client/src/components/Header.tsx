@@ -1,26 +1,25 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { SITE_NAME } from '../constants'
+import { splitLocalePath } from '../i18n/locale'
+import { useLocale } from '../i18n/LocaleContext'
+import type { NavLinkKey, NavTopKey } from '../i18n/messages/ko'
 import '../styles/site-header.css'
 
 const LOGO_SRC = '/images/logo/khayah_logo.png'
 const FALLBACK_LOGO = '/images/logo/khayah_logo.png'
 
-type NavLink = { label: string; to: string; children?: NavLink[] }
+type NavLinkDef = { key: NavLinkKey; to: string; children?: NavLinkDef[] }
 
 type NavColumn = {
   id: string
-  /** 데스크톱 서브메뉴 왼쪽 제목 */
-  label: string
-  /** 단일 세로 열 */
-  links?: NavLink[]
-  /** 카야: 두 개의 세로 열 (가로 배치) */
-  subColumns?: NavLink[][]
-  /** 카야: 두 줄 가로 행 (각 행이 한 줄) */
-  subRows?: NavLink[][]
+  topKey: NavTopKey
+  links?: NavLinkDef[]
+  subColumns?: NavLinkDef[][]
+  subRows?: NavLinkDef[][]
 }
 
-function columnAllLinks(col: NavColumn): NavLink[] {
+function columnAllLinks(col: NavColumn): NavLinkDef[] {
   if (col.subRows?.length) return col.subRows.flat()
   if (col.subColumns?.length) return col.subColumns.flat()
   const base = col.links ?? []
@@ -30,75 +29,84 @@ function columnAllLinks(col: NavColumn): NavLink[] {
 const NAV_COLUMNS: NavColumn[] = [
   {
     id: 'khaya-col',
-    label: '카야',
+    topKey: 'khayah',
     subRows: [
       [
-        { label: '인사말', to: '/카야/카야-스토리' },
-        { label: '연혁', to: '/카야/카야-연혁' },
-        { label: '오시는 길', to: '/카야/위치안내' },
-        { label: '재정보고', to: '/소식/재정보고' },
+        { key: 'greeting', to: '/about/greeting' },
+        { key: 'history', to: '/about/history' },
+        { key: 'location', to: '/about/location' },
+        { key: 'financialReport', to: '/news/financial-report' },
       ],
       [
-        { label: '카야 소개', to: '/카야/카야소개' },
-        { label: 'CI', to: '/카야/카야소개?tab=ci' },
-        { label: '조직도 · 이사회 · 전문위원', to: '/카야/카야소개?tab=org' },
+        { key: 'aboutKhayah', to: '/about/khayah' },
+        { key: 'ci', to: '/about/khayah?tab=ci' },
+        { key: 'org', to: '/about/khayah?tab=org' },
       ],
     ],
   },
   {
     id: 'business-col',
-    label: '사업',
+    topKey: 'business',
     links: [
-      { label: '국내사업', to: '/국내사업', children: [{ label: '교육', to: '/국내사업/교육' }] },
       {
-        label: '해외사업',
-        to: '/해외사업',
+        key: 'domestic',
+        to: '/business/domestic',
+        children: [{ key: 'domesticEducation', to: '/business/domestic/education' }],
+      },
+      {
+        key: 'overseas',
+        to: '/business/overseas',
         children: [
-          { label: '교육', to: '/해외사업/교육' },
-          { label: '보건의료', to: '/해외사업/보건의료' },
+          { key: 'overseasEducation', to: '/business/overseas/education' },
+          { key: 'overseasHealth', to: '/business/overseas/health-care' },
         ],
       },
-      { label: '옹호사업', to: '/사업/옹호사업' },
-      { label: '진행사업', to: '/사업/진행사업' },
+      { key: 'advocacy', to: '/business/advocacy' },
+      { key: 'projects', to: '/business/projects' },
     ],
   },
   {
     id: 'support-col',
-    label: '후원',
-    links: [
-      { label: '후원 안내', to: '/후원/후원-안내' },
-    ],
+    topKey: 'support',
+    links: [{ key: 'supportGuide', to: '/support/guide' }],
   },
   {
     id: 'news-col',
-    label: '소식',
+    topKey: 'news',
     links: [
-      { label: '스토리', to: '/stories' },
-      { label: '공지사항', to: '/소식/공지사항' },
-      { label: '활동소식', to: '/소식/활동소식' },
-      { label: '연간소식지', to: '/소식/연간소식지' },
-      { label: '언론보도', to: '/소식/언론보도' },
-      { label: '고객 문의', to: '/소식/고객문의' },
+      { key: 'stories', to: '/stories' },
+      { key: 'announcements', to: '/news/announcements' },
+      { key: 'activities', to: '/news/activities' },
+      { key: 'newsletter', to: '/news/newsletter' },
+      { key: 'press', to: '/news/press' },
+      { key: 'inquiry', to: '/news/inquiry' },
     ],
   },
 ]
 
-const TOP_LINKS = [
-  { label: '카야', to: '/카야/카야소개' },
-  { label: '사업', to: '/국내사업' },
-  { label: '후원', to: '/후원/후원-안내' },
-  { label: '소식', to: '/stories' },
+const TOP_LINKS: { key: NavTopKey; to: string }[] = [
+  { key: 'khayah', to: '/about/khayah' },
+  { key: 'business', to: '/business/domestic' },
+  { key: 'support', to: '/support/guide' },
+  { key: 'news', to: '/stories' },
 ]
 
-const NAV_BY_LABEL = new Map(NAV_COLUMNS.map((c) => [c.label, c]))
+const NAV_BY_KEY = new Map(NAV_COLUMNS.map((c) => [c.topKey, c]))
 
 export function Header() {
   const [atTop, setAtTop] = useState(true)
   const [mobileOpen, setMobileOpen] = useState(false)
-  const [desktopMenuLabel, setDesktopMenuLabel] = useState<string | null>(null)
+  const [desktopMenuKey, setDesktopMenuKey] = useState<NavTopKey | null>(null)
   const desktopMenuCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const location = useLocation()
-  const isHome = location.pathname === '/'
+  const { locale, localize, swapLocale, messages } = useLocale()
+  const nav = messages.nav
+
+  const loc = (to: string) => localize(to)
+  const topLabel = (key: NavTopKey) => nav.top[key]
+  const linkLabel = (key: NavLinkKey) => nav.links[key]
+  const { pathnameWithoutLocale } = splitLocalePath(location.pathname)
+  const isHome = pathnameWithoutLocale === '/'
 
   const cancelDesktopMenuTimer = () => {
     if (desktopMenuCloseTimer.current) {
@@ -107,16 +115,16 @@ export function Header() {
     }
   }
 
-  const openDesktopMenu = (label: string) => {
+  const openDesktopMenu = (key: NavTopKey) => {
     cancelDesktopMenuTimer()
-    setDesktopMenuLabel(label)
+    setDesktopMenuKey(key)
   }
 
   /** fixed 드롭다운으로 이동할 때 li에서 잠깐 hover가 끊겨도 패널이 유지되도록 지연 닫기 */
   const scheduleCloseDesktopMenu = () => {
     cancelDesktopMenuTimer()
     desktopMenuCloseTimer.current = setTimeout(() => {
-      setDesktopMenuLabel(null)
+      setDesktopMenuKey(null)
       desktopMenuCloseTimer.current = null
     }, 280)
   }
@@ -142,7 +150,7 @@ export function Header() {
     const onChange = () => {
       if (mql.matches) setMobileOpen(false)
       else {
-        setDesktopMenuLabel(null)
+        setDesktopMenuKey(null)
         cancelDesktopMenuTimer()
       }
     }
@@ -152,7 +160,7 @@ export function Header() {
   }, [])
 
   useEffect(() => {
-    setDesktopMenuLabel(null)
+    setDesktopMenuKey(null)
     cancelDesktopMenuTimer()
   }, [location.pathname])
 
@@ -162,46 +170,47 @@ export function Header() {
     document.body.classList.toggle('has-overlay-header', isHome)
     document.body.classList.toggle(
       'has-transparent-header',
-      isHome && atTop && !mobileOpen && desktopMenuLabel === null,
+      isHome && atTop && !mobileOpen && desktopMenuKey === null,
     )
     return () => {
       document.body.classList.remove('has-overlay-header')
       document.body.classList.remove('has-transparent-header')
     }
-  }, [isHome, atTop, mobileOpen, desktopMenuLabel])
+  }, [isHome, atTop, mobileOpen, desktopMenuKey])
 
   const closeMobile = () => setMobileOpen(false)
 
-  const renderLinkList = (links: NavLink[]) => (
+  const renderLinkList = (links: NavLinkDef[]) => (
     <div className="site-header__submenu-columns">
       <div className="site-header__submenu-col">
-        {links.map((l) =>
-          l.children?.length ? (
-            <div key={`${l.to}-${l.label}`} className="site-header__submenu-group">
-              <Link to={l.to} role="menuitem" className="site-header__submenu-group-title">
-                {l.label}
+        {links.map((l) => {
+          const label = linkLabel(l.key)
+          return l.children?.length ? (
+            <div key={`${l.to}-${l.key}`} className="site-header__submenu-group">
+              <Link to={loc(l.to)} role="menuitem" className="site-header__submenu-group-title">
+                {label}
               </Link>
-              <div className="site-header__submenu-sublinks" aria-label={`${l.label} 내부 카테고리`}>
+              <div className="site-header__submenu-sublinks" aria-label={nav.aria.subcategory(label)}>
                 {l.children.map((c) => (
                   <Link
-                    key={`${l.to}__${c.to}__${c.label}`}
-                    to={c.to}
+                    key={`${l.to}__${c.to}__${c.key}`}
+                    to={loc(c.to)}
                     role="menuitem"
                     className="site-header__submenu-sublink"
                   >
-                    {c.label}
+                    {linkLabel(c.key)}
                   </Link>
                 ))}
               </div>
             </div>
           ) : (
-            <div key={`${l.to}-${l.label}`} className="site-header__submenu-group site-header__submenu-group--single">
-              <Link to={l.to} role="menuitem" className="site-header__submenu-group-title">
-                {l.label}
+            <div key={`${l.to}-${l.key}`} className="site-header__submenu-group site-header__submenu-group--single">
+              <Link to={loc(l.to)} role="menuitem" className="site-header__submenu-group-title">
+                {label}
               </Link>
             </div>
-          ),
-        )}
+          )
+        })}
       </div>
     </div>
   )
@@ -209,43 +218,44 @@ export function Header() {
   const renderMobileLinks = (col: NavColumn) => {
     if (!col.links?.length) {
       return columnAllLinks(col).map((l) => (
-        <Link key={`${l.to}-${l.label}`} to={l.to} onClick={closeMobile}>
-          {l.label}
+        <Link key={`${l.to}-${l.key}`} to={loc(l.to)} onClick={closeMobile}>
+          {linkLabel(l.key)}
         </Link>
       ))
     }
 
-    return col.links.map((l) =>
-      l.children?.length ? (
-        <div key={`${l.to}-${l.label}`} className="site-header__mobile-subgroup">
-          <Link to={l.to} onClick={closeMobile} className="site-header__mobile-subgroup-title">
-            {l.label}
+    return col.links.map((l) => {
+      const label = linkLabel(l.key)
+      return l.children?.length ? (
+        <div key={`${l.to}-${l.key}`} className="site-header__mobile-subgroup">
+          <Link to={loc(l.to)} onClick={closeMobile} className="site-header__mobile-subgroup-title">
+            {label}
           </Link>
-          <div className="site-header__mobile-sublinks" aria-label={`${l.label} 내부 카테고리`}>
+          <div className="site-header__mobile-sublinks" aria-label={nav.aria.subcategory(label)}>
             {l.children.map((c) => (
-              <Link key={`${l.to}__${c.to}__${c.label}`} to={c.to} onClick={closeMobile}>
-                {c.label}
+              <Link key={`${l.to}__${c.to}__${c.key}`} to={loc(c.to)} onClick={closeMobile}>
+                {linkLabel(c.key)}
               </Link>
             ))}
           </div>
         </div>
       ) : (
-        <Link key={`${l.to}-${l.label}`} to={l.to} onClick={closeMobile}>
-          {l.label}
+        <Link key={`${l.to}-${l.key}`} to={loc(l.to)} onClick={closeMobile}>
+          {label}
         </Link>
-      ),
-    )
+      )
+    })
   }
 
   return (
     <header
       className={`site-header${!atTop ? ' is-scrolled' : ''}${mobileOpen ? ' is-mobile-open' : ''}${
         isHome ? ' is-home' : ''
-      }${atTop ? ' is-at-top' : ''}${desktopMenuLabel ? ' is-desktop-menu-open' : ''}`}
+      }${atTop ? ' is-at-top' : ''}${desktopMenuKey ? ' is-desktop-menu-open' : ''}`}
     >
       <div className="site-header__bar">
         <div className="site-header__left">
-          <Link to="/" className="site-header__logo" rel="home">
+          <Link to={loc('/')} className="site-header__logo" rel="home">
             <img
               src={LOGO_SRC}
               alt={SITE_NAME}
@@ -258,43 +268,44 @@ export function Header() {
             />
           </Link>
 
-          <nav aria-label="주요 메뉴">
+          <nav aria-label={nav.aria.main}>
             <ul className="site-header__nav">
               {TOP_LINKS.map((item) => {
-                const col = NAV_BY_LABEL.get(item.label)
+                const col = NAV_BY_KEY.get(item.key)
                 const linksFlat = col ? columnAllLinks(col) : []
                 const hasSub = linksFlat.length > 0
-                const subOpen = hasSub && desktopMenuLabel === item.label
+                const subOpen = hasSub && desktopMenuKey === item.key
+                const sectionLabel = topLabel(item.key)
 
                 return (
                   <li
                     key={item.to}
                     className={`site-header__nav-item${subOpen ? ' is-menu-open' : ''}`}
-                    onMouseEnter={() => hasSub && openDesktopMenu(item.label)}
+                    onMouseEnter={() => hasSub && openDesktopMenu(item.key)}
                     onMouseLeave={() => hasSub && scheduleCloseDesktopMenu()}
                   >
                     <Link
-                      to={item.to}
+                      to={loc(item.to)}
                       className="site-header__nav-link"
                       aria-expanded={hasSub ? subOpen : undefined}
                       aria-haspopup={hasSub ? 'menu' : undefined}
                     >
-                      {item.label}
+                      {sectionLabel}
                     </Link>
 
                     {hasSub && col ? (
                       <div
                         className={`site-header__submenu${subOpen ? ' is-open' : ''}`}
                         role="menu"
-                        aria-label={`${item.label} 하위 메뉴`}
+                        aria-label={nav.aria.submenu(sectionLabel)}
                         aria-hidden={!subOpen}
-                        onMouseEnter={() => openDesktopMenu(item.label)}
+                        onMouseEnter={() => openDesktopMenu(item.key)}
                         onMouseLeave={scheduleCloseDesktopMenu}
-                        onFocusCapture={() => openDesktopMenu(item.label)}
+                        onFocusCapture={() => openDesktopMenu(item.key)}
                       >
                         <div className="site-header__submenu-inner">
                           <div className="site-header__submenu-left">
-                            <p className="site-header__submenu-title">{col.label}</p>
+                            <p className="site-header__submenu-title">{topLabel(col.topKey)}</p>
                           </div>
                           <div className="site-header__submenu-right">
                             {col.subRows?.length ? (
@@ -303,12 +314,12 @@ export function Header() {
                                   <div key={ri} className="site-header__submenu-row">
                                     {row.map((l) => (
                                       <Link
-                                        key={`${ri}-${l.to}-${l.label}`}
-                                        to={l.to}
+                                        key={`${ri}-${l.to}-${l.key}`}
+                                        to={loc(l.to)}
                                         role="menuitem"
                                         className="site-header__submenu-link"
                                       >
-                                        {l.label}
+                                        {linkLabel(l.key)}
                                       </Link>
                                     ))}
                                   </div>
@@ -328,12 +339,12 @@ export function Header() {
                                       <div key={gi} className="site-header__submenu-col">
                                         {group.map((l) => (
                                           <Link
-                                            key={`${gi}-${l.to}-${l.label}`}
-                                            to={l.to}
+                                            key={`${gi}-${l.to}-${l.key}`}
+                                            to={loc(l.to)}
                                             role="menuitem"
                                             className="site-header__submenu-link"
                                           >
-                                            {l.label}
+                                            {linkLabel(l.key)}
                                           </Link>
                                         ))}
                                       </div>
@@ -356,10 +367,29 @@ export function Header() {
         </div>
 
         <div className="site-header__right">
+          <nav className="site-header__locale" aria-label={nav.aria.locale}>
+            <Link
+              to={swapLocale('ko')}
+              className={`site-header__locale-link${locale === 'ko' ? ' is-active' : ''}`}
+              aria-current={locale === 'ko' ? 'page' : undefined}
+            >
+              한국어
+            </Link>
+            <span className="site-header__locale-sep" aria-hidden>
+              |
+            </span>
+            <Link
+              to={swapLocale('en')}
+              className={`site-header__locale-link${locale === 'en' ? ' is-active' : ''}`}
+              aria-current={locale === 'en' ? 'page' : undefined}
+            >
+              EN
+            </Link>
+          </nav>
           <button
             type="button"
             className="site-header__toggle"
-            aria-label={mobileOpen ? '메뉴 닫기' : '메뉴 열기'}
+            aria-label={mobileOpen ? nav.aria.mobileClose : nav.aria.mobileOpen}
             aria-expanded={mobileOpen}
             onClick={() => setMobileOpen((o) => !o)}
           >
@@ -373,14 +403,14 @@ export function Header() {
       <div className={`site-header__mobile${mobileOpen ? ' is-open' : ''}`} id="site-header-mobile-panel">
         {NAV_COLUMNS.map((col) => (
           <details key={col.id} className="site-header__mobile-group" open>
-            <summary>{col.label}</summary>
+            <summary>{topLabel(col.topKey)}</summary>
             <div className="site-header__mobile-links">
               {renderMobileLinks(col)}
             </div>
           </details>
         ))}
-        <Link to="/" className="site-header__mobile-single" onClick={closeMobile}>
-          홈
+        <Link to={loc('/')} className="site-header__mobile-single" onClick={closeMobile}>
+          {nav.home}
         </Link>
       </div>
     </header>

@@ -225,9 +225,11 @@ type Props = {
   kind: 'income' | 'expense'
   segments: FinancialReportSegment[]
   totalFormatted: string
+  incomeTitle?: string
+  expenseTitle?: string
 }
 
-export function FinancialDonutChart({ year, kind, segments, totalFormatted }: Props) {
+export function FinancialDonutChart({ year, kind, segments, totalFormatted, incomeTitle, expenseTitle }: Props) {
   const gid = useId()
   const wrapRef = useRef<HTMLElement>(null)
   const [inView, setInView] = useState(false)
@@ -237,7 +239,7 @@ export function FinancialDonutChart({ year, kind, segments, totalFormatted }: Pr
 
   const segmentKey = useMemo(() => segments.map((s) => `${s.id}:${s.percent}:${s.color}`).join('|'), [segments])
 
-  const title = kind === 'income' ? '수입총액' : '지출총액'
+  const title = kind === 'income' ? (incomeTitle ?? '수입총액') : (expenseTitle ?? '지출총액')
 
   const { centerAmountNum, centerAmountWon } = useMemo(() => {
     if (totalFormatted.endsWith('원')) {

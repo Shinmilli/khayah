@@ -18,23 +18,11 @@ export interface BoardItem {
   isNew?: boolean
 }
 
-export const HERO_SLIDES: HeroSlideItem[] = [
-  {
-    image: '/images/Home/slider/SliderImg1.JPG',
-    alt: '아이들 이미지',
-    lines: ['카야는', '사람을 키우고 섬기는', '개발 NGO 입니다.'],
-  },
-  {
-    image: '/images/Home/slider/sliderImg2.jpg',
-    alt: '함께 만들어가는 세상',
-    lines: ['함께 만들어가는', '따뜻한 세상'],
-  },
-  {
-    image: '/images/Home/slider/sliderImg3.jpg',
-    alt: '작은 변화와 희망',
-    lines: ['작은 변화가', '큰 희망을 만듭니다'],
-  },
-]
+export const HERO_SLIDE_IMAGES = [
+  '/images/Home/slider/SliderImg1.JPG',
+  '/images/Home/slider/sliderImg2.jpg',
+  '/images/Home/slider/sliderImg3.jpg',
+] as const
 
 export const STORY_ITEMS: StoryItem[] = [
   {
@@ -89,9 +77,9 @@ export const NOTICE_ITEMS: BoardItem[] = [
   { title: '기부금 영수증 발급 일정 안내', date: '25.12.08' },
 ]
 
-export const HERO_BIZ_LINKS: { label: string; to: string }[] = [
-  { label: '국내사업', to: '/국내사업' },
-  { label: '해외사업', to: '/해외사업' },
-  { label: '옹호사업', to: '/사업/옹호사업' },
-  { label: '진행사업', to: '/사업/진행사업' },
+export const HERO_BIZ_LINKS: { to: string }[] = [
+  { to: '/business/domestic' },
+  { to: '/business/overseas' },
+  { to: '/business/advocacy' },
+  { to: '/business/projects' },
 ]

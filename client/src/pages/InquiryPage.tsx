@@ -3,11 +3,12 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { PageHero } from '../components/PageHero'
 import { ListStatus } from '../components/ListStatus'
 import {
-  INQUIRY_HUB_TABS,
+  INQUIRY_HUB_TAB_IDS,
   type InquiryHubTabId,
   parseInquiryHubTab,
 } from '../features/inquiry/inquiryHubTabs'
 import { createInquiry, fetchInquiryFaq, lookupInquiries } from '../services/api'
+import { useLocale } from '../i18n/LocaleContext'
 import { INQUIRY_TYPES, type InquiryPublic, type InquiryType } from '../types/inquiry'
 import type { InquiryFaqItem } from '../types/inquiryFaq'
 import '../styles/khayah-about-hub.css'
@@ -31,7 +32,17 @@ function statusClass(status: string): string {
 export function InquiryPage() {
   const location = useLocation()
   const navigate = useNavigate()
+  const { locale, localize, messages } = useLocale()
+  const iq = messages.pages.inquiry
   const activeHubTab = useMemo(() => parseInquiryHubTab(location.search), [location.search])
+  const hubTabs = useMemo(
+    () =>
+      INQUIRY_HUB_TAB_IDS.map((id) => ({
+        id,
+        label: id === 'faq' ? iq.tabs.faq : iq.tabs.board,
+      })),
+    [iq.tabs],
+  )
 
   const [mode, setMode] = useState<Mode>('write')
   const [faqItems, setFaqItems] = useState<InquiryFaqItem[]>([])
@@ -59,17 +70,17 @@ export function InquiryPage() {
   const [results, setResults] = useState<InquiryPublic[] | null>(null)
 
   useEffect(() => {
-    document.title = '고객 문의 | 사단법인 카야 인터내셔널'
+    document.title = messages.pages.documentTitle(iq.title)
     return () => {
-      document.title = '사단법인 카야 인터내셔널 | 개발NGO'
+      document.title = messages.pages.defaultTitle
     }
-  }, [])
+  }, [iq.title, messages.pages])
 
   useEffect(() => {
     let cancelled = false
     setFaqLoading(true)
     setFaqError(false)
-    fetchInquiryFaq()
+    fetchInquiryFaq(locale)
       .then((doc) => {
         if (!cancelled) {
           setFaqItems(doc.items)
@@ -85,13 +96,14 @@ export function InquiryPage() {
     return () => {
       cancelled = true
     }
-  }, [])
+  }, [locale])
 
   const setHubTab = (id: InquiryHubTabId) => {
+    const pathname = localize('/news/inquiry')
     if (id === 'faq') {
-      navigate({ pathname: '/소식/고객문의' }, { replace: true })
+      navigate({ pathname }, { replace: true })
     } else {
-      navigate({ pathname: '/소식/고객문의', search: '?tab=board' }, { replace: true })
+      navigate({ pathname, search: '?tab=board' }, { replace: true })
     }
   }
 
@@ -104,11 +116,11 @@ export function InquiryPage() {
       return
     }
     if (pin !== pinConfirm) {
-      setSubmitError('임시 비밀번호가 일치하지 않습니다.')
+      setSubmitError(iq.pinMismatch)
       return
     }
     if (!/^\d{4,6}$/.test(pin)) {
-      setSubmitError('임시 비밀번호는 숫자 4~6자리여야 합니다.')
+      setSubmitError(iq.pinInvalid)
       return
     }
     setSubmitting(true)
@@ -127,7 +139,7 @@ export function InquiryPage() {
       setPin('')
       setPinConfirm('')
     } catch (err) {
-      setSubmitError(err instanceof Error ? err.message : '문의 접수에 실패했습니다.')
+      setSubmitError(err instanceof Error ? err.message : iq.submitFail)
     } finally {
       setSubmitting(false)
     }
@@ -138,7 +150,7 @@ export function InquiryPage() {
     setLookupError('')
     setResults(null)
     if (!/^\d{4,6}$/.test(lookupPin)) {
-      setLookupError('임시 비밀번호는 숫자 4~6자리여야 합니다.')
+      setLookupError(iq.pinInvalid)
       return
     }
     setLooking(true)
@@ -149,9 +161,9 @@ export function InquiryPage() {
         pin: lookupPin,
       })
       setResults(list)
-      if (list.length === 0) setLookupError('일치하는 문의가 없습니다. 정보를 다시 확인해 주세요.')
+      if (list.length === 0) setLookupError(iq.lookupEmpty)
     } catch (err) {
-      setLookupError(err instanceof Error ? err.message : '문의 조회에 실패했습니다.')
+      setLookupError(err instanceof Error ? err.message : iq.lookupFail)
     } finally {
       setLooking(false)
     }
@@ -159,11 +171,11 @@ export function InquiryPage() {
 
   return (
     <div className="khayah-about-hub inquiry-page">
-      <PageHero title="고객 문의" showScrollHint={false} />
+      <PageHero title={iq.title} showScrollHint={false} />
 
-      <nav className="khayah-about-tabs" aria-label="고객 문의 하위 메뉴">
+      <nav className="khayah-about-tabs" aria-label={iq.tabsAria}>
         <div className="khayah-about-tabs__rail" role="tablist">
-          {INQUIRY_HUB_TABS.map((t) => {
+          {hubTabs.map((t) => {
             const active = activeHubTab === t.id
             return (
               <button
@@ -195,16 +207,16 @@ export function InquiryPage() {
                 <h2 id="inquiry-faq-heading" className="inquiry-section-title">
                   FAQ {faqLoading ? null : <span className="inquiry-count">({faqItems.length})</span>}
                 </h2>
-                <p className="inquiry-section-sub">자주 묻는 질문을 먼저 확인해 보세요.</p>
+                <p className="inquiry-section-sub">{iq.faqSub}</p>
               </header>
 
               {faqLoading ? (
                 <ListStatus variant="loading" lines={3} />
               ) : faqError ? (
-                <ListStatus variant="error" message="FAQ를 불러오지 못했습니다." />
+                <ListStatus variant="error" message={iq.faqLoadError} />
               ) : faqItems.length === 0 ? (
                 <div className="inquiry-faq__list inquiry-faq__list--empty" role="status">
-                  <p className="inquiry-faq__empty">등록된 게시물이 없습니다.</p>
+                  <p className="inquiry-faq__empty">{iq.faqEmpty}</p>
                 </div>
               ) : (
                 <ul className="inquiry-faq__list">
@@ -238,32 +250,24 @@ export function InquiryPage() {
             <section className="inquiry-board" aria-labelledby="inquiry-board-heading">
               <header className="inquiry-section-head">
                 <h2 id="inquiry-board-heading" className="inquiry-section-title">
-                  문의하기
+                  {iq.boardTitle}
                 </h2>
-                <p className="inquiry-section-sub">문의 작성 또는 기존 문의 조회</p>
+                <p className="inquiry-section-sub">{iq.boardSub}</p>
               </header>
 
               <section className="inquiry-guide" aria-labelledby="inquiry-guide-heading">
                 <h3 id="inquiry-guide-heading" className="inquiry-guide__title">
-                  문의방법
+                  {iq.guideTitle}
                 </h3>
                 <ol className="inquiry-guide__steps">
-                  <li>
-                    <strong>이름 · 연락처 · 임시 비밀번호</strong>를 입력해 문의를 작성합니다.
-                  </li>
-                  <li>
-                    임시 비밀번호는 <strong>숫자 4~6자리</strong>로 직접 정합니다.
-                  </li>
-                  <li>
-                    나중에 「내 문의 조회」에서 같은 정보로 <strong>답변을 확인</strong>합니다.
-                  </li>
+                  {iq.guideSteps.map((step) => (
+                    <li key={step}>{step}</li>
+                  ))}
                 </ol>
-                <p className="inquiry-guide__note">
-                  비밀번호는 암호화되어 저장되며, 분실 시 사이트에서 복구할 수 없습니다.
-                </p>
+                <p className="inquiry-guide__note">{iq.guideNote}</p>
               </section>
 
-              <div className="inquiry-tabs" role="tablist" aria-label="문의 모드">
+              <div className="inquiry-tabs" role="tablist" aria-label={iq.modeAria}>
                 <button
                   type="button"
                   role="tab"
@@ -271,7 +275,7 @@ export function InquiryPage() {
                   className={`inquiry-tab${mode === 'write' ? ' is-active' : ''}`}
                   onClick={() => setMode('write')}
                 >
-                  문의 작성
+                  {iq.modeWrite}
                 </button>
                 <button
                   type="button"
@@ -280,14 +284,14 @@ export function InquiryPage() {
                   className={`inquiry-tab${mode === 'lookup' ? ' is-active' : ''}`}
                   onClick={() => setMode('lookup')}
                 >
-                  내 문의 조회
+                  {iq.modeLookup}
                 </button>
               </div>
 
               {mode === 'write' ? (
                 <form className="inquiry-form" onSubmit={onSubmit} noValidate>
                   <label className="inquiry-hp" aria-hidden="true">
-                    <span>웹사이트</span>
+                    <span>website</span>
                     <input
                       tabIndex={-1}
                       autoComplete="off"
@@ -299,7 +303,7 @@ export function InquiryPage() {
                   <div className="inquiry-rows">
                     <label className="inquiry-row">
                       <span className="inquiry-row__label">
-                        이름 <span className="inquiry-req" aria-hidden>*</span>
+                        {iq.labelName} <span className="inquiry-req" aria-hidden>*</span>
                       </span>
                       <input
                         className="inquiry-input"
@@ -311,20 +315,20 @@ export function InquiryPage() {
                     </label>
                     <label className="inquiry-row">
                       <span className="inquiry-row__label">
-                        연락처 <span className="inquiry-req" aria-hidden>*</span>
+                        {iq.labelContact} <span className="inquiry-req" aria-hidden>*</span>
                       </span>
                       <input
                         className="inquiry-input"
                         required
                         maxLength={120}
-                        placeholder="이메일 또는 전화"
+                        placeholder={iq.contactPlaceholder}
                         value={contact}
                         onChange={(e) => setContact(e.currentTarget.value)}
                       />
                     </label>
                     <label className="inquiry-row">
                       <span className="inquiry-row__label">
-                        임시 비밀번호 <span className="inquiry-req" aria-hidden>*</span>
+                        {iq.labelPin} <span className="inquiry-req" aria-hidden>*</span>
                       </span>
                       <input
                         className="inquiry-input"
@@ -333,14 +337,14 @@ export function InquiryPage() {
                         pattern="\d{4,6}"
                         maxLength={6}
                         autoComplete="new-password"
-                        placeholder="숫자 4~6자리"
+                        placeholder={iq.pinPlaceholder}
                         value={pin}
                         onChange={(e) => setPin(e.currentTarget.value.replace(/\D/g, '').slice(0, 6))}
                       />
                     </label>
                     <label className="inquiry-row">
                       <span className="inquiry-row__label">
-                        비밀번호 확인 <span className="inquiry-req" aria-hidden>*</span>
+                        {iq.labelPinConfirm} <span className="inquiry-req" aria-hidden>*</span>
                       </span>
                       <input
                         className="inquiry-input"
@@ -355,7 +359,7 @@ export function InquiryPage() {
                     </label>
                     <label className="inquiry-row">
                       <span className="inquiry-row__label">
-                        문의 유형 <span className="inquiry-req" aria-hidden>*</span>
+                        {iq.labelType} <span className="inquiry-req" aria-hidden>*</span>
                       </span>
                       <select
                         className="inquiry-input"
@@ -364,14 +368,14 @@ export function InquiryPage() {
                       >
                         {INQUIRY_TYPES.map((t) => (
                           <option key={t} value={t}>
-                            {t}
+                            {iq.types[t] ?? t}
                           </option>
                         ))}
                       </select>
                     </label>
                     <label className="inquiry-row">
                       <span className="inquiry-row__label">
-                        제목 <span className="inquiry-req" aria-hidden>*</span>
+                        {iq.labelSubject} <span className="inquiry-req" aria-hidden>*</span>
                       </span>
                       <input
                         className="inquiry-input"
@@ -383,7 +387,7 @@ export function InquiryPage() {
                     </label>
                     <label className="inquiry-row inquiry-row--area">
                       <span className="inquiry-row__label">
-                        내용 <span className="inquiry-req" aria-hidden>*</span>
+                        {iq.labelBody} <span className="inquiry-req" aria-hidden>*</span>
                       </span>
                       <textarea
                         className="inquiry-input inquiry-input--area"
@@ -398,15 +402,12 @@ export function InquiryPage() {
 
                   {submitError ? <p className="inquiry-msg inquiry-msg--error">{submitError}</p> : null}
                   {submitOk ? (
-                    <p className="inquiry-msg inquiry-msg--ok">
-                      문의가 접수되었습니다. (문의번호 #{submitOk.id}) 같은 이름·연락처·비밀번호로 「내 문의
-                      조회」에서 답변을 확인할 수 있습니다.
-                    </p>
+                    <p className="inquiry-msg inquiry-msg--ok">{iq.submitOk(submitOk.id)}</p>
                   ) : null}
 
                   <div className="inquiry-actions">
                     <button type="submit" className="inquiry-btn" disabled={submitting}>
-                      {submitting ? '접수 중…' : '문의 접수'}
+                      {submitting ? iq.submitting : iq.submit}
                     </button>
                   </div>
                 </form>
@@ -416,7 +417,7 @@ export function InquiryPage() {
                     <div className="inquiry-rows">
                       <label className="inquiry-row">
                         <span className="inquiry-row__label">
-                          이름 <span className="inquiry-req" aria-hidden>*</span>
+                          {iq.labelName} <span className="inquiry-req" aria-hidden>*</span>
                         </span>
                         <input
                           className="inquiry-input"
@@ -428,7 +429,7 @@ export function InquiryPage() {
                       </label>
                       <label className="inquiry-row">
                         <span className="inquiry-row__label">
-                          연락처 <span className="inquiry-req" aria-hidden>*</span>
+                          {iq.labelContact} <span className="inquiry-req" aria-hidden>*</span>
                         </span>
                         <input
                           className="inquiry-input"
@@ -440,7 +441,7 @@ export function InquiryPage() {
                       </label>
                       <label className="inquiry-row">
                         <span className="inquiry-row__label">
-                          임시 비밀번호 <span className="inquiry-req" aria-hidden>*</span>
+                          {iq.labelPin} <span className="inquiry-req" aria-hidden>*</span>
                         </span>
                         <input
                           className="inquiry-input"
@@ -457,33 +458,35 @@ export function InquiryPage() {
                     {lookupError ? <p className="inquiry-msg inquiry-msg--error">{lookupError}</p> : null}
                     <div className="inquiry-actions">
                       <button type="submit" className="inquiry-btn" disabled={looking}>
-                        {looking ? '조회 중…' : '문의 조회'}
+                        {looking ? iq.looking : iq.lookup}
                       </button>
                     </div>
                   </form>
 
                   {results && results.length > 0 ? (
-                    <ul className="inquiry-results" aria-label="조회 결과">
+                    <ul className="inquiry-results" aria-label={iq.resultsAria}>
                       {results.map((row) => (
                         <li key={row.id} className="inquiry-card">
                           <div className="inquiry-card__head">
-                            <span className={statusClass(row.status)}>{row.status}</span>
+                            <span className={statusClass(row.status)}>
+                              {iq.statuses[row.status] ?? row.status}
+                            </span>
                             <span className="inquiry-card__meta">
-                              #{row.id} · {row.type} · {formatDate(row.createdAt)}
+                              #{row.id} · {iq.types[row.type] ?? row.type} · {formatDate(row.createdAt)}
                             </span>
                           </div>
                           <h3 className="inquiry-card__title">{row.subject}</h3>
                           <p className="inquiry-card__body">{row.body}</p>
                           {row.reply ? (
                             <div className="inquiry-card__reply">
-                              <h4>답변</h4>
+                              <h4>{iq.reply}</h4>
                               <p>{row.reply}</p>
                               {row.repliedAt ? (
-                                <time dateTime={row.repliedAt}>답변일 {formatDate(row.repliedAt)}</time>
+                                <time dateTime={row.repliedAt}>{iq.repliedAt(formatDate(row.repliedAt))}</time>
                               ) : null}
                             </div>
                           ) : (
-                            <p className="inquiry-card__pending">아직 답변이 등록되지 않았습니다.</p>
+                            <p className="inquiry-card__pending">{iq.replyPending}</p>
                           )}
                         </li>
                       ))}
@@ -496,18 +499,16 @@ export function InquiryPage() {
 
           <section className="inquiry-detail-contact" aria-labelledby="inquiry-detail-heading">
             <h2 id="inquiry-detail-heading" className="inquiry-section-title">
-              자세한 문의
+              {iq.detailTitle}
             </h2>
-            <p className="inquiry-section-sub">
-              FAQ·문의하기로 해결되지 않으면 아래 연락처로 문의해 주세요.
-            </p>
+            <p className="inquiry-section-sub">{iq.detailSub}</p>
             <div className="inquiry-detail-cards">
               <a className="inquiry-detail-card" href="mailto:khayahkorea@gmail.com">
-                <span className="inquiry-detail-card__label">이메일</span>
+                <span className="inquiry-detail-card__label">{iq.emailLabel}</span>
                 <span className="inquiry-detail-card__value">khayahkorea@gmail.com</span>
               </a>
               <a className="inquiry-detail-card" href="tel:031-689-3639">
-                <span className="inquiry-detail-card__label">전화</span>
+                <span className="inquiry-detail-card__label">{iq.phoneLabel}</span>
                 <span className="inquiry-detail-card__value">031-689-3639</span>
               </a>
             </div>

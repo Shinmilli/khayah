@@ -1,6 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getPdfInline = getPdfInline;
+const cloudinary_1 = require("../utils/cloudinary");
+const storedMedia_1 = require("../utils/storedMedia");
 function allowedPdfSourceHost(host) {
     const h = host.toLowerCase();
     return (h === 'res.cloudinary.com' ||
@@ -43,6 +45,10 @@ function candidateUrls(src) {
     if (!/\.pdf(\?|$)/i.test(noHash)) {
         const [pathPart, qs] = noHash.split('?');
         out.push(qs ? `${pathPart}.pdf?${qs}` : `${pathPart}.pdf`);
+    }
+    else {
+        // public_id에 .pdf가 들어간 자산은 delivery가 401 → 확장자 없는 URL도 시도
+        out.push(noHash.replace(/\.pdf(?=\?|$)/i, ''));
     }
     return [...new Set(out)];
 }
@@ -99,6 +105,16 @@ async function getPdfInline(req, res) {
                 break;
             }
             lastStatus = got.status;
+        }
+        // Cloudinary: public URL 401인 경우(특히 public_id에 .pdf 포함) 인증 다운로드로 재시도
+        if (!buf && parsed.hostname.toLowerCase().includes('cloudinary.com')) {
+            for (const id of (0, storedMedia_1.cloudinaryPublicIdCandidates)(parsed.toString())) {
+                const authBuf = await (0, cloudinary_1.downloadCloudinaryRawBuffer)(id);
+                if (authBuf) {
+                    buf = authBuf;
+                    break;
+                }
+            }
         }
         if (!buf) {
             res.status(lastStatus === 404 ? 404 : 502).json({ error: 'Failed to fetch PDF', status: lastStatus });

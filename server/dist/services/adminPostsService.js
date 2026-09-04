@@ -66,7 +66,7 @@ exports.adminPostsService = {
         const [posts, total] = await Promise.all([
             prisma_1.prisma.post.findMany({
                 where: { postType: 'post', ...kindFilter },
-                orderBy: { postDate: 'desc' },
+                orderBy: [{ postDate: 'desc' }, { id: 'desc' }],
                 skip,
                 take: perPage,
                 include: {
@@ -186,9 +186,11 @@ exports.adminPostsService = {
                     data: keys.map((k) => ({ postId: id, metaKey: k, metaValue: String(params.meta?.[k] ?? '') })),
                 });
             }
-            const removed = (0, storedMedia_1.mediaNotIn)((0, storedMedia_1.collectPostMedia)(prevMeta), (0, storedMedia_1.collectPostMedia)(params.meta));
-            await (0, storedMedia_1.deleteStoredMediaMany)(removed);
         }
+        const nextMeta = params.meta ? { ...prevMeta, ...params.meta } : prevMeta;
+        const nextContent = params.content != null ? params.content : existing.postContent;
+        const removed = (0, storedMedia_1.mediaNotIn)((0, storedMedia_1.collectPostMedia)(prevMeta, existing.postContent), (0, storedMedia_1.collectPostMedia)(nextMeta, nextContent));
+        await (0, storedMedia_1.deleteStoredMediaMany)(removed);
         return this.getById(id);
     },
     async remove(id) {
@@ -198,7 +200,7 @@ exports.adminPostsService = {
         });
         if (!existing)
             return false;
-        await (0, storedMedia_1.deleteStoredMediaMany)((0, storedMedia_1.collectPostMedia)(metaArrayToObject(existing.postMeta)));
+        await (0, storedMedia_1.deleteStoredMediaMany)((0, storedMedia_1.collectPostMedia)(metaArrayToObject(existing.postMeta), existing.postContent));
         // delete dependents first
         await prisma_1.prisma.commentMeta.deleteMany({ where: { comment: { postId: id } } });
         await prisma_1.prisma.comment.deleteMany({ where: { postId: id } });

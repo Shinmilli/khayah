@@ -33,7 +33,10 @@ export declare const inquiriesService: {
         contact: string;
         pin: string;
     }): Promise<InquiryPublic[]>;
-    listAdmin(page?: number, perPage?: number): Promise<{
+    listAdmin(page?: number, perPage?: number, filters?: {
+        name?: string;
+        contact?: string;
+    }): Promise<{
         inquiries: InquiryAdmin[];
         total: number;
     }>;

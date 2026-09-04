@@ -2,8 +2,11 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { fetchPostsByKind } from '../../../services/api'
 import type { Post } from '../../../types/post'
+import { useLocale } from '../../../i18n/LocaleContext'
 
 export function StorySection() {
+  const { messages, localize } = useLocale()
+  const m = messages.home.story
   const trackRef = useRef<HTMLDivElement | null>(null)
   const fillRef = useRef<HTMLDivElement | null>(null)
   const progressRef = useRef<HTMLDivElement | null>(null)
@@ -127,27 +130,27 @@ export function StorySection() {
     const scope = p.meta?.khayah_story_scope ?? ''
     switch (scope) {
       case '국내':
-        return '국내사업'
+        return m.chip.domestic
       case '해외':
-        return '해외사업'
+        return m.chip.overseas
       case '옹호':
-        return '옹호사업'
+        return m.chip.advocacy
       case '지원':
       case '진행':
-        return '진행사업'
+        return m.chip.support
       default:
-        return '스토리'
+        return m.chip.default
     }
   }
 
   return (
-    <section className="story-section" id="news" aria-label="스토리">
+    <section className="story-section" id="news" aria-label={m.aria}>
       <div className="story-container">
-        <h2 className="impact-banner__title story-title">스토리</h2>
-        <p className="impact-banner__sub story-sub">우리들이 전하는 이야기</p>
+        <h2 className="impact-banner__title story-title">{m.title}</h2>
+        <p className="impact-banner__sub story-sub">{m.subtitle}</p>
 
         <div className="story-slider">
-          <div ref={trackRef} className="story-track" tabIndex={0} aria-label="스토리 목록">
+          <div ref={trackRef} className="story-track" tabIndex={0} aria-label={m.listAria}>
             {storyItems.map((p, idx) => {
               const isLastCta = idx === storyItems.length - 1
               const cardInner = (
@@ -174,16 +177,16 @@ export function StorySection() {
                       </div>
                       <Link
                         className="story-card__cta-layer"
-                        to="/stories"
-                        aria-label={`스토리 더보기. 미리보기: ${p.title}`}
+                        to={localize('/stories')}
+                        aria-label={m.moreAria(p.title)}
                       >
                         <span className="story-more__btn">
-                          스토리 더보기 <span aria-hidden="true">›</span>
+                          {m.more} <span aria-hidden="true">›</span>
                         </span>
                       </Link>
                     </div>
                   ) : (
-                    <Link className="story-card" to={`/posts/${encodeURIComponent(p.slug)}`}>
+                    <Link className="story-card" to={localize(`/posts/${encodeURIComponent(p.slug)}`)}>
                       {cardInner}
                     </Link>
                   )}
@@ -192,14 +195,14 @@ export function StorySection() {
             })}
           </div>
 
-          <div className="story-controls" aria-label="스토리 슬라이더 컨트롤">
+          <div className="story-controls" aria-label={m.controls}>
             <div ref={progressRef} className="story-progress" aria-hidden="true">
               <div ref={fillRef} className="story-progress__fill" />
             </div>
-            <button type="button" className="story-nav story-nav--prev" aria-label="이전 스토리" onClick={() => scrollByStep(-1)}>
+            <button type="button" className="story-nav story-nav--prev" aria-label={m.prev} onClick={() => scrollByStep(-1)}>
               <span aria-hidden="true">‹</span>
             </button>
-            <button type="button" className="story-nav story-nav--next" aria-label="다음 스토리" onClick={() => scrollByStep(1)}>
+            <button type="button" className="story-nav story-nav--next" aria-label={m.next} onClick={() => scrollByStep(1)}>
               <span aria-hidden="true">›</span>
             </button>
           </div>

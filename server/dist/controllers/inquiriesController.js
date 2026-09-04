@@ -8,12 +8,22 @@ exports.adminUpdateInquiry = adminUpdateInquiry;
 exports.adminDeleteInquiry = adminDeleteInquiry;
 const inquiriesService_1 = require("../services/inquiriesService");
 const rateLimit_1 = require("../utils/rateLimit");
+const prisma_1 = require("../utils/prisma");
 function errStatus(e) {
     const s = e?.status;
     return typeof s === 'number' ? s : 500;
 }
 function errMessage(e, fallback) {
     return e instanceof Error && e.message ? e.message : fallback;
+}
+function dbUnavailablePayload() {
+    return {
+        error: 'Database unavailable',
+        reason: prisma_1.prismaInitStatus.reason ?? 'unknown',
+        hint: prisma_1.prismaInitStatus.reason === 'missing_database_url'
+            ? 'server/.env에 DATABASE_URL을 설정한 뒤 API 서버를 재시art하세요.'
+            : 'DATABASE_URL과 Supabase 연결을 확인한 뒤 API 서버를 재시art하세요.',
+    };
 }
 async function createInquiry(req, res) {
     const ip = (0, rateLimit_1.clientIp)(req);
@@ -66,10 +76,19 @@ async function adminListInquiries(req, res) {
     try {
         const page = Math.max(1, parseInt(String(req.query.page ?? '1'), 10) || 1);
         const perPage = Math.min(50, Math.max(1, parseInt(String(req.query.perPage ?? '20'), 10) || 20));
-        const result = await inquiriesService_1.inquiriesService.listAdmin(page, perPage);
+        const name = typeof req.query.name === 'string' ? req.query.name : '';
+        const contact = typeof req.query.contact === 'string' ? req.query.contact : '';
+        const result = await inquiriesService_1.inquiriesService.listAdmin(page, perPage, { name, contact });
         res.json(result);
     }
     catch (e) {
+        const status = errStatus(e);
+        if (status === 503) {
+            return res.status(503).json(dbUnavailablePayload());
+        }
+        if (status >= 400 && status < 500) {
+            return res.status(status).json({ error: errMessage(e, 'Invalid request') });
+        }
         console.error(e);
         res.status(500).json({ error: 'Failed to list inquiries' });
     }
@@ -90,6 +109,10 @@ async function adminGetInquiry(req, res) {
         res.json(row);
     }
     catch (e) {
+        const status = errStatus(e);
+        if (status >= 400 && status < 500) {
+            return res.status(status).json({ error: errMessage(e, 'Invalid request') });
+        }
         console.error(e);
         res.status(500).json({ error: 'Failed to get inquiry' });
     }
@@ -128,6 +151,10 @@ async function adminDeleteInquiry(req, res) {
         res.status(204).end();
     }
     catch (e) {
+        const status = errStatus(e);
+        if (status >= 400 && status < 500) {
+            return res.status(status).json({ error: errMessage(e, 'Invalid request') });
+        }
         console.error(e);
         res.status(500).json({ error: 'Failed to delete inquiry' });
     }

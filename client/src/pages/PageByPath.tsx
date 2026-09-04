@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
-import { Link, Navigate, useLocation } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { fetchPageBySlug, fetchPostBySlug } from '../services/api'
 import { PostDetail, crumbsForPost, heroTitleForKind } from '../components/PostDetail'
-import { PAGES_STATIC, normalizePathKey, pathToSlug } from '../constants/pagesContent'
+import { getStaticPage, normalizePathKey, pathToSlug } from '../constants/pagesContent'
+import { useLocale } from '../i18n/LocaleContext'
 import type { Page } from '../types/page'
 import type { Post } from '../types/post'
 import { NewsArchivePage } from './NewsArchivePage'
@@ -18,66 +19,40 @@ import '../styles/business-overseas-health.css'
 import '../styles/business-advocacy.css'
 import '../styles/donor-guide.css'
 import { NANUM_DONATE_URL } from '../constants/nanumDonate'
+import { PATH } from '../i18n/routes'
 
-function storyCtaForPathKey(pathKey: string): { label: string; to: string } | null {
+function storyCtaForPathKey(
+  pathKey: string,
+  messages: ReturnType<typeof useLocale>['messages'],
+): { label: string; to: string } | null {
+  const cta = messages.pages.storyCta
   if (!pathKey) return null
-  if (pathKey === '국내사업' || pathKey.startsWith('국내사업/')) {
-    return { label: '국내 스토리 확인하기', to: '/stories/domestic' }
+  if (pathKey === PATH.businessDomestic || pathKey.startsWith(`${PATH.businessDomestic}/`)) {
+    return { label: cta.domestic, to: '/stories/domestic' }
   }
-  if (pathKey === '해외사업' || pathKey.startsWith('해외사업/')) {
-    return { label: '해외 스토리 확인하기', to: '/stories/overseas' }
+  if (pathKey === PATH.businessOverseas || pathKey.startsWith(`${PATH.businessOverseas}/`)) {
+    return { label: cta.overseas, to: '/stories/overseas' }
   }
-  if (pathKey === '사업/옹호사업' || pathKey.startsWith('사업/옹호사업/')) {
-    return { label: '옹호 스토리 확인하기', to: '/stories/advocacy' }
+  if (pathKey === PATH.businessAdvocacy || pathKey.startsWith(`${PATH.businessAdvocacy}/`)) {
+    return { label: cta.advocacy, to: '/stories/advocacy' }
   }
-  if (pathKey === '사업/진행사업' || pathKey.startsWith('사업/진행사업/')) {
-    return { label: '지원 스토리 확인하기', to: '/stories/support' }
+  if (pathKey === PATH.businessProjects || pathKey.startsWith(`${PATH.businessProjects}/`)) {
+    return { label: cta.support, to: '/stories/support' }
   }
   return null
 }
 
 export function PageByPath() {
   const location = useLocation()
+  const { locale, localize, messages } = useLocale()
   const pathKey = normalizePathKey(location.pathname)
 
-  // Backward compatibility redirects (old slugs)
-  if (pathKey === '소식/카야소식') return <Navigate to="/소식/활동소식" replace />
-  if (pathKey === '소식/소식지') return <Navigate to="/소식/연간소식지" replace />
-  if (pathKey === '소식/1대1문의') return <Navigate to="/소식/고객문의" replace />
-  if (pathKey === '카야/조직도') return <Navigate to="/카야/카야소개?tab=org#org-chart" replace />
-  if (pathKey === '카야/이사회-전문위원') return <Navigate to="/카야/카야소개?tab=org#directors" replace />
-  if (pathKey === '소식') return <Navigate to="/stories" replace />
-  /** `/카야` 단독은 라우트 없음 → 카야 소개 허브 */
-  if (pathKey === '카야') return <Navigate to="/카야/카야소개" replace />
-  /** `/후원` 단독 → 후원 안내 */
-  if (pathKey === '후원') return <Navigate to="/후원/후원-안내" replace />
-  /** 구 경로 `후원가이드/…` → `후원/…` */
-  if (pathKey.startsWith('후원가이드')) {
-    const tail = pathKey === '후원가이드' ? '' : pathKey.slice('후원가이드/'.length)
-    const sub = !tail || tail === '후원자-가이드' || tail === '후원-안내' ? '후원-안내' : tail
-    return <Navigate to={`/후원/${sub}`} replace />
-  }
-  /** 구 WP 오타 `후원자가이드/…` → `후원/…` */
-  if (pathKey.startsWith('후원자가이드')) {
-    const tail = pathKey === '후원자가이드' ? '' : pathKey.slice('후원자가이드/'.length)
-    const sub = !tail || tail === '후원자-가이드' ? '후원-안내' : tail
-    return <Navigate to={`/후원/${sub}`} replace />
-  }
-  if (pathKey === '카야/핵심사업') return <Navigate to="/카야/카야소개" replace />
-  if (
-    pathKey === '후원/정기후원' ||
-    pathKey === '후원/일시후원' ||
-    pathKey === '후원/물품후원' ||
-    pathKey === '후원/자원봉사'
-  ) {
-    return <Navigate to="/후원/후원-안내" replace />
-  }
-  if (pathKey === '카야와-함께/카야소식') return <Navigate to="/소식/활동소식" replace />
-  if (pathKey === '카야와-함께/공지사항') return <Navigate to="/소식/공지사항" replace />
-
   const isNewsArchive =
-    pathKey === '소식/공지사항' || pathKey === '소식/활동소식' || pathKey === '소식/연간소식지' || pathKey === '소식/언론보도'
-  const isInquiry = pathKey === '소식/고객문의'
+    pathKey === PATH.newsAnnouncements ||
+    pathKey === PATH.newsActivities ||
+    pathKey === PATH.newsNewsletter ||
+    pathKey === PATH.newsPress
+  const isInquiry = pathKey === PATH.newsInquiry
 
   const hashId = location.hash.replace(/^#/, '')
   const [apiPage, setApiPage] = useState<Page | null | undefined>(undefined)
@@ -86,7 +61,7 @@ export function PageByPath() {
   const isPostPath = pathKey.startsWith('posts/')
   const postSlug = isPostPath ? pathKey.replace(/^posts\/?/, '') : ''
 
-  const staticPage = pathKey && !isPostPath && !isInquiry ? PAGES_STATIC[pathKey] : null
+  const staticPage = pathKey && !isPostPath && !isInquiry ? getStaticPage(pathKey, locale) : null
 
   const slug = pathToSlug(location.pathname)
 
@@ -127,9 +102,9 @@ export function PageByPath() {
 
   const title = isInquiry ? null : (staticPage?.title ?? apiPage?.title ?? post?.title ?? null)
   useEffect(() => {
-    if (title) document.title = `${title} | 사단법인 카야 인터내셔널`
-    return () => { document.title = '사단법인 카야 인터내셔널 | 개발NGO' }
-  }, [title])
+    if (title) document.title = messages.pages.documentTitle(title)
+    return () => { document.title = messages.pages.defaultTitle }
+  }, [title, messages.pages])
 
   useEffect(() => {
     if (!hashId) return
@@ -140,7 +115,7 @@ export function PageByPath() {
   }, [hashId, pathKey, staticPage, apiPage])
 
   useEffect(() => {
-    if (pathKey !== '후원/후원-안내') return
+    if (pathKey !== PATH.supportGuide) return
     const root = document.querySelector<HTMLElement>('.page-content-wrapper .the_content_wrapper.page-body')
     if (!root) return
     let hideTimer: number
@@ -159,8 +134,8 @@ export function PageByPath() {
       if (!btn) return
       e.preventDefault()
       void navigator.clipboard.writeText(NANUM_DONATE_URL).then(
-        () => showToast('후원 링크가 복사되었습니다. 카톡·문자에 붙여넣어 주세요.'),
-        () => showToast('복사에 실패했습니다. 링크를 길게 눌러 복사하거나 주소창에서 다시 시도해 주세요.')
+        () => showToast(messages.pages.supportGuide.copySuccess),
+        () => showToast(messages.pages.supportGuide.copyFail),
       )
     }
     root.addEventListener('click', onClick)
@@ -168,7 +143,7 @@ export function PageByPath() {
       root.removeEventListener('click', onClick)
       window.clearTimeout(hideTimer)
     }
-  }, [pathKey, location.pathname])
+  }, [pathKey, location.pathname, messages.pages.supportGuide])
 
   if (isInquiry) return <InquiryPage />
 
@@ -191,10 +166,10 @@ export function PageByPath() {
   }
 
   if (staticPage) {
-    const storyCta = storyCtaForPathKey(pathKey)
+    const storyCta = storyCtaForPathKey(pathKey, messages)
     return (
       <div className="page-content-wrapper">
-        <PageHero title={staticPage.title} showScrollHint={pathKey !== '카야/위치안내'} />
+        <PageHero title={staticPage.title} showScrollHint={pathKey !== PATH.aboutLocation} />
         <div className="section">
           <div className="section_wrapper clearfix">
             <div className="column one">
@@ -204,7 +179,7 @@ export function PageByPath() {
               />
               {storyCta ? (
                 <div className="page-story-cta">
-                  <Link className="page-story-cta__btn" to={storyCta.to}>
+                  <Link className="page-story-cta__btn" to={localize(storyCta.to)}>
                     {storyCta.label}
                   </Link>
                 </div>
@@ -217,7 +192,7 @@ export function PageByPath() {
   }
 
   if (apiPage) {
-    const storyCta = storyCtaForPathKey(pathKey)
+    const storyCta = storyCtaForPathKey(pathKey, messages)
     return (
       <div className="page-content-wrapper">
         <PageHero title={apiPage.title} />
@@ -230,7 +205,7 @@ export function PageByPath() {
               />
               {storyCta ? (
                 <div className="page-story-cta">
-                  <Link className="page-story-cta__btn" to={storyCta.to}>
+                  <Link className="page-story-cta__btn" to={localize(storyCta.to)}>
                     {storyCta.label}
                   </Link>
                 </div>
@@ -249,11 +224,11 @@ export function PageByPath() {
   if (show404) {
     return (
       <div className="page-content-wrapper">
-        <PageHero title="페이지를 찾을 수 없습니다" />
+        <PageHero title={messages.pages.notFoundTitle} />
         <div className="section">
           <div className="section_wrapper clearfix">
             <div className="column one">
-              <p>요청하신 경로에 해당하는 페이지가 없거나 이동되었을 수 있습니다.</p>
+              <p>{messages.pages.notFoundBody}</p>
             </div>
           </div>
         </div>
@@ -263,11 +238,11 @@ export function PageByPath() {
 
   return (
     <div className="page-content-wrapper">
-      <PageHero title={title ?? '불러오는 중...'} />
+      <PageHero title={title ?? messages.pages.loading} />
       <div className="section">
         <div className="section_wrapper clearfix">
           <div className="column one">
-            <p className="loading">불러오는 중...</p>
+            <p className="loading">{messages.pages.loading}</p>
           </div>
         </div>
       </div>

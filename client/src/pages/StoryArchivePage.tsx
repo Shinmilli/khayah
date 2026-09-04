@@ -6,16 +6,10 @@ import type { Post } from '../types/post'
 import { PageHero } from '../components/PageHero'
 import { Pagination } from '../components/Pagination'
 import { paginate } from '../utils/paginate'
+import { useLocale } from '../i18n/LocaleContext'
 import '../styles/story.css'
 
 type StoryScopeKey = 'all' | 'domestic' | 'overseas' | 'advocacy' | 'support'
-
-const scopeLabels: Record<Exclude<StoryScopeKey, 'all'>, string> = {
-  domestic: '국내',
-  overseas: '해외',
-  advocacy: '옹호',
-  support: '지원',
-}
 
 function parseScope(raw: string | null | undefined): StoryScopeKey {
   if (!raw) return 'all'
@@ -41,19 +35,6 @@ function scopeToMeta(scope: Exclude<StoryScopeKey, 'all'>): string {
   }
 }
 
-function scopeToChip(scope: Exclude<StoryScopeKey, 'all'>): string {
-  switch (scope) {
-    case 'domestic':
-      return '국내사업'
-    case 'overseas':
-      return '해외사업'
-    case 'advocacy':
-      return '옹호사업'
-    case 'support':
-      return '진행사업'
-  }
-}
-
 function useQuery() {
   const location = useLocation()
   return useMemo(() => new URLSearchParams(location.search), [location.search])
@@ -71,6 +52,8 @@ function formatDotDate(iso: string): string {
 export function StoryArchivePage() {
   const params = useParams()
   const query = useQuery()
+  const { localize, messages } = useLocale()
+  const st = messages.pages.stories
   const initialScope = parseScope(params.scope ?? query.get('scope'))
 
   const [scope, setScope] = useState<StoryScopeKey>(initialScope)
@@ -94,25 +77,51 @@ export function StoryArchivePage() {
   const items = useMemo(() => {
     if (scope === 'all') return posts
     const meta = scopeToMeta(scope)
-    return posts.filter((p) => (p.meta?.khayah_story_scope ?? '') === meta || (meta === '지원' && (p.meta?.khayah_story_scope ?? '') === '진행'))
+    return posts.filter(
+      (p) =>
+        (p.meta?.khayah_story_scope ?? '') === meta ||
+        (meta === '지원' && (p.meta?.khayah_story_scope ?? '') === '진행'),
+    )
   }, [posts, scope])
 
   const STORY_PER_PAGE = 9
   const paged = paginate(items, listPage, STORY_PER_PAGE)
 
   const scopeTabs: Array<{ key: StoryScopeKey; label: string }> = [
-    { key: 'all', label: '전체' },
-    { key: 'domestic', label: '국내' },
-    { key: 'overseas', label: '해외' },
-    { key: 'advocacy', label: '옹호' },
-    { key: 'support', label: '지원' },
+    { key: 'all', label: st.all },
+    { key: 'domestic', label: st.scopes.domestic },
+    { key: 'overseas', label: st.scopes.overseas },
+    { key: 'advocacy', label: st.scopes.advocacy },
+    { key: 'support', label: st.scopes.support },
   ]
 
-  const title = scope === 'all' ? '스토리' : `${scopeLabels[scope]}사업`
+  const title =
+    scope === 'all' ? st.title : st.scopeTitle(st.scopes[scope as Exclude<StoryScopeKey, 'all'>])
+
+  const chipForMeta = (s: string): string => {
+    if (s === '국내') return st.chips.domestic
+    if (s === '해외') return st.chips.overseas
+    if (s === '옹호') return st.chips.advocacy
+    if (s === '지원' || s === '진행') return st.chips.support
+    return st.chips.default
+  }
+
+  const chipForScope = (s: Exclude<StoryScopeKey, 'all'>): string => {
+    switch (s) {
+      case 'domestic':
+        return st.chips.domestic
+      case 'overseas':
+        return st.chips.overseas
+      case 'advocacy':
+        return st.chips.advocacy
+      case 'support':
+        return st.chips.support
+    }
+  }
 
   return (
     <div className="page-content-wrapper">
-      <PageHero title="스토리" />
+      <PageHero title={st.title} />
       <div className="section">
         <div className="section_wrapper clearfix">
           <div className="column one">
@@ -121,8 +130,8 @@ export function StoryArchivePage() {
                 <div className="story-archive__title-row">
                   <h2 className="story-archive__title">{title}</h2>
                 </div>
-                <p className="story-archive__sub">우리들이 전하는 이야기</p>
-                <nav className="story-filter" aria-label="스토리 범위 선택">
+                <p className="story-archive__sub">{st.subtitle}</p>
+                <nav className="story-filter" aria-label={st.filterAria}>
                   {scopeTabs.map((t) => (
                     <button
                       key={t.key}
@@ -139,7 +148,7 @@ export function StoryArchivePage() {
                 </nav>
               </header>
 
-              <section className="story-archive__grid" aria-label="스토리 목록">
+              <section className="story-archive__grid" aria-label={st.listAria}>
                 {paged.items.map((p) => (
                   <article key={p.id} className="story-archive__item">
                     <div className="story-list-card">
@@ -150,21 +159,14 @@ export function StoryArchivePage() {
                       </div>
                       <div className="story-list-card__body">
                         <h3 className="story-list-card__title">
-                          <Link to={`/posts/${encodeURIComponent(p.slug)}`}>{p.title}</Link>
+                          <Link to={localize(`/posts/${encodeURIComponent(p.slug)}`)}>{p.title}</Link>
                         </h3>
                         <p className="story-list-card__excerpt">{p.excerpt || ''}</p>
                         <div className="story-list-card__meta">
                           <span className="story-list-card__chip">
                             {scope === 'all'
-                              ? (() => {
-                                  const s = p.meta?.khayah_story_scope ?? ''
-                                  if (s === '국내') return '국내사업'
-                                  if (s === '해외') return '해외사업'
-                                  if (s === '옹호') return '옹호사업'
-                                  if (s === '지원' || s === '진행') return '진행사업'
-                                  return '스토리'
-                                })()
-                              : scopeToChip(scope)}
+                              ? chipForMeta(p.meta?.khayah_story_scope ?? '')
+                              : chipForScope(scope)}
                           </span>
                           <time className="story-list-card__date" dateTime={p.publishedAt}>
                             {formatDotDate(p.publishedAt)}
@@ -181,7 +183,7 @@ export function StoryArchivePage() {
                   page={paged.page}
                   totalPages={paged.totalPages}
                   onChange={setListPage}
-                  label="스토리 페이지"
+                  label={st.pagination}
                 />
               </div>
             </div>
@@ -191,4 +193,3 @@ export function StoryArchivePage() {
     </div>
   )
 }
-

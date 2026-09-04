@@ -3,10 +3,12 @@ import type { YoutubeLatestVideo } from '../types/youtube'
 import type { PostsResponse } from '../types/post'
 import type { Page } from '../types/page'
 import type { Post } from '../types/post'
-import type { FinancialReportsDocument } from '../features/financial-report/financialReportTypes'
+import type { FinancialReportsDocument, FinancialReportsPublicDocument } from '../features/financial-report/financialReportTypes'
 import type { InquiryAdmin, InquiryPublic } from '../types/inquiry'
-import type { InquiryFaqDocument } from '../types/inquiryFaq'
-import type { ImpactStatsDocument } from '../features/home/impactStatsTypes'
+import type { InquiryFaqDocument, InquiryFaqPublicDocument } from '../types/inquiryFaq'
+import type { ImpactStatsDocument, ImpactStatsLocaleContent } from '../features/home/impactStatsTypes'
+import type { HeroBannerDocument, HeroBannerPublicDocument } from '../features/home/heroBannerTypes'
+import type { Locale } from '../i18n/locale'
 
 export type AdminPost = Post & { meta?: Record<string, string> }
 export type AdminPostsResponse = { posts: AdminPost[]; total: number }
@@ -195,8 +197,14 @@ export async function adminDeletePost(id: number): Promise<void> {
   if (!res.ok) throw new Error('Failed to delete admin post')
 }
 
-export async function fetchFinancialReports(): Promise<FinancialReportsDocument> {
-  const res = await fetch(`${API_BASE}/financial-reports`)
+export async function fetchFinancialReports(locale: Locale = 'ko'): Promise<FinancialReportsPublicDocument> {
+  const res = await fetch(`${API_BASE}/financial-reports?lang=${encodeURIComponent(locale)}`)
+  if (!res.ok) throw new Error('Failed to fetch financial reports')
+  return res.json()
+}
+
+export async function adminFetchFinancialReports(): Promise<FinancialReportsDocument> {
+  const res = await fetch(`${API_BASE}/admin/financial-reports`)
   if (!res.ok) throw new Error('Failed to fetch financial reports')
   return res.json()
 }
@@ -214,8 +222,14 @@ export async function adminPutFinancialReports(doc: FinancialReportsDocument): P
   return res.json()
 }
 
-export async function fetchImpactStats(): Promise<ImpactStatsDocument> {
-  const res = await fetch(`${API_BASE}/impact-stats`)
+export async function fetchImpactStats(locale: Locale = 'ko'): Promise<ImpactStatsLocaleContent> {
+  const res = await fetch(`${API_BASE}/impact-stats?lang=${encodeURIComponent(locale)}`)
+  if (!res.ok) throw new Error('Failed to fetch impact stats')
+  return res.json()
+}
+
+export async function adminFetchImpactStats(): Promise<ImpactStatsDocument> {
+  const res = await fetch(`${API_BASE}/admin/impact-stats`)
   if (!res.ok) throw new Error('Failed to fetch impact stats')
   return res.json()
 }
@@ -229,6 +243,31 @@ export async function adminPutImpactStats(doc: ImpactStatsDocument): Promise<Imp
   if (!res.ok) {
     const text = await res.text().catch(() => '')
     throw new Error(text || 'Failed to save impact stats')
+  }
+  return res.json()
+}
+
+export async function fetchHeroBanner(locale: Locale = 'ko'): Promise<HeroBannerPublicDocument> {
+  const res = await fetch(`${API_BASE}/hero-banner?lang=${encodeURIComponent(locale)}`)
+  if (!res.ok) throw new Error('Failed to fetch hero banner')
+  return res.json()
+}
+
+export async function adminFetchHeroBanner(): Promise<HeroBannerDocument> {
+  const res = await fetch(`${API_BASE}/admin/hero-banner`)
+  if (!res.ok) throw new Error('Failed to fetch hero banner')
+  return res.json()
+}
+
+export async function adminPutHeroBanner(doc: HeroBannerDocument): Promise<HeroBannerDocument> {
+  const res = await fetch(`${API_BASE}/admin/hero-banner`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(doc),
+  })
+  if (!res.ok) {
+    const text = await res.text().catch(() => '')
+    throw new Error(text || 'Failed to save hero banner')
   }
   return res.json()
 }
@@ -250,8 +289,8 @@ export async function createInquiry(input: {
   return res.json()
 }
 
-export async function fetchInquiryFaq(): Promise<InquiryFaqDocument> {
-  const res = await fetch(`${API_BASE}/inquiry-faq`)
+export async function fetchInquiryFaq(locale: Locale = 'ko'): Promise<InquiryFaqPublicDocument> {
+  const res = await fetch(`${API_BASE}/inquiry-faq?lang=${encodeURIComponent(locale)}`)
   if (!res.ok) throw new Error(await readApiError(res, 'FAQ를 불러오지 못했습니다.'))
   return res.json()
 }

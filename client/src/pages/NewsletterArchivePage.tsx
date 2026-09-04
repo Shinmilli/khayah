@@ -39,7 +39,7 @@ export function NewsletterArchivePage() {
               <ul className="newsletter-list" aria-label="연간소식지 목록">
                 {NEWSLETTERS.map((n) => (
                   <li key={n.id} className="newsletter-item">
-                    <Link to={`/소식/연간소식지/${encodeURIComponent(n.id)}`} className="newsletter-link">
+                    <Link to={`/news/newsletter/${encodeURIComponent(n.id)}`} className="newsletter-link">
                       <div className="newsletter-thumb" aria-hidden="true">
                         {n.coverImageUrl ? <img src={n.coverImageUrl} alt="" loading="lazy" /> : null}
                       </div>

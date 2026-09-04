@@ -348,6 +348,9 @@ function PostEditorForm({
       setPdfUploading(false)
       setDocUploading(false)
     }
+  }
+
+  const onRemoveSelectedPdfs = async () => {
     const pick = new Set(selectedPdfUrls)
     if (pick.size === 0) return
     const removing = pdfFiles.filter((f) => pick.has(f.url))

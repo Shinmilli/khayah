@@ -23,6 +23,7 @@ const contentChildren = [
 
 const otherNav = [
   { to: '/admin/app/inquiries', label: '고객 문의' },
+  { to: '/admin/app/inquiry-faq', label: 'FAQ 관리' },
   { to: '/admin/app/operations', label: '운영·권한' },
 ] as const
 

@@ -1,33 +1,26 @@
 import { useEffect, useMemo } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { PageHero } from '../components/PageHero'
-import { PAGES_STATIC } from '../constants/pagesContent'
+import { getStaticPage } from '../constants/pagesContent'
+import { useLocale } from '../i18n/LocaleContext'
 import {
-  KHAYAH_ABOUT_TABS,
+  KHAYAH_ABOUT_TAB_IDS,
   type KhayahAboutTabId,
   parseAboutTab,
 } from '../features/khayah-about/khayahAboutHubTabs'
 import { KHAYAH_CI_PAGE_HTML } from '../constants/khayahCiHtml'
+import { KHAYAH_CI_PAGE_HTML as KHAYAH_CI_PAGE_HTML_EN } from '../constants/khayahCiHtml.en'
 import '../styles/khayah-about-hub.css'
 import '../styles/khayah-ci.css'
 import '../styles/page.css'
 
-function tabTitle(id: KhayahAboutTabId): string {
-  switch (id) {
-    case 'intro':
-      return '카야 소개'
-    case 'ci':
-      return 'CI'
-    case 'org':
-      return '조직도 · 이사회 · 전문위원'
-    default:
-      return '카야 소개'
-  }
-}
-
 export function KhayahAboutHubPage() {
   const location = useLocation()
   const navigate = useNavigate()
+  const { locale, localize, messages } = useLocale()
+  const hub = messages.pages.aboutHub
+  const aboutPath = localize('/about/khayah')
+  const aboutTabs = KHAYAH_ABOUT_TAB_IDS.map((id) => ({ id, label: hub.tabs[id] }))
 
   const activeTab = useMemo(
     () => parseAboutTab(location.search, location.hash),
@@ -35,50 +28,51 @@ export function KhayahAboutHubPage() {
   )
 
   useEffect(() => {
-    document.title = `${tabTitle(activeTab)} | 사단법인 카야 인터내셔널`
+    document.title = messages.pages.documentTitle(hub.tabs[activeTab])
     return () => {
-      document.title = '사단법인 카야 인터내셔널 | 개발NGO'
+      document.title = messages.pages.defaultTitle
     }
-  }, [activeTab])
+  }, [activeTab, hub.tabs, messages.pages])
 
   useEffect(() => {
     const h = location.hash.replace(/^#/, '').toLowerCase()
     if (h === 'ci' && !location.search.includes('tab=')) {
-      navigate({ pathname: '/카야/카야소개', search: '?tab=ci', hash: '' }, { replace: true })
+      navigate({ pathname: aboutPath, search: '?tab=ci', hash: '' }, { replace: true })
       return
     }
     if (new URLSearchParams(location.search).get('tab') === 'programs') {
-      navigate({ pathname: '/카야/카야소개' }, { replace: true })
+      navigate({ pathname: aboutPath }, { replace: true })
       return
     }
     if ((h === 'directors' || h === 'experts' || h === 'org-chart') && activeTab !== 'org') {
-      navigate({ pathname: '/카야/카야소개', search: '?tab=org', hash: `#${h}` }, { replace: true })
+      navigate({ pathname: aboutPath, search: '?tab=org', hash: `#${h}` }, { replace: true })
       return
     }
     if (!h) return
     window.setTimeout(() => {
       document.getElementById(h)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }, 120)
-  }, [location.hash, location.search, activeTab, navigate])
+  }, [location.hash, location.search, activeTab, navigate, aboutPath])
 
   const setTab = (id: KhayahAboutTabId) => {
     if (id === 'intro') {
-      navigate({ pathname: '/카야/카야소개' }, { replace: true })
+      navigate({ pathname: aboutPath }, { replace: true })
     } else {
-      navigate({ pathname: '/카야/카야소개', search: `?tab=${id}` }, { replace: true })
+      navigate({ pathname: aboutPath, search: `?tab=${id}` }, { replace: true })
     }
   }
 
-  const introHtml = PAGES_STATIC['카야/카야소개']?.content ?? ''
-  const orgBoardMergedHtml = PAGES_STATIC['카야/조직도']?.content ?? ''
+  const introHtml = getStaticPage('about/khayah', locale)?.content ?? ''
+  const orgBoardMergedHtml = getStaticPage('about/org-chart', locale)?.content ?? ''
+  const ciHtml = locale === 'en' ? KHAYAH_CI_PAGE_HTML_EN : KHAYAH_CI_PAGE_HTML
 
   return (
     <div className="khayah-about-hub">
-      <PageHero title="카야 소개" showScrollHint={false} />
+      <PageHero title={hub.title} showScrollHint={false} />
 
-      <nav className="khayah-about-tabs" aria-label="카야 소개 하위 메뉴">
+      <nav className="khayah-about-tabs" aria-label={hub.tabsAria}>
         <div className="khayah-about-tabs__rail" role="tablist">
-          {KHAYAH_ABOUT_TABS.map((t) => {
+          {aboutTabs.map((t) => {
             const active = activeTab === t.id
             return (
               <button
@@ -111,7 +105,7 @@ export function KhayahAboutHubPage() {
             />
           )}
           {activeTab === 'ci' && (
-            <div className="the_content_wrapper page-body khayah-about-hub__html" dangerouslySetInnerHTML={{ __html: KHAYAH_CI_PAGE_HTML }} />
+            <div className="the_content_wrapper page-body khayah-about-hub__html" dangerouslySetInnerHTML={{ __html: ciHtml }} />
           )}
           {activeTab === 'org' && (
             <div

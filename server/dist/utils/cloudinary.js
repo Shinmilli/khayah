@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.isCloudinaryConfigured = isCloudinaryConfigured;
 exports.configureCloudinary = configureCloudinary;
 exports.uploadBufferToCloudinary = uploadBufferToCloudinary;
+exports.downloadCloudinaryRawBuffer = downloadCloudinaryRawBuffer;
 exports.destroyCloudinaryAsset = destroyCloudinaryAsset;
 const cloudinary_1 = require("cloudinary");
 function isCloudinaryConfigured() {
@@ -28,8 +29,10 @@ async function uploadBufferToCloudinary(options) {
     configureCloudinary();
     const folder = `${folderPrefix()}/${options.kind === 'document' ? 'documents' : 'images'}`;
     const resourceType = options.kind === 'document' ? 'raw' : 'image';
-    const rawId = `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`;
-    const publicId = options.kind === 'document' ? `${rawId}.pdf` : undefined;
+    // public_id에 .pdf를 넣으면 Cloudinary delivery URL이 401이 나는 경우가 있음 → 확장자 제외
+    const publicId = options.kind === 'document'
+        ? `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`
+        : undefined;
     const result = await new Promise((resolve, reject) => {
         const stream = cloudinary_1.v2.uploader.upload_stream({
             folder,
@@ -61,20 +64,63 @@ async function uploadBufferToCloudinary(options) {
         format: result.format,
     };
 }
-async function destroyCloudinaryAsset(publicId, resourceTypeHint) {
-    if (!publicId.trim() || !isCloudinaryConfigured())
-        return;
+/** public delivery가 401인 raw(특히 public_id에 .pdf 포함)용 인증 다운로드 */
+async function downloadCloudinaryRawBuffer(publicId) {
+    const id = publicId.trim();
+    if (!id || !isCloudinaryConfigured())
+        return null;
     configureCloudinary();
-    const order = resourceTypeHint === 'image' ? ['image', 'raw'] : ['raw', 'image'];
-    for (const resource_type of order) {
+    const candidates = id.toLowerCase().endsWith('.pdf')
+        ? [id, id.slice(0, -4)]
+        : [id, `${id}.pdf`];
+    for (const pid of candidates) {
         try {
-            const r = await cloudinary_1.v2.uploader.destroy(publicId, { resource_type, invalidate: true });
-            if (r?.result === 'ok' || r?.result === 'not found')
-                return;
+            const dl = cloudinary_1.v2.utils.private_download_url(pid, '', {
+                resource_type: 'raw',
+                type: 'upload',
+                expires_at: Math.floor(Date.now() / 1000) + 120,
+            });
+            const upstream = await fetch(dl, { redirect: 'follow' });
+            if (!upstream.ok)
+                continue;
+            const buf = Buffer.from(await upstream.arrayBuffer());
+            if (buf.length >= 5 && buf.subarray(0, 4).toString('utf8') === '%PDF')
+                return buf;
         }
-        catch {
-            // try next resource type
+        catch (e) {
+            console.warn('[cloudinary] private download failed', { publicId: pid, e });
         }
     }
+    return null;
+}
+async function destroyCloudinaryAsset(publicId, resourceTypeHint) {
+    if (!publicId.trim() || !isCloudinaryConfigured())
+        return 'failed';
+    configureCloudinary();
+    const order = resourceTypeHint === 'image'
+        ? ['image', 'raw']
+        : resourceTypeHint === 'raw'
+            ? ['raw', 'image']
+            : ['raw', 'image'];
+    let sawNotFound = false;
+    for (const resource_type of order) {
+        try {
+            const r = await cloudinary_1.v2.uploader.destroy(publicId, {
+                resource_type,
+                type: 'upload',
+                invalidate: true,
+            });
+            if (r?.result === 'ok')
+                return 'ok';
+            if (r?.result === 'not found') {
+                sawNotFound = true;
+                continue;
+            }
+        }
+        catch (e) {
+            console.warn('[cloudinary] destroy try failed', { publicId, resource_type, e });
+        }
+    }
+    return sawNotFound ? 'not_found' : 'failed';
 }
 //# sourceMappingURL=cloudinary.js.map

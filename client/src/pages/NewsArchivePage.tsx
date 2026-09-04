@@ -16,14 +16,16 @@ import {
 } from '../utils/newsletterYear'
 import '../styles/page.css'
 import '../styles/newsletter.css'
+import { PATH } from '../i18n/routes'
+import { useLocale } from '../i18n/LocaleContext'
 
-function formatDate(iso: string): string {
+function formatDate(
+  iso: string,
+  format: (y: number, m: number, d: number) => string,
+): string {
   const d = new Date(iso)
   if (Number.isNaN(d.getTime())) return ''
-  const y = d.getFullYear()
-  const m = d.getMonth() + 1
-  const day = d.getDate()
-  return `${y}년 ${m}월 ${day}일`
+  return format(d.getFullYear(), d.getMonth() + 1, d.getDate())
 }
 
 function pressArticleTitle(post: Post): string {
@@ -69,13 +71,16 @@ function newsletterIsPdfMode(post: Post): boolean {
   return m === 'PDF 업로드 모드' || m === 'PDF소식지'
 }
 
-/** 호수 표시용 (숫자만 있으면 ○○호) */
-function newsletterIssueLabel(raw: string | undefined): string {
+/** 호수 표시용 (숫자만 있으면 ○○호 / No. ○○) */
+function newsletterIssueLabel(
+  raw: string | undefined,
+  issueUnit: (n: string) => string,
+): string {
   const t = (raw ?? '').replace(/\([^)]*\)/g, '').trim()
   if (!t) return ''
-  if (t.includes('호')) return t
+  if (t.includes('호') || /^no\.?\s*/i.test(t)) return t
   const digits = t.replace(/\D/g, '')
-  return digits ? `${digits}호` : `${t}호`
+  return issueUnit(digits || t)
 }
 
 function newsletterPdfUrl(post: Post): string {
@@ -95,13 +100,16 @@ function usePathKey(): string {
 
 export function NewsArchivePage() {
   const pathKey = usePathKey()
+  const { localize, messages } = useLocale()
+  const ar = messages.pages.archive
 
   const { kind, title } = useMemo(() => {
-    if (pathKey === '소식/활동소식') return { kind: '활동소식', title: '활동소식' }
-    if (pathKey === '소식/연간소식지') return { kind: '연간소식지', title: '연간소식지' }
-    if (pathKey === '소식/언론보도') return { kind: '언론보도', title: '언론보도' }
-    return { kind: '공지사항', title: '공지사항' }
-  }, [pathKey])
+    const links = messages.nav.links
+    if (pathKey === PATH.newsActivities) return { kind: '활동소식', title: links.activities }
+    if (pathKey === PATH.newsNewsletter) return { kind: '연간소식지', title: links.newsletter }
+    if (pathKey === PATH.newsPress) return { kind: '언론보도', title: links.press }
+    return { kind: '공지사항', title: links.announcements }
+  }, [pathKey, messages.nav.links])
 
   const [posts, setPosts] = useState<Post[]>([])
   const [loading, setLoading] = useState(true)
@@ -212,11 +220,11 @@ export function NewsArchivePage() {
   const paged = paginate(archiveAll, listPage, perPage)
 
   useEffect(() => {
-    document.title = `${title} | 사단법인 카야 인터내셔널`
+    document.title = ar.siteTitle(title)
     return () => {
-      document.title = '사단법인 카야 인터내셔널 | 개발NGO'
+      document.title = ar.siteTitleDefault
     }
-  }, [title])
+  }, [title, ar])
 
   return (
     <div
@@ -228,33 +236,31 @@ export function NewsArchivePage() {
       <div className="section">
         <div className="section_wrapper clearfix">
           <div className="column one">
-            {loading && <p className="notice-archive__status">불러오는 중…</p>}
+            {loading && <p className="notice-archive__status">{ar.loading}</p>}
             {error && (
-              <p className="notice-archive__status notice-archive__status--error">
-                목록을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.
-              </p>
+              <p className="notice-archive__status notice-archive__status--error">{ar.loadError}</p>
             )}
 
             {!loading && !error && isNewsletter && newsletterSorted.length === 0 && (
-              <p className="notice-archive__status">등록된 소식지가 없습니다.</p>
+              <p className="notice-archive__status">{ar.emptyNewsletter}</p>
             )}
             {!loading && !error && !isNewsletter && sortedPosts.length === 0 && (
-              <p className="notice-archive__status">등록된 글이 없습니다.</p>
+              <p className="notice-archive__status">{ar.empty}</p>
             )}
 
             {!loading && !error && isNewsletter && newsletterSorted.length > 0 && (
               <div className="yearly-nl-archive">
-                <div className="yearly-nl-toolbar" role="search" aria-label="연간소식지 필터">
+                <div className="yearly-nl-toolbar" role="search" aria-label={ar.newsletterFilterAria}>
                   <label className="yearly-nl-filter">
                     <select
                       className="yearly-nl-select"
-                      aria-label="연도"
+                      aria-label={ar.yearLabel}
                       value={String(filterYear)}
                       onChange={(e) => setFilterYear(Number(e.currentTarget.value))}
                     >
                       {newsletterYears.map((y) => (
                         <option key={y} value={String(y)}>
-                          {y}년
+                          {ar.yearOption(y)}
                         </option>
                       ))}
                     </select>
@@ -263,13 +269,13 @@ export function NewsArchivePage() {
                     <label className="yearly-nl-filter">
                       <select
                         className="yearly-nl-select"
-                        aria-label="호수"
+                        aria-label={ar.issueLabel}
                         value={filterIssue}
                         onChange={(e) => setFilterIssue(e.currentTarget.value)}
                       >
                         {newsletterIssueValues.map((issueKey) => (
                           <option key={issueKey} value={issueKey}>
-                            {newsletterIssueLabel(issueKey)}
+                            {newsletterIssueLabel(issueKey, ar.issueUnit)}
                           </option>
                         ))}
                       </select>
@@ -277,16 +283,16 @@ export function NewsArchivePage() {
                   ) : null}
                 </div>
 
-                <div className="yearly-nl-cards" aria-label="연간소식지 목록">
+                <div className="yearly-nl-cards" aria-label={ar.listAria(title)}>
                   {paged.items.length === 0 ? (
-                    <p className="notice-archive__status">선택한 조건에 해당하는 소식지가 없습니다.</p>
+                    <p className="notice-archive__status">{ar.emptyFiltered}</p>
                   ) : (
                     paged.items.map((post) => {
                       const pdf = newsletterPdfUrl(post)
                       const isPdf = newsletterIsPdfMode(post)
                       const cover = coverMetaUrl(post)
                       const issueRaw = post.meta?.khayah_newsletter_issue?.trim() ?? ''
-                      const issueHo = newsletterIssueLabel(issueRaw)
+                      const issueHo = newsletterIssueLabel(issueRaw, ar.issueUnit)
                       const yearLabel = newsletterCoverageLabel(post)
                       const excerpt = (post.excerpt || '')
                         .replace(/<[^>]+>/g, ' ')
@@ -299,13 +305,13 @@ export function NewsArchivePage() {
                         Boolean(excerpt) &&
                         norm(excerpt) !== titleNorm &&
                         (!yearLabel || norm(excerpt) !== norm(yearLabel))
-                      const detailPath = `/posts/${encodeURIComponent(post.slug)}`
+                      const detailPath = localize(`/posts/${encodeURIComponent(post.slug)}`)
                       const ctaPdf = isPdf && pdf
                       const pdfFileName = (() => {
                         const original = post.meta?.khayah_pdf_name?.trim()
                         if (original) return original.toLowerCase().endsWith('.pdf') ? original : `${original}.pdf`
-                        const title = post.title.trim() || '소식지'
-                        return title.toLowerCase().endsWith('.pdf') ? title : `${title}.pdf`
+                        const t = post.title.trim() || title
+                        return t.toLowerCase().endsWith('.pdf') ? t : `${t}.pdf`
                       })()
                       const pdfHref = pdfOpenHref(pdf, pdfFileName)
                       return (
@@ -322,14 +328,14 @@ export function NewsArchivePage() {
                                 target="_blank"
                                 rel="noopener noreferrer"
                               >
-                                자세히 보기
+                                {ar.viewDetail}
                                 <span className="yearly-nl-cta__icon" aria-hidden>
                                   →
                                 </span>
                               </a>
                             ) : (
                               <Link className="yearly-nl-cta" to={detailPath}>
-                                자세히 보기
+                                {ar.viewDetail}
                                 <span className="yearly-nl-cta__icon" aria-hidden>
                                   →
                                 </span>
@@ -358,7 +364,7 @@ export function NewsArchivePage() {
                   page={paged.page}
                   totalPages={paged.totalPages}
                   onChange={setListPage}
-                  label="연간소식지 페이지"
+                  label={ar.pagination(title)}
                 />
               </div>
             )}
@@ -366,11 +372,11 @@ export function NewsArchivePage() {
             {!loading && !error && isPress && sortedPosts.length > 0 && (
               <div className="archive-board">
               <div className="archive-board__head" aria-hidden="true">
-                <span>제목</span>
-                <span>등록일</span>
-                <span className="archive-board__head-action">바로보기</span>
+                <span>{ar.colTitle}</span>
+                <span>{ar.colDate}</span>
+                <span className="archive-board__head-action">{ar.colAction}</span>
               </div>
-              <ul className="press-archive__list" aria-label={`${title} 목록`}>
+              <ul className="press-archive__list" aria-label={ar.listAria(title)}>
                 {paged.items.map((post) => {
                   const url = pressArticleUrl(post)
                   const ymd = pressDisplayYmd(post)
@@ -381,7 +387,7 @@ export function NewsArchivePage() {
                       <div className="press-archive__text">
                         <p className="press-archive__headline">
                           {pub ? (
-                            <span className="press-archive__source-wrap" aria-label={`매체 ${pub}`}>
+                            <span className="press-archive__source-wrap" aria-label={ar.mediaAria(pub)}>
                               <span className="press-archive__bracket">[</span>
                               <span className="press-archive__source">{pub}</span>
                               <span className="press-archive__bracket">]</span>
@@ -401,10 +407,10 @@ export function NewsArchivePage() {
                           target="_blank"
                           rel="noopener noreferrer"
                         >
-                          기사 바로보기
+                          {ar.viewArticle}
                         </a>
                       ) : (
-                        <span className="press-archive__btn press-archive__btn--disabled">링크 없음</span>
+                        <span className="press-archive__btn press-archive__btn--disabled">{ar.noLink}</span>
                       )}
                     </li>
                   )
@@ -418,18 +424,21 @@ export function NewsArchivePage() {
                 page={paged.page}
                 totalPages={paged.totalPages}
                 onChange={setListPage}
-                label="언론보도 페이지"
+                label={ar.pagination(title)}
               />
             ) : null}
 
             {!loading && !error && isActivity && sortedPosts.length > 0 && (
               <>
-              <ul className="activity-archive__list" aria-label={`${title} 목록`}>
+              <ul className="activity-archive__list" aria-label={ar.listAria(title)}>
                 {paged.items.map((post) => {
                   const cover = coverMetaUrl(post)
                   return (
                     <li key={post.id} className="activity-archive__item">
-                      <Link to={`/posts/${encodeURIComponent(post.slug)}`} className="activity-archive__link">
+                      <Link
+                        to={localize(`/posts/${encodeURIComponent(post.slug)}`)}
+                        className="activity-archive__link"
+                      >
                         <div className="activity-archive__thumb-wrap">
                           {cover ? (
                             <img
@@ -448,7 +457,7 @@ export function NewsArchivePage() {
                         <div className="activity-archive__body">
                           <h2 className="activity-archive__title">{post.title}</h2>
                           <time className="activity-archive__date" dateTime={post.publishedAt}>
-                            {formatDate(post.publishedAt)}
+                            {formatDate(post.publishedAt, ar.date)}
                           </time>
                         </div>
                       </Link>
@@ -460,7 +469,7 @@ export function NewsArchivePage() {
                 page={paged.page}
                 totalPages={paged.totalPages}
                 onChange={setListPage}
-                label="활동소식 페이지"
+                label={ar.pagination(title)}
               />
               </>
             )}
@@ -469,16 +478,19 @@ export function NewsArchivePage() {
               <>
               <div className="archive-board">
               <div className="archive-board__head" aria-hidden="true">
-                <span>제목</span>
-                <span>등록일</span>
+                <span>{ar.colTitle}</span>
+                <span>{ar.colDate}</span>
               </div>
-              <ul className="notice-archive__list" aria-label={`${title} 목록`}>
+              <ul className="notice-archive__list" aria-label={ar.listAria(title)}>
                 {paged.items.map((post) => (
                   <li key={post.id} className="notice-archive__item">
-                    <Link to={`/posts/${encodeURIComponent(post.slug)}`} className="notice-archive__link">
+                    <Link
+                      to={localize(`/posts/${encodeURIComponent(post.slug)}`)}
+                      className="notice-archive__link"
+                    >
                       <h2 className="notice-archive__title">{post.title}</h2>
                       <time className="notice-archive__date" dateTime={post.publishedAt}>
-                        {formatDate(post.publishedAt)}
+                        {formatDate(post.publishedAt, ar.date)}
                       </time>
                     </Link>
                   </li>
@@ -489,7 +501,7 @@ export function NewsArchivePage() {
                 page={paged.page}
                 totalPages={paged.totalPages}
                 onChange={setListPage}
-                label="공지사항 페이지"
+                label={ar.pagination(title)}
               />
               </>
             )}

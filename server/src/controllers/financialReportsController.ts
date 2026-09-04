@@ -1,7 +1,23 @@
 import type { Request, Response } from 'express'
-import { readFinancialReportsDocument, writeFinancialReportsDocument } from '../services/financialReportsFileService'
+import {
+  parseFinancialLocale,
+  readFinancialReportsDocument,
+  readFinancialReportsForLocale,
+  writeFinancialReportsDocument,
+} from '../services/financialReportsFileService'
 
-export async function getFinancialReports(_req: Request, res: Response) {
+export async function getFinancialReports(req: Request, res: Response) {
+  try {
+    const locale = parseFinancialLocale(req.query.lang)
+    const doc = await readFinancialReportsForLocale(locale)
+    res.json(doc)
+  } catch (e) {
+    console.error(e)
+    res.status(500).json({ error: 'Failed to load financial reports' })
+  }
+}
+
+export async function getAdminFinancialReports(_req: Request, res: Response) {
   try {
     const doc = await readFinancialReportsDocument()
     res.json(doc)

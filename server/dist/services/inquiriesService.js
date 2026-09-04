@@ -83,14 +83,22 @@ exports.inquiriesService = {
         }
         return matched;
     },
-    async listAdmin(page = 1, perPage = 20) {
+    async listAdmin(page = 1, perPage = 20, filters = {}) {
         if (!prisma_1.prisma)
             throw Object.assign(new Error('Database unavailable'), { status: 503 });
         const skip = Math.max(0, (page - 1) * perPage);
         const take = Math.min(50, Math.max(1, perPage));
+        const nameQ = filters.name?.trim() ?? '';
+        const contactQ = filters.contact?.trim().replace(/\s+/g, '') ?? '';
+        const where = {};
+        if (nameQ)
+            where.name = { contains: nameQ, mode: 'insensitive' };
+        if (contactQ)
+            where.contact = { contains: contactQ.toLowerCase(), mode: 'insensitive' };
         const [total, rows] = await Promise.all([
-            prisma_1.prisma.inquiry.count(),
+            prisma_1.prisma.inquiry.count({ where }),
             prisma_1.prisma.inquiry.findMany({
+                where,
                 orderBy: { createdAt: 'desc' },
                 skip,
                 take,

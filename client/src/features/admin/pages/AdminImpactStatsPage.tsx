@@ -1,10 +1,12 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   DEFAULT_IMPACT_STATS,
+  type ImpactEditLocale,
   type ImpactStatItem,
   type ImpactStatsDocument,
+  type ImpactStatsLocaleContent,
 } from '../../home/impactStatsTypes'
-import { adminPutImpactStats, fetchImpactStats } from '../../../services/api'
+import { adminFetchImpactStats, adminPutImpactStats } from '../../../services/api'
 
 function newStatId(): string {
   return `stat-${typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : String(Date.now())}`
@@ -14,18 +16,26 @@ function deepClone<T>(v: T): T {
   return JSON.parse(JSON.stringify(v)) as T
 }
 
+const EDIT_LOCALES: { id: ImpactEditLocale; label: string }[] = [
+  { id: 'ko', label: '한국어' },
+  { id: 'en', label: 'English' },
+]
+
 export function AdminImpactStatsPage() {
   const [doc, setDoc] = useState<ImpactStatsDocument>(() => deepClone(DEFAULT_IMPACT_STATS))
+  const [editLocale, setEditLocale] = useState<ImpactEditLocale>('ko')
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [savedAt, setSavedAt] = useState<string>('')
 
+  const localeDoc = useMemo(() => doc.locales[editLocale], [doc, editLocale])
+
   const load = useCallback(async () => {
     setLoading(true)
     setError('')
     try {
-      const data = await fetchImpactStats()
+      const data = await adminFetchImpactStats()
       setDoc(data)
     } catch (e) {
       setError(e instanceof Error ? e.message : '불러오지 못했습니다.')
@@ -39,24 +49,52 @@ export function AdminImpactStatsPage() {
     void load()
   }, [load])
 
+  const patchLocale = (patch: Partial<ImpactStatsLocaleContent>) => {
+    setDoc((prev) => ({
+      ...prev,
+      locales: {
+        ...prev.locales,
+        [editLocale]: { ...prev.locales[editLocale], ...patch },
+      },
+    }))
+  }
+
   const updateStat = (idx: number, patch: Partial<ImpactStatItem>) => {
     setDoc((prev) => ({
       ...prev,
-      stats: prev.stats.map((row, i) => (i === idx ? { ...row, ...patch } : row)),
+      locales: {
+        ...prev.locales,
+        [editLocale]: {
+          ...prev.locales[editLocale],
+          stats: prev.locales[editLocale].stats.map((row, i) => (i === idx ? { ...row, ...patch } : row)),
+        },
+      },
     }))
   }
 
   const removeStat = (idx: number) => {
     setDoc((prev) => ({
       ...prev,
-      stats: prev.stats.filter((_, i) => i !== idx),
+      locales: {
+        ...prev.locales,
+        [editLocale]: {
+          ...prev.locales[editLocale],
+          stats: prev.locales[editLocale].stats.filter((_, i) => i !== idx),
+        },
+      },
     }))
   }
 
   const addStat = () => {
     setDoc((prev) => ({
       ...prev,
-      stats: [...prev.stats, { id: newStatId(), label: '', value: '', unit: '' }],
+      locales: {
+        ...prev.locales,
+        [editLocale]: {
+          ...prev.locales[editLocale],
+          stats: [...prev.locales[editLocale].stats, { id: newStatId(), label: '', value: '', unit: '' }],
+        },
+      },
     }))
   }
 
@@ -65,19 +103,37 @@ export function AdminImpactStatsPage() {
     setError('')
     try {
       const payload: ImpactStatsDocument = {
-        version: 1,
-        donut: {
-          percent: doc.donut.percent,
-          labelLines: doc.donut.labelLines.map((line) => line.trim()).filter(Boolean),
+        version: 2,
+        locales: {
+          ko: {
+            donut: {
+              percent: doc.locales.ko.donut.percent,
+              labelLines: doc.locales.ko.donut.labelLines.map((line) => line.trim()).filter(Boolean),
+            },
+            stats: doc.locales.ko.stats
+              .filter((row) => row.label.trim() || row.value.trim() || row.unit?.trim())
+              .map((row) => ({
+                id: row.id.trim() || newStatId(),
+                label: row.label.trim(),
+                value: row.value.trim(),
+                unit: row.unit?.trim() ?? '',
+              })),
+          },
+          en: {
+            donut: {
+              percent: doc.locales.en.donut.percent,
+              labelLines: doc.locales.en.donut.labelLines.map((line) => line.trim()).filter(Boolean),
+            },
+            stats: doc.locales.en.stats
+              .filter((row) => row.label.trim() || row.value.trim() || row.unit?.trim())
+              .map((row) => ({
+                id: row.id.trim() || newStatId(),
+                label: row.label.trim(),
+                value: row.value.trim(),
+                unit: row.unit?.trim() ?? '',
+              })),
+          },
         },
-        stats: doc.stats
-          .filter((row) => row.label.trim() || row.value.trim() || row.unit?.trim())
-          .map((row) => ({
-            id: row.id.trim() || newStatId(),
-            label: row.label.trim(),
-            value: row.value.trim(),
-            unit: row.unit?.trim() ?? '',
-          })),
       }
       const saved = await adminPutImpactStats(payload)
       setDoc(saved)
@@ -89,7 +145,7 @@ export function AdminImpactStatsPage() {
     }
   }
 
-  const labelLinesText = doc.donut.labelLines.join('\n')
+  const labelLinesText = localeDoc.donut.labelLines.join('\n')
 
   return (
     <div className="admin-page">
@@ -97,13 +153,29 @@ export function AdminImpactStatsPage() {
         <div>
           <h1 className="admin-page__title">나눔의 결실</h1>
           <p className="admin-page__desc">
-            홈 「나눔의 결실」 섹션의 도넛 비율·설명과 하단 성과 지표를 수정합니다. 단위(예: 명)는
-            비워 두면 표시하지 않습니다. 라벨이 비어 있는 항목은 홈에 나오지 않습니다.
+            홈 「나눔의 결실」 섹션의 도넛·성과 지표를 언어별로 수정합니다. 비율(%)은 한·영 공통으로
+            저장되며, 아래 탭에서 각 언어의 문구만 편집합니다.
           </p>
         </div>
         <button type="button" className="admin-btn" disabled={saving || loading} onClick={() => void onSave()}>
           {saving ? '저장 중…' : '저장'}
         </button>
+      </div>
+
+      <div className="admin-field admin-field--full" style={{ marginBottom: '1rem' }}>
+        <span className="admin-field__label">편집 언어</span>
+        <div className="admin-segmented admin-segmented--tight" role="group" aria-label="편집 언어">
+          {EDIT_LOCALES.map(({ id, label }) => (
+            <button
+              key={id}
+              type="button"
+              className={`admin-segmented__btn${editLocale === id ? ' admin-segmented__btn--active' : ''}`}
+              onClick={() => setEditLocale(id)}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {error ? <p className="admin-banner admin-banner--error">{error}</p> : null}
@@ -123,38 +195,41 @@ export function AdminImpactStatsPage() {
             </h2>
             <div className="admin-form-grid">
               <label className="admin-field">
-                <span className="admin-field__label">비율 (%)</span>
+                <span className="admin-field__label">비율 (%) — 한·영 공통</span>
                 <input
                   className="admin-input"
                   type="number"
                   min={0}
                   max={100}
                   step={0.1}
-                  value={Number.isFinite(doc.donut.percent) ? doc.donut.percent : 0}
-                  onChange={(e) =>
+                  value={Number.isFinite(localeDoc.donut.percent) ? localeDoc.donut.percent : 0}
+                  onChange={(e) => {
+                    const percent = parseFloat(e.target.value) || 0
                     setDoc((prev) => ({
                       ...prev,
-                      donut: { ...prev.donut, percent: parseFloat(e.target.value) || 0 },
+                      locales: {
+                        ko: { ...prev.locales.ko, donut: { ...prev.locales.ko.donut, percent } },
+                        en: { ...prev.locales.en, donut: { ...prev.locales.en.donut, percent } },
+                      },
                     }))
-                  }
+                  }}
                 />
               </label>
               <label className="admin-field admin-field--full">
-                <span className="admin-field__label">도넛 안 설명 (줄마다 Enter)</span>
+                <span className="admin-field__label">도넛 안 설명 ({editLocale === 'ko' ? '한국어' : 'English'}, 줄마다 Enter)</span>
                 <textarea
                   className="admin-input admin-input--area"
                   rows={3}
                   value={labelLinesText}
                   onChange={(e) =>
-                    setDoc((prev) => ({
-                      ...prev,
+                    patchLocale({
                       donut: {
-                        ...prev.donut,
+                        ...localeDoc.donut,
                         labelLines: e.target.value.split('\n'),
                       },
-                    }))
+                    })
                   }
-                  placeholder={'수혜된 아동의\n교육지원'}
+                  placeholder={editLocale === 'ko' ? '수혜된 아동의\n교육지원' : 'Education support\nfor children we serve'}
                 />
               </label>
             </div>
@@ -163,7 +238,7 @@ export function AdminImpactStatsPage() {
           <section className="admin-panel" aria-labelledby="impact-stats-heading">
             <div className="admin-page__head admin-page__head--inline">
               <h2 id="impact-stats-heading" className="admin-panel__title">
-                성과 지표
+                성과 지표 ({editLocale === 'ko' ? '한국어' : 'English'})
               </h2>
               <button type="button" className="admin-btn admin-btn--sm admin-btn--ghost" onClick={addStat}>
                 항목 추가
@@ -180,14 +255,14 @@ export function AdminImpactStatsPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {doc.stats.length === 0 ? (
+                  {localeDoc.stats.length === 0 ? (
                     <tr>
                       <td colSpan={4} className="admin-table__empty">
                         항목이 없습니다. 「항목 추가」로 넣어 주세요.
                       </td>
                     </tr>
                   ) : (
-                    doc.stats.map((row, idx) => (
+                    localeDoc.stats.map((row, idx) => (
                       <tr key={row.id}>
                         <td>
                           <input
@@ -231,6 +306,10 @@ export function AdminImpactStatsPage() {
                 </tbody>
               </table>
             </div>
+            <p className="admin-upload__hint">
+              항목 ID는 언어 간 매칭용입니다. 숫자(value)는 언어별로 같게 두어도 되고, 표시 형식만 다르게
+              적을 수 있습니다.
+            </p>
           </section>
         </>
       )}

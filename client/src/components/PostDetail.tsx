@@ -44,15 +44,15 @@ function listPathForPost(post: Post): string {
   const kind = post.meta?.khayah_kind ?? ''
   switch (kind) {
     case '공지사항':
-      return '/소식/공지사항'
+      return '/news/announcements'
     case '활동소식':
-      return '/소식/활동소식'
+      return '/news/activities'
     case '연간소식지':
-      return '/소식/연간소식지'
+      return '/news/newsletter'
     case '언론보도':
-      return '/소식/언론보도'
+      return '/news/press'
     case '진행사업':
-      return '/사업/진행사업'
+      return '/business/projects'
     case '스토리': {
       const scope = post.meta?.khayah_story_scope
       if (scope === '국내') return '/stories/domestic'
@@ -62,7 +62,7 @@ function listPathForPost(post: Post): string {
       return '/stories'
     }
     default:
-      return '/소식/공지사항'
+      return '/news/announcements'
   }
 }
 
@@ -72,31 +72,31 @@ function crumbsForPost(post: Post): Array<{ label: string; to: string }> {
     case '공지사항':
       return [
         { label: '소식', to: '/stories' },
-        { label: '공지사항', to: '/소식/공지사항' },
+        { label: '공지사항', to: '/news/announcements' },
       ]
     case '활동소식':
       return [
         { label: '소식', to: '/stories' },
-        { label: '활동소식', to: '/소식/활동소식' },
+        { label: '활동소식', to: '/news/activities' },
       ]
     case '연간소식지':
       return [
         { label: '소식', to: '/stories' },
-        { label: '연간소식지', to: '/소식/연간소식지' },
+        { label: '연간소식지', to: '/news/newsletter' },
       ]
     case '언론보도':
       return [
         { label: '소식', to: '/stories' },
-        { label: '언론보도', to: '/소식/언론보도' },
+        { label: '언론보도', to: '/news/press' },
       ]
     case '진행사업': {
       const region = post.meta?.khayah_project_region?.trim()
       const crumbs = [
-        { label: '사업', to: '/국내사업' },
-        { label: '진행사업', to: '/사업/진행사업' },
+        { label: '사업', to: '/business/domestic' },
+        { label: '진행사업', to: '/business/projects' },
       ]
       if (region) {
-        crumbs.push({ label: region, to: `/사업/진행사업/${encodeURIComponent(region)}` })
+        crumbs.push({ label: region, to: `/business/projects/${encodeURIComponent(region)}` })
       }
       return crumbs
     }

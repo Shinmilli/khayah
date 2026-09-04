@@ -4,12 +4,18 @@ import {
   DEFAULT_INCOME_SEGMENTS,
 } from '../../financial-report/financialReportDefaults'
 import type {
-  FinancialReportSegment,
-  FinancialReportYearData,
+  FinancialReportEditLocale,
+  FinancialReportSegmentV2,
+  FinancialReportYearDataV2,
   FinancialReportsDocument,
 } from '../../financial-report/financialReportTypes'
 import { AdminMediaUpload } from '../components/AdminMediaUpload'
-import { adminPutFinancialReports, fetchFinancialReports } from '../../../services/api'
+import { adminFetchFinancialReports, adminPutFinancialReports } from '../../../services/api'
+
+const EDIT_LOCALES: { id: FinancialReportEditLocale; label: string }[] = [
+  { id: 'ko', label: '한국어' },
+  { id: 'en', label: 'English' },
+]
 
 function deepClone<T>(v: T): T {
   return JSON.parse(JSON.stringify(v)) as T
@@ -19,7 +25,7 @@ function newSegmentId(): string {
   return `seg-${typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : String(Date.now())}`
 }
 
-function emptyYearFromTemplate(year: number): FinancialReportYearData {
+function emptyYearFromTemplate(year: number): FinancialReportYearDataV2 {
   return {
     year,
     /** 템플릿의 의미 있는 id 유지 — 도넛 안내선 분기·저장 데이터와 일치 (추가 행만 newSegmentId) */
@@ -64,14 +70,23 @@ function AdminOnOffToggle({
 function SegmentTableEditor({
   title,
   rows,
+  editLocale,
   onChange,
 }: {
   title: string
-  rows: FinancialReportSegment[]
-  onChange: (next: FinancialReportSegment[]) => void
+  rows: FinancialReportSegmentV2[]
+  editLocale: FinancialReportEditLocale
+  onChange: (next: FinancialReportSegmentV2[]) => void
 }) {
-  const updateRow = (idx: number, patch: Partial<FinancialReportSegment>) => {
-    const next = rows.map((r, i) => (i === idx ? { ...r, ...patch } : r))
+  const updateRow = (idx: number, patch: Partial<FinancialReportSegmentV2> & { label?: string }) => {
+    const next = rows.map((r, i) => {
+      if (i !== idx) return r
+      if (patch.label !== undefined) {
+        return { ...r, labels: { ...r.labels, [editLocale]: patch.label } }
+      }
+      const { label: _drop, ...rest } = patch
+      return { ...r, ...rest }
+    })
     onChange(next)
   }
   const removeRow = (idx: number) => {
@@ -80,7 +95,12 @@ function SegmentTableEditor({
   const addRow = () => {
     onChange([
       ...rows,
-      { id: newSegmentId(), label: '새 항목', percent: 0, color: '#6c7a89' },
+      {
+        id: newSegmentId(),
+        labels: { ko: '새 항목', en: 'New item' },
+        percent: 0,
+        color: '#6c7a89',
+      },
     ])
   }
 
@@ -108,7 +128,7 @@ function SegmentTableEditor({
                 <td>
                   <input
                     className="admin-input"
-                    value={row.label}
+                    value={row.labels[editLocale]}
                     onChange={(e) => updateRow(idx, { label: e.target.value })}
                     aria-label={`${title} 항목명`}
                   />
@@ -153,6 +173,7 @@ function SegmentTableEditor({
 
 export function AdminFinancialReportsPage() {
   const [doc, setDoc] = useState<FinancialReportsDocument | null>(null)
+  const [editLocale, setEditLocale] = useState<FinancialReportEditLocale>('ko')
   const [selectedYear, setSelectedYear] = useState<number | null>(null)
   const [loading, setLoading] = useState(true)
   const [loadErr, setLoadErr] = useState<string | null>(null)
@@ -164,7 +185,7 @@ export function AdminFinancialReportsPage() {
     setLoading(true)
     setLoadErr(null)
     try {
-      const d = await fetchFinancialReports()
+      const d = await adminFetchFinancialReports()
       setDoc(deepClone(d))
       const ys = [...d.reports.map((r) => r.year)].sort((a, b) => b - a)
       setSelectedYear((cur) => (cur !== null && ys.includes(cur) ? cur : ys[0] ?? null))
@@ -190,7 +211,7 @@ export function AdminFinancialReportsPage() {
     return doc.reports.find((r) => r.year === selectedYear) ?? null
   }, [doc, selectedYear])
 
-  const updateSelected = (patch: Partial<FinancialReportYearData>) => {
+  const updateSelected = (patch: Partial<FinancialReportYearDataV2>) => {
     if (!doc || selectedYear === null) return
     setDoc({
       ...doc,
@@ -273,7 +294,7 @@ export function AdminFinancialReportsPage() {
           <h1 className="admin-page__title">재정보고</h1>
           <p className="admin-page__desc">
             연도별 수입·지출 도넛 데이터와 재무상태표·운영성과표 이미지·기부금 공시 PDF를 저장합니다.
-            파일은 서버 <code>/uploads</code>에 두고 공개 페이지(`/소식/재정보고`)는{' '}
+            파일은 서버 <code>/uploads</code>에 두고 공개 페이지(`/news/financial-report`)는{' '}
             <code>GET /api/financial-reports</code>로 불러옵니다.
           </p>
         </div>
@@ -292,6 +313,24 @@ export function AdminFinancialReportsPage() {
           저장되었습니다.
         </p>
       ) : null}
+
+      <div className="admin-locale-tabs" role="tablist" aria-label="재정보고 라벨 편집 언어">
+        {EDIT_LOCALES.map((loc) => (
+          <button
+            key={loc.id}
+            type="button"
+            role="tab"
+            aria-selected={editLocale === loc.id}
+            className={`admin-locale-tabs__btn${editLocale === loc.id ? ' is-active' : ''}`}
+            onClick={() => setEditLocale(loc.id)}
+          >
+            {loc.label}
+          </button>
+        ))}
+      </div>
+      <p className="admin-upload__hint" style={{ marginBottom: '1rem' }}>
+        도넛 항목명만 언어별로 편집합니다. 비율·색·금액·이미지·PDF는 공통입니다.
+      </p>
 
       <section className="admin-panel" aria-labelledby="fr-years-heading">
         <h2 id="fr-years-heading" className="admin-panel__title">
@@ -368,11 +407,13 @@ export function AdminFinancialReportsPage() {
 
             <SegmentTableEditor
               title="수입 구성 (도넛)"
+              editLocale={editLocale}
               rows={selected.incomeSegments}
               onChange={(incomeSegments) => updateSelected({ incomeSegments })}
             />
             <SegmentTableEditor
               title="지출 구성 (도넛)"
+              editLocale={editLocale}
               rows={selected.expenseSegments}
               onChange={(expenseSegments) => updateSelected({ expenseSegments })}
             />

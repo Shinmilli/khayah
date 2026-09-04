@@ -1,4 +1,5 @@
 import { useRef } from 'react'
+import { useLocale } from '../../../i18n/LocaleContext'
 
 const PARTNER_LOGOS: { src: string; alt: string }[] = [
   { src: '/images/Home/parteners/partner-1.png', alt: '협력기관 로고 1' },
@@ -9,6 +10,8 @@ const PARTNER_LOGOS: { src: string; alt: string }[] = [
 ]
 
 export function PartnersSection() {
+  const { messages } = useLocale()
+  const m = messages.home.partners
   const trackRef = useRef<HTMLDivElement | null>(null)
 
   const scrollByStep = (direction: number) => {
@@ -23,19 +26,17 @@ export function PartnersSection() {
   }
 
   return (
-    <section className="partners-section" aria-label="협력기관">
+    <section className="partners-section" aria-label={m.aria}>
       <div className="partners-container">
         <div className="partners-layout">
           <header className="partners-head">
-            <h2 className="partners-title">함께하는 협력기관</h2>
-            <p className="partners-sub">
-              카야의 활동은 다양한 파트너와의 협력으로 더 멀리, 더 단단하게 이어집니다.
-            </p>
-            <div className="partners-controls" aria-label="협력기관 로고 컨트롤">
-              <button type="button" className="partners-nav partners-nav--prev" aria-label="이전 로고" onClick={() => scrollByStep(-1)}>
+            <h2 className="partners-title">{m.title}</h2>
+            <p className="partners-sub">{m.subtitle}</p>
+            <div className="partners-controls" aria-label={m.controls}>
+              <button type="button" className="partners-nav partners-nav--prev" aria-label={m.prev} onClick={() => scrollByStep(-1)}>
                 <span aria-hidden="true">‹</span>
               </button>
-              <button type="button" className="partners-nav partners-nav--next" aria-label="다음 로고" onClick={() => scrollByStep(1)}>
+              <button type="button" className="partners-nav partners-nav--next" aria-label={m.next} onClick={() => scrollByStep(1)}>
                 <span aria-hidden="true">›</span>
               </button>
             </div>

@@ -1,11 +1,26 @@
 import { useEffect, useMemo, useState } from 'react'
 import { AdminMediaUpload } from '../components/AdminMediaUpload'
-import { getDefaultPopupConfig, getDefaultPopupItem, loadPopupConfig, savePopupConfig, type PopupConfig, type PopupItem } from '../../../utils/popup'
+import {
+  getDefaultPopupConfig,
+  getDefaultPopupItem,
+  loadPopupConfig,
+  savePopupConfig,
+  type PopupConfig,
+  type PopupItem,
+} from '../../../utils/popup'
+
+type PopupEditLocale = 'ko' | 'en'
+
+const EDIT_LOCALES: { id: PopupEditLocale; label: string }[] = [
+  { id: 'ko', label: '한국어' },
+  { id: 'en', label: 'English' },
+]
 
 export function AdminPopupPage() {
   const defaults = useMemo(() => getDefaultPopupConfig(), [])
   const [config, setConfig] = useState<PopupConfig>(defaults)
   const [selectedId, setSelectedId] = useState<string>('')
+  const [editLocale, setEditLocale] = useState<PopupEditLocale>('ko')
   const [status, setStatus] = useState<string>('')
 
   useEffect(() => {
@@ -35,7 +50,7 @@ export function AdminPopupPage() {
       <div className="admin-page__head">
         <div>
           <h1 className="admin-page__title">팝업 관리</h1>
-          <p className="admin-page__desc">여러 개의 팝업을 등록하고, 표시 여부/이미지/링크를 관리합니다. (localStorage 기반)</p>
+          <p className="admin-page__desc">여러 개의 팝업을 등록하고, 표시 여부/이미지/링크를 관리합니다. 버튼 문구는 한·영 별도 (localStorage 기반)</p>
         </div>
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
           <button
@@ -56,6 +71,20 @@ export function AdminPopupPage() {
       </div>
 
       <section className="admin-panel" aria-label="팝업 설정">
+        <div className="admin-locale-tabs" role="tablist" aria-label="팝업 버튼 문구 편집 언어">
+          {EDIT_LOCALES.map((loc) => (
+            <button
+              key={loc.id}
+              type="button"
+              role="tab"
+              aria-selected={editLocale === loc.id}
+              className={`admin-locale-tabs__btn${editLocale === loc.id ? ' is-active' : ''}`}
+              onClick={() => setEditLocale(loc.id)}
+            >
+              {loc.label}
+            </button>
+          ))}
+        </div>
         <div className="admin-form-grid">
           <div className="admin-field admin-field--full">
             <span className="admin-field__label">팝업 목록</span>
@@ -149,13 +178,21 @@ export function AdminPopupPage() {
                   </div>
                 </div>
                 <label className="admin-field admin-field--full">
-                  <span className="admin-field__label">버튼 텍스트</span>
+                  <span className="admin-field__label">버튼 텍스트 ({editLocale === 'ko' ? '한국어' : 'English'})</span>
                   <input
                     className="admin-input"
                     type="text"
-                    placeholder="예: 자세히 보기"
-                    value={selected?.buttonLabel ?? ''}
-                    onChange={(e) => updateSelected({ buttonLabel: e.currentTarget.value })}
+                    placeholder={editLocale === 'ko' ? '예: 자세히 보기' : 'e.g. Learn more'}
+                    value={selected?.buttonLabels?.[editLocale] ?? ''}
+                    onChange={(e) =>
+                      updateSelected({
+                        buttonLabels: {
+                          ko: selected?.buttonLabels?.ko ?? '자세히 보기',
+                          en: selected?.buttonLabels?.en ?? 'Learn more',
+                          [editLocale]: e.currentTarget.value,
+                        },
+                      })
+                    }
                   />
                 </label>
                 <label className="admin-field admin-field--full">

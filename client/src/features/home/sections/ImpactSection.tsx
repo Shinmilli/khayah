@@ -4,42 +4,40 @@ import {
   DEFAULT_IMPACT_STATS,
   formatImpactPercent,
   visibleImpactStats,
-  type ImpactStatsDocument,
+  type ImpactStatsLocaleContent,
 } from '../impactStatsTypes'
 import { fetchImpactStats } from '../../../services/api'
-
-const ROTATOR_TEXT = [
-  '01. 투명하게 증명합니다',
-  '02. 현장의 변화를 우선합니다',
-  '03. 소중한 마음을 연결합니다',
-]
+import { useLocale } from '../../../i18n/LocaleContext'
+import { PATH } from '../../../i18n/routes'
 
 export function ImpactSection() {
+  const { locale, messages, localize } = useLocale()
+  const m = messages.home.impact
   const [idx, setIdx] = useState(0)
-  const [content, setContent] = useState<ImpactStatsDocument>(DEFAULT_IMPACT_STATS)
+  const [content, setContent] = useState<ImpactStatsLocaleContent>(DEFAULT_IMPACT_STATS.locales.ko)
   const visualRef = useRef<HTMLDivElement | null>(null)
   const bgRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
     let cancelled = false
-    fetchImpactStats()
+    fetchImpactStats(locale)
       .then((doc) => {
         if (!cancelled) setContent(doc)
       })
       .catch(() => {
-        if (!cancelled) setContent(DEFAULT_IMPACT_STATS)
+        if (!cancelled) setContent(DEFAULT_IMPACT_STATS.locales[locale])
       })
     return () => {
       cancelled = true
     }
-  }, [])
+  }, [locale])
 
   useEffect(() => {
     const timer = window.setInterval(() => {
-      setIdx((prev) => (prev + 1) % ROTATOR_TEXT.length)
+      setIdx((prev) => (prev + 1) % m.rotator.length)
     }, 2800)
     return () => window.clearInterval(timer)
-  }, [])
+  }, [m.rotator.length])
 
   useEffect(() => {
     const impactBannerBg = bgRef.current
@@ -51,12 +49,13 @@ export function ImpactSection() {
   const labelLines = donut.labelLines.map((line) => line.trim()).filter(Boolean)
   const donutLabelText = labelLines.join(' ')
   const statsVisible = visibleImpactStats(stats)
+  const percentText = formatImpactPercent(donut.percent)
 
   return (
-    <section className="impact-banner" id="support" aria-label="후원금 사용 요약">
+    <section className="impact-banner" id="support" aria-label={m.aria}>
       <header className="impact-banner__intro impact-banner__align-col">
-        <h2 className="impact-banner__title">나눔의 결실</h2>
-        <p className="impact-banner__sub">함께 만든 희망의 열매들</p>
+        <h2 className="impact-banner__title">{m.title}</h2>
+        <p className="impact-banner__sub">{m.subtitle}</p>
       </header>
 
       <div ref={visualRef} className="impact-banner__visual">
@@ -64,7 +63,7 @@ export function ImpactSection() {
 
         <div className="impact-banner__visual-text impact-banner__align-col">
           <div className="impact-banner__rotator" aria-live="polite">
-            {ROTATOR_TEXT.map((t, i) => (
+            {m.rotator.map((t, i) => (
               <p key={t} className={`impact-rotator__item${i === idx ? ' is-active' : ''}`}>
                 {t}
               </p>
@@ -76,22 +75,18 @@ export function ImpactSection() {
           <article className="impact-card impact-card--primary">
             <div className="impact-card__content">
               <div className="impact-card__head">
-                <h3 className="impact-card__title">후원금은 이렇게 사용됩니다</h3>
-                <p className="impact-card__desc">Khayah는 후원금을 가장 가치 있는 일에 사용하기 위해 노력합니다.</p>
+                <h3 className="impact-card__title">{m.cardTitle}</h3>
+                <p className="impact-card__desc">{m.cardDesc}</p>
               </div>
             </div>
 
             <div
               className="donut"
               style={{ '--p': donut.percent } as CSSProperties}
-              aria-label={
-                donutLabelText
-                  ? `후원금의 ${formatImpactPercent(donut.percent).replace('%', '')}%는 ${donutLabelText}에 사용됩니다`
-                  : `후원금의 ${formatImpactPercent(donut.percent)}`
-              }
+              aria-label={m.donutAria(percentText, donutLabelText)}
             >
               <div className="donut__center">
-                <div className="donut__value">{formatImpactPercent(donut.percent)}</div>
+                <div className="donut__value">{percentText}</div>
                 {labelLines.length > 0 ? (
                   <div className="donut__sub">
                     {labelLines.map((line, i) => (
@@ -105,13 +100,13 @@ export function ImpactSection() {
               </div>
             </div>
 
-            <Link className="impact-card__cta" to="/소식/재정보고">
-              자세히보기
+            <Link className="impact-card__cta" to={localize(`/${PATH.newsFinancialReport}`)}>
+              {m.cta}
             </Link>
           </article>
 
           {statsVisible.length > 0 ? (
-            <div className="impact-stats" role="list" aria-label="성과 지표">
+            <div className="impact-stats" role="list" aria-label={m.statsAria}>
               {statsVisible.map((row) => {
                 const unit = row.unit?.trim() ?? ''
                 return (

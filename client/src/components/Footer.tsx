@@ -1,24 +1,28 @@
 import { Fragment, useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
-import { FOOTER, FOOTER_LOGO_DARK, FOOTER_LOGO_FALLBACK, FOOTER_TOP_LINKS } from '../constants'
+import { FOOTER_LOGO_DARK, FOOTER_LOGO_FALLBACK, FOOTER_TOP_LINKS } from '../constants'
+import { useLocale } from '../i18n/LocaleContext'
+import type { FooterTopLinkKey } from '../i18n/messages/ko'
 
 type TopLinkItem = (typeof FOOTER_TOP_LINKS)[number]
 
 function FooterTopLink({
   item,
   children,
+  to,
 }: {
   item: TopLinkItem
   children: ReactNode
+  to?: string
 }) {
-  if ('to' in item) {
+  if ('to' in item && to) {
     return (
-      <Link className="footer-links-bar__link" to={item.to}>
+      <Link className="footer-links-bar__link" to={to}>
         {children}
       </Link>
     )
   }
-  if (item.href) {
+  if ('href' in item && item.href) {
     return (
       <a
         className="footer-links-bar__link"
@@ -47,8 +51,8 @@ function FooterBrandLogo() {
   )
 }
 
-function ContactText() {
-  const lines = FOOTER.contactText.split('\n')
+function ContactText({ text }: { text: string }) {
+  const lines = text.split('\n')
   return (
     <div className="footer-main__address">
       {lines.map((line, i) => (
@@ -61,20 +65,29 @@ function ContactText() {
 }
 
 export function Footer() {
+  const { localize, messages } = useLocale()
+  const { footer } = messages
+  const year = new Date().getFullYear()
+
   return (
     <footer id="Footer" className="clearfix">
       <div className="footer-links-bar">
         <div className="container footer-links-bar__inner">
-          <nav className="footer-links-bar__nav" aria-label="푸터 바로가기">
+          <nav className="footer-links-bar__nav" aria-label={footer.aria}>
             <div className="footer-links-bar__row">
               {FOOTER_TOP_LINKS.map((item, i) => (
-                <Fragment key={item.label}>
+                <Fragment key={item.key}>
                   {i > 0 && (
                     <span className="footer-links-bar__sep" aria-hidden>
                       |
                     </span>
                   )}
-                  <FooterTopLink item={item}>{item.label}</FooterTopLink>
+                  <FooterTopLink
+                    item={item}
+                    to={'to' in item ? localize(item.to) : undefined}
+                  >
+                    {footer.topLinks[item.key as FooterTopLinkKey]}
+                  </FooterTopLink>
                 </Fragment>
               ))}
             </div>
@@ -86,7 +99,7 @@ export function Footer() {
         <div className="container footer-main__inner">
           <div className="footer-main__left">
             <FooterBrandLogo />
-            <ContactText />
+            <ContactText text={footer.contactText} />
           </div>
         </div>
       </div>
@@ -107,9 +120,7 @@ export function Footer() {
                 ↑
               </span>
             </a>
-            <div className="copyright">
-              © {new Date().getFullYear()} 사단법인 카야 인터내셔널. All Rights Reserved.
-            </div>
+            <div className="copyright">{footer.copyright(year)}</div>
           </div>
         </div>
       </div>
