@@ -366,9 +366,18 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
       </div>
 
       <div class="ov-edu-strip" aria-label="Activity images">
-        <div class="ov-edu-img" aria-hidden="true"><div class="ov-edu-img__cap">Learning activities</div></div>
-        <div class="ov-edu-img" aria-hidden="true"><div class="ov-edu-img__cap">Reading club</div></div>
-        <div class="ov-edu-img" aria-hidden="true"><div class="ov-edu-img__cap">Learning environment</div></div>
+        <div class="ov-edu-img" aria-hidden="true">
+          <img class="ov-edu-img__photo" src="/images/business/overseas-edu-learn.jpg" alt="" loading="lazy" />
+          <div class="ov-edu-img__cap">Learning activities</div>
+        </div>
+        <div class="ov-edu-img" aria-hidden="true">
+          <img class="ov-edu-img__photo" src="/images/business/overseas-edu-reading.jpg" alt="" loading="lazy" />
+          <div class="ov-edu-img__cap">Reading club</div>
+        </div>
+        <div class="ov-edu-img" aria-hidden="true">
+          <img class="ov-edu-img__photo" src="/images/business/overseas-edu-env.jpg" alt="" loading="lazy" />
+          <div class="ov-edu-img__cap">Learning environment</div>
+        </div>
       </div>
     </div>
   </section>
@@ -406,9 +415,18 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
       </div>
 
       <div class="ov-edu-strip" aria-label="Activity images">
-        <div class="ov-edu-img" aria-hidden="true"><div class="ov-edu-img__cap">Skills training</div></div>
-        <div class="ov-edu-img" aria-hidden="true"><div class="ov-edu-img__cap">Field practice</div></div>
-        <div class="ov-edu-img" aria-hidden="true"><div class="ov-edu-img__cap">Job placement</div></div>
+        <div class="ov-edu-img" aria-hidden="true">
+          <img class="ov-edu-img__photo" src="/images/business/overseas-edu-skill.jpg" alt="" loading="lazy" />
+          <div class="ov-edu-img__cap">Skills training</div>
+        </div>
+        <div class="ov-edu-img" aria-hidden="true">
+          <img class="ov-edu-img__photo" src="/images/business/overseas-edu-field.jpg" alt="" loading="lazy" />
+          <div class="ov-edu-img__cap">Field practice</div>
+        </div>
+        <div class="ov-edu-img" aria-hidden="true">
+          <img class="ov-edu-img__photo" src="/images/business/overseas-edu-job.jpg" alt="" loading="lazy" />
+          <div class="ov-edu-img__cap">Job placement</div>
+        </div>
       </div>
     </div>
   </section>
@@ -438,6 +456,21 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
           <p class="ov-edu-qcard__p">
             We strengthen the capacity of teachers and learning support staff and provide materials and methods so that student-centered lessons can spread.
           </p>
+        </div>
+      </div>
+
+      <div class="ov-edu-strip" aria-label="Activity images">
+        <div class="ov-edu-img" aria-hidden="true">
+          <img class="ov-edu-img__photo" src="/images/business/overseas-edu-quality-1.jpg" alt="" loading="lazy" />
+          <div class="ov-edu-img__cap">Teacher training</div>
+        </div>
+        <div class="ov-edu-img" aria-hidden="true">
+          <img class="ov-edu-img__photo" src="/images/business/overseas-edu-quality-2.jpg" alt="" loading="lazy" />
+          <div class="ov-edu-img__cap">Teaching materials</div>
+        </div>
+        <div class="ov-edu-img" aria-hidden="true">
+          <img class="ov-edu-img__photo" src="/images/business/overseas-edu-quality-3.jpg" alt="" loading="lazy" />
+          <div class="ov-edu-img__cap">Classroom learning</div>
         </div>
       </div>
     </div>
@@ -678,6 +711,7 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
           </p>
         </div>
         <div class="edu-ref-media" aria-hidden="true">
+          <img class="edu-ref-media__img" src="/images/business/domestic-edu-1.jpg" alt="" loading="lazy" />
           <div class="edu-ref-media__caption">Program on the ground</div>
         </div>
       </div>
@@ -688,6 +722,7 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
     <div class="edu-wrap">
       <div class="edu-ref-grid">
         <div class="edu-ref-media" aria-hidden="true">
+          <img class="edu-ref-media__img" src="/images/business/domestic-edu-2.jpg" alt="" loading="lazy" />
           <div class="edu-ref-media__caption">Education &amp; mentoring</div>
         </div>
         <div>
@@ -716,6 +751,7 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
           </p>
         </div>
         <div class="edu-ref-media" aria-hidden="true">
+          <img class="edu-ref-media__img" src="/images/business/domestic-edu-3.jpg" alt="" loading="lazy" />
           <div class="edu-ref-media__caption">Youth growth program</div>
         </div>
       </div>

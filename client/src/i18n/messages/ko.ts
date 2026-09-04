@@ -119,6 +119,7 @@ export type Messages = {
     notFoundTitle: string
     notFoundBody: string
     loading: string
+    scrollHint: string
     storyCta: {
       domestic: string
       overseas: string
@@ -408,6 +409,7 @@ export const koMessages: Messages = {
     notFoundTitle: '페이지를 찾을 수 없습니다',
     notFoundBody: '요청하신 경로에 해당하는 페이지가 없거나 이동되었을 수 있습니다.',
     loading: '불러오는 중...',
+    scrollHint: '스크롤',
     storyCta: {
       domestic: '국내 스토리 확인하기',
       overseas: '해외 스토리 확인하기',

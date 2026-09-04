@@ -18,6 +18,7 @@ import '../styles/page.css'
 import '../styles/newsletter.css'
 import { PATH } from '../i18n/routes'
 import { useLocale } from '../i18n/LocaleContext'
+import { pageHeroImageForPath } from '../constants/pageHeroImages'
 
 function formatDate(
   iso: string,
@@ -232,7 +233,7 @@ export function NewsArchivePage() {
         isNewsletter ? ' yearly-nl-page' : ''
       }${isActivity ? ' activity-archive-page' : ''}`}
     >
-      <PageHero title={title} />
+      <PageHero title={title} backgroundImageUrl={pageHeroImageForPath(pathKey)} />
       <div className="section">
         <div className="section_wrapper clearfix">
           <div className="column one">

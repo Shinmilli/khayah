@@ -21,6 +21,7 @@ import '../styles/business-advocacy.css'
 import '../styles/donor-guide.css'
 import { NANUM_DONATE_URL } from '../constants/nanumDonate'
 import { PATH } from '../i18n/routes'
+import { pageHeroImageForPath } from '../constants/pageHeroImages'
 
 function storyCtaForPathKey(
   pathKey: string,
@@ -174,7 +175,11 @@ export function PageByPath() {
     const storyCta = storyCtaForPathKey(pathKey, messages)
     return (
       <div className="page-content-wrapper">
-        <PageHero title={staticPage.title} showScrollHint={pathKey !== PATH.aboutLocation} />
+        <PageHero
+          title={staticPage.title}
+          backgroundImageUrl={pageHeroImageForPath(pathKey)}
+          showScrollHint={pathKey !== PATH.aboutLocation}
+        />
         <div className="section">
           <div className="section_wrapper clearfix">
             <div className="column one">
@@ -200,7 +205,7 @@ export function PageByPath() {
     const storyCta = storyCtaForPathKey(pathKey, messages)
     return (
       <div className="page-content-wrapper">
-        <PageHero title={apiPage.title} />
+        <PageHero title={apiPage.title} backgroundImageUrl={pageHeroImageForPath(pathKey)} />
         <div className="section">
           <div className="section_wrapper clearfix">
             <div className="column one">

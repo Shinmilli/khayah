@@ -196,14 +196,23 @@
   position: relative;
 }
 
+.edu-ref-media__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
 .edu-ref-media::after {
   content: '';
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(860px 360px at 30% 35%, rgba(178, 8, 56, 0.26), transparent 58%),
-    radial-gradient(820px 380px at 78% 70%, rgba(178, 8, 56, 0.14), transparent 60%),
-    linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.02));
+    linear-gradient(180deg, transparent 45%, rgba(0, 0, 0, 0.45) 100%),
+    radial-gradient(860px 360px at 30% 35%, rgba(178, 8, 56, 0.18), transparent 58%);
+  pointer-events: none;
 }
 
 .edu-ref-media__caption {

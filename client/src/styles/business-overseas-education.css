@@ -73,9 +73,11 @@
   align-items: start;
 }
 
+/* page.css 의 .page-body h2 (22px) 보다 우선 */
+.page-content-wrapper .page-body h2.ov-edu-head__ko,
 .ov-edu-head__ko {
   margin: 0;
-  font-size: clamp(30px, 3.4vw, 44px);
+  font-size: clamp(28px, 3.2vw, 40px);
   letter-spacing: -0.05em;
   line-height: 1.05;
   color: var(--ov-edu-primary);
@@ -156,14 +158,21 @@
   overflow: hidden;
 }
 
+.ov-edu-img__photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
 .ov-edu-img::after {
   content: '';
   position: absolute;
   inset: 0;
-  background:
-    radial-gradient(820px 340px at 30% 35%, rgba(178, 8, 56, 0.26), transparent 58%),
-    radial-gradient(820px 380px at 78% 70%, rgba(178, 8, 56, 0.14), transparent 60%),
-    linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.02));
+  background: linear-gradient(180deg, transparent 40%, rgba(0, 0, 0, 0.5) 100%);
+  pointer-events: none;
 }
 
 .ov-edu-img__cap {

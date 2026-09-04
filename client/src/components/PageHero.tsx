@@ -77,6 +77,11 @@ function labelForSlug(seg: string, messages: Messages): string {
       return nav.links.supportGuide
     case 'apply':
       return messages.footer.topLinks.donate
+    case 'org-chart':
+    case 'org':
+      return nav.links.org
+    case 'directors':
+      return nav.links.org
     case 'nepal':
       return messages.pages.projects.regions.nepal
     case 'myanmar':
@@ -323,21 +328,27 @@ export function PageHero({
         }))
       : buildCrumbs(location.pathname, messages, localize)
 
+  // 경로 키가 제목으로 남은 경우(예: business/domestic) → 브레드크럼 라벨로 보정
+  const displayTitle =
+    /^[a-z0-9]+(?:\/[a-z0-9-]+)+$/i.test(title.trim()) && crumbs.length > 0
+      ? crumbs[crumbs.length - 1]!.label
+      : title
+
   return (
     <>
-      <section className="page-hero" aria-label={title}>
+      <section className="page-hero" aria-label={displayTitle}>
         <div
           className={`page-hero__bg${backgroundImageUrl ? ' has-image' : ''}`}
           style={backgroundImageUrl ? { backgroundImage: `url('${backgroundImageUrl}')` } : undefined}
           aria-hidden="true"
         />
         <div className="page-hero__inner">
-          <h1 className="page-hero__title">{title}</h1>
+          <h1 className="page-hero__title">{displayTitle}</h1>
         </div>
         {showScrollHint && (
           <div className="page-hero__scroll" aria-hidden="true">
             <div className="page-hero__scroll-line" />
-            <span className="page-hero__scroll-label">Scroll</span>
+            <span className="page-hero__scroll-label">{messages.pages.scrollHint}</span>
           </div>
         )}
       </section>

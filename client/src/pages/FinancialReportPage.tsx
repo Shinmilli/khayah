@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { PageHero } from '../components/PageHero'
+import { pageHeroImageForPath } from '../constants/pageHeroImages'
+import { PATH } from '../i18n/routes'
 import { FinancialDonutChart } from '../features/financial-report/FinancialDonutChart'
 import { formatWon } from '../features/financial-report/financialReportDefaults'
 import type { FinancialReportsPublicDocument } from '../features/financial-report/financialReportTypes'
@@ -155,7 +157,11 @@ export function FinancialReportPage() {
   if (loading) {
     return (
       <div className="financial-report-page">
-        <PageHero title={nav.links.financialReport} showScrollHint={false} />
+        <PageHero
+          title={nav.links.financialReport}
+          backgroundImageUrl={pageHeroImageForPath(PATH.newsFinancialReport)}
+          showScrollHint={false}
+        />
         <div className="financial-report__inner">
           <p className="financial-report__status">{fr.loading}</p>
         </div>
@@ -166,7 +172,11 @@ export function FinancialReportPage() {
   if (error) {
     return (
       <div className="financial-report-page">
-        <PageHero title={nav.links.financialReport} showScrollHint={false} />
+        <PageHero
+          title={nav.links.financialReport}
+          backgroundImageUrl={pageHeroImageForPath(PATH.newsFinancialReport)}
+          showScrollHint={false}
+        />
         <div className="financial-report__inner">
           <div className="financial-report__error" role="alert">
             <p>{error}</p>
@@ -183,7 +193,11 @@ export function FinancialReportPage() {
   if (!doc || !report || year === null || !settings) {
     return (
       <div className="financial-report-page">
-        <PageHero title={nav.links.financialReport} showScrollHint={false} />
+        <PageHero
+          title={nav.links.financialReport}
+          backgroundImageUrl={pageHeroImageForPath(PATH.newsFinancialReport)}
+          showScrollHint={false}
+        />
         <div className="financial-report__inner">
           <p className="financial-report__empty">
             {fr.empty}
@@ -197,7 +211,11 @@ export function FinancialReportPage() {
 
   return (
     <div className="financial-report-page">
-      <PageHero title={fr.pageTitle(report.year)} showScrollHint={false} />
+      <PageHero
+        title={fr.pageTitle(report.year)}
+        backgroundImageUrl={pageHeroImageForPath(PATH.newsFinancialReport)}
+        showScrollHint={false}
+      />
 
       <div className="financial-report__inner">
         <div className="financial-report__year-row">

@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom'
 import { PageHero } from '../components/PageHero'
+import { pageHeroImageForPath } from '../constants/pageHeroImages'
+import { PATH } from '../i18n/routes'
 import '../styles/newsletter.css'
 
 type NewsletterItem = {
@@ -31,7 +33,7 @@ const NEWSLETTERS: NewsletterItem[] = [
 export function NewsletterArchivePage() {
   return (
     <div className="page-content-wrapper newsletter-page">
-      <PageHero title="연간소식지" />
+      <PageHero title="연간소식지" backgroundImageUrl={pageHeroImageForPath(PATH.newsNewsletter)} />
       <div className="section">
         <div className="section_wrapper clearfix">
           <div className="column one">

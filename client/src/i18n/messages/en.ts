@@ -143,6 +143,7 @@ export const enMessages: Messages = {
     notFoundTitle: 'Page not found',
     notFoundBody: 'The page you requested may not exist or may have been moved.',
     loading: 'Loading…',
+    scrollHint: 'Scroll',
     storyCta: {
       domestic: 'View domestic stories',
       overseas: 'View overseas stories',

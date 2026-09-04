@@ -6,7 +6,8 @@ import { fetchPostsByKindAndRegion } from '../services/api'
 import type { Post } from '../types/post'
 import { paginate } from '../utils/paginate'
 import { useLocale } from '../i18n/LocaleContext'
-import { PROJECT_SLUG_TO_REGION, projectRegionHref } from '../i18n/routes'
+import { PATH, PROJECT_SLUG_TO_REGION, projectRegionHref } from '../i18n/routes'
+import { pageHeroImageForPath } from '../constants/pageHeroImages'
 import '../styles/projects.css'
 
 const REGIONS = ['전체', '네팔', '키르기즈스탄', '미얀마', '국내'] as const
@@ -63,7 +64,7 @@ export function ProjectsPage() {
 
   return (
     <div className="projects-page">
-      <PageHero title={pj.title} />
+      <PageHero title={pj.title} backgroundImageUrl={pageHeroImageForPath(PATH.businessProjects)} />
 
       <div className="projects-wrap">
         <nav className="projects-tabs" aria-label={pj.filterAria}>

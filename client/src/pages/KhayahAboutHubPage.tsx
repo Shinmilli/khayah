@@ -1,6 +1,8 @@
 import { useEffect, useMemo } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { PageHero } from '../components/PageHero'
+import { pageHeroImageForPath } from '../constants/pageHeroImages'
+import { PATH } from '../i18n/routes'
 import { getStaticPage } from '../constants/pagesContent'
 import { useLocale } from '../i18n/LocaleContext'
 import {
@@ -68,7 +70,7 @@ export function KhayahAboutHubPage() {
 
   return (
     <div className="khayah-about-hub">
-      <PageHero title={hub.title} showScrollHint={false} />
+      <PageHero title={hub.title} backgroundImageUrl={pageHeroImageForPath(PATH.aboutKhayah)} showScrollHint={false} />
 
       <nav className="khayah-about-tabs" aria-label={hub.tabsAria}>
         <div className="khayah-about-tabs__rail" role="tablist">

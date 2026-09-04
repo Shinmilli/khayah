@@ -217,7 +217,7 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
     content: KHAYAH_ORG_BOARD_MERGED_HTML,
   },
   'business/overseas': {
-    title: 'business/overseas',
+    title: '해외사업',
     content: `
 <div class="overseas-page">
   <section class="overseas-hero">
@@ -371,9 +371,18 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
       </div>
 
       <div class="ov-edu-strip" aria-label="활동 이미지">
-        <div class="ov-edu-img" aria-hidden="true"><div class="ov-edu-img__cap">학습 활동</div></div>
-        <div class="ov-edu-img" aria-hidden="true"><div class="ov-edu-img__cap">독서클럽</div></div>
-        <div class="ov-edu-img" aria-hidden="true"><div class="ov-edu-img__cap">교육 환경</div></div>
+        <div class="ov-edu-img" aria-hidden="true">
+          <img class="ov-edu-img__photo" src="/images/business/overseas-edu-learn.jpg" alt="" loading="lazy" />
+          <div class="ov-edu-img__cap">학습 활동</div>
+        </div>
+        <div class="ov-edu-img" aria-hidden="true">
+          <img class="ov-edu-img__photo" src="/images/business/overseas-edu-reading.jpg" alt="" loading="lazy" />
+          <div class="ov-edu-img__cap">독서클럽</div>
+        </div>
+        <div class="ov-edu-img" aria-hidden="true">
+          <img class="ov-edu-img__photo" src="/images/business/overseas-edu-env.jpg" alt="" loading="lazy" />
+          <div class="ov-edu-img__cap">교육 환경</div>
+        </div>
       </div>
     </div>
   </section>
@@ -411,9 +420,18 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
       </div>
 
       <div class="ov-edu-strip" aria-label="활동 이미지">
-        <div class="ov-edu-img" aria-hidden="true"><div class="ov-edu-img__cap">기술 훈련</div></div>
-        <div class="ov-edu-img" aria-hidden="true"><div class="ov-edu-img__cap">현장 실습</div></div>
-        <div class="ov-edu-img" aria-hidden="true"><div class="ov-edu-img__cap">일자리 연계</div></div>
+        <div class="ov-edu-img" aria-hidden="true">
+          <img class="ov-edu-img__photo" src="/images/business/overseas-edu-skill.jpg" alt="" loading="lazy" />
+          <div class="ov-edu-img__cap">기술 훈련</div>
+        </div>
+        <div class="ov-edu-img" aria-hidden="true">
+          <img class="ov-edu-img__photo" src="/images/business/overseas-edu-field.jpg" alt="" loading="lazy" />
+          <div class="ov-edu-img__cap">현장 실습</div>
+        </div>
+        <div class="ov-edu-img" aria-hidden="true">
+          <img class="ov-edu-img__photo" src="/images/business/overseas-edu-job.jpg" alt="" loading="lazy" />
+          <div class="ov-edu-img__cap">일자리 연계</div>
+        </div>
       </div>
     </div>
   </section>
@@ -443,6 +461,21 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
           <p class="ov-edu-qcard__p">
             교사와 학습 보조 인력의 역량을 강화하고, 학생 참여 중심의 수업이 확산될 수 있도록 교육 자료와 방법을 지원합니다.
           </p>
+        </div>
+      </div>
+
+      <div class="ov-edu-strip" aria-label="활동 이미지">
+        <div class="ov-edu-img" aria-hidden="true">
+          <img class="ov-edu-img__photo" src="/images/business/overseas-edu-quality-1.jpg" alt="" loading="lazy" />
+          <div class="ov-edu-img__cap">교사 교육</div>
+        </div>
+        <div class="ov-edu-img" aria-hidden="true">
+          <img class="ov-edu-img__photo" src="/images/business/overseas-edu-quality-2.jpg" alt="" loading="lazy" />
+          <div class="ov-edu-img__cap">수업 자료</div>
+        </div>
+        <div class="ov-edu-img" aria-hidden="true">
+          <img class="ov-edu-img__photo" src="/images/business/overseas-edu-quality-3.jpg" alt="" loading="lazy" />
+          <div class="ov-edu-img__cap">교실 학습</div>
         </div>
       </div>
     </div>
@@ -570,7 +603,7 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
 `,
   },
   'business/domestic': {
-    title: 'business/domestic',
+    title: '국내사업',
     content: `
 <div class="domestic-page">
   <section class="domestic-hero">
@@ -683,6 +716,7 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
           </p>
         </div>
         <div class="edu-ref-media" aria-hidden="true">
+          <img class="edu-ref-media__img" src="/images/business/domestic-edu-1.jpg" alt="" loading="lazy" />
           <div class="edu-ref-media__caption">프로그램 현장</div>
         </div>
       </div>
@@ -693,6 +727,7 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
     <div class="edu-wrap">
       <div class="edu-ref-grid">
         <div class="edu-ref-media" aria-hidden="true">
+          <img class="edu-ref-media__img" src="/images/business/domestic-edu-2.jpg" alt="" loading="lazy" />
           <div class="edu-ref-media__caption">교육 · 멘토링</div>
         </div>
         <div>
@@ -721,6 +756,7 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
           </p>
         </div>
         <div class="edu-ref-media" aria-hidden="true">
+          <img class="edu-ref-media__img" src="/images/business/domestic-edu-3.jpg" alt="" loading="lazy" />
           <div class="edu-ref-media__caption">청소년 성장 프로그램</div>
         </div>
       </div>
@@ -827,7 +863,7 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
     content: '<p>후원 신청 및 정기후원 안내 페이지입니다. 문의: khayahkorea@gmail.com / 031 689 3639</p>',
   },
   'news': {
-    title: 'news',
+    title: '소식',
     content: '<p>카야의 최신 소식, 공지사항, 활동소식, 연간소식지, 재정보고를 확인하실 수 있습니다.</p><p><a href="/news/announcements">공지사항</a> · <a href="/news/activities">활동소식</a> · <a href="/news/newsletter">연간소식지</a> · <a href="/news/press">언론보도</a> · <a href="/news/financial-report">재정보고</a></p>',
   },
   'news/activities': {
