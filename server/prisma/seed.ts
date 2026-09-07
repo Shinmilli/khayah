@@ -732,6 +732,7 @@ async function seed() {
     title: string
     region: '네팔' | '키르기즈스탄' | '미얀마' | '국내'
     daysAgo: number
+    cover: string
     lead: string
     body: string[]
   }> = [
@@ -739,6 +740,7 @@ async function seed() {
       title: '카트만두 도시빈민 마을 꿈도서관',
       region: '네팔',
       daysAgo: 10,
+      cover: COVER.books,
       lead: '책을 빌리는 공간을 넘어, 청소년이 생각을 나누는 거점으로 운영합니다.',
       body: [
         '대상은 카트만두 외곽 도시빈민 밀집 지역의 초·중등 연령 아동과 학부모입니다.',
@@ -750,6 +752,7 @@ async function seed() {
       title: '네팔 학교보건 및 위생 환경 개선',
       region: '네팔',
       daysAgo: 40,
+      cover: COVER.health,
       lead: '손 씻기 시설과 보건 교육을 묶어, 출석과 학습이 이어지게 합니다.',
       body: [
         '학령기 아동의 신체검사, 위생 교육, 학부모·교사 보건 세미나, 보건 책자 배포를 진행합니다.',
@@ -760,6 +763,7 @@ async function seed() {
       title: '도시빈민 학생 STEM 역량 강화',
       region: '키르기즈스탄',
       daysAgo: 7,
+      cover: COVER.stem,
       lead: '실험·코딩·팀 프로젝트로 과학 수업의 문을 넓힙니다.',
       body: [
         '비슈케크 및 인근 학교의 중학생을 대상으로 학기제 STEM 과정을 운영합니다.',
@@ -771,6 +775,7 @@ async function seed() {
       title: '키르기즈스탄 청년 진로·직업 탐색',
       region: '키르기즈스탄',
       daysAgo: 58,
+      cover: COVER.workshop,
       lead: '지역 산업 조사에 기반한 맞춤형 직업 탐색 워크숍을 진행합니다.',
       body: [
         '참여자 맞춤형 적성 프로그램과 기업 연계형 현장 방문을 결합합니다.',
@@ -781,6 +786,7 @@ async function seed() {
       title: '양곤 도시빈민마을 청소년 꿈도서관',
       region: '미얀마',
       daysAgo: 22,
+      cover: COVER.reading,
       lead: '안전한 학습 공간과 독서 모임을 통해 배움의 리듬을 되찾게 합니다.',
       body: [
         '분쟁과 이동이 잦은 환경에서 도서관은 ‘매일 같은 시간에 올 수 있는 곳’으로 기능합니다.',
@@ -791,6 +797,7 @@ async function seed() {
       title: '미얀마 학교 기반 보건활동',
       region: '미얀마',
       daysAgo: 75,
+      cover: COVER.medical,
       lead: '신체검사와 성 보건 교육을 학부모 세미나와 함께 진행합니다.',
       body: [
         '카야는 의료 서비스를 대신하는 것이 아니라, 가정과 학교가 건강을 돌보는 역량을 키우는 데 집중합니다.',
@@ -801,6 +808,7 @@ async function seed() {
       title: '외국인노동자 기술·창업 교육',
       region: '국내',
       daysAgo: 15,
+      cover: COVER.hands,
       lead: '사회적 가치를 바탕으로 한 기술·창업 교육으로 귀국 후 나눔을 준비합니다.',
       body: [
         '성남 등지에서 기수제로 운영하며, 기술 실습과 기초 경영, 문화탐방, 인식개선 활동을 포함합니다.',
@@ -811,6 +819,7 @@ async function seed() {
       title: '탈북청년 소셜비즈니스 · 청소년 세계시민교육',
       region: '국내',
       daysAgo: 36,
+      cover: COVER.meeting,
       lead: '국내 정착 청년의 기업가 정신과 청소년의 세계시민 역량을 함께 키웁니다.',
       body: [
         '탈북청년에게는 소셜비즈니스와 국제개발협력 교육을, 청소년에게는 민주시민·세계시민 프로그램을 제공합니다.',
@@ -826,7 +835,10 @@ async function seed() {
       title: row.title,
       contentHtml: html(row.lead, row.body),
       date: isoDaysAgo(row.daysAgo),
-      meta: [{ key: 'khayah_project_region', value: row.region }],
+      meta: [
+        { key: 'khayah_project_region', value: row.region },
+        { key: 'khayah_cover_url', value: row.cover },
+      ],
     })
   }
 }

@@ -23,6 +23,14 @@ function normalizeRegion(param: string | undefined): Region {
   return match ?? '전체'
 }
 
+function projectCoverUrl(post: Post): string | undefined {
+  const fromMeta = post.meta?.khayah_cover_url?.trim()
+  if (fromMeta) return fromMeta
+  const html = post.content || ''
+  const match = html.match(/<img[^>]+src=["']([^"']+)["']/i)
+  return match?.[1]?.trim() || undefined
+}
+
 export function ProjectsPage() {
   const params = useParams()
   const { locale, localize, messages } = useLocale()
@@ -89,9 +97,20 @@ export function ProjectsPage() {
         ) : (
           <>
           <ul className="projects-list" aria-label={pj.listAria}>
-            {paged.items.map((p) => (
+            {paged.items.map((p) => {
+              const cover = projectCoverUrl(p)
+              const detailTo = localize(`/posts/${encodeURIComponent(p.slug)}`)
+              return (
               <li key={p.id} className="projects-item">
-                <div className="projects-thumb" aria-hidden="true" />
+                <Link
+                  to={detailTo}
+                  state={{ postKind: '진행사업' }}
+                  className={`projects-thumb${cover ? '' : ' projects-thumb--placeholder'}`}
+                  tabIndex={-1}
+                  aria-hidden="true"
+                >
+                  {cover ? <img src={cover} alt="" loading="lazy" /> : null}
+                </Link>
                 <div className="projects-meta">
                   <div className="projects-meta__top">
                     <time className="projects-date" dateTime={p.publishedAt}>
@@ -106,7 +125,7 @@ export function ProjectsPage() {
                   </div>
                   <Link
                     className="projects-title"
-                    to={localize(`/posts/${encodeURIComponent(p.slug)}`)}
+                    to={detailTo}
                     state={{ postKind: '진행사업' }}
                   >
                     {p.title}
@@ -114,7 +133,8 @@ export function ProjectsPage() {
                   <p className="projects-excerpt">{p.excerpt}</p>
                 </div>
               </li>
-            ))}
+              )
+            })}
           </ul>
           <Pagination
             page={paged.page}

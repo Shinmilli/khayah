@@ -250,7 +250,7 @@ function PostEditorForm({
       setNewsletterYearEnd('')
       setNewsletterYearRange(false)
     }
-    if (postType !== '연간소식지' && postType !== '활동소식' && postType !== '스토리') {
+    if (postType !== '연간소식지' && postType !== '활동소식' && postType !== '스토리' && postType !== '진행사업') {
       setCoverFile(null)
       setCoverPreviewUrl('')
     }
@@ -281,7 +281,7 @@ function PostEditorForm({
         }
       }
     }
-    if (initialPostType === '활동소식' || initialPostType === '스토리') {
+    if (initialPostType === '활동소식' || initialPostType === '스토리' || initialPostType === '진행사업') {
       if (initialMeta.khayah_cover_url) setCoverPreviewUrl(initialMeta.khayah_cover_url)
     }
     if (initialPostType === '언론보도') {
@@ -552,7 +552,7 @@ function PostEditorForm({
       }
       const storedCover =
         coverPreviewUrl.trim() && !coverPreviewUrl.startsWith('blob:') ? coverPreviewUrl.trim() : ''
-      if (postType === '연간소식지' || postType === '활동소식' || postType === '스토리') {
+      if (postType === '연간소식지' || postType === '활동소식' || postType === '스토리' || postType === '진행사업') {
         meta.khayah_cover_url = storedCover
         meta.khayah_cover_blank = coverBlank ? 'true' : ''
       }
@@ -892,7 +892,7 @@ function PostEditorForm({
                     대표 이미지
                     {postType === '연간소식지' && yearlyMode === 'PDF소식지'
                       ? ' (PDF 표지 또는 이미지)'
-                      : postType === '활동소식' || postType === '스토리'
+                      : postType === '활동소식' || postType === '스토리' || postType === '진행사업'
                         ? ' (목록 왼쪽 썸네일)'
                         : ''}
                   </span>
@@ -943,7 +943,7 @@ function PostEditorForm({
                             칸으로 둡니다.
                           </p>
                         </>
-                      ) : postType === '활동소식' || postType === '스토리' ? (
+                      ) : postType === '활동소식' || postType === '스토리' || postType === '진행사업' ? (
                         <>
                           <label
                             className="admin-btn admin-btn--ghost"
