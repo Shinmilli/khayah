@@ -29,11 +29,13 @@ export function ListStatus({ variant, message, lines = 4, className = '' }: List
         <>
           <span className="list-status__spinner" aria-hidden />
           <p className="list-status__text">{text}</p>
-          <div className="list-status__skeleton" aria-hidden>
-            {Array.from({ length: Math.max(1, Math.min(8, lines)) }, (_, i) => (
-              <span key={i} className="list-status__bone" style={{ width: `${88 - (i % 3) * 12}%` }} />
-            ))}
-          </div>
+          {lines > 0 ? (
+            <div className="list-status__skeleton" aria-hidden>
+              {Array.from({ length: Math.max(1, Math.min(8, lines)) }, (_, i) => (
+                <span key={i} className="list-status__bone" style={{ width: `${88 - (i % 3) * 12}%` }} />
+              ))}
+            </div>
+          ) : null}
         </>
       ) : (
         <p className="list-status__text">{text}</p>

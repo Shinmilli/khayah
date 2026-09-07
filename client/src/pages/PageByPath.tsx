@@ -21,7 +21,8 @@ import '../styles/business-advocacy.css'
 import '../styles/donor-guide.css'
 import { NANUM_DONATE_URL } from '../constants/nanumDonate'
 import { PATH } from '../i18n/routes'
-import { pageHeroImageForPath } from '../constants/pageHeroImages'
+import { pageHeroImageForPath, pageHeroImageForPostKind } from '../constants/pageHeroImages'
+import { ListStatus } from '../components/ListStatus'
 
 function storyCtaForPathKey(
   pathKey: string,
@@ -159,7 +160,11 @@ export function PageByPath() {
     const kind = post.meta?.khayah_kind ?? ''
     return (
       <div className="page-content-wrapper">
-        <PageHero title={heroTitleForKind(kind)} crumbs={crumbsForPost(post)} />
+        <PageHero
+          title={heroTitleForKind(kind, messages)}
+          crumbs={crumbsForPost(post, messages)}
+          backgroundImageUrl={pageHeroImageForPostKind(kind, post.meta?.khayah_story_scope)}
+        />
         <div className="section">
           <div className="section_wrapper clearfix">
             <div className="column one">
@@ -246,13 +251,17 @@ export function PageByPath() {
     )
   }
 
+  const loadingHeroImage = isPostPath
+    ? pageHeroImageForPath(PATH.newsAnnouncements)
+    : pageHeroImageForPath(pathKey)
+
   return (
     <div className="page-content-wrapper">
-      <PageHero title={title ?? messages.pages.loading} />
+      <PageHero title={title ?? messages.pages.loading} backgroundImageUrl={loadingHeroImage} />
       <div className="section">
         <div className="section_wrapper clearfix">
           <div className="column one">
-            <p className="loading">{messages.pages.loading}</p>
+            <ListStatus variant="loading" message={messages.pages.loading} lines={isPostPath ? 6 : 4} />
           </div>
         </div>
       </div>

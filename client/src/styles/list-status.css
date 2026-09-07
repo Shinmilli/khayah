@@ -136,6 +136,10 @@
   margin-top: 12px;
 }
 
+.story-archive__grid > .list-status {
+  grid-column: 1 / -1;
+}
+
 .post-board__nav-empty--loading {
   color: #9ca3af;
   font-style: normal;

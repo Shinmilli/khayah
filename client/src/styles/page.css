@@ -1657,6 +1657,39 @@
   color: #888;
 }
 
+/* 모바일 게시글: 좌우 여백 과다 완화 */
+@media (max-width: 767px) {
+  .page-content-wrapper > .section:has(.post-board) .section_wrapper {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .page-content-wrapper > .section:has(.post-board) .column.one {
+    padding-left: 0;
+    padding-right: 0;
+    margin-bottom: 0;
+  }
+
+  .post-board {
+    padding-top: 16px;
+    padding-bottom: 32px;
+  }
+
+  .post-board__head {
+    padding: 14px 4px 12px;
+  }
+
+  .post-board__body {
+    padding-left: 4px;
+    padding-right: 4px;
+  }
+
+  .post-board:not(.post-board--feature) .post-board__body {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+}
+
 @media (max-width: 640px) {
   .post-board__nav-row {
     grid-template-columns: 5.2rem minmax(0, 1fr);

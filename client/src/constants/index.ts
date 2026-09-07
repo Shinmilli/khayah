@@ -24,5 +24,5 @@ export const FOOTER_LOGO_FALLBACK = '/images/logo/khayah_logo.png'
 /** 푸터 본문(주소·연락처) — 줄바꿈 순서 그대로 표시 */
 export const FOOTER = {
   contactText:
-    '사단법인 카야 인터내셔널\n경기도 성남시 분당구 이매동 81-3 (방아로 38)\nT 070.5121.2198 | F 070.8650.3639\nE khayahinternational@gmail.com',
+    '사단법인 카야인터내셔널\n경기도 성남시 분당구 이매동 81-3 (방아로 38)\nT 070.5121.2198 | F 070.8650.3639\nE khayahinternational@gmail.com',
 } as const

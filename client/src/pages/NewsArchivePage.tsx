@@ -19,6 +19,7 @@ import '../styles/newsletter.css'
 import { PATH } from '../i18n/routes'
 import { useLocale } from '../i18n/LocaleContext'
 import { pageHeroImageForPath } from '../constants/pageHeroImages'
+import { ListStatus } from '../components/ListStatus'
 
 function formatDate(
   iso: string,
@@ -237,17 +238,19 @@ export function NewsArchivePage() {
       <div className="section">
         <div className="section_wrapper clearfix">
           <div className="column one">
-            {loading && <p className="notice-archive__status">{ar.loading}</p>}
-            {error && (
-              <p className="notice-archive__status notice-archive__status--error">{ar.loadError}</p>
-            )}
+            {loading ? (
+              <ListStatus variant="loading" message={ar.loading} lines={5} />
+            ) : null}
+            {error ? (
+              <ListStatus variant="error" message={ar.loadError} />
+            ) : null}
 
-            {!loading && !error && isNewsletter && newsletterSorted.length === 0 && (
-              <p className="notice-archive__status">{ar.emptyNewsletter}</p>
-            )}
-            {!loading && !error && !isNewsletter && sortedPosts.length === 0 && (
-              <p className="notice-archive__status">{ar.empty}</p>
-            )}
+            {!loading && !error && isNewsletter && newsletterSorted.length === 0 ? (
+              <ListStatus variant="empty" message={ar.emptyNewsletter} />
+            ) : null}
+            {!loading && !error && !isNewsletter && sortedPosts.length === 0 ? (
+              <ListStatus variant="empty" message={ar.empty} />
+            ) : null}
 
             {!loading && !error && isNewsletter && newsletterSorted.length > 0 && (
               <div className="yearly-nl-archive">
@@ -286,7 +289,7 @@ export function NewsArchivePage() {
 
                 <div className="yearly-nl-cards" aria-label={ar.listAria(title)}>
                   {paged.items.length === 0 ? (
-                    <p className="notice-archive__status">{ar.emptyFiltered}</p>
+                    <ListStatus variant="empty" message={ar.emptyFiltered} />
                   ) : (
                     paged.items.map((post) => {
                       const pdf = newsletterPdfUrl(post)

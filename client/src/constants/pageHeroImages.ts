@@ -54,3 +54,26 @@ export function pageHeroImageForPath(pathKey: string | null | undefined): string
 export function pageHeroImageForStoryScope(_scope?: string | null): string {
   return NEWS
 }
+
+/** 게시글 종류·스토리 범위에 맞는 히어로 배너 */
+export function pageHeroImageForPostKind(
+  kind: string | null | undefined,
+  storyScope?: string | null,
+): string {
+  switch (kind) {
+    case '공지사항':
+      return BY_PATH[PATH.newsAnnouncements]
+    case '활동소식':
+      return BY_PATH[PATH.newsActivities]
+    case '연간소식지':
+      return BY_PATH[PATH.newsNewsletter]
+    case '언론보도':
+      return BY_PATH[PATH.newsPress]
+    case '진행사업':
+      return BY_PATH[PATH.businessProjects]
+    case '스토리':
+      return pageHeroImageForStoryScope(storyScope)
+    default:
+      return NEWS
+  }
+}

@@ -314,5 +314,16 @@ export const enMessages: Messages = {
         org: 'Organization & board',
       },
     },
+    postDetail: {
+      list: 'Back to list',
+      publishedPrefix: 'Published ',
+      next: 'Next',
+      prev: 'Previous',
+      nextEmpty: 'No newer post.',
+      prevEmpty: 'No older post.',
+      navAria: 'Previous and next posts',
+      filesAria: 'Attachments',
+      fallbackTitle: 'News',
+    },
   },
 }

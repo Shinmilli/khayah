@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { fetchPostsByKind } from '../services/api'
+import { useLocale } from '../i18n/LocaleContext'
+import type { Messages } from '../i18n/messages/ko'
+import { PROJECT_REGION_TO_SLUG } from '../i18n/routes'
 import type { Post } from '../types/post'
 import { parsePdfAttachments, pdfOpenHref, type PdfAttachment } from '../utils/pdfAttachments'
 
@@ -15,10 +18,10 @@ function PaperclipIcon() {
   )
 }
 
-function PostFileBar({ files }: { files: PdfAttachment[] }) {
+function PostFileBar({ files, ariaLabel }: { files: PdfAttachment[]; ariaLabel: string }) {
   if (files.length === 0) return null
   return (
-    <ul className="post-board__files" aria-label="첨부 문서">
+    <ul className="post-board__files" aria-label={ariaLabel}>
       {files.map((f) => (
         <li key={f.url}>
           <a href={pdfOpenHref(f.url, f.name)} target="_blank" rel="noopener noreferrer">
@@ -66,85 +69,101 @@ function listPathForPost(post: Post): string {
   }
 }
 
-function crumbsForPost(post: Post): Array<{ label: string; to: string }> {
+function regionLabel(region: string, messages: Messages): string {
+  const slug = PROJECT_REGION_TO_SLUG[region]
+  if (slug === 'nepal') return messages.pages.projects.regions.nepal
+  if (slug === 'myanmar') return messages.pages.projects.regions.myanmar
+  if (slug === 'kyrgyzstan') return messages.pages.projects.regions.kyrgyzstan
+  if (slug === 'domestic') return messages.pages.projects.regions.domestic
+  return region
+}
+
+function crumbsForPost(post: Post, messages: Messages): Array<{ label: string; to: string }> {
   const kind = post.meta?.khayah_kind ?? ''
+  const { nav, pages } = messages
   switch (kind) {
     case '공지사항':
       return [
-        { label: '소식', to: '/stories' },
-        { label: '공지사항', to: '/news/announcements' },
+        { label: nav.top.news, to: '/stories' },
+        { label: nav.links.announcements, to: '/news/announcements' },
       ]
     case '활동소식':
       return [
-        { label: '소식', to: '/stories' },
-        { label: '활동소식', to: '/news/activities' },
+        { label: nav.top.news, to: '/stories' },
+        { label: nav.links.activities, to: '/news/activities' },
       ]
     case '연간소식지':
       return [
-        { label: '소식', to: '/stories' },
-        { label: '연간소식지', to: '/news/newsletter' },
+        { label: nav.top.news, to: '/stories' },
+        { label: nav.links.newsletter, to: '/news/newsletter' },
       ]
     case '언론보도':
       return [
-        { label: '소식', to: '/stories' },
-        { label: '언론보도', to: '/news/press' },
+        { label: nav.top.news, to: '/stories' },
+        { label: nav.links.press, to: '/news/press' },
       ]
     case '진행사업': {
       const region = post.meta?.khayah_project_region?.trim()
       const crumbs = [
-        { label: '사업', to: '/business/domestic' },
-        { label: '진행사업', to: '/business/projects' },
+        { label: nav.top.business, to: '/business/domestic' },
+        { label: nav.links.projects, to: '/business/projects' },
       ]
       if (region) {
-        crumbs.push({ label: region, to: `/business/projects/${encodeURIComponent(region)}` })
+        const slug = PROJECT_REGION_TO_SLUG[region] ?? encodeURIComponent(region)
+        crumbs.push({ label: regionLabel(region, messages), to: `/business/projects/${slug}` })
       }
       return crumbs
     }
     case '스토리': {
       const scope = post.meta?.khayah_story_scope
-      const crumbs = [{ label: '스토리', to: '/stories' }]
-      if (scope === '국내') crumbs.push({ label: '국내', to: '/stories/domestic' })
-      else if (scope === '해외') crumbs.push({ label: '해외', to: '/stories/overseas' })
-      else if (scope === '옹호') crumbs.push({ label: '옹호', to: '/stories/advocacy' })
-      else if (scope === '진행' || scope === '지원') crumbs.push({ label: '지원', to: '/stories/support' })
+      const crumbs = [{ label: pages.stories.title, to: '/stories' }]
+      if (scope === '국내') crumbs.push({ label: pages.stories.scopes.domestic, to: '/stories/domestic' })
+      else if (scope === '해외') crumbs.push({ label: pages.stories.scopes.overseas, to: '/stories/overseas' })
+      else if (scope === '옹호') crumbs.push({ label: pages.stories.scopes.advocacy, to: '/stories/advocacy' })
+      else if (scope === '진행' || scope === '지원') {
+        crumbs.push({ label: pages.stories.scopes.support, to: '/stories/support' })
+      }
       return crumbs
     }
     default:
-      return [{ label: '소식', to: '/stories' }]
+      return [{ label: nav.top.news, to: '/stories' }]
   }
 }
 
-function heroTitleForKind(kind: string): string {
-  if (kind === '공지사항') return '공지사항'
-  if (kind === '활동소식') return '활동소식'
-  if (kind === '연간소식지') return '연간소식지'
-  if (kind === '언론보도') return '언론보도'
-  if (kind === '진행사업') return '진행사업'
-  if (kind === '스토리') return '스토리'
-  return kind || '소식'
+function heroTitleForKind(kind: string, messages: Messages): string {
+  const { nav, pages } = messages
+  if (kind === '공지사항') return nav.links.announcements
+  if (kind === '활동소식') return nav.links.activities
+  if (kind === '연간소식지') return nav.links.newsletter
+  if (kind === '언론보도') return nav.links.press
+  if (kind === '진행사업') return nav.links.projects
+  if (kind === '스토리') return pages.stories.title
+  return kind || pages.postDetail.fallbackTitle
 }
 
-function storyScopeChip(scope: string | undefined): string | null {
+function storyScopeChip(scope: string | undefined, messages: Messages): string | null {
   switch (scope) {
     case '국내':
-      return '국내사업'
+      return messages.pages.stories.chips.domestic
     case '해외':
-      return '해외사업'
+      return messages.pages.stories.chips.overseas
     case '옹호':
-      return '옹호사업'
+      return messages.pages.stories.chips.advocacy
     case '지원':
     case '진행':
-      return '진행사업'
+      return messages.pages.stories.chips.support
     default:
       return null
   }
 }
 
 export function PostDetail({ post }: { post: Post }) {
+  const { localize, messages } = useLocale()
+  const pd = messages.pages.postDetail
   const kind = post.meta?.khayah_kind ?? ''
-  const listTo = listPathForPost(post)
+  const listTo = localize(listPathForPost(post))
   const [siblings, setSiblings] = useState<Post[]>([])
-  const storyChip = kind === '스토리' ? storyScopeChip(post.meta?.khayah_story_scope) : null
+  const storyChip = kind === '스토리' ? storyScopeChip(post.meta?.khayah_story_scope, messages) : null
 
   useEffect(() => {
     if (!kind) {
@@ -186,35 +205,35 @@ export function PostDetail({ post }: { post: Post }) {
         {storyChip ? <p className="post-board__scope">{storyChip}</p> : null}
         <h1 className="post-board__title">{post.title}</h1>
         <p className="post-board__meta">
-          {isFeature ? null : '등록일 '}
+          {isFeature ? null : pd.publishedPrefix}
           <time dateTime={post.publishedAt}>{formatDotDate(post.publishedAt)}</time>
         </p>
       </header>
 
-      {isFeature ? <PostFileBar files={attachments} /> : null}
+      {isFeature ? <PostFileBar files={attachments} ariaLabel={pd.filesAria} /> : null}
 
       <div
         className="the_content_wrapper page-body post-board__body"
         dangerouslySetInnerHTML={{ __html: post.content || post.excerpt || '' }}
       />
 
-      {!isFeature ? <PostFileBar files={attachments} /> : null}
+      {!isFeature ? <PostFileBar files={attachments} ariaLabel={pd.filesAria} /> : null}
 
       <div className="post-board__toolbar">
         <Link className="post-board__list-btn" to={listTo}>
-          목록
+          {pd.list}
         </Link>
       </div>
 
-      <nav className="post-board__nav" aria-label="이전글 다음글">
+      <nav className="post-board__nav" aria-label={pd.navAria}>
         {newer ? (
           <Link
             className="post-board__nav-row post-board__nav-row--link"
-            to={`/posts/${encodeURIComponent(newer.slug)}`}
+            to={localize(`/posts/${encodeURIComponent(newer.slug)}`)}
           >
             <span className="post-board__nav-label">
               <span className="post-board__chevron post-board__chevron--up" aria-hidden />
-              다음글
+              {pd.next}
             </span>
             <span className="post-board__nav-main">
               <span className="post-board__nav-title">{newer.title}</span>
@@ -227,19 +246,19 @@ export function PostDetail({ post }: { post: Post }) {
           <div className="post-board__nav-row">
             <span className="post-board__nav-label">
               <span className="post-board__chevron post-board__chevron--up" aria-hidden />
-              다음글
+              {pd.next}
             </span>
-            <span className="post-board__nav-empty">다음글이 존재하지 않습니다.</span>
+            <span className="post-board__nav-empty">{pd.nextEmpty}</span>
           </div>
         )}
         {older ? (
           <Link
             className="post-board__nav-row post-board__nav-row--link"
-            to={`/posts/${encodeURIComponent(older.slug)}`}
+            to={localize(`/posts/${encodeURIComponent(older.slug)}`)}
           >
             <span className="post-board__nav-label">
               <span className="post-board__chevron post-board__chevron--down" aria-hidden />
-              이전글
+              {pd.prev}
             </span>
             <span className="post-board__nav-main">
               <span className="post-board__nav-title">{older.title}</span>
@@ -252,9 +271,9 @@ export function PostDetail({ post }: { post: Post }) {
           <div className="post-board__nav-row">
             <span className="post-board__nav-label">
               <span className="post-board__chevron post-board__chevron--down" aria-hidden />
-              이전글
+              {pd.prev}
             </span>
-            <span className="post-board__nav-empty">이전글이 존재하지 않습니다.</span>
+            <span className="post-board__nav-empty">{pd.prevEmpty}</span>
           </div>
         )}
       </nav>
@@ -262,4 +281,4 @@ export function PostDetail({ post }: { post: Post }) {
   )
 }
 
-export { heroTitleForKind, crumbsForPost }
+export { heroTitleForKind, crumbsForPost, listPathForPost }

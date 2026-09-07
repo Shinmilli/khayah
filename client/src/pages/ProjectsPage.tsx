@@ -8,6 +8,7 @@ import { paginate } from '../utils/paginate'
 import { useLocale } from '../i18n/LocaleContext'
 import { PATH, PROJECT_SLUG_TO_REGION, projectRegionHref } from '../i18n/routes'
 import { pageHeroImageForPath } from '../constants/pageHeroImages'
+import { ListStatus } from '../components/ListStatus'
 import '../styles/projects.css'
 
 const REGIONS = ['전체', '네팔', '키르기즈스탄', '미얀마', '국내'] as const
@@ -36,7 +37,7 @@ export function ProjectsPage() {
   const region = useMemo(() => normalizeRegion(params.region), [params.region])
   const [rows, setRows] = useState<Post[]>([])
   const [listPage, setListPage] = useState(1)
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string>('')
 
   useEffect(() => {
@@ -80,11 +81,11 @@ export function ProjectsPage() {
         </nav>
 
         {loading ? (
-          <p className="projects-state">{pj.loading}</p>
+          <ListStatus variant="loading" message={pj.loading} lines={5} />
         ) : error ? (
-          <p className="projects-state">{error}</p>
+          <ListStatus variant="error" message={error || pj.loadError} />
         ) : rows.length === 0 ? (
-          <p className="projects-state">{pj.empty}</p>
+          <ListStatus variant="empty" message={pj.empty} />
         ) : (
           <>
           <ul className="projects-list" aria-label={pj.listAria}>

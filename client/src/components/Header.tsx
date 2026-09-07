@@ -74,9 +74,9 @@ const NAV_COLUMNS: NavColumn[] = [
     id: 'news-col',
     topKey: 'news',
     links: [
-      { key: 'stories', to: '/stories' },
       { key: 'announcements', to: '/news/announcements' },
       { key: 'activities', to: '/news/activities' },
+      { key: 'stories', to: '/stories' },
       { key: 'newsletter', to: '/news/newsletter' },
       { key: 'press', to: '/news/press' },
       { key: 'inquiry', to: '/news/inquiry' },
@@ -88,7 +88,7 @@ const TOP_LINKS: { key: NavTopKey; to: string }[] = [
   { key: 'khayah', to: '/about/khayah' },
   { key: 'business', to: '/business/domestic' },
   { key: 'support', to: '/support/guide' },
-  { key: 'news', to: '/stories' },
+  { key: 'news', to: '/news/announcements' },
 ]
 
 const NAV_BY_KEY = new Map(NAV_COLUMNS.map((c) => [c.topKey, c]))

@@ -8,6 +8,7 @@ import { Pagination } from '../components/Pagination'
 import { paginate } from '../utils/paginate'
 import { useLocale } from '../i18n/LocaleContext'
 import { pageHeroImageForStoryScope } from '../constants/pageHeroImages'
+import { ListStatus } from '../components/ListStatus'
 import '../styles/story.css'
 
 type StoryScopeKey = 'all' | 'domestic' | 'overseas' | 'advocacy' | 'support'
@@ -60,15 +61,25 @@ export function StoryArchivePage() {
   const [scope, setScope] = useState<StoryScopeKey>(initialScope)
   const [listPage, setListPage] = useState(1)
   const [posts, setPosts] = useState<Post[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
 
   useEffect(() => {
     let cancelled = false
+    setLoading(true)
+    setError(false)
     fetchPostsByKind('스토리', 1, 200)
       .then((res) => {
         if (!cancelled) setPosts(res.posts)
       })
       .catch(() => {
-        if (!cancelled) setPosts([])
+        if (!cancelled) {
+          setPosts([])
+          setError(true)
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false)
       })
     return () => {
       cancelled = true
@@ -149,36 +160,60 @@ export function StoryArchivePage() {
                 </nav>
               </header>
 
-              <section className="story-archive__grid" aria-label={st.listAria}>
-                {paged.items.map((p) => (
-                  <article key={p.id} className="story-archive__item">
-                    <div className="story-list-card">
-                      <div className="story-list-card__thumb">
-                        {p.meta?.khayah_cover_url?.trim() ? (
-                          <img src={p.meta.khayah_cover_url.trim()} alt="" loading="lazy" />
-                        ) : null}
-                      </div>
-                      <div className="story-list-card__body">
-                        <h3 className="story-list-card__title">
-                          <Link to={localize(`/posts/${encodeURIComponent(p.slug)}`)}>{p.title}</Link>
-                        </h3>
-                        <p className="story-list-card__excerpt">{p.excerpt || ''}</p>
-                        <div className="story-list-card__meta">
-                          <span className="story-list-card__chip">
-                            {scope === 'all'
-                              ? chipForMeta(p.meta?.khayah_story_scope ?? '')
-                              : chipForScope(scope)}
-                          </span>
-                          <time className="story-list-card__date" dateTime={p.publishedAt}>
-                            {formatDotDate(p.publishedAt)}
-                          </time>
+              {loading ? (
+                <ListStatus variant="loading" message={messages.pages.archive.loading} lines={0} />
+              ) : null}
+              <section className="story-archive__grid" aria-label={st.listAria} aria-busy={loading || undefined}>
+                {loading
+                  ? Array.from({ length: 6 }, (_, i) => (
+                      <article key={i} className="story-archive__item story-archive__item--skeleton" aria-hidden>
+                        <div className="story-list-card">
+                          <div className="story-list-card__thumb" />
+                          <div className="story-list-card__body">
+                            <div className="story-list-card__title" />
+                            <div className="story-list-card__excerpt" />
+                            <div className="story-list-card__meta" />
+                          </div>
                         </div>
-                      </div>
-                    </div>
-                  </article>
-                ))}
+                      </article>
+                    ))
+                  : null}
+                {error ? <ListStatus variant="error" message={st.loadError} /> : null}
+                {!loading && !error && items.length === 0 ? (
+                  <ListStatus variant="empty" message={st.empty} />
+                ) : null}
+                {!loading && !error
+                  ? paged.items.map((p) => (
+                      <article key={p.id} className="story-archive__item">
+                        <div className="story-list-card">
+                          <div className="story-list-card__thumb">
+                            {p.meta?.khayah_cover_url?.trim() ? (
+                              <img src={p.meta.khayah_cover_url.trim()} alt="" loading="lazy" />
+                            ) : null}
+                          </div>
+                          <div className="story-list-card__body">
+                            <h3 className="story-list-card__title">
+                              <Link to={localize(`/posts/${encodeURIComponent(p.slug)}`)}>{p.title}</Link>
+                            </h3>
+                            <p className="story-list-card__excerpt">{p.excerpt || ''}</p>
+                            <div className="story-list-card__meta">
+                              <span className="story-list-card__chip">
+                                {scope === 'all'
+                                  ? chipForMeta(p.meta?.khayah_story_scope ?? '')
+                                  : chipForScope(scope)}
+                              </span>
+                              <time className="story-list-card__date" dateTime={p.publishedAt}>
+                                {formatDotDate(p.publishedAt)}
+                              </time>
+                            </div>
+                          </div>
+                        </div>
+                      </article>
+                    ))
+                  : null}
               </section>
 
+              {!loading && !error && items.length > 0 ? (
               <div className="story-archive__actions">
                 <Pagination
                   page={paged.page}
@@ -187,6 +222,7 @@ export function StoryArchivePage() {
                   label={st.pagination}
                 />
               </div>
+              ) : null}
             </div>
           </div>
         </div>

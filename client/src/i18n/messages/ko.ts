@@ -263,6 +263,17 @@ export type Messages = {
         org: string
       }
     }
+    postDetail: {
+      list: string
+      publishedPrefix: string
+      next: string
+      prev: string
+      nextEmpty: string
+      prevEmpty: string
+      navAria: string
+      filesAria: string
+      fallbackTitle: string
+    }
   }
 }
 
@@ -318,9 +329,9 @@ export const koMessages: Messages = {
       kakao: '카카오채널',
     },
     contactText:
-      '사단법인 카야 인터내셔널\n경기도 성남시 분당구 이매동 81-3 (방아로 38)\nT 070.5121.2198 | F 070.8650.3639\nE khayahinternational@gmail.com',
+      '사단법인 카야인터내셔널\n경기도 성남시 분당구 이매동 81-3 (방아로 38)\nT 070.5121.2198 | F 070.8650.3639\nE khayahinternational@gmail.com',
     copyright: (year: number) =>
-      `© ${year} 사단법인 카야 인터내셔널. All Rights Reserved.`,
+      `© ${year} 사단법인 카야인터내셔널. All Rights Reserved.`,
   },
   home: {
     hero: {
@@ -580,6 +591,16 @@ export const koMessages: Messages = {
         org: '조직도 · 이사회 · 전문위원',
       },
     },
+    postDetail: {
+      list: '목록',
+      publishedPrefix: '등록일 ',
+      next: '다음글',
+      prev: '이전글',
+      nextEmpty: '다음글이 존재하지 않습니다.',
+      prevEmpty: '이전글이 존재하지 않습니다.',
+      navAria: '이전글 다음글',
+      filesAria: '첨부 문서',
+      fallbackTitle: '소식',
+    },
   },
-
 }
