@@ -89,22 +89,30 @@
 }
 
 .site-header__logo {
-  display: flex;
+  position: relative;
+  display: grid;
   align-items: center;
+  justify-items: start;
+  line-height: 0;
   text-decoration: none;
   color: inherit;
+  overflow: hidden;
 }
 
 .site-header__logo img,
 .site-header__logo-img {
+  grid-area: 1 / 1;
   height: 42px;
   width: auto;
   object-fit: contain;
   display: block;
 }
 
+/* 흰 로고는 같은 칸에만 겹침. 붉은 로고가 보일 때는 완전히 숨김 */
 .site-header__logo-img--white {
-  display: none;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
 }
 
 /* flex 직계 자식은 <nav> — nav까지 bar 높이를 써야 li::after가 bar 최하단에 닿음 */
@@ -458,11 +466,13 @@
 }
 
 .site-header.is-home.is-at-top:not(.is-mobile-open):not(:hover):not(.is-desktop-menu-open) .site-header__logo-img--color {
-  display: none;
+  opacity: 0;
+  visibility: hidden;
 }
 
 .site-header.is-home.is-at-top:not(.is-mobile-open):not(:hover):not(.is-desktop-menu-open) .site-header__logo-img--white {
-  display: block;
+  opacity: 1;
+  visibility: visible;
 }
 
 /* 로케일 스위치: 전역 a/a:hover보다 우선해 배너 위에서도 흰색 유지 */
@@ -626,11 +636,13 @@
   }
 
   .site-header.is-mobile-open .site-header__logo-img--color {
-    display: block;
+    opacity: 1;
+    visibility: visible;
   }
 
   .site-header.is-mobile-open .site-header__logo-img--white {
-    display: none;
+    opacity: 0;
+    visibility: hidden;
   }
 
   :root {

@@ -1,4 +1,6 @@
+import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
+import { pageHeroBlurForUrl } from '../constants/pageHeroImages'
 import { splitLocalePath } from '../i18n/locale'
 import { useLocale } from '../i18n/LocaleContext'
 import type { Messages } from '../i18n/messages/ko'
@@ -311,6 +313,51 @@ function buildCrumbs(
   return crumbs
 }
 
+function imageAlreadyReady(url: string): boolean {
+  if (typeof Image === 'undefined') return false
+  const probe = new Image()
+  probe.src = url
+  return probe.complete && probe.naturalWidth > 0
+}
+
+function HeroBackdrop({ src }: { src: string | null }) {
+  const blur = pageHeroBlurForUrl(src)
+  const [ready, setReady] = useState(() => (src ? imageAlreadyReady(src) : true))
+
+  useEffect(() => {
+    if (!src) {
+      setReady(true)
+      return
+    }
+    if (imageAlreadyReady(src)) {
+      setReady(true)
+      return
+    }
+    setReady(false)
+  }, [src])
+
+  return (
+    <div
+      className={`page-hero__bg${src ? ' has-image' : ''}${ready ? ' is-ready' : ''}`}
+      aria-hidden="true"
+    >
+      {blur ? (
+        <div className="page-hero__blur" style={{ backgroundImage: `url('${blur}')` }} />
+      ) : null}
+      {src ? (
+        <img
+          className="page-hero__photo"
+          src={src}
+          alt=""
+          fetchPriority="high"
+          decoding="async"
+          onLoad={() => setReady(true)}
+        />
+      ) : null}
+    </div>
+  )
+}
+
 export function PageHero({
   title,
   backgroundImageUrl = null,
@@ -337,11 +384,7 @@ export function PageHero({
   return (
     <>
       <section className="page-hero" aria-label={displayTitle}>
-        <div
-          className={`page-hero__bg${backgroundImageUrl ? ' has-image' : ''}`}
-          style={backgroundImageUrl ? { backgroundImage: `url('${backgroundImageUrl}')` } : undefined}
-          aria-hidden="true"
-        />
+        <HeroBackdrop src={backgroundImageUrl} />
         <div className="page-hero__inner">
           <h1 className="page-hero__title">{displayTitle}</h1>
         </div>

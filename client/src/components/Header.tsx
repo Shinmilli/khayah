@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { SITE_NAME } from '../constants'
+import { pageHeroImageForPath, prefetchPageHeroImage } from '../constants/pageHeroImages'
 import { splitLocalePath } from '../i18n/locale'
 import { useLocale } from '../i18n/LocaleContext'
 import type { NavLinkKey, NavTopKey } from '../i18n/messages/ko'
@@ -94,6 +95,18 @@ const TOP_LINKS: { key: NavTopKey; to: string }[] = [
 
 const NAV_BY_KEY = new Map(NAV_COLUMNS.map((c) => [c.topKey, c]))
 
+const TOP_BANNER_URLS: Record<NavTopKey, string[]> = {
+  khayah: [pageHeroImageForPath('about/khayah')!].filter(Boolean),
+  business: [
+    pageHeroImageForPath('business/domestic')!,
+    pageHeroImageForPath('business/overseas')!,
+    pageHeroImageForPath('business/advocacy')!,
+    pageHeroImageForPath('business/projects')!,
+  ].filter(Boolean),
+  support: [pageHeroImageForPath('support/guide')!].filter(Boolean),
+  news: [pageHeroImageForPath('news/announcements')!].filter(Boolean),
+}
+
 export function Header() {
   const [atTop, setAtTop] = useState(true)
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -119,6 +132,7 @@ export function Header() {
   const openDesktopMenu = (key: NavTopKey) => {
     cancelDesktopMenuTimer()
     setDesktopMenuKey(key)
+    for (const url of TOP_BANNER_URLS[key] ?? []) prefetchPageHeroImage(url)
   }
 
   const closeDesktopMenu = () => {
