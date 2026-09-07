@@ -104,7 +104,11 @@ export function ProjectsPage() {
                       </span>
                     ) : null}
                   </div>
-                  <Link className="projects-title" to={localize(`/posts/${encodeURIComponent(p.slug)}`)}>
+                  <Link
+                    className="projects-title"
+                    to={localize(`/posts/${encodeURIComponent(p.slug)}`)}
+                    state={{ postKind: '진행사업' }}
+                  >
                     {p.title}
                   </Link>
                   <p className="projects-excerpt">{p.excerpt}</p>

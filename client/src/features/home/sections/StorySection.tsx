@@ -186,7 +186,11 @@ export function StorySection() {
                       </Link>
                     </div>
                   ) : (
-                    <Link className="story-card" to={localize(`/posts/${encodeURIComponent(p.slug)}`)}>
+                    <Link
+                      className="story-card"
+                      to={localize(`/posts/${encodeURIComponent(p.slug)}`)}
+                      state={{ postKind: '스토리' }}
+                    >
                       {cardInner}
                     </Link>
                   )}

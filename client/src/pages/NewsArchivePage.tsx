@@ -310,6 +310,7 @@ export function NewsArchivePage() {
                         norm(excerpt) !== titleNorm &&
                         (!yearLabel || norm(excerpt) !== norm(yearLabel))
                       const detailPath = localize(`/posts/${encodeURIComponent(post.slug)}`)
+                      const detailState = { postKind: kind }
                       const ctaPdf = isPdf && pdf
                       const pdfFileName = (() => {
                         const original = post.meta?.khayah_pdf_name?.trim()
@@ -338,7 +339,7 @@ export function NewsArchivePage() {
                                 </span>
                               </a>
                             ) : (
-                              <Link className="yearly-nl-cta" to={detailPath}>
+                              <Link className="yearly-nl-cta" to={detailPath} state={detailState}>
                                 {ar.viewDetail}
                                 <span className="yearly-nl-cta__icon" aria-hidden>
                                   →
@@ -441,6 +442,7 @@ export function NewsArchivePage() {
                     <li key={post.id} className="activity-archive__item">
                       <Link
                         to={localize(`/posts/${encodeURIComponent(post.slug)}`)}
+                        state={{ postKind: kind }}
                         className="activity-archive__link"
                       >
                         <div className="activity-archive__thumb-wrap">
@@ -490,6 +492,7 @@ export function NewsArchivePage() {
                   <li key={post.id} className="notice-archive__item">
                     <Link
                       to={localize(`/posts/${encodeURIComponent(post.slug)}`)}
+                      state={{ postKind: kind }}
                       className="notice-archive__link"
                     >
                       <h2 className="notice-archive__title">{post.title}</h2>

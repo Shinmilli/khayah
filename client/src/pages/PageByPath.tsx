@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { fetchPageBySlug, fetchPostBySlug } from '../services/api'
-import { PostDetail, crumbsForPost, heroTitleForKind } from '../components/PostDetail'
+import { PostDetail, crumbsForKind, crumbsForPost, heroTitleForKind } from '../components/PostDetail'
 import { getStaticPage, normalizePathKey, pathToSlug } from '../constants/pagesContent'
 import { useLocale } from '../i18n/LocaleContext'
 import type { Page } from '../types/page'
@@ -45,7 +45,33 @@ function storyCtaForPathKey(
   return null
 }
 
+type PostNavState = { postKind?: string }
+
+function kindHintFromPath(pathKey: string): string {
+  if (pathKey === PATH.newsActivities) return '활동소식'
+  if (pathKey === PATH.newsNewsletter) return '연간소식지'
+  if (pathKey === PATH.newsAnnouncements) return '공지사항'
+  if (pathKey === PATH.newsPress) return '언론보도'
+  return ''
+}
+
+/** 목록에서 상세로 이동해도 직전 목록 종류로 로딩 히어로를 맞춘다. */
+let lastPostKindHint = ''
+
 export function PageByPath() {
+  const location = useLocation()
+  const pathKey = normalizePathKey(location.pathname)
+  const fromPath = kindHintFromPath(pathKey)
+  if (fromPath) lastPostKindHint = fromPath
+  const navKind =
+    location.state && typeof location.state === 'object' && 'postKind' in location.state
+      ? String((location.state as PostNavState).postKind ?? '')
+      : ''
+  if (navKind) lastPostKindHint = navKind
+  return <PageByPathInner key={pathKey} kindHint={lastPostKindHint} />
+}
+
+function PageByPathInner({ kindHint }: { kindHint: string }) {
   const location = useLocation()
   const { locale, localize, messages } = useLocale()
   const pathKey = normalizePathKey(location.pathname)
@@ -60,10 +86,17 @@ export function PageByPath() {
 
   const hashId = location.hash.replace(/^#/, '')
   const [apiPage, setApiPage] = useState<Page | null | undefined>(undefined)
-  const [post, setPost] = useState<Post | null | undefined>(undefined)
+  /** slug가 일치할 때만 유효. undefined=로딩, null=없음 */
+  const [postState, setPostState] = useState<{ slug: string; post: Post | null | undefined }>({
+    slug: '',
+    post: undefined,
+  })
 
   const isPostPath = pathKey.startsWith('posts/')
   const postSlug = isPostPath ? pathKey.replace(/^posts\/?/, '') : ''
+  const post = isPostPath && postState.slug === postSlug ? postState.post : undefined
+  const postLoading = Boolean(isPostPath && (postState.slug !== postSlug || post === undefined))
+  const postMissing = Boolean(isPostPath && postState.slug === postSlug && post === null)
 
   const staticPage =
     pathKey && !isPostPath && !isInquiry && !isHistory ? getStaticPage(pathKey, locale) : null
@@ -71,30 +104,25 @@ export function PageByPath() {
   const slug = pathToSlug(location.pathname)
 
   useEffect(() => {
-    if (isNewsArchive || isInquiry || isHistory) {
-      setApiPage(null)
-      setPost(null)
-      return
-    }
-    if (staticPage || !slug) {
-      setApiPage(null)
-      setPost(null)
+    if (isNewsArchive || isInquiry || isHistory || staticPage || !slug) {
       return
     }
     if (isPostPath && postSlug) {
-      setApiPage(null)
+      setPostState({ slug: postSlug, post: undefined })
       let cancelled = false
       fetchPostBySlug(postSlug)
         .then((p) => {
-          if (!cancelled) setPost(p ?? null)
+          if (!cancelled) setPostState({ slug: postSlug, post: p ?? null })
         })
         .catch(() => {
-          if (!cancelled) setPost(null)
+          if (!cancelled) setPostState({ slug: postSlug, post: null })
         })
-      return () => { cancelled = true }
+      return () => {
+        cancelled = true
+      }
     }
     let cancelled = false
-    setPost(null)
+    setApiPage(undefined)
     fetchPageBySlug(slug)
       .then((p) => {
         if (!cancelled) setApiPage(p ?? null)
@@ -102,10 +130,14 @@ export function PageByPath() {
       .catch(() => {
         if (!cancelled) setApiPage(null)
       })
-    return () => { cancelled = true }
+    return () => {
+      cancelled = true
+    }
   }, [slug, staticPage, isPostPath, postSlug, isNewsArchive, isInquiry, isHistory])
 
-  const title = isInquiry ? null : (staticPage?.title ?? apiPage?.title ?? post?.title ?? null)
+  const title = isInquiry
+    ? null
+    : (staticPage?.title ?? apiPage?.title ?? (post && 'title' in post ? post.title : null) ?? null)
   useEffect(() => {
     if (title) document.title = messages.pages.documentTitle(title)
     return () => { document.title = messages.pages.defaultTitle }
@@ -117,7 +149,7 @@ export function PageByPath() {
       document.getElementById(hashId)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }, 80)
     return () => clearTimeout(timer)
-  }, [hashId, pathKey, staticPage, apiPage])
+  }, [hashId, pathKey, staticPage, apiPage, post])
 
   useEffect(() => {
     if (pathKey !== PATH.supportGuide) return
@@ -155,6 +187,27 @@ export function PageByPath() {
   if (isHistory) return <HistoryPage />
 
   if (isNewsArchive) return <NewsArchivePage />
+
+  if (postLoading) {
+    return (
+      <div className="page-content-wrapper">
+        <PageHero
+          title={kindHint ? heroTitleForKind(kindHint, messages) : messages.pages.loading}
+          crumbs={kindHint ? crumbsForKind(kindHint, messages) : undefined}
+          backgroundImageUrl={
+            kindHint ? pageHeroImageForPostKind(kindHint) : pageHeroImageForPath(PATH.newsAnnouncements)
+          }
+        />
+        <div className="section">
+          <div className="section_wrapper clearfix">
+            <div className="column one">
+              <ListStatus variant="loading" message={messages.pages.loading} lines={6} />
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   if (post) {
     const kind = post.meta?.khayah_kind ?? ''
@@ -234,7 +287,10 @@ export function PageByPath() {
 
   const show404 =
     !staticPage &&
-    ((isPostPath && post === null) || (!isPostPath && apiPage === null))
+    !isNewsArchive &&
+    !isInquiry &&
+    !isHistory &&
+    (postMissing || (!isPostPath && apiPage === null))
 
   if (show404) {
     return (
@@ -251,17 +307,13 @@ export function PageByPath() {
     )
   }
 
-  const loadingHeroImage = isPostPath
-    ? pageHeroImageForPath(PATH.newsAnnouncements)
-    : pageHeroImageForPath(pathKey)
-
   return (
     <div className="page-content-wrapper">
-      <PageHero title={title ?? messages.pages.loading} backgroundImageUrl={loadingHeroImage} />
+      <PageHero title={title ?? messages.pages.loading} backgroundImageUrl={pageHeroImageForPath(pathKey)} />
       <div className="section">
         <div className="section_wrapper clearfix">
           <div className="column one">
-            <ListStatus variant="loading" message={messages.pages.loading} lines={isPostPath ? 6 : 4} />
+            <ListStatus variant="loading" message={messages.pages.loading} lines={4} />
           </div>
         </div>
       </div>

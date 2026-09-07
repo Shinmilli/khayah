@@ -7,6 +7,7 @@ import type { NavLinkKey, NavTopKey } from '../i18n/messages/ko'
 import '../styles/site-header.css'
 
 const LOGO_SRC = '/images/logo/khayah_logo.png'
+const LOGO_WHITE_SRC = '/images/logo/khayahLogoWhite.png'
 const FALLBACK_LOGO = '/images/logo/khayah_logo.png'
 
 type NavLinkDef = { key: NavLinkKey; to: string; children?: NavLinkDef[] }
@@ -257,6 +258,7 @@ export function Header() {
         <div className="site-header__left">
           <Link to={loc('/')} className="site-header__logo" rel="home">
             <img
+              className="site-header__logo-img site-header__logo-img--color"
               src={LOGO_SRC}
               alt={SITE_NAME}
               onError={(e) => {
@@ -265,6 +267,12 @@ export function Header() {
                 el.dataset.fallback = '1'
                 el.src = FALLBACK_LOGO
               }}
+            />
+            <img
+              className="site-header__logo-img site-header__logo-img--white"
+              src={LOGO_WHITE_SRC}
+              alt=""
+              aria-hidden="true"
             />
           </Link>
 

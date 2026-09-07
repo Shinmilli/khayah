@@ -78,7 +78,11 @@ export function BoardSection() {
             ) : (
               notices.map((post) => (
                 <article key={post.id} className="board-item board-item--notice" role="listitem">
-                  <Link to={localize(`/posts/${encodeURIComponent(post.slug)}`)} className="board-item__title">
+                  <Link
+                    to={localize(`/posts/${encodeURIComponent(post.slug)}`)}
+                    state={{ postKind: post.meta?.khayah_kind ?? '공지사항' }}
+                    className="board-item__title"
+                  >
                     {post.title}
                   </Link>
                   <div className="board-item__meta">

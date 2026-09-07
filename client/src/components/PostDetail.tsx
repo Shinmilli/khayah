@@ -78,8 +78,7 @@ function regionLabel(region: string, messages: Messages): string {
   return region
 }
 
-function crumbsForPost(post: Post, messages: Messages): Array<{ label: string; to: string }> {
-  const kind = post.meta?.khayah_kind ?? ''
+function crumbsForKind(kind: string, messages: Messages): Array<{ label: string; to: string }> {
   const { nav, pages } = messages
   switch (kind) {
     case '공지사항':
@@ -102,32 +101,38 @@ function crumbsForPost(post: Post, messages: Messages): Array<{ label: string; t
         { label: nav.top.news, to: '/stories' },
         { label: nav.links.press, to: '/news/press' },
       ]
-    case '진행사업': {
-      const region = post.meta?.khayah_project_region?.trim()
-      const crumbs = [
+    case '진행사업':
+      return [
         { label: nav.top.business, to: '/business/domestic' },
         { label: nav.links.projects, to: '/business/projects' },
       ]
-      if (region) {
-        const slug = PROJECT_REGION_TO_SLUG[region] ?? encodeURIComponent(region)
-        crumbs.push({ label: regionLabel(region, messages), to: `/business/projects/${slug}` })
-      }
-      return crumbs
-    }
-    case '스토리': {
-      const scope = post.meta?.khayah_story_scope
-      const crumbs = [{ label: pages.stories.title, to: '/stories' }]
-      if (scope === '국내') crumbs.push({ label: pages.stories.scopes.domestic, to: '/stories/domestic' })
-      else if (scope === '해외') crumbs.push({ label: pages.stories.scopes.overseas, to: '/stories/overseas' })
-      else if (scope === '옹호') crumbs.push({ label: pages.stories.scopes.advocacy, to: '/stories/advocacy' })
-      else if (scope === '진행' || scope === '지원') {
-        crumbs.push({ label: pages.stories.scopes.support, to: '/stories/support' })
-      }
-      return crumbs
-    }
+    case '스토리':
+      return [{ label: pages.stories.title, to: '/stories' }]
     default:
       return [{ label: nav.top.news, to: '/stories' }]
   }
+}
+
+function crumbsForPost(post: Post, messages: Messages): Array<{ label: string; to: string }> {
+  const kind = post.meta?.khayah_kind ?? ''
+  const crumbs = crumbsForKind(kind, messages)
+  if (kind === '진행사업') {
+    const region = post.meta?.khayah_project_region?.trim()
+    if (region) {
+      const slug = PROJECT_REGION_TO_SLUG[region] ?? encodeURIComponent(region)
+      crumbs.push({ label: regionLabel(region, messages), to: `/business/projects/${slug}` })
+    }
+  } else if (kind === '스토리') {
+    const scope = post.meta?.khayah_story_scope
+    const { pages } = messages
+    if (scope === '국내') crumbs.push({ label: pages.stories.scopes.domestic, to: '/stories/domestic' })
+    else if (scope === '해외') crumbs.push({ label: pages.stories.scopes.overseas, to: '/stories/overseas' })
+    else if (scope === '옹호') crumbs.push({ label: pages.stories.scopes.advocacy, to: '/stories/advocacy' })
+    else if (scope === '진행' || scope === '지원') {
+      crumbs.push({ label: pages.stories.scopes.support, to: '/stories/support' })
+    }
+  }
+  return crumbs
 }
 
 function heroTitleForKind(kind: string, messages: Messages): string {
@@ -230,6 +235,7 @@ export function PostDetail({ post }: { post: Post }) {
           <Link
             className="post-board__nav-row post-board__nav-row--link"
             to={localize(`/posts/${encodeURIComponent(newer.slug)}`)}
+            state={{ postKind: kind }}
           >
             <span className="post-board__nav-label">
               <span className="post-board__chevron post-board__chevron--up" aria-hidden />
@@ -255,6 +261,7 @@ export function PostDetail({ post }: { post: Post }) {
           <Link
             className="post-board__nav-row post-board__nav-row--link"
             to={localize(`/posts/${encodeURIComponent(older.slug)}`)}
+            state={{ postKind: kind }}
           >
             <span className="post-board__nav-label">
               <span className="post-board__chevron post-board__chevron--down" aria-hidden />
@@ -281,4 +288,4 @@ export function PostDetail({ post }: { post: Post }) {
   )
 }
 
-export { heroTitleForKind, crumbsForPost, listPathForPost }
+export { heroTitleForKind, crumbsForKind, crumbsForPost, listPathForPost }

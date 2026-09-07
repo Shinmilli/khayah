@@ -95,11 +95,16 @@
   color: inherit;
 }
 
-.site-header__logo img {
+.site-header__logo img,
+.site-header__logo-img {
   height: 42px;
   width: auto;
   object-fit: contain;
   display: block;
+}
+
+.site-header__logo-img--white {
+  display: none;
 }
 
 /* flex 직계 자식은 <nav> — nav까지 bar 높이를 써야 li::after가 bar 최하단에 닿음 */
@@ -448,12 +453,16 @@
   box-shadow: none;
 }
 
-.site-header.is-home.is-at-top:not(.is-mobile-open):not(:hover):not(.is-desktop-menu-open) .site-header__logo img {
-  filter: brightness(0) invert(1);
-}
-
 .site-header.is-home.is-at-top:not(.is-mobile-open):not(:hover):not(.is-desktop-menu-open) .site-header__nav-item::after {
   background: rgba(255, 255, 255, 0.85);
+}
+
+.site-header.is-home.is-at-top:not(.is-mobile-open):not(:hover):not(.is-desktop-menu-open) .site-header__logo-img--color {
+  display: none;
+}
+
+.site-header.is-home.is-at-top:not(.is-mobile-open):not(:hover):not(.is-desktop-menu-open) .site-header__logo-img--white {
+  display: block;
 }
 
 /* 로케일 스위치: 전역 a/a:hover보다 우선해 배너 위에서도 흰색 유지 */
@@ -577,7 +586,8 @@
     display: block;
   }
 
-  .site-header__logo img {
+  .site-header__logo img,
+  .site-header__logo-img {
     height: 38px;
   }
 
@@ -615,8 +625,12 @@
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
   }
 
-  .site-header.is-mobile-open .site-header__logo img {
-    filter: none;
+  .site-header.is-mobile-open .site-header__logo-img--color {
+    display: block;
+  }
+
+  .site-header.is-mobile-open .site-header__logo-img--white {
+    display: none;
   }
 
   :root {
@@ -629,7 +643,8 @@
     padding: 0 1.5rem;
   }
 
-  .site-header__logo img {
+  .site-header__logo img,
+  .site-header__logo-img {
     height: 34px;
   }
 }
