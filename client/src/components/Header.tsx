@@ -121,6 +121,15 @@ export function Header() {
     setDesktopMenuKey(key)
   }
 
+  const closeDesktopMenu = () => {
+    cancelDesktopMenuTimer()
+    setDesktopMenuKey(null)
+    const active = document.activeElement
+    if (active instanceof HTMLElement && active.closest('.site-header')) {
+      active.blur()
+    }
+  }
+
   /** fixed 드롭다운으로 이동할 때 li에서 잠깐 hover가 끊겨도 패널이 유지되도록 지연 닫기 */
   const scheduleCloseDesktopMenu = () => {
     cancelDesktopMenuTimer()
@@ -161,9 +170,9 @@ export function Header() {
   }, [])
 
   useEffect(() => {
-    setDesktopMenuKey(null)
-    cancelDesktopMenuTimer()
-  }, [location.pathname])
+    closeDesktopMenu()
+    setMobileOpen(false)
+  }, [location.pathname, location.search, location.hash])
 
   useEffect(() => () => cancelDesktopMenuTimer(), [])
 
@@ -297,6 +306,7 @@ export function Header() {
                       className="site-header__nav-link"
                       aria-expanded={hasSub ? subOpen : undefined}
                       aria-haspopup={hasSub ? 'menu' : undefined}
+                      onClick={closeDesktopMenu}
                     >
                       {sectionLabel}
                     </Link>
@@ -310,6 +320,9 @@ export function Header() {
                         onMouseEnter={() => openDesktopMenu(item.key)}
                         onMouseLeave={scheduleCloseDesktopMenu}
                         onFocusCapture={() => openDesktopMenu(item.key)}
+                        onClick={(e) => {
+                          if ((e.target as HTMLElement).closest('a[href]')) closeDesktopMenu()
+                        }}
                       >
                         <div className="site-header__submenu-inner">
                           <div className="site-header__submenu-left">
