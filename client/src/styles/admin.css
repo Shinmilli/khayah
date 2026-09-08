@@ -1,4 +1,4 @@
-/* Admin UI mock — /admin only, no public header overlap */
+/* Admin — /admin only, no public header overlap */
 body.admin-route {
   padding-top: 0;
 }
@@ -57,6 +57,12 @@ body.admin-route {
   margin-bottom: 16px;
 }
 
+.admin-login__google-host {
+  display: flex;
+  justify-content: center;
+  min-height: 44px;
+}
+
 .admin-login__google {
   width: 100%;
   display: inline-flex;
@@ -70,8 +76,6 @@ body.admin-route {
   font-size: 15px;
   font-weight: 500;
   color: #3c4043;
-  cursor: not-allowed;
-  opacity: 0.65;
 }
 
 .admin-login__google-icon {
@@ -94,6 +98,13 @@ body.admin-route {
   color: #8b949e;
 }
 
+.admin-login__error {
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #b00020;
+}
+
 .admin-login__divider {
   height: 1px;
   background: #e6e8ec;
@@ -112,8 +123,13 @@ body.admin-route {
   cursor: pointer;
 }
 
-.admin-login__demo:hover {
+.admin-login__demo:hover:not(:disabled) {
   filter: brightness(1.05);
+}
+
+.admin-login__demo:disabled {
+  opacity: 0.7;
+  cursor: wait;
 }
 
 .admin-login__note {
@@ -159,6 +175,20 @@ body.admin-route {
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.12);
   color: #cbd5e1;
+}
+
+.admin-app__user {
+  font-size: 12px;
+  line-height: 1.4;
+  color: #94a3b8;
+  padding: 0 6px 12px;
+  word-break: break-all;
+}
+
+.admin-app--boot {
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
 }
 
 .admin-app__nav {

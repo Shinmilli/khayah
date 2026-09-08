@@ -10,9 +10,28 @@ import type { ImpactStatsDocument, ImpactStatsLocaleContent } from '../features/
 import type { HeroBannerDocument, HeroBannerPublicDocument } from '../features/home/heroBannerTypes'
 import type { HistoryDocument, HistoryLocaleContent } from '../features/history/historyTypes'
 import type { Locale } from '../i18n/locale'
+import type { AdminRole, AdminUserPublic } from '../features/admin/adminRoles'
 
 export type AdminPost = Post & { meta?: Record<string, string> }
 export type AdminPostsResponse = { posts: AdminPost[]; total: number }
+export type { AdminRole, AdminUserPublic }
+
+function needsAdminCredentials(url: string): boolean {
+  return /\/admin\/|\/auth\/|\/uploads\/(document|image|delete)/.test(url)
+}
+
+async function apiFetch(url: string, init?: RequestInit): Promise<Response> {
+  const creds = needsAdminCredentials(url)
+  const res = await fetch(url, {
+    ...init,
+    credentials: creds ? 'include' : init?.credentials,
+  })
+  const skipAuthEvent = /\/auth\/(me|google|logout|demo)/.test(url)
+  if (creds && res.status === 401 && !skipAuthEvent && typeof window !== 'undefined') {
+    window.dispatchEvent(new Event('khayah-admin-unauthorized'))
+  }
+  return res
+}
 
 async function readApiError(res: Response, fallback: string): Promise<string> {
   const text = await res.text().catch(() => '')
@@ -106,7 +125,7 @@ export async function deleteUploadedMedia(ref: {
   provider?: string
   resourceType?: string
 }): Promise<void> {
-  const res = await fetch(`${API_BASE}/uploads/delete`, {
+  const res = await apiFetch(`${API_BASE}/uploads/delete`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(ref),
@@ -117,7 +136,7 @@ export async function deleteUploadedMedia(ref: {
 export async function uploadDocumentPdf(file: File): Promise<DocumentUploadResult> {
   const form = new FormData()
   form.append('file', file)
-  const res = await fetch(`${API_BASE}/uploads/document`, { method: 'POST', body: form })
+  const res = await apiFetch(`${API_BASE}/uploads/document`, { method: 'POST', body: form })
   if (!res.ok) {
     throw new Error(await readApiError(res, 'PDF 업로드에 실패했습니다.'))
   }
@@ -132,7 +151,7 @@ export async function uploadDocumentPdf(file: File): Promise<DocumentUploadResul
 export async function uploadReportImage(file: File): Promise<DocumentUploadResult> {
   const form = new FormData()
   form.append('file', file)
-  const res = await fetch(`${API_BASE}/uploads/image`, { method: 'POST', body: form })
+  const res = await apiFetch(`${API_BASE}/uploads/image`, { method: 'POST', body: form })
   if (!res.ok) throw new Error(await readApiError(res, '이미지 업로드에 실패했습니다.'))
   const data = (await res.json()) as DocumentUploadResult
   if (!data?.url?.trim()) {
@@ -150,7 +169,7 @@ export async function adminFetchPostsByKind(kind: string, page = 1, perPage = 20
 }
 
 export async function adminFetchPost(id: number): Promise<AdminPost> {
-  const res = await fetch(`${API_BASE}/admin/posts/${id}`)
+  const res = await apiFetch(`${API_BASE}/admin/posts/${id}`)
   if (!res.ok) throw new Error('Failed to fetch admin post')
   return res.json()
 }
@@ -164,7 +183,7 @@ export async function adminCreatePost(input: {
   meta?: Record<string, string>
   publishedAt?: string
 }): Promise<AdminPost> {
-  const res = await fetch(`${API_BASE}/admin/posts`, {
+  const res = await apiFetch(`${API_BASE}/admin/posts`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(input),
@@ -184,7 +203,7 @@ export async function adminUpdatePost(
     publishedAt?: string
   },
 ): Promise<AdminPost> {
-  const res = await fetch(`${API_BASE}/admin/posts/${id}`, {
+  const res = await apiFetch(`${API_BASE}/admin/posts/${id}`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(input),
@@ -194,7 +213,7 @@ export async function adminUpdatePost(
 }
 
 export async function adminDeletePost(id: number): Promise<void> {
-  const res = await fetch(`${API_BASE}/admin/posts/${id}`, { method: 'DELETE' })
+  const res = await apiFetch(`${API_BASE}/admin/posts/${id}`, { method: 'DELETE' })
   if (!res.ok) throw new Error('Failed to delete admin post')
 }
 
@@ -205,13 +224,13 @@ export async function fetchFinancialReports(locale: Locale = 'ko'): Promise<Fina
 }
 
 export async function adminFetchFinancialReports(): Promise<FinancialReportsDocument> {
-  const res = await fetch(`${API_BASE}/admin/financial-reports`)
+  const res = await apiFetch(`${API_BASE}/admin/financial-reports`)
   if (!res.ok) throw new Error('Failed to fetch financial reports')
   return res.json()
 }
 
 export async function adminPutFinancialReports(doc: FinancialReportsDocument): Promise<FinancialReportsDocument> {
-  const res = await fetch(`${API_BASE}/admin/financial-reports`, {
+  const res = await apiFetch(`${API_BASE}/admin/financial-reports`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(doc),
@@ -230,13 +249,13 @@ export async function fetchImpactStats(locale: Locale = 'ko'): Promise<ImpactSta
 }
 
 export async function adminFetchImpactStats(): Promise<ImpactStatsDocument> {
-  const res = await fetch(`${API_BASE}/admin/impact-stats`)
+  const res = await apiFetch(`${API_BASE}/admin/impact-stats`)
   if (!res.ok) throw new Error('Failed to fetch impact stats')
   return res.json()
 }
 
 export async function adminPutImpactStats(doc: ImpactStatsDocument): Promise<ImpactStatsDocument> {
-  const res = await fetch(`${API_BASE}/admin/impact-stats`, {
+  const res = await apiFetch(`${API_BASE}/admin/impact-stats`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(doc),
@@ -255,13 +274,13 @@ export async function fetchHistory(locale: Locale = 'ko'): Promise<HistoryLocale
 }
 
 export async function adminFetchHistory(): Promise<HistoryDocument> {
-  const res = await fetch(`${API_BASE}/admin/history`)
+  const res = await apiFetch(`${API_BASE}/admin/history`)
   if (!res.ok) throw new Error('Failed to fetch history')
   return res.json()
 }
 
 export async function adminPutHistory(doc: HistoryDocument): Promise<HistoryDocument> {
-  const res = await fetch(`${API_BASE}/admin/history`, {
+  const res = await apiFetch(`${API_BASE}/admin/history`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(doc),
@@ -280,13 +299,13 @@ export async function fetchHeroBanner(locale: Locale = 'ko'): Promise<HeroBanner
 }
 
 export async function adminFetchHeroBanner(): Promise<HeroBannerDocument> {
-  const res = await fetch(`${API_BASE}/admin/hero-banner`)
+  const res = await apiFetch(`${API_BASE}/admin/hero-banner`)
   if (!res.ok) throw new Error('Failed to fetch hero banner')
   return res.json()
 }
 
 export async function adminPutHeroBanner(doc: HeroBannerDocument): Promise<HeroBannerDocument> {
-  const res = await fetch(`${API_BASE}/admin/hero-banner`, {
+  const res = await apiFetch(`${API_BASE}/admin/hero-banner`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(doc),
@@ -322,13 +341,13 @@ export async function fetchInquiryFaq(locale: Locale = 'ko'): Promise<InquiryFaq
 }
 
 export async function adminFetchInquiryFaq(): Promise<InquiryFaqDocument> {
-  const res = await fetch(`${API_BASE}/admin/inquiry-faq`)
+  const res = await apiFetch(`${API_BASE}/admin/inquiry-faq`)
   if (!res.ok) throw new Error(await readApiError(res, 'FAQ를 불러오지 못했습니다.'))
   return res.json()
 }
 
 export async function adminPutInquiryFaq(doc: InquiryFaqDocument): Promise<InquiryFaqDocument> {
-  const res = await fetch(`${API_BASE}/admin/inquiry-faq`, {
+  const res = await apiFetch(`${API_BASE}/admin/inquiry-faq`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(doc),
@@ -365,7 +384,7 @@ export async function adminFetchInquiries(
   const contact = filters.contact?.trim()
   if (name) params.set('name', name)
   if (contact) params.set('contact', contact)
-  const res = await fetch(`${API_BASE}/admin/inquiries?${params}`)
+  const res = await apiFetch(`${API_BASE}/admin/inquiries?${params}`)
   if (!res.ok) throw new Error(await readApiError(res, '문의 목록을 불러오지 못했습니다.'))
   return res.json()
 }
@@ -374,7 +393,7 @@ export async function adminUpdateInquiry(
   id: number,
   input: { status?: string; reply?: string; memo?: string },
 ): Promise<InquiryAdmin> {
-  const res = await fetch(`${API_BASE}/admin/inquiries/${id}`, {
+  const res = await apiFetch(`${API_BASE}/admin/inquiries/${id}`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(input),
@@ -384,6 +403,72 @@ export async function adminUpdateInquiry(
 }
 
 export async function adminDeleteInquiry(id: number): Promise<void> {
-  const res = await fetch(`${API_BASE}/admin/inquiries/${id}`, { method: 'DELETE' })
+  const res = await apiFetch(`${API_BASE}/admin/inquiries/${id}`, { method: 'DELETE' })
   if (!res.ok) throw new Error(await readApiError(res, '문의 삭제에 실패했습니다.'))
+}
+
+export async function authGoogle(idToken: string): Promise<AdminUserPublic> {
+  const res = await apiFetch(`${API_BASE}/auth/google`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ idToken }),
+  })
+  if (!res.ok) throw new Error(await readApiError(res, '로그인에 실패했습니다.'))
+  const data = (await res.json()) as { user: AdminUserPublic }
+  return data.user
+}
+
+export async function authMe(): Promise<AdminUserPublic | null> {
+  const res = await apiFetch(`${API_BASE}/auth/me`)
+  if (res.status === 401) return null
+  if (!res.ok) throw new Error(await readApiError(res, '세션을 확인하지 못했습니다.'))
+  const data = (await res.json()) as { user: AdminUserPublic }
+  return data.user
+}
+
+export async function authLogout(): Promise<void> {
+  const res = await apiFetch(`${API_BASE}/auth/logout`, { method: 'POST' })
+  if (!res.ok) throw new Error(await readApiError(res, '로그아웃에 실패했습니다.'))
+}
+
+export async function authDemo(): Promise<AdminUserPublic> {
+  const res = await apiFetch(`${API_BASE}/auth/demo`, { method: 'POST' })
+  if (!res.ok) throw new Error(await readApiError(res, '목업 로그인에 실패했습니다.'))
+  const data = (await res.json()) as { user: AdminUserPublic }
+  return data.user
+}
+
+export async function adminFetchUsers(): Promise<AdminUserPublic[]> {
+  const res = await apiFetch(`${API_BASE}/admin/users`)
+  if (!res.ok) throw new Error(await readApiError(res, '관리자 목록을 불러오지 못했습니다.'))
+  const data = (await res.json()) as { users: AdminUserPublic[] }
+  return data.users ?? []
+}
+
+export async function adminInviteUser(email: string, role: AdminRole): Promise<AdminUserPublic> {
+  const res = await apiFetch(`${API_BASE}/admin/users`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, role }),
+  })
+  if (!res.ok) throw new Error(await readApiError(res, '초대에 실패했습니다.'))
+  return res.json()
+}
+
+export async function adminPatchUser(
+  id: number,
+  patch: { role?: AdminRole; active?: boolean },
+): Promise<AdminUserPublic> {
+  const res = await apiFetch(`${API_BASE}/admin/users/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(patch),
+  })
+  if (!res.ok) throw new Error(await readApiError(res, '계정 변경에 실패했습니다.'))
+  return res.json()
+}
+
+export async function adminDeleteUser(id: number): Promise<void> {
+  const res = await apiFetch(`${API_BASE}/admin/users/${id}`, { method: 'DELETE' })
+  if (!res.ok) throw new Error(await readApiError(res, '계정 삭제에 실패했습니다.'))
 }

@@ -1,6 +1,7 @@
-import { useEffect, useId, useState } from 'react'
+import { useEffect, useId, useMemo, useState } from 'react'
 import { NavLink, Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom'
-import { isAdminMockLoggedIn, setAdminMockLoggedIn } from './session'
+import { useAdminAuth } from './AdminAuthContext'
+import { ADMIN_ROLE_LABEL } from './adminRoles'
 
 function isContentAdminPath(pathname: string): boolean {
   return (
@@ -24,14 +25,15 @@ const contentChildren = [
 ] as const
 
 const otherNav = [
-  { to: '/admin/app/inquiries', label: '고객 문의' },
-  { to: '/admin/app/inquiry-faq', label: 'FAQ 관리' },
-  { to: '/admin/app/operations', label: '운영·권한' },
+  { to: '/admin/app/inquiries', label: '고객 문의', roles: ['super', 'inquiry'] },
+  { to: '/admin/app/inquiry-faq', label: 'FAQ 관리', roles: ['super', 'content', 'inquiry'] },
+  { to: '/admin/app/operations', label: '운영·권한', roles: ['super'] },
 ] as const
 
 export function AdminAppShell() {
   const navigate = useNavigate()
   const location = useLocation()
+  const { me, loading, logout } = useAdminAuth()
   const contentSubId = useId()
   const [contentOpen, setContentOpen] = useState(() => isContentAdminPath(location.pathname))
 
@@ -39,11 +41,29 @@ export function AdminAppShell() {
     if (isContentAdminPath(location.pathname)) setContentOpen(true)
   }, [location.pathname])
 
-  const contentChildActive = contentChildren.some(
+  const visibleContent = useMemo(() => {
+    if (!me || me.role === 'inquiry') return []
+    return contentChildren
+  }, [me])
+
+  const visibleOther = useMemo(() => {
+    if (!me) return []
+    return otherNav.filter((item) => (item.roles as readonly string[]).includes(me.role))
+  }, [me])
+
+  const contentChildActive = visibleContent.some(
     (item) => location.pathname === item.to || location.pathname.startsWith(`${item.to}/`),
   )
 
-  if (!isAdminMockLoggedIn()) {
+  if (loading) {
+    return (
+      <div className="admin-app admin-app--boot">
+        <p className="admin-panel__foot">관리자 세션을 확인하는 중…</p>
+      </div>
+    )
+  }
+
+  if (!me) {
     return <Navigate to="/admin" replace />
   }
 
@@ -52,41 +72,44 @@ export function AdminAppShell() {
       <aside className="admin-app__sidebar" aria-label="관리자 메뉴">
         <div className="admin-app__brand">
           <span className="admin-app__brand-name">Khayah Admin</span>
-          <span className="admin-app__badge">UI 목업</span>
+          <span className="admin-app__badge">{ADMIN_ROLE_LABEL[me.role]}</span>
         </div>
+        <p className="admin-app__user">{me.email}</p>
         <nav className="admin-app__nav">
-          <div className="admin-app__nav-group">
-            <button
-              type="button"
-              className={`admin-app__nav-toggle${contentChildActive ? ' admin-app__nav-toggle--child-active' : ''}`}
-              onClick={() => setContentOpen((o) => !o)}
-              aria-expanded={contentOpen}
-              aria-controls={contentSubId}
-            >
-              <span className="admin-app__nav-toggle-label">콘텐츠 관리</span>
-              <span className="admin-app__nav-chevron" aria-hidden>
-                {contentOpen ? '▾' : '▸'}
-              </span>
-            </button>
-            {contentOpen ? (
-              <div id={contentSubId} className="admin-app__nav-sub">
-                {contentChildren.map(({ to, label }) => (
-                  <NavLink
-                    key={to}
-                    to={to}
-                    end
-                    className={({ isActive }) =>
-                      `admin-app__nav-link admin-app__nav-link--sub${isActive ? ' admin-app__nav-link--active' : ''}`
-                    }
-                  >
-                    {label}
-                  </NavLink>
-                ))}
-              </div>
-            ) : null}
-          </div>
+          {visibleContent.length > 0 ? (
+            <div className="admin-app__nav-group">
+              <button
+                type="button"
+                className={`admin-app__nav-toggle${contentChildActive ? ' admin-app__nav-toggle--child-active' : ''}`}
+                onClick={() => setContentOpen((o) => !o)}
+                aria-expanded={contentOpen}
+                aria-controls={contentSubId}
+              >
+                <span className="admin-app__nav-toggle-label">콘텐츠 관리</span>
+                <span className="admin-app__nav-chevron" aria-hidden>
+                  {contentOpen ? '▾' : '▸'}
+                </span>
+              </button>
+              {contentOpen ? (
+                <div id={contentSubId} className="admin-app__nav-sub">
+                  {visibleContent.map(({ to, label }) => (
+                    <NavLink
+                      key={to}
+                      to={to}
+                      end
+                      className={({ isActive }) =>
+                        `admin-app__nav-link admin-app__nav-link--sub${isActive ? ' admin-app__nav-link--active' : ''}`
+                      }
+                    >
+                      {label}
+                    </NavLink>
+                  ))}
+                </div>
+              ) : null}
+            </div>
+          ) : null}
 
-          {otherNav.map(({ to, label }) => (
+          {visibleOther.map(({ to, label }) => (
             <NavLink
               key={to}
               to={to}
@@ -103,18 +126,20 @@ export function AdminAppShell() {
             type="button"
             className="admin-app__logout"
             onClick={() => {
-              setAdminMockLoggedIn(false)
-              navigate('/admin', { replace: true })
+              void logout().finally(() => {
+                navigate('/admin', { replace: true })
+              })
             }}
           >
-            로그아웃(목업)
+            로그아웃
           </button>
         </div>
       </aside>
       <div className="admin-app__main">
         <header className="admin-app__topbar">
           <p className="admin-app__topbar-meta">
-            Google Workspace 계정과 역할 매핑은 운영 정책 확정 후 연동 예정입니다.
+            {me.name ? `${me.name} · ` : ''}
+            {ADMIN_ROLE_LABEL[me.role]}
           </p>
         </header>
         <main className="admin-app__content">

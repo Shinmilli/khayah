@@ -163,3 +163,16 @@ model Inquiry {
   @@index([status, createdAt])
   @@map("inquiries")
 }
+
+model AdminUser {
+  id          Int       @id @default(autoincrement())
+  email       String    @unique @db.VarChar(191)
+  name        String    @default("") @db.VarChar(120)
+  role        String    @db.VarChar(20)
+  active      Boolean   @default(true)
+  lastLoginAt DateTime? @map("last_login_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  @@map("admin_users")
+}

@@ -12,6 +12,9 @@ import { inquiryFaqRouter } from './routes/inquiryFaq'
 import { impactStatsRouter } from './routes/impactStats'
 import { heroBannerRouter } from './routes/heroBanner'
 import { historyRouter } from './routes/history'
+import { authRouter } from './routes/auth'
+import { adminUsersRouter } from './routes/adminUsers'
+import { adminAuthGuard } from './middlewares/requireAdmin'
 import { prisma, prismaInitStatus } from './utils/prisma'
 
 const app = express()
@@ -19,9 +22,17 @@ const PORT = process.env.PORT ?? 3001
 const clientOrigin = (process.env.CLIENT_ORIGIN ?? '').trim().replace(/\/$/, '') || undefined
 
 app.set('trust proxy', 1)
-app.use(cors({ origin: clientOrigin }))
+app.use(
+  cors({
+    origin: clientOrigin ?? true,
+    credentials: true,
+  }),
+)
 app.use(express.json())
 
+app.use('/api', adminAuthGuard)
+app.use('/api', authRouter)
+app.use('/api', adminUsersRouter)
 app.use('/api', postsRouter)
 app.use('/api', pagesRouter)
 app.use('/api', youtubeRouter)
