@@ -64,8 +64,8 @@ export async function postGoogleLogin(req: Request, res: Response) {
       const bootstrap = normalizeEmail(process.env.ADMIN_BOOTSTRAP_EMAIL ?? '')
       if (total === 0 && bootstrap && bootstrap === email) {
         const created = await createBootstrapSuper(email, displayName)
-        setAdminSessionCookie(res, created.id)
-        res.json({ user: toPublicUser(created) })
+        const token = setAdminSessionCookie(res, created.id)
+        res.json({ user: toPublicUser(created), token })
         return
       }
       res.status(403).json({
@@ -78,8 +78,8 @@ export async function postGoogleLogin(req: Request, res: Response) {
       return
     }
     const updated = await touchAdminLogin(existing.id, displayName || existing.name)
-    setAdminSessionCookie(res, updated.id)
-    res.json({ user: toPublicUser(updated) })
+    const token = setAdminSessionCookie(res, updated.id)
+    res.json({ user: toPublicUser(updated), token })
   } catch (e) {
     sendAdminError(res, e, '로그인 처리에 실패했습니다.')
   }
@@ -119,13 +119,13 @@ export async function postDemoLogin(_req: Request, res: Response) {
     } else {
       console.warn('[auth/demo] database unavailable; issuing cookie-only demo session')
     }
-    setAdminSessionCookie(res, user.id, {
+    const token = setAdminSessionCookie(res, user.id, {
       demo: true,
       role: user.role,
       email: user.email,
       name: user.name,
     })
-    res.json({ user })
+    res.json({ user, token })
   } catch (e) {
     sendAdminError(res, e, '목업 로그인에 실패했습니다.')
   }

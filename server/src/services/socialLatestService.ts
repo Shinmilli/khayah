@@ -54,6 +54,24 @@ function clip(s: string, max: number): string {
   return `${t.slice(0, max).trim()}…`
 }
 
+function firstImgSrc(html: string): string | null {
+  const m = html.match(/<img[^>]+src=["']([^"']+)["']/i)
+  const src = m?.[1]?.trim()
+  if (!src) return null
+  return httpsUrl(decodeXmlEntities(src))
+}
+
+function isUsableImageUrl(url: string): boolean {
+  try {
+    const host = new URL(url).hostname
+    // RSS 채널 프로필 썸네일 호스트는 외부에서 열리지 않는 경우가 많음
+    if (host === 'blogpfthumb.phinf.naver.net') return false
+    return true
+  } catch {
+    return false
+  }
+}
+
 function toIso(date: string): string | null {
   const d = new Date(date)
   if (Number.isNaN(d.getTime())) return null
@@ -133,14 +151,19 @@ async function loadBlogPreview(): Promise<SocialPreview> {
   const itemXml = itemOpen >= 0 ? xml.slice(itemOpen, xml.indexOf('</item>', itemOpen) + 7) : ''
   const postTitle = itemXml ? tagValue(itemXml, 'title') : ''
   const postLink = itemXml ? tagValue(itemXml, 'link').replace(/\?fromRss=true.*$/, '') : ''
-  const postDesc = itemXml ? clip(tagValue(itemXml, 'description'), 88) : ''
+  const rawDesc = itemXml ? tagValue(itemXml, 'description') : ''
+  const postDesc = rawDesc ? clip(rawDesc, 88) : ''
   const publishedAt = itemXml ? toIso(tagValue(itemXml, 'pubDate')) : null
+  const postImage = firstImgSrc(rawDesc)
+  const profile = profileImage ? httpsUrl(profileImage) : null
+  const imageCandidates = [postImage, profile].filter((url): url is string => Boolean(url))
+  const image = imageCandidates.find((url) => isUsableImageUrl(url)) ?? null
 
   return {
     url: postLink || blogHomeUrl(),
     title: postTitle || tagValue(channel, 'title') || 'Khayah International',
     description: postDesc || about,
-    image: profileImage ? httpsUrl(profileImage) : null,
+    image,
     publishedAt,
   }
 }

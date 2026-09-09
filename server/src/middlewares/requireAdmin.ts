@@ -2,17 +2,16 @@ import type { NextFunction, Request, Response } from 'express'
 import { isAdminRole, type AdminRole, type AdminUserPublic } from '../types/adminAuth'
 import { prisma } from '../utils/prisma'
 import {
-  ADMIN_SESSION_COOKIE,
   demoUserFromSession,
   isDemoLoginAllowed,
-  readCookie,
+  readSessionToken,
   verifyAdminSession,
   type SessionPayload,
 } from '../utils/adminSession'
 import { findAdminUserById } from '../services/adminUsersService'
 
 export async function loadAdminUser(req: Request): Promise<AdminUserPublic | null> {
-  const token = readCookie(req, ADMIN_SESSION_COOKIE)
+  const token = readSessionToken(req)
   if (!token) return null
   let session: SessionPayload | null = null
   try {

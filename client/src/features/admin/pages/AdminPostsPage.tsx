@@ -8,6 +8,7 @@ import {
   adminFetchPostsByKind,
   adminUpdatePost,
   deleteUploadedMedia,
+  getAdminBearerToken,
   uploadDocumentPdf,
   uploadReportImage,
 } from '../../../services/api'
@@ -114,12 +115,17 @@ function attachmentFromUpload(result: DocumentUploadResult): PdfAttachment {
 
 /** 새로고침/탭 닫기 시 저장 안 된 업로드를 keepalive로 삭제 */
 function deleteSessionUploadsKeepalive(refs: SessionMediaRef[]) {
+  const token = getAdminBearerToken()
   for (const ref of refs) {
     try {
       void fetch(`${API_BASE}/uploads/delete`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify(ref),
+        credentials: 'include',
         keepalive: true,
       })
     } catch {

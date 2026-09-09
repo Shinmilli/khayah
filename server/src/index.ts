@@ -17,15 +17,22 @@ import { authRouter } from './routes/auth'
 import { adminUsersRouter } from './routes/adminUsers'
 import { adminAuthGuard } from './middlewares/requireAdmin'
 import { prisma, prismaInitStatus } from './utils/prisma'
+import { parseClientOrigins } from './utils/adminSession'
 
 const app = express()
 const PORT = process.env.PORT ?? 3001
-const clientOrigin = (process.env.CLIENT_ORIGIN ?? '').trim().replace(/\/$/, '') || undefined
+const allowedOrigins = parseClientOrigins()
 
 app.set('trust proxy', 1)
 app.use(
   cors({
-    origin: clientOrigin ?? true,
+    origin(origin, callback) {
+      if (!origin || allowedOrigins.length === 0 || allowedOrigins.includes(origin)) {
+        callback(null, true)
+        return
+      }
+      callback(null, false)
+    },
     credentials: true,
   }),
 )

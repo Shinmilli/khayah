@@ -22,6 +22,13 @@ export function isDemoLoginAllowed(): boolean {
   return true
 }
 
+export function parseClientOrigins(raw = process.env.CLIENT_ORIGIN ?? ''): string[] {
+  return raw
+    .split(',')
+    .map((s) => s.trim().replace(/\/$/, ''))
+    .filter(Boolean)
+}
+
 export type SessionPayload = {
   uid: number
   iat: number
@@ -44,10 +51,7 @@ function sessionSecret(): string {
 }
 
 function sessionCookieOptions(): CookieOptions {
-  const origins = (process.env.CLIENT_ORIGIN ?? '')
-    .split(',')
-    .map((s) => s.trim().replace(/\/$/, ''))
-    .filter(Boolean)
+  const origins = parseClientOrigins()
   let crossSite = process.env.NODE_ENV === 'production'
   for (const origin of origins) {
     try {
@@ -68,6 +72,20 @@ function sessionCookieOptions(): CookieOptions {
     path: '/',
     maxAge: SESSION_MAX_AGE_MS,
   }
+}
+
+function applySessionCookie(res: Response, token: string, clear = false): void {
+  const opts = sessionCookieOptions()
+  const sameSite = opts.sameSite === 'none' ? 'None' : opts.sameSite === 'strict' ? 'Strict' : 'Lax'
+  const parts = [
+    `${ADMIN_SESSION_COOKIE}=${clear ? '' : encodeURIComponent(token)}`,
+    'Path=/',
+    `Max-Age=${clear ? 0 : Math.floor(SESSION_MAX_AGE_MS / 1000)}`,
+    'HttpOnly',
+    `SameSite=${sameSite}`,
+  ]
+  if (opts.secure) parts.push('Secure')
+  res.append('Set-Cookie', parts.join('; '))
 }
 
 export function signAdminSession(uid: number, extra?: Omit<SessionPayload, 'uid' | 'iat' | 'exp'>): string {
@@ -119,12 +137,28 @@ export function readCookie(req: Request, name: string): string | null {
   return null
 }
 
+export function readSessionToken(req: Request): string | null {
+  const fromCookie = readCookie(req, ADMIN_SESSION_COOKIE)
+  const header = (req.headers.authorization ?? '').trim()
+  const match = /^Bearer\s+(\S+)/i.exec(header)
+  const fromHeader = match?.[1] ?? null
+  if (fromCookie && verifyAdminSession(fromCookie)) return fromCookie
+  if (fromHeader && verifyAdminSession(fromHeader)) return fromHeader
+  return fromCookie || fromHeader
+}
+
 export function setAdminSessionCookie(
   res: Response,
   uid: number,
   extra?: Omit<SessionPayload, 'uid' | 'iat' | 'exp'>,
-): void {
-  res.cookie(ADMIN_SESSION_COOKIE, signAdminSession(uid, extra), sessionCookieOptions())
+): string {
+  const token = signAdminSession(uid, extra)
+  try {
+    applySessionCookie(res, token)
+  } catch (e) {
+    console.warn('[admin session] failed to set cookie', e)
+  }
+  return token
 }
 
 export function demoUserFromSession(session: SessionPayload): AdminUserPublic {
@@ -139,11 +173,9 @@ export function demoUserFromSession(session: SessionPayload): AdminUserPublic {
 }
 
 export function clearAdminSessionCookie(res: Response): void {
-  const opts = sessionCookieOptions()
-  res.clearCookie(ADMIN_SESSION_COOKIE, {
-    path: opts.path,
-    secure: opts.secure,
-    sameSite: opts.sameSite,
-    httpOnly: opts.httpOnly,
-  })
+  try {
+    applySessionCookie(res, '', true)
+  } catch (e) {
+    console.warn('[admin session] failed to clear cookie', e)
+  }
 }

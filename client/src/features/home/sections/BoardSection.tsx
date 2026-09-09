@@ -15,6 +15,8 @@ function formatPublished(iso: string): string {
   return `${y}.${m}.${day}`
 }
 
+const NAVER_BLOG_MARK = '/images/social/naver-blog.svg'
+
 function ChannelCard({
   href,
   variant,
@@ -36,15 +38,34 @@ function ChannelCard({
   const date = preview?.publishedAt ? formatPublished(preview.publishedAt) : ''
   const link = preview?.url || href
   const hasLatest = Boolean(preview?.publishedAt)
+  const [imgFailed, setImgFailed] = useState(false)
+  const showPhoto = Boolean(image) && !imgFailed
+  const showBlogMark = variant === 'blog' && !showPhoto
+
+  useEffect(() => {
+    setImgFailed(false)
+  }, [image])
 
   return (
     <a
-      className={`board-channel__card board-channel__card--${variant}${image ? ' has-photo' : ''}`}
+      className={`board-channel__card board-channel__card--${variant}${showPhoto ? ' has-photo' : ''}${showBlogMark ? ' has-brand-mark' : ''}`}
       href={link}
       target="_blank"
       rel="noopener noreferrer"
     >
-      {image ? <img className="board-channel__photo" src={image} alt="" /> : null}
+      {showPhoto ? (
+        <img
+          className="board-channel__photo"
+          src={image ?? ''}
+          alt=""
+          onError={() => setImgFailed(true)}
+        />
+      ) : null}
+      {showBlogMark ? (
+        <span className="board-channel__brand-mark" aria-hidden="true">
+          <img src={NAVER_BLOG_MARK} alt="" />
+        </span>
+      ) : null}
       <span className="board-channel__copy">
         {hasLatest ? <span className="board-channel__kicker">{latestLabel}</span> : null}
         <span className="board-channel__brand">{title}</span>

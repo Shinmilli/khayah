@@ -17,19 +17,58 @@ export type AdminPost = Post & { meta?: Record<string, string> }
 export type AdminPostsResponse = { posts: AdminPost[]; total: number }
 export type { AdminRole, AdminUserPublic }
 
+const ADMIN_TOKEN_KEY = 'khayah_admin_token'
+
+function readAdminToken(): string | null {
+  if (typeof window === 'undefined') return null
+  try {
+    return sessionStorage.getItem(ADMIN_TOKEN_KEY) || localStorage.getItem(ADMIN_TOKEN_KEY)
+  } catch {
+    return null
+  }
+}
+
+function persistAdminToken(token: string | undefined): void {
+  if (typeof window === 'undefined') return
+  try {
+    if (token) {
+      sessionStorage.setItem(ADMIN_TOKEN_KEY, token)
+      localStorage.setItem(ADMIN_TOKEN_KEY, token)
+    } else {
+      sessionStorage.removeItem(ADMIN_TOKEN_KEY)
+      localStorage.removeItem(ADMIN_TOKEN_KEY)
+    }
+  } catch {
+    /* private mode / blocked storage */
+  }
+}
+
+export function getAdminBearerToken(): string | null {
+  return readAdminToken()
+}
+
 function needsAdminCredentials(url: string): boolean {
   return /\/admin\/|\/auth\/|\/uploads\/(document|image|delete)/.test(url)
 }
 
 async function apiFetch(url: string, init?: RequestInit): Promise<Response> {
   const creds = needsAdminCredentials(url)
+  const headers = new Headers(init?.headers)
+  const token = creds ? readAdminToken() : null
+  if (token && !headers.has('Authorization')) {
+    headers.set('Authorization', `Bearer ${token}`)
+  }
   const res = await fetch(url, {
     ...init,
+    headers,
     credentials: creds ? 'include' : init?.credentials,
   })
   const skipAuthEvent = /\/auth\/(me|google|logout|demo)/.test(url)
-  if (creds && res.status === 401 && !skipAuthEvent && typeof window !== 'undefined') {
-    window.dispatchEvent(new Event('khayah-admin-unauthorized'))
+  if (creds && res.status === 401) {
+    persistAdminToken(undefined)
+    if (!skipAuthEvent && typeof window !== 'undefined') {
+      window.dispatchEvent(new Event('khayah-admin-unauthorized'))
+    }
   }
   return res
 }
@@ -168,7 +207,7 @@ export async function uploadReportImage(file: File): Promise<DocumentUploadResul
 }
 
 export async function adminFetchPostsByKind(kind: string, page = 1, perPage = 20): Promise<AdminPostsResponse> {
-  const res = await fetch(
+  const res = await apiFetch(
     `${API_BASE}/admin/posts?kind=${encodeURIComponent(kind)}&page=${page}&perPage=${perPage}`,
   )
   if (!res.ok) throw new Error(await readApiError(res, '게시글 목록을 불러오지 못했습니다.'))
@@ -177,7 +216,7 @@ export async function adminFetchPostsByKind(kind: string, page = 1, perPage = 20
 
 export async function adminFetchPost(id: number): Promise<AdminPost> {
   const res = await apiFetch(`${API_BASE}/admin/posts/${id}`)
-  if (!res.ok) throw new Error('Failed to fetch admin post')
+  if (!res.ok) throw new Error(await readApiError(res, '게시글을 불러오지 못했습니다.'))
   return res.json()
 }
 
@@ -195,7 +234,7 @@ export async function adminCreatePost(input: {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(input),
   })
-  if (!res.ok) throw new Error('Failed to create admin post')
+  if (!res.ok) throw new Error(await readApiError(res, '게시글 등록에 실패했습니다.'))
   return res.json()
 }
 
@@ -215,13 +254,13 @@ export async function adminUpdatePost(
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(input),
   })
-  if (!res.ok) throw new Error('Failed to update admin post')
+  if (!res.ok) throw new Error(await readApiError(res, '게시글 수정에 실패했습니다.'))
   return res.json()
 }
 
 export async function adminDeletePost(id: number): Promise<void> {
   const res = await apiFetch(`${API_BASE}/admin/posts/${id}`, { method: 'DELETE' })
-  if (!res.ok) throw new Error('Failed to delete admin post')
+  if (!res.ok) throw new Error(await readApiError(res, '게시글 삭제에 실패했습니다.'))
 }
 
 export async function fetchFinancialReports(locale: Locale = 'ko'): Promise<FinancialReportsPublicDocument> {
@@ -421,7 +460,8 @@ export async function authGoogle(idToken: string): Promise<AdminUserPublic> {
     body: JSON.stringify({ idToken }),
   })
   if (!res.ok) throw new Error(await readApiError(res, '로그인에 실패했습니다.'))
-  const data = (await res.json()) as { user: AdminUserPublic }
+  const data = (await res.json()) as { user: AdminUserPublic; token?: string }
+  persistAdminToken(data.token)
   return data.user
 }
 
@@ -434,14 +474,19 @@ export async function authMe(): Promise<AdminUserPublic | null> {
 }
 
 export async function authLogout(): Promise<void> {
-  const res = await apiFetch(`${API_BASE}/auth/logout`, { method: 'POST' })
-  if (!res.ok) throw new Error(await readApiError(res, '로그아웃에 실패했습니다.'))
+  try {
+    const res = await apiFetch(`${API_BASE}/auth/logout`, { method: 'POST' })
+    if (!res.ok) throw new Error(await readApiError(res, '로그아웃에 실패했습니다.'))
+  } finally {
+    persistAdminToken(undefined)
+  }
 }
 
 export async function authDemo(): Promise<AdminUserPublic> {
   const res = await apiFetch(`${API_BASE}/auth/demo`, { method: 'POST' })
   if (!res.ok) throw new Error(await readApiError(res, '목업 로그인에 실패했습니다.'))
-  const data = (await res.json()) as { user: AdminUserPublic }
+  const data = (await res.json()) as { user: AdminUserPublic; token?: string }
+  persistAdminToken(data.token)
   return data.user
 }
 

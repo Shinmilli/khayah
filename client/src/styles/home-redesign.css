@@ -1306,7 +1306,8 @@ body.has-overlay-header .home-page {
   flex-direction: column;
   justify-content: flex-end;
   gap: 10px;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 4 / 3;
+  min-height: 240px;
   padding: 22px 22px 20px;
   border-radius: 12px;
   text-decoration: none;
@@ -1315,6 +1316,10 @@ body.has-overlay-header .home-page {
   min-width: 0;
   overflow: hidden;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.board-channel__card.has-brand-mark {
+  justify-content: space-between;
 }
 
 .board-channel__card:hover {
@@ -1338,6 +1343,25 @@ body.has-overlay-header .home-page {
   height: 100%;
   object-fit: cover;
   z-index: 0;
+}
+
+.board-channel__brand-mark {
+  position: relative;
+  z-index: 2;
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 108px;
+  pointer-events: none;
+}
+
+.board-channel__brand-mark img {
+  width: clamp(72px, 28%, 120px);
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.18));
 }
 
 .board-channel__card.has-photo::after {
@@ -1833,7 +1857,7 @@ body.has-overlay-header .home-page {
 
 @media (min-width: 1200px) {
   .home-page {
-    --impact-donut-reserve: clamp(180px, 12vw, 240px);
+    --impact-donut-reserve: clamp(240px, 15vw, 300px);
   }
 
   .impact-card--primary {
@@ -1868,11 +1892,11 @@ body.has-overlay-header .home-page {
   }
 
   .donut {
-    --size: clamp(260px, 16vw, 360px);
-    --thickness: clamp(22px, 1.6vw, 32px);
+    --size: clamp(320px, 21vw, 440px);
+    --thickness: clamp(24px, 1.85vw, 36px);
     position: absolute;
-    right: clamp(-48px, -2.4vw, -28px);
-    bottom: clamp(-56px, -3vw, -32px);
+    right: clamp(-80px, -4.2vw, -50px);
+    bottom: clamp(-76px, -4vw, -44px);
     transform: none;
     margin-right: 0;
     grid-column: auto;
@@ -1882,11 +1906,11 @@ body.has-overlay-header .home-page {
   }
 
   .donut__value {
-    font-size: clamp(1.72rem, calc(0.9vw + 1.2rem), 2.45rem);
+    font-size: clamp(1.92rem, calc(1.1vw + 1.26rem), 2.85rem);
   }
 
   .donut__sub {
-    font-size: clamp(0.88rem, calc(0.35vw + 0.62rem), 1.08rem);
+    font-size: clamp(0.9rem, calc(0.42vw + 0.62rem), 1.16rem);
     line-height: 1.24;
   }
 
