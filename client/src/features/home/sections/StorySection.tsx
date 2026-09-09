@@ -146,8 +146,11 @@ export function StorySection() {
   return (
     <section className="story-section" id="news" aria-label={m.aria}>
       <div className="story-container">
-        <h2 className="impact-banner__title story-title">{m.title}</h2>
-        <p className="impact-banner__sub story-sub">{m.subtitle}</p>
+        <header className="home-section-intro">
+          <p className="home-section-intro__kicker">{m.kicker}</p>
+          <h2 className="home-section-intro__title">{m.title}</h2>
+          <p className="home-section-intro__sub">{m.subtitle}</p>
+        </header>
 
         <div className="story-slider">
           <div ref={trackRef} className="story-track" tabIndex={0} aria-label={m.listAria}>

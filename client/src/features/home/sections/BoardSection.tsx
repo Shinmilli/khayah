@@ -15,7 +15,21 @@ function formatPublished(iso: string): string {
   return `${y}.${m}.${day}`
 }
 
-const NAVER_BLOG_MARK = '/images/social/naver-blog.svg'
+function NaverBlogLockup() {
+  return (
+    <span className="naver-blog-lockup" aria-hidden="true">
+      <svg className="naver-blog-lockup__mark" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <rect width="24" height="24" rx="5" fill="#03C75A" />
+        <path
+          fill="#fff"
+          transform="translate(-1 0)"
+          d="M7.15 5.4h3.55l4.55 7.15V5.4h3.6v13.2h-3.55l-4.55-7.15v7.15H7.15V5.4z"
+        />
+      </svg>
+      <span className="naver-blog-lockup__word">blog</span>
+    </span>
+  )
+}
 
 function ChannelCard({
   href,
@@ -41,6 +55,7 @@ function ChannelCard({
   const [imgFailed, setImgFailed] = useState(false)
   const showPhoto = Boolean(image) && !imgFailed
   const showBlogMark = variant === 'blog' && !showPhoto
+  const showInstaMark = variant === 'instagram' && !showPhoto
 
   useEffect(() => {
     setImgFailed(false)
@@ -48,28 +63,39 @@ function ChannelCard({
 
   return (
     <a
-      className={`board-channel__card board-channel__card--${variant}${showPhoto ? ' has-photo' : ''}${showBlogMark ? ' has-brand-mark' : ''}`}
+      className={`board-channel__card board-channel__card--${variant}${showPhoto ? ' has-photo' : ''}${showBlogMark || showInstaMark ? ' has-brand-mark' : ''}`}
       href={link}
       target="_blank"
       rel="noopener noreferrer"
     >
-      {showPhoto ? (
-        <img
-          className="board-channel__photo"
-          src={image ?? ''}
-          alt=""
-          onError={() => setImgFailed(true)}
-        />
-      ) : null}
-      {showBlogMark ? (
-        <span className="board-channel__brand-mark" aria-hidden="true">
-          <img src={NAVER_BLOG_MARK} alt="" />
-        </span>
-      ) : null}
+      <span className="board-channel__media">
+        {showPhoto ? (
+          <img
+            className="board-channel__photo"
+            src={image ?? ''}
+            alt=""
+            onError={() => setImgFailed(true)}
+          />
+        ) : null}
+        {showBlogMark ? (
+          <span className="board-channel__brand-mark" aria-hidden="true">
+            <NaverBlogLockup />
+          </span>
+        ) : null}
+        {showInstaMark ? (
+          <span className="board-channel__brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="3.2" y="3.2" width="17.6" height="17.6" rx="5.2" stroke="currentColor" strokeWidth="1.4" />
+              <circle cx="12" cy="12" r="4.1" stroke="currentColor" strokeWidth="1.4" />
+              <circle cx="17.35" cy="6.65" r="0.95" fill="currentColor" />
+            </svg>
+          </span>
+        ) : null}
+      </span>
       <span className="board-channel__copy">
         {hasLatest ? <span className="board-channel__kicker">{latestLabel}</span> : null}
         <span className="board-channel__brand">{title}</span>
-        {desc ? <span className="board-channel__desc">{desc}</span> : null}
+        {!hasLatest && desc ? <span className="board-channel__desc">{desc}</span> : null}
         {date ? <span className="board-channel__date">{date}</span> : null}
       </span>
     </a>
@@ -108,11 +134,17 @@ export function BoardSection() {
   }, [])
 
   return (
-    <section className="board-section" aria-label={m.youtubeTitle}>
+    <section className="board-section" aria-label={m.aria}>
+      <header className="home-section-intro">
+        <p className="home-section-intro__kicker">{m.kicker}</p>
+        <h2 className="home-section-intro__title">{m.title}</h2>
+        <p className="home-section-intro__sub">{m.subtitle}</p>
+      </header>
+
       <div className="board-grid">
         <article className="board-column board-channel">
           <div className="board-head">
-            <h2 className="board-head__title">{m.blogTitle}</h2>
+            <h3 className="board-head__title">{m.blogTitle}</h3>
             <a
               className="board-more"
               href={BLOG_URL}
@@ -120,7 +152,8 @@ export function BoardSection() {
               rel="noopener noreferrer"
               aria-label={m.blogAria}
             >
-              +
+              {m.more}
+              <span aria-hidden="true">↗</span>
             </a>
           </div>
           <ChannelCard
@@ -135,7 +168,7 @@ export function BoardSection() {
 
         <article className="board-column board-channel">
           <div className="board-head">
-            <h2 className="board-head__title">{m.instagramTitle}</h2>
+            <h3 className="board-head__title">{m.instagramTitle}</h3>
             <a
               className="board-more"
               href={INSTAGRAM_URL}
@@ -143,7 +176,8 @@ export function BoardSection() {
               rel="noopener noreferrer"
               aria-label={m.instagramAria}
             >
-              +
+              {m.more}
+              <span aria-hidden="true">↗</span>
             </a>
           </div>
           <ChannelCard
@@ -158,7 +192,7 @@ export function BoardSection() {
 
         <article className="board-column board-channel">
           <div className="board-head">
-            <h2 className="board-head__title">{m.youtubeTitle}</h2>
+            <h3 className="board-head__title">{m.youtubeTitle}</h3>
             <a
               className="board-more"
               href={PROMO_YOUTUBE_CHANNEL_URL}
@@ -166,11 +200,12 @@ export function BoardSection() {
               rel="noopener noreferrer"
               aria-label={m.promoMoreAria}
             >
-              +
+              {m.more}
+              <span aria-hidden="true">↗</span>
             </a>
           </div>
           <div className="promo-video">
-            <div className="promo-video__player">
+            <div className="board-channel__media promo-video__player">
               {promo ? (
                 <iframe
                   className="promo-video__embed"

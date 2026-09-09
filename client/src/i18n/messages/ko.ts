@@ -62,6 +62,7 @@ export type Messages = {
     }
     story: {
       aria: string
+      kicker: string
       title: string
       subtitle: string
       listAria: string
@@ -80,6 +81,7 @@ export type Messages = {
     }
     impact: {
       aria: string
+      kicker: string
       title: string
       subtitle: string
       rotator: string[]
@@ -90,6 +92,11 @@ export type Messages = {
       donutAria: (percent: string, label: string) => string
     }
     board: {
+      aria: string
+      kicker: string
+      title: string
+      subtitle: string
+      more: string
       moreAria: string
       blogTitle: string
       blogDesc: string
@@ -106,6 +113,7 @@ export type Messages = {
     }
     partners: {
       aria: string
+      kicker: string
       title: string
       subtitle: string
       controls: string
@@ -358,6 +366,7 @@ export const koMessages: Messages = {
     },
     story: {
       aria: '스토리',
+      kicker: 'Stories',
       title: '스토리',
       subtitle: '우리들이 전하는 이야기',
       listAria: '스토리 목록',
@@ -376,6 +385,7 @@ export const koMessages: Messages = {
     },
     impact: {
       aria: '후원금 사용 요약',
+      kicker: 'Impact',
       title: '나눔의 결실',
       subtitle: '함께 만든 희망의 열매들',
       rotator: [
@@ -391,6 +401,11 @@ export const koMessages: Messages = {
         label ? `후원금의 ${percent.replace('%', '')}%는 ${label}에 사용됩니다` : `후원금의 ${percent}`,
     },
     board: {
+      aria: '카야 채널',
+      kicker: 'Follow',
+      title: '현장의 기록',
+      subtitle: '블로그, 인스타그램, 유튜브에 담긴 카야의 하루입니다.',
+      more: '바로가기',
       moreAria: '더보기',
       blogTitle: '블로그',
       blogDesc: '카야의 이야기를 네이버 블로그에서 만나보세요.',
@@ -407,6 +422,7 @@ export const koMessages: Messages = {
     },
     partners: {
       aria: '협력기관',
+      kicker: 'Partners',
       title: '함께하는 협력기관',
       subtitle: '카야의 활동은 다양한 파트너와의 협력으로 더 멀리, 더 단단하게 이어집니다.',
       controls: '협력기관 로고 컨트롤',

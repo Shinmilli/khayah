@@ -54,9 +54,10 @@ export function ImpactSection() {
 
   return (
     <section className="impact-banner" id="support" aria-label={m.aria}>
-      <header className="impact-banner__intro impact-banner__align-col">
-        <h2 className="impact-banner__title">{m.title}</h2>
-        <p className="impact-banner__sub">{m.subtitle}</p>
+      <header className="home-section-intro impact-banner__intro impact-banner__align-col">
+        <p className="home-section-intro__kicker">{m.kicker}</p>
+        <h2 className="home-section-intro__title">{m.title}</h2>
+        <p className="home-section-intro__sub">{m.subtitle}</p>
       </header>
 
       <div ref={visualRef} className="impact-banner__visual">
@@ -72,7 +73,7 @@ export function ImpactSection() {
           </div>
         </div>
 
-        <div className="impact-banner__inner">
+        <div className="impact-banner__inner impact-banner__align-col">
           <article className="impact-card impact-card--primary">
             <div className="impact-card__content">
               <div className="impact-card__head">

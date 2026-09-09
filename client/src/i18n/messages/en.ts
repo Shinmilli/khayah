@@ -79,6 +79,7 @@ export const enMessages: Messages = {
     },
     story: {
       aria: 'Stories',
+      kicker: 'Stories',
       title: 'Stories',
       subtitle: 'Voices from the field',
       listAria: 'Story list',
@@ -97,6 +98,7 @@ export const enMessages: Messages = {
     },
     impact: {
       aria: 'How donations are used',
+      kicker: 'Impact',
       title: 'Impact of giving',
       subtitle: 'Fruit of hope, grown together',
       rotator: [
@@ -114,6 +116,11 @@ export const enMessages: Messages = {
           : `${percent} of donations`,
     },
     board: {
+      aria: 'Khayah channels',
+      kicker: 'Follow',
+      title: 'Field notes',
+      subtitle: 'The day-to-day continues on the blog, Instagram, and YouTube.',
+      more: 'Open',
       moreAria: 'View more',
       blogTitle: 'Blog',
       blogDesc: 'Read Khayah’s stories on the Naver blog.',
@@ -130,6 +137,7 @@ export const enMessages: Messages = {
     },
     partners: {
       aria: 'Partner organizations',
+      kicker: 'Partners',
       title: 'Partners',
       subtitle: 'Khayah’s work reaches further and grows stronger through collaboration.',
       controls: 'Partner logo controls',

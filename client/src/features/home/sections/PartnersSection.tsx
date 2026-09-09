@@ -16,6 +16,7 @@ export function PartnersSection() {
     <section className="partners-section" aria-label={m.aria}>
       <div className="partners-container">
         <header className="partners-head">
+          <p className="partners-kicker">{m.kicker}</p>
           <h2 className="partners-title">{m.title}</h2>
           <p className="partners-sub">{m.subtitle}</p>
         </header>
