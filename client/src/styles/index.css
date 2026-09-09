@@ -593,8 +593,8 @@ a:hover {
 
 /* 전역 플로팅 후원 (홈: 히어로 절반 이상 스크롤 아웃 시 / 그 외 페이지: 항상) */
 .site-floating-fab {
-  --fab-donate-size: 72px;
-  --fab-social-size: 46px;
+  --fab-donate-size: 84px;
+  --fab-social-size: 50px;
   --fab-social-gap: 10px;
   --fab-stack-gap: 12px;
   position: fixed;
@@ -728,7 +728,7 @@ a:hover {
   align-items: center;
   justify-content: center;
   gap: 3px;
-  padding: 10px 6px 12px;
+  padding: 12px 6px 14px;
   box-sizing: border-box;
   background: var(--khayah-red);
   color: #fff;
@@ -756,8 +756,8 @@ a:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 13px;
-  height: 13px;
+  width: 16px;
+  height: 16px;
   flex-shrink: 0;
   color: #fff;
 }
@@ -769,11 +769,46 @@ a:hover {
 }
 
 .site-floating-fab__label {
-  font-size: 0.65rem;
+  font-size: 0.72rem;
   font-weight: 600;
   line-height: 1.1;
   letter-spacing: -0.02em;
   text-align: center;
+}
+
+/* 데스크톱: 소셜 버튼 항상 표시. 모바일·태블릿은 hover/focus 유지 */
+@media (min-width: 1025px) {
+  .site-floating-fab {
+    --fab-donate-size: 96px;
+    --fab-social-size: 54px;
+    --fab-social-gap: 12px;
+    --fab-stack-gap: 14px;
+  }
+
+  .site-floating-fab::before {
+    pointer-events: none;
+  }
+
+  .site-floating-fab.is-visible .site-floating-fab__socials {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, 0);
+    pointer-events: auto;
+  }
+
+  .site-floating-fab__heart {
+    width: 18px;
+    height: 18px;
+  }
+
+  .site-floating-fab__label {
+    font-size: 0.8rem;
+  }
+
+  .site-floating-fab__social svg {
+    width: 22px;
+    height: 22px;
+  }
 }
 
 /* Post list (blog) */

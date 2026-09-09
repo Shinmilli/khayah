@@ -137,7 +137,6 @@ export const enMessages: Messages = {
     },
     partners: {
       aria: 'Partner organizations',
-      kicker: 'Partners',
       title: 'Partners',
       subtitle: 'Khayah’s work reaches further and grows stronger through collaboration.',
       controls: 'Partner logo controls',

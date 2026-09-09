@@ -113,7 +113,6 @@ export type Messages = {
     }
     partners: {
       aria: string
-      kicker: string
       title: string
       subtitle: string
       controls: string
@@ -422,7 +421,6 @@ export const koMessages: Messages = {
     },
     partners: {
       aria: '협력기관',
-      kicker: 'Partners',
       title: '함께하는 협력기관',
       subtitle: '카야의 활동은 다양한 파트너와의 협력으로 더 멀리, 더 단단하게 이어집니다.',
       controls: '협력기관 로고 컨트롤',
