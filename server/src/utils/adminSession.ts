@@ -1,34 +1,64 @@
 import { createHmac, timingSafeEqual } from 'crypto'
 import type { CookieOptions, Request, Response } from 'express'
+import type { AdminRole, AdminUserPublic } from '../types/adminAuth'
+import { isAdminRole } from '../types/adminAuth'
 
 export const ADMIN_SESSION_COOKIE = 'khayah_admin'
 const SESSION_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000
+const DEV_SESSION_SECRET = 'dev-only-khayah-admin-session'
 
-type SessionPayload = {
+export const DEMO_ADMIN_PUBLIC: AdminUserPublic = {
+  id: 0,
+  email: 'demo@khayah.local',
+  name: '임시 목업',
+  role: 'super',
+  active: true,
+  lastLoginAt: null,
+}
+
+export function isDemoLoginAllowed(): boolean {
+  const flag = (process.env.ADMIN_DEMO_LOGIN ?? process.env.ADMIN_DEV_LOGIN ?? '').trim().toLowerCase()
+  if (flag === 'false' || flag === '0' || flag === 'off') return false
+  return true
+}
+
+export type SessionPayload = {
   uid: number
   iat: number
   exp: number
+  demo?: boolean
+  role?: AdminRole
+  email?: string
+  name?: string
 }
 
 function sessionSecret(): string {
   const fromEnv = (process.env.ADMIN_SESSION_SECRET ?? '').trim()
   if (fromEnv.length >= 16) return fromEnv
   if (process.env.NODE_ENV === 'production') {
-    throw new Error('ADMIN_SESSION_SECRET must be set (16+ characters) in production')
+    console.warn(
+      '[admin session] ADMIN_SESSION_SECRET is missing or shorter than 16 characters. Using an insecure fallback so demo login can work. Set a 16+ character secret in production.',
+    )
   }
-  return 'dev-only-khayah-admin-session'
+  return DEV_SESSION_SECRET
 }
 
 function sessionCookieOptions(): CookieOptions {
-  const client = (process.env.CLIENT_ORIGIN ?? '').trim()
-  let crossSite = false
-  try {
-    if (client) {
-      const host = new URL(client).hostname
-      crossSite = host !== 'localhost' && host !== '127.0.0.1'
+  const origins = (process.env.CLIENT_ORIGIN ?? '')
+    .split(',')
+    .map((s) => s.trim().replace(/\/$/, ''))
+    .filter(Boolean)
+  let crossSite = process.env.NODE_ENV === 'production'
+  for (const origin of origins) {
+    try {
+      const host = new URL(origin).hostname
+      if (host && host !== 'localhost' && host !== '127.0.0.1') {
+        crossSite = true
+        break
+      }
+    } catch {
+      /* ignore invalid CLIENT_ORIGIN entry */
     }
-  } catch {
-    /* ignore invalid CLIENT_ORIGIN */
   }
   const secure = crossSite || process.env.NODE_ENV === 'production'
   return {
@@ -40,12 +70,13 @@ function sessionCookieOptions(): CookieOptions {
   }
 }
 
-export function signAdminSession(uid: number): string {
+export function signAdminSession(uid: number, extra?: Omit<SessionPayload, 'uid' | 'iat' | 'exp'>): string {
   const iat = Math.floor(Date.now() / 1000)
   const payload: SessionPayload = {
     uid,
     iat,
     exp: iat + Math.floor(SESSION_MAX_AGE_MS / 1000),
+    ...extra,
   }
   const body = Buffer.from(JSON.stringify(payload)).toString('base64url')
   const sig = createHmac('sha256', sessionSecret()).update(body).digest('base64url')
@@ -88,8 +119,23 @@ export function readCookie(req: Request, name: string): string | null {
   return null
 }
 
-export function setAdminSessionCookie(res: Response, uid: number): void {
-  res.cookie(ADMIN_SESSION_COOKIE, signAdminSession(uid), sessionCookieOptions())
+export function setAdminSessionCookie(
+  res: Response,
+  uid: number,
+  extra?: Omit<SessionPayload, 'uid' | 'iat' | 'exp'>,
+): void {
+  res.cookie(ADMIN_SESSION_COOKIE, signAdminSession(uid, extra), sessionCookieOptions())
+}
+
+export function demoUserFromSession(session: SessionPayload): AdminUserPublic {
+  return {
+    id: Number.isFinite(session.uid) ? session.uid : DEMO_ADMIN_PUBLIC.id,
+    email: session.email || DEMO_ADMIN_PUBLIC.email,
+    name: session.name || DEMO_ADMIN_PUBLIC.name,
+    role: isAdminRole(session.role) ? session.role : DEMO_ADMIN_PUBLIC.role,
+    active: true,
+    lastLoginAt: null,
+  }
 }
 
 export function clearAdminSessionCookie(res: Response): void {

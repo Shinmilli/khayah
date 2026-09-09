@@ -4,6 +4,7 @@ import cors from 'cors'
 import { postsRouter } from './routes/posts'
 import { pagesRouter } from './routes/pages'
 import { youtubeRouter } from './routes/youtube'
+import { socialRouter } from './routes/social'
 import { uploadsRouter } from './routes/uploads'
 import { adminPostsRouter } from './routes/adminPosts'
 import { financialReportsRouter } from './routes/financialReports'
@@ -36,6 +37,7 @@ app.use('/api', adminUsersRouter)
 app.use('/api', postsRouter)
 app.use('/api', pagesRouter)
 app.use('/api', youtubeRouter)
+app.use('/api', socialRouter)
 app.use('/api', uploadsRouter)
 app.use('/api', adminPostsRouter)
 app.use('/api', financialReportsRouter)

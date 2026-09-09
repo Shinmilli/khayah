@@ -11,19 +11,22 @@
           "id": "participants",
           "label": "사업 참여자 수",
           "value": "100,000",
-          "unit": "명"
+          "unit": "명",
+          "icon": "groups"
         },
         {
           "id": "regions",
           "label": "지원받은 지역/마을 수",
           "value": "0000",
-          "unit": ""
+          "unit": "",
+          "icon": "location_on"
         },
         {
           "id": "facilities",
           "label": "건설 지원 시설 혹은 제공한 카트 수",
           "value": "0000",
-          "unit": ""
+          "unit": "",
+          "icon": "local_shipping"
         }
       ]
     },
@@ -37,19 +40,22 @@
           "id": "participants",
           "label": "Program participants",
           "value": "100,000",
-          "unit": ""
+          "unit": "",
+          "icon": "groups"
         },
         {
           "id": "regions",
           "label": "Communities / villages supported",
           "value": "0000",
-          "unit": ""
+          "unit": "",
+          "icon": "location_on"
         },
         {
           "id": "facilities",
           "label": "Facilities built or carts provided",
           "value": "0000",
-          "unit": ""
+          "unit": "",
+          "icon": "local_shipping"
         }
       ]
     }

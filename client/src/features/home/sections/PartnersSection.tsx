@@ -1,4 +1,3 @@
-import { useRef } from 'react'
 import { useLocale } from '../../../i18n/LocaleContext'
 
 const PARTNER_LOGOS: { src: string; alt: string }[] = [
@@ -12,48 +11,30 @@ const PARTNER_LOGOS: { src: string; alt: string }[] = [
 export function PartnersSection() {
   const { messages } = useLocale()
   const m = messages.home.partners
-  const trackRef = useRef<HTMLDivElement | null>(null)
-
-  const scrollByStep = (direction: number) => {
-    const track = trackRef.current
-    if (!track) return
-    const firstCard = track.querySelector('.partner-card')
-    if (!firstCard) return
-    const styles = window.getComputedStyle(track)
-    const gap = Number.parseFloat(styles.columnGap || styles.gap || '0') || 0
-    const step = firstCard.getBoundingClientRect().width + gap
-    track.scrollBy({ left: direction * step, behavior: 'smooth' })
-  }
 
   return (
     <section className="partners-section" aria-label={m.aria}>
       <div className="partners-container">
-        <div className="partners-layout">
-          <header className="partners-head">
-            <h2 className="partners-title">{m.title}</h2>
-            <p className="partners-sub">{m.subtitle}</p>
-            <div className="partners-controls" aria-label={m.controls}>
-              <button type="button" className="partners-nav partners-nav--prev" aria-label={m.prev} onClick={() => scrollByStep(-1)}>
-                <span aria-hidden="true">‹</span>
-              </button>
-              <button type="button" className="partners-nav partners-nav--next" aria-label={m.next} onClick={() => scrollByStep(1)}>
-                <span aria-hidden="true">›</span>
-              </button>
-            </div>
-          </header>
+        <header className="partners-head">
+          <h2 className="partners-title">{m.title}</h2>
+          <p className="partners-sub">{m.subtitle}</p>
+        </header>
 
-          <div className="partners-slider-wrap">
-            <div ref={trackRef} className="partners-slider" role="list" aria-label="협력기관 로고 목록">
-              {PARTNER_LOGOS.map((logo) => (
-                <div key={logo.src} className="partner-card" role="listitem">
-                  <img className="partner-logo" src={logo.src} alt={logo.alt} loading="lazy" />
-                </div>
-              ))}
-            </div>
+        <div className="partners-marquee">
+          <div className="partners-track">
+            {PARTNER_LOGOS.map((logo) => (
+              <div key={logo.src} className="partner-card">
+                <img className="partner-logo" src={logo.src} alt={logo.alt} loading="lazy" />
+              </div>
+            ))}
+            {PARTNER_LOGOS.map((logo) => (
+              <div key={`${logo.src}-dup`} className="partner-card" aria-hidden="true">
+                <img className="partner-logo" src={logo.src} alt="" loading="lazy" />
+              </div>
+            ))}
           </div>
         </div>
       </div>
     </section>
   )
 }
-

@@ -1,5 +1,6 @@
 import { API_BASE } from '../constants'
 import type { YoutubeLatestVideo } from '../types/youtube'
+import type { SocialLatest } from '../types/social'
 import type { PostsResponse } from '../types/post'
 import type { Page } from '../types/page'
 import type { Post } from '../types/post'
@@ -103,6 +104,12 @@ export async function fetchPostBySlug(slug: string): Promise<Post | null> {
 export async function fetchYoutubeLatest(): Promise<YoutubeLatestVideo> {
   const res = await fetch(`${API_BASE}/youtube/latest`)
   if (!res.ok) throw new Error('Failed to fetch YouTube latest')
+  return res.json()
+}
+
+export async function fetchSocialLatest(): Promise<SocialLatest> {
+  const res = await fetch(`${API_BASE}/social/latest`)
+  if (!res.ok) throw new Error('Failed to fetch social latest')
   return res.json()
 }
 

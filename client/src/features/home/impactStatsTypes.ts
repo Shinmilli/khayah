@@ -3,6 +3,8 @@ export type ImpactStatItem = {
   label: string
   value: string
   unit?: string
+  /** Material Symbols Outlined ligature name (e.g. groups, location_on) */
+  icon?: string
 }
 
 export type ImpactStatsLocaleContent = {
@@ -32,9 +34,9 @@ export const DEFAULT_IMPACT_STATS: ImpactStatsDocument = {
         labelLines: ['수혜된 아동의', '교육지원'],
       },
       stats: [
-        { id: 'participants', label: '사업 참여자 수', value: '100,000', unit: '명' },
-        { id: 'regions', label: '지원받은 지역/마을 수', value: '0000', unit: '' },
-        { id: 'facilities', label: '건설 지원 시설 혹은 제공한 카트 수', value: '0000', unit: '' },
+        { id: 'participants', label: '사업 참여자 수', value: '100,000', unit: '명', icon: 'groups' },
+        { id: 'regions', label: '지원받은 지역/마을 수', value: '0000', unit: '', icon: 'location_on' },
+        { id: 'facilities', label: '건설 지원 시설 혹은 제공한 카트 수', value: '0000', unit: '', icon: 'local_shipping' },
       ],
     },
     en: {
@@ -43,9 +45,9 @@ export const DEFAULT_IMPACT_STATS: ImpactStatsDocument = {
         labelLines: ['Education support', 'for children we serve'],
       },
       stats: [
-        { id: 'participants', label: 'Program participants', value: '100,000', unit: '' },
-        { id: 'regions', label: 'Communities / villages supported', value: '0000', unit: '' },
-        { id: 'facilities', label: 'Facilities built or carts provided', value: '0000', unit: '' },
+        { id: 'participants', label: 'Program participants', value: '100,000', unit: '', icon: 'groups' },
+        { id: 'regions', label: 'Communities / villages supported', value: '0000', unit: '', icon: 'location_on' },
+        { id: 'facilities', label: 'Facilities built or carts provided', value: '0000', unit: '', icon: 'local_shipping' },
       ],
     },
   },

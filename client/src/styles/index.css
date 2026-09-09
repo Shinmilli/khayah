@@ -1,6 +1,6 @@
 /* Base & Betheme-child inspired (Khayah) */
 :root {
-  --site-header-height: 80px;
+  --site-header-height: 88px;
   --khayah-red: #b20838;
   --khayah-red-hover: #c78598;
   --text-dark: #404954;
@@ -35,15 +35,21 @@ body.has-overlay-header {
   padding-top: 0;
 }
 
+@media (min-width: 1280px) {
+  :root {
+    --site-header-height: 96px;
+  }
+}
+
 @media (max-width: 768px) {
   :root {
-    --site-header-height: 70px;
+    --site-header-height: 74px;
   }
 }
 
 @media (max-width: 480px) {
   :root {
-    --site-header-height: 60px;
+    --site-header-height: 64px;
   }
 }
 

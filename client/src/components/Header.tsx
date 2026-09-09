@@ -17,13 +17,9 @@ type NavColumn = {
   id: string
   topKey: NavTopKey
   links?: NavLinkDef[]
-  subColumns?: NavLinkDef[][]
-  subRows?: NavLinkDef[][]
 }
 
 function columnAllLinks(col: NavColumn): NavLinkDef[] {
-  if (col.subRows?.length) return col.subRows.flat()
-  if (col.subColumns?.length) return col.subColumns.flat()
   const base = col.links ?? []
   return base.flatMap((l) => [l, ...(l.children ?? [])])
 }
@@ -32,18 +28,14 @@ const NAV_COLUMNS: NavColumn[] = [
   {
     id: 'khaya-col',
     topKey: 'khayah',
-    subRows: [
-      [
-        { key: 'greeting', to: '/about/greeting' },
-        { key: 'history', to: '/about/history' },
-        { key: 'location', to: '/about/location' },
-        { key: 'financialReport', to: '/news/financial-report' },
-      ],
-      [
-        { key: 'aboutKhayah', to: '/about/khayah' },
-        { key: 'ci', to: '/about/khayah?tab=ci' },
-        { key: 'org', to: '/about/khayah?tab=org' },
-      ],
+    links: [
+      { key: 'greeting', to: '/about/greeting' },
+      { key: 'history', to: '/about/history' },
+      { key: 'location', to: '/about/location' },
+      { key: 'financialReport', to: '/news/financial-report' },
+      { key: 'aboutKhayah', to: '/about/khayah' },
+      { key: 'ci', to: '/about/khayah?tab=ci' },
+      { key: 'org', to: '/about/khayah?tab=org' },
     ],
   },
   {
@@ -204,38 +196,53 @@ export function Header() {
 
   const closeMobile = () => setMobileOpen(false)
 
+  const renderStackedList = (links: NavLinkDef[]) => (
+    <div className="site-header__submenu-list site-header__submenu-list--stack">
+      {links.map((l) => (
+        <Link
+          key={`${l.to}-${l.key}`}
+          to={loc(l.to)}
+          role="menuitem"
+          className="site-header__submenu-link"
+          onClick={closeDesktopMenu}
+        >
+          {linkLabel(l.key)}
+        </Link>
+      ))}
+    </div>
+  )
+
   const renderLinkList = (links: NavLinkDef[]) => (
-    <div className="site-header__submenu-columns">
-      <div className="site-header__submenu-col">
-        {links.map((l) => {
-          const label = linkLabel(l.key)
-          return l.children?.length ? (
-            <div key={`${l.to}-${l.key}`} className="site-header__submenu-group">
-              <Link to={loc(l.to)} role="menuitem" className="site-header__submenu-group-title">
-                {label}
-              </Link>
-              <div className="site-header__submenu-sublinks" aria-label={nav.aria.subcategory(label)}>
-                {l.children.map((c) => (
-                  <Link
-                    key={`${l.to}__${c.to}__${c.key}`}
-                    to={loc(c.to)}
-                    role="menuitem"
-                    className="site-header__submenu-sublink"
-                  >
-                    {linkLabel(c.key)}
-                  </Link>
-                ))}
-              </div>
+    <div className="site-header__submenu-list">
+      {links.map((l) => {
+        const label = linkLabel(l.key)
+        return l.children?.length ? (
+          <div key={`${l.to}-${l.key}`} className="site-header__submenu-group">
+            <Link to={loc(l.to)} role="menuitem" className="site-header__submenu-group-title" onClick={closeDesktopMenu}>
+              {label}
+            </Link>
+            <div className="site-header__submenu-sublinks" aria-label={nav.aria.subcategory(label)}>
+              {l.children.map((c) => (
+                <Link
+                  key={`${l.to}__${c.to}__${c.key}`}
+                  to={loc(c.to)}
+                  role="menuitem"
+                  className="site-header__submenu-sublink"
+                  onClick={closeDesktopMenu}
+                >
+                  {linkLabel(c.key)}
+                </Link>
+              ))}
             </div>
-          ) : (
-            <div key={`${l.to}-${l.key}`} className="site-header__submenu-group site-header__submenu-group--single">
-              <Link to={loc(l.to)} role="menuitem" className="site-header__submenu-group-title">
-                {label}
-              </Link>
-            </div>
-          )
-        })}
-      </div>
+          </div>
+        ) : (
+          <div key={`${l.to}-${l.key}`} className="site-header__submenu-group site-header__submenu-group--single">
+            <Link to={loc(l.to)} role="menuitem" className="site-header__submenu-group-title" onClick={closeDesktopMenu}>
+              {label}
+            </Link>
+          </div>
+        )
+      })}
     </div>
   )
 
@@ -343,53 +350,9 @@ export function Header() {
                             <p className="site-header__submenu-title">{topLabel(col.topKey)}</p>
                           </div>
                           <div className="site-header__submenu-right">
-                            {col.subRows?.length ? (
-                              <div className="site-header__submenu-rows">
-                                {col.subRows.map((row, ri) => (
-                                  <div key={ri} className="site-header__submenu-row">
-                                    {row.map((l) => (
-                                      <Link
-                                        key={`${ri}-${l.to}-${l.key}`}
-                                        to={loc(l.to)}
-                                        role="menuitem"
-                                        className="site-header__submenu-link"
-                                      >
-                                        {linkLabel(l.key)}
-                                      </Link>
-                                    ))}
-                                  </div>
-                                ))}
-                              </div>
-                            ) : (
-                              <>
-                                {col.subColumns ? (
-                                  <div
-                                    className={`site-header__submenu-columns${
-                                      col.subColumns && col.subColumns.length > 1
-                                        ? ' site-header__submenu-columns--split'
-                                        : ''
-                                    }`}
-                                  >
-                                    {col.subColumns.map((group, gi) => (
-                                      <div key={gi} className="site-header__submenu-col">
-                                        {group.map((l) => (
-                                          <Link
-                                            key={`${gi}-${l.to}-${l.key}`}
-                                            to={loc(l.to)}
-                                            role="menuitem"
-                                            className="site-header__submenu-link"
-                                          >
-                                            {linkLabel(l.key)}
-                                          </Link>
-                                        ))}
-                                      </div>
-                                    ))}
-                                  </div>
-                                ) : (
-                                  renderLinkList(col.links ?? [])
-                                )}
-                              </>
-                            )}
+                            {col.topKey === 'khayah'
+                              ? renderStackedList(col.links ?? [])
+                              : renderLinkList(col.links ?? [])}
                           </div>
                         </div>
                       </div>

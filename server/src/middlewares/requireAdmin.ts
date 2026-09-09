@@ -1,20 +1,31 @@
 import type { NextFunction, Request, Response } from 'express'
 import { isAdminRole, type AdminRole, type AdminUserPublic } from '../types/adminAuth'
 import { prisma } from '../utils/prisma'
-import { ADMIN_SESSION_COOKIE, readCookie, verifyAdminSession } from '../utils/adminSession'
+import {
+  ADMIN_SESSION_COOKIE,
+  demoUserFromSession,
+  isDemoLoginAllowed,
+  readCookie,
+  verifyAdminSession,
+  type SessionPayload,
+} from '../utils/adminSession'
 import { findAdminUserById } from '../services/adminUsersService'
 
 export async function loadAdminUser(req: Request): Promise<AdminUserPublic | null> {
-  if (!prisma) return null
   const token = readCookie(req, ADMIN_SESSION_COOKIE)
   if (!token) return null
-  let session: { uid: number } | null = null
+  let session: SessionPayload | null = null
   try {
     session = verifyAdminSession(token)
   } catch {
     return null
   }
   if (!session) return null
+  if (session.demo) {
+    if (!isDemoLoginAllowed()) return null
+    return demoUserFromSession(session)
+  }
+  if (!prisma) return null
   const row = await findAdminUserById(session.uid)
   if (!row || !row.active || !isAdminRole(row.role)) return null
   return {

@@ -4,11 +4,14 @@ import seedDocument from '../seed/impact-stats.default.json'
 
 const DATA_FILE = path.resolve(process.cwd(), 'data', 'impact-stats.json')
 
+const ICON_NAME_RE = /^[a-z0-9_]{1,64}$/
+
 export type ImpactStatItem = {
   id: string
   label: string
   value: string
   unit?: string
+  icon?: string
 }
 
 export type ImpactStatsLocaleContent = {
@@ -54,6 +57,9 @@ function validateLocaleContent(body: unknown): body is ImpactStatsLocaleContent 
     if (typeof row.label !== 'string') return false
     if (typeof row.value !== 'string') return false
     if (row.unit != null && typeof row.unit !== 'string') return false
+    if (row.icon != null && row.icon !== '') {
+      if (typeof row.icon !== 'string' || !ICON_NAME_RE.test(row.icon)) return false
+    }
   }
   return true
 }

@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { BLOG_URL, INSTAGRAM_URL } from '../../../constants'
 import { PROMO_YOUTUBE_CHANNEL_URL } from '../../../constants/youtube'
-import { fetchPostsByKind, fetchYoutubeLatest } from '../../../services/api'
+import { fetchSocialLatest, fetchYoutubeLatest } from '../../../services/api'
+import type { SocialPreview } from '../../../types/social'
 import type { YoutubeLatestVideo } from '../../../types/youtube'
-import type { Post } from '../../../types/post'
 import { useLocale } from '../../../i18n/LocaleContext'
-import { PATH } from '../../../i18n/routes'
 
 function formatPublished(iso: string): string {
   const d = new Date(iso)
@@ -16,13 +15,53 @@ function formatPublished(iso: string): string {
   return `${y}.${m}.${day}`
 }
 
+function ChannelCard({
+  href,
+  variant,
+  fallbackTitle,
+  fallbackDesc,
+  preview,
+  latestLabel,
+}: {
+  href: string
+  variant: 'blog' | 'instagram'
+  fallbackTitle: string
+  fallbackDesc: string
+  preview: SocialPreview | null
+  latestLabel: string
+}) {
+  const title = preview?.title?.trim() || fallbackTitle
+  const desc = preview?.description?.trim() || fallbackDesc
+  const image = preview?.image
+  const date = preview?.publishedAt ? formatPublished(preview.publishedAt) : ''
+  const link = preview?.url || href
+  const hasLatest = Boolean(preview?.publishedAt)
+
+  return (
+    <a
+      className={`board-channel__card board-channel__card--${variant}${image ? ' has-photo' : ''}`}
+      href={link}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      {image ? <img className="board-channel__photo" src={image} alt="" /> : null}
+      <span className="board-channel__copy">
+        {hasLatest ? <span className="board-channel__kicker">{latestLabel}</span> : null}
+        <span className="board-channel__brand">{title}</span>
+        {desc ? <span className="board-channel__desc">{desc}</span> : null}
+        {date ? <span className="board-channel__date">{date}</span> : null}
+      </span>
+    </a>
+  )
+}
+
 export function BoardSection() {
-  const { messages, localize } = useLocale()
+  const { messages } = useLocale()
   const m = messages.home.board
   const [promo, setPromo] = useState<YoutubeLatestVideo | null>(null)
   const [promoError, setPromoError] = useState(false)
-  const [notices, setNotices] = useState<Post[]>([])
-  const [noticeError, setNoticeError] = useState(false)
+  const [blog, setBlog] = useState<SocialPreview | null>(null)
+  const [instagram, setInstagram] = useState<SocialPreview | null>(null)
 
   useEffect(() => {
     let cancelled = false
@@ -33,19 +72,14 @@ export function BoardSection() {
       .catch(() => {
         if (!cancelled) setPromoError(true)
       })
-    return () => {
-      cancelled = true
-    }
-  }, [])
-
-  useEffect(() => {
-    let cancelled = false
-    fetchPostsByKind('공지사항', 1, 5)
-      .then((res) => {
-        if (!cancelled) setNotices(res.posts)
+    fetchSocialLatest()
+      .then((data) => {
+        if (cancelled) return
+        setBlog(data.blog)
+        setInstagram(data.instagram)
       })
       .catch(() => {
-        if (!cancelled) setNoticeError(true)
+        /* 정적 카드 문구로 표시 */
       })
     return () => {
       cancelled = true
@@ -53,50 +87,57 @@ export function BoardSection() {
   }, [])
 
   return (
-    <section className="board-section">
+    <section className="board-section" aria-label={m.youtubeTitle}>
       <div className="board-grid">
-        <div className="board-column board-column--notice">
+        <article className="board-column board-channel">
           <div className="board-head">
-            <h2 className="board-head__title">{m.noticeTitle}</h2>
-            <span className="board-head__badge" aria-hidden="true">
-              {m.noticeBadge}
-            </span>
-            <Link className="board-more" to={localize(`/${PATH.newsAnnouncements}`)} aria-label={m.moreAria}>
+            <h2 className="board-head__title">{m.blogTitle}</h2>
+            <a
+              className="board-more"
+              href={BLOG_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={m.blogAria}
+            >
               +
-            </Link>
+            </a>
           </div>
+          <ChannelCard
+            href={BLOG_URL}
+            variant="blog"
+            fallbackTitle="Naver Blog"
+            fallbackDesc={m.blogDesc}
+            preview={blog}
+            latestLabel={m.latestLabel}
+          />
+        </article>
 
-          <div className="board-list" role="list" aria-label={m.listAria}>
-            {noticeError ? (
-              <article className="board-item board-item--notice" role="listitem">
-                <h3 className="board-item__title">{m.loadError}</h3>
-              </article>
-            ) : notices.length === 0 ? (
-              <article className="board-item board-item--notice" role="listitem">
-                <h3 className="board-item__title">{m.empty}</h3>
-              </article>
-            ) : (
-              notices.map((post) => (
-                <article key={post.id} className="board-item board-item--notice" role="listitem">
-                  <Link
-                    to={localize(`/posts/${encodeURIComponent(post.slug)}`)}
-                    state={{ postKind: post.meta?.khayah_kind ?? '공지사항' }}
-                    className="board-item__title"
-                  >
-                    {post.title}
-                  </Link>
-                  <div className="board-item__meta">
-                    <span className="board-item__date">{formatPublished(post.publishedAt)}</span>
-                  </div>
-                </article>
-              ))
-            )}
+        <article className="board-column board-channel">
+          <div className="board-head">
+            <h2 className="board-head__title">{m.instagramTitle}</h2>
+            <a
+              className="board-more"
+              href={INSTAGRAM_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={m.instagramAria}
+            >
+              +
+            </a>
           </div>
-        </div>
+          <ChannelCard
+            href={INSTAGRAM_URL}
+            variant="instagram"
+            fallbackTitle="Instagram"
+            fallbackDesc={m.instagramDesc}
+            preview={instagram}
+            latestLabel={m.latestLabel}
+          />
+        </article>
 
-        <div className="board-column promo-column">
-          <div className="board-head board-head--promo">
-            <h2 className="board-head__title">{m.promoTitle}</h2>
+        <article className="board-column board-channel">
+          <div className="board-head">
+            <h2 className="board-head__title">{m.youtubeTitle}</h2>
             <a
               className="board-more"
               href={PROMO_YOUTUBE_CHANNEL_URL}
@@ -130,14 +171,14 @@ export function BoardSection() {
             </div>
             <div className="promo-video__caption">
               <span className="promo-video__title">
-                {promo?.title ?? (promoError ? m.promoTitle : m.promoLoading)}
+                {promo?.title ?? (promoError ? m.youtubeTitle : m.promoLoading)}
               </span>
               <span className="promo-video__date">
                 {promo ? formatPublished(promo.publishedAt) : promoError ? '' : '—'}
               </span>
             </div>
           </div>
-        </div>
+        </article>
       </div>
     </section>
   )

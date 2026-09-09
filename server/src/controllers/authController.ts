@@ -3,6 +3,8 @@ import { prisma } from '../utils/prisma'
 import { verifyGoogleIdToken } from '../utils/googleIdToken'
 import {
   clearAdminSessionCookie,
+  DEMO_ADMIN_PUBLIC,
+  isDemoLoginAllowed,
   setAdminSessionCookie,
 } from '../utils/adminSession'
 import { loadAdminUser } from '../middlewares/requireAdmin'
@@ -17,19 +19,14 @@ import {
   touchAdminLogin,
 } from '../services/adminUsersService'
 
-function isDemoLoginAllowed(): boolean {
-  const flag = (process.env.ADMIN_DEMO_LOGIN ?? '').trim().toLowerCase()
-  if (flag === 'false' || flag === '0' || flag === 'off') return false
-  return true
-}
-
 function sendAdminError(res: Response, e: unknown, fallback: string) {
   if (e instanceof AdminHttpError) {
     res.status(e.status).json({ error: e.message })
     return
   }
   console.error(e)
-  res.status(500).json({ error: fallback })
+  const hint = e instanceof Error ? e.message : String(e)
+  res.status(500).json({ error: fallback, hint })
 }
 
 export async function postGoogleLogin(req: Request, res: Response) {
@@ -111,14 +108,24 @@ export async function postDemoLogin(_req: Request, res: Response) {
     res.status(403).json({ error: '임시 목업 로그인이 비활성화되어 있습니다.' })
     return
   }
-  if (!prisma) {
-    res.status(503).json({ error: 'Database unavailable' })
-    return
-  }
   try {
-    const user = await ensureDemoSuper()
-    setAdminSessionCookie(res, user.id)
-    res.json({ user: toPublicUser(user) })
+    let user = DEMO_ADMIN_PUBLIC
+    if (prisma) {
+      try {
+        user = toPublicUser(await ensureDemoSuper())
+      } catch (e) {
+        console.warn('[auth/demo] admin_users upsert failed; issuing cookie-only demo session', e)
+      }
+    } else {
+      console.warn('[auth/demo] database unavailable; issuing cookie-only demo session')
+    }
+    setAdminSessionCookie(res, user.id, {
+      demo: true,
+      role: user.role,
+      email: user.email,
+      name: user.name,
+    })
+    res.json({ user })
   } catch (e) {
     sendAdminError(res, e, '목업 로그인에 실패했습니다.')
   }

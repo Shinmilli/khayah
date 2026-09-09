@@ -1,5 +1,6 @@
 import { type CSSProperties, useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { resolveImpactStatIcon } from '../impactStatIcons'
 import {
   DEFAULT_IMPACT_STATS,
   formatImpactPercent,
@@ -118,7 +119,11 @@ export function ImpactSection() {
                         {unit ? <span className="unit">{unit}</span> : null}
                       </div>
                     </div>
-                    <div className="impact-stat__icon" aria-hidden="true" />
+                    <div className="impact-stat__icon" aria-hidden="true">
+                      <span className="material-symbols-outlined">
+                        {resolveImpactStatIcon(row.icon, row.id)}
+                      </span>
+                    </div>
                   </div>
                 )
               })}

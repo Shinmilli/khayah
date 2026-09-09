@@ -53,8 +53,8 @@
 .site-header__locale {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  font-size: 13px;
+  gap: 8px;
+  font-size: 16px;
   font-weight: 600;
   color: var(--header-text);
   transition: color 0.3s ease;
@@ -85,7 +85,7 @@
 .site-header__locale-sep {
   color: var(--header-text);
   opacity: 0.35;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .site-header__logo {
@@ -102,7 +102,7 @@
 .site-header__logo img,
 .site-header__logo-img {
   grid-area: 1 / 1;
-  height: 42px;
+  height: 52px;
   width: auto;
   object-fit: contain;
   display: block;
@@ -167,7 +167,7 @@
 .site-header__nav-link {
   text-decoration: none;
   color: var(--header-text);
-  font-size: 1.08rem;
+  font-size: clamp(1.22rem, 0.32vw + 1.14rem, 1.4rem);
   font-weight: 600;
   padding: 0;
   display: flex;
@@ -214,7 +214,7 @@
 
 .site-header__submenu-title {
   margin: 0;
-  font-size: 1.7rem;
+  font-size: clamp(2rem, 1.2vw + 1.7rem, 2.35rem);
   font-weight: 800;
   letter-spacing: -0.02em;
   color: #1a1a1a;
@@ -226,81 +226,28 @@
   padding-left: clamp(24px, 2.8vw, 48px);
 }
 
-/* 카야: 세로 라인 1·2를 가로로 나란히 / 각 라인 안 링크는 세로 */
-.site-header__submenu-columns {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  align-items: flex-start;
-  justify-content: flex-start;
-  gap: clamp(40px, 5vw, 88px);
-  padding-left: clamp(12px, 1.4vw, 28px);
-}
-
-.site-header__submenu-columns--split {
-  gap: clamp(48px, 6vw, 104px);
-}
-
-.site-header__submenu-col {
+.site-header__submenu-list {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  flex: 0 0 auto;
+  gap: 8px;
+}
+
+.site-header__submenu-list--stack {
   gap: 2px;
-  min-width: 0;
 }
 
-/* 카야 메뉴: 두 줄 가로 네비 */
-.site-header__submenu-rows {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  min-width: 0;
+.site-header__submenu-list--stack .site-header__submenu-link {
+  font-weight: 700;
 }
 
-.site-header__submenu-row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: clamp(8px, 1.2vw, 14px) clamp(20px, 2.4vw, 36px);
-  padding-left: clamp(12px, 1.4vw, 28px);
-}
-
-.site-header__submenu-row:not(:last-child) {
-  padding-bottom: 14px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-}
-
-.site-header__submenu-link {
-  display: block;
-  padding: 6px 0;
-  font-size: 1.06rem;
-  font-weight: 500;
-  color: #222;
-  text-decoration: none;
-  white-space: nowrap;
-  line-height: 1.35;
-}
-
-.site-header__submenu-link:hover,
-.site-header__submenu-link:focus-visible {
-  color: var(--header-primary);
-}
-
-/* Business 2-depth (그룹 + 내부 카테고리) */
 .site-header__submenu-group {
   display: flex;
   flex-direction: row;
   align-items: baseline;
   flex-wrap: wrap;
   gap: 16px;
-  padding: 10px 0;
-}
-
-.site-header__submenu-group + .site-header__submenu-group {
-  margin-top: 6px;
-  padding-top: 14px;
-  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  padding: 6px 0;
 }
 
 .site-header__submenu-group--single {
@@ -310,12 +257,12 @@
 .site-header__submenu-group-title {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  font-size: 1.06rem;
+  font-size: 1.24rem;
   font-weight: 700;
   color: #1a1a1a;
   text-decoration: none;
   white-space: nowrap;
+  line-height: 1.35;
 }
 
 .site-header__submenu-group-title:hover,
@@ -327,22 +274,29 @@
   display: inline-flex;
   flex-direction: row;
   flex-wrap: wrap;
+  align-items: baseline;
   gap: 14px;
   padding-left: 0;
-  border-left: 0;
 }
 
+.site-header__submenu-link,
 .site-header__submenu-sublink {
   display: block;
-  padding: 4px 0;
-  font-size: 1.01rem;
-  font-weight: 400;
-  color: #333;
+  padding: 7px 0;
+  font-size: 1.22rem;
+  font-weight: 500;
+  color: #222;
   text-decoration: none;
   white-space: nowrap;
   line-height: 1.35;
 }
 
+.site-header__submenu-sublink {
+  font-weight: 400;
+}
+
+.site-header__submenu-link:hover,
+.site-header__submenu-link:focus-visible,
 .site-header__submenu-sublink:hover,
 .site-header__submenu-sublink:focus-visible {
   color: var(--header-primary);
@@ -422,7 +376,7 @@
 
 .site-header__mega-col-head {
   font-weight: 800;
-  font-size: 0.92rem;
+  font-size: 1.12rem;
   color: #1a1a1a;
   margin: 0 0 12px;
   letter-spacing: -0.02em;
@@ -435,7 +389,7 @@
 }
 
 .site-header__mega-links a {
-  font-size: 0.92rem;
+  font-size: 1.12rem;
   font-weight: 500;
   color: #555;
   text-decoration: none;
@@ -509,13 +463,12 @@
 }
 
 .site-header__mobile-group {
-  border-bottom: 1px solid #eee;
-  padding: 12px 0;
+  padding: 8px 0;
 }
 
 .site-header__mobile-group summary {
   font-weight: 800;
-  font-size: 1.06rem;
+  font-size: 1.22rem;
   cursor: pointer;
   list-style: none;
   padding: 8px 0;
@@ -533,7 +486,7 @@
 }
 
 .site-header__mobile-links a {
-  font-size: 1rem;
+  font-size: 1.14rem;
   font-weight: 650;
   color: #444;
   padding: 6px 0;
@@ -568,7 +521,7 @@
 /* 3단(국내·해외 하위: 교육, 보건의료 등) — 상위 구분보다 얇게 */
 .site-header__mobile-sublinks a {
   font-weight: 400;
-  font-size: 0.94rem;
+  font-size: 1.08rem;
   color: #5a5a5a;
 }
 
@@ -582,7 +535,23 @@
   padding: 14px 0;
   text-decoration: none;
   color: #222;
-  border-bottom: 1px solid #eee;
+}
+
+@media (min-width: 1280px) {
+  .site-header__bar,
+  .site-header__submenu-inner,
+  .site-header__mega-inner {
+    max-width: 1520px;
+  }
+
+  .site-header__logo img,
+  .site-header__logo-img {
+    height: 58px;
+  }
+
+  .site-header__nav-link {
+    font-size: clamp(1.28rem, 0.28vw + 1.18rem, 1.48rem);
+  }
 }
 
 @media (max-width: 1024px) {
@@ -598,7 +567,7 @@
 
   .site-header__logo img,
   .site-header__logo-img {
-    height: 38px;
+    height: 44px;
   }
 
   .site-header__nav {
@@ -657,7 +626,7 @@
 
   .site-header__logo img,
   .site-header__logo-img {
-    height: 34px;
+    height: 40px;
   }
 }
 
@@ -667,6 +636,6 @@
   }
 
   .site-header__logo img {
-    height: 30px;
+    height: 36px;
   }
 }

@@ -8,12 +8,15 @@ export const SITE_DESCRIPTION = '개발NGO, 해외후원, 국내후원, 옹호�
 export const API_BASE = import.meta.env.VITE_API_BASE ?? '/api'
 
 /** 푸터 상단 바로가기 (한 줄, | 구분) — 라벨은 i18n messages.footer.topLinks */
+export const BLOG_URL = 'https://blog.naver.com/khayah'
+export const INSTAGRAM_URL = 'https://www.instagram.com/khayah_international'
+
 export const FOOTER_TOP_LINKS = [
   { key: 'donate', href: NANUM_DONATE_URL },
   { key: 'projects', to: '/business/projects' },
   { key: 'location', to: '/about/location' },
-  { key: 'instagram', href: 'https://www.instagram.com/khayah_international' },
-  { key: 'blog', href: 'https://blog.naver.com/khayah' },
+  { key: 'instagram', href: INSTAGRAM_URL },
+  { key: 'blog', href: BLOG_URL },
   { key: 'kakao', href: 'https://pf.kakao.com/_TnWKK' },
 ] as const
 

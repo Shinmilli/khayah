@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { IMPACT_STAT_ICONS, resolveImpactStatIcon } from '../../home/impactStatIcons'
 import {
   DEFAULT_IMPACT_STATS,
   type ImpactEditLocale,
@@ -72,6 +73,21 @@ export function AdminImpactStatsPage() {
     }))
   }
 
+  const updateStatIcon = (idx: number, icon: string) => {
+    setDoc((prev) => {
+      const id = prev.locales[editLocale].stats[idx]?.id
+      if (!id) return prev
+      const sync = (stats: ImpactStatItem[]) => stats.map((row) => (row.id === id ? { ...row, icon } : row))
+      return {
+        ...prev,
+        locales: {
+          ko: { ...prev.locales.ko, stats: sync(prev.locales.ko.stats) },
+          en: { ...prev.locales.en, stats: sync(prev.locales.en.stats) },
+        },
+      }
+    })
+  }
+
   const removeStat = (idx: number) => {
     setDoc((prev) => ({
       ...prev,
@@ -92,7 +108,10 @@ export function AdminImpactStatsPage() {
         ...prev.locales,
         [editLocale]: {
           ...prev.locales[editLocale],
-          stats: [...prev.locales[editLocale].stats, { id: newStatId(), label: '', value: '', unit: '' }],
+          stats: [
+            ...prev.locales[editLocale].stats,
+            { id: newStatId(), label: '', value: '', unit: '', icon: 'groups' },
+          ],
         },
       },
     }))
@@ -117,6 +136,7 @@ export function AdminImpactStatsPage() {
                 label: row.label.trim(),
                 value: row.value.trim(),
                 unit: row.unit?.trim() ?? '',
+                icon: resolveImpactStatIcon(row.icon, row.id),
               })),
           },
           en: {
@@ -131,6 +151,7 @@ export function AdminImpactStatsPage() {
                 label: row.label.trim(),
                 value: row.value.trim(),
                 unit: row.unit?.trim() ?? '',
+                icon: resolveImpactStatIcon(row.icon, row.id),
               })),
           },
         },
@@ -153,8 +174,8 @@ export function AdminImpactStatsPage() {
         <div>
           <h1 className="admin-page__title">나눔의 결실</h1>
           <p className="admin-page__desc">
-            홈 「나눔의 결실」 섹션의 도넛·성과 지표를 언어별로 수정합니다. 비율(%)은 한·영 공통으로
-            저장되며, 아래 탭에서 각 언어의 문구만 편집합니다.
+            홈 「나눔의 결실」 섹션의 도넛·성과 지표를 언어별로 수정합니다. 비율(%)과 아이콘은 한·영
+            공통으로 저장되며, 아래 탭에서 각 언어의 문구만 편집합니다.
           </p>
         </div>
         <button type="button" className="admin-btn" disabled={saving || loading} onClick={() => void onSave()}>
@@ -248,6 +269,7 @@ export function AdminImpactStatsPage() {
               <table className="admin-table">
                 <thead>
                   <tr>
+                    <th scope="col">아이콘</th>
                     <th scope="col">항목명</th>
                     <th scope="col">숫자</th>
                     <th scope="col">단위 (선택)</th>
@@ -257,58 +279,80 @@ export function AdminImpactStatsPage() {
                 <tbody>
                   {localeDoc.stats.length === 0 ? (
                     <tr>
-                      <td colSpan={4} className="admin-table__empty">
+                      <td colSpan={5} className="admin-table__empty">
                         항목이 없습니다. 「항목 추가」로 넣어 주세요.
                       </td>
                     </tr>
                   ) : (
-                    localeDoc.stats.map((row, idx) => (
-                      <tr key={row.id}>
-                        <td>
-                          <input
-                            className="admin-input"
-                            value={row.label}
-                            onChange={(e) => updateStat(idx, { label: e.target.value })}
-                            placeholder="사업 참여자 수"
-                            aria-label="항목명"
-                          />
-                        </td>
-                        <td>
-                          <input
-                            className="admin-input"
-                            value={row.value}
-                            onChange={(e) => updateStat(idx, { value: e.target.value })}
-                            placeholder="100,000"
-                            aria-label="숫자"
-                          />
-                        </td>
-                        <td>
-                          <input
-                            className="admin-input"
-                            value={row.unit ?? ''}
-                            onChange={(e) => updateStat(idx, { unit: e.target.value })}
-                            placeholder="비우면 숨김"
-                            aria-label="단위"
-                          />
-                        </td>
-                        <td>
-                          <button
-                            type="button"
-                            className="admin-btn admin-btn--sm admin-btn--danger-ghost"
-                            onClick={() => removeStat(idx)}
-                          >
-                            삭제
-                          </button>
-                        </td>
-                      </tr>
-                    ))
+                    localeDoc.stats.map((row, idx) => {
+                      const iconName = resolveImpactStatIcon(row.icon, row.id)
+                      return (
+                        <tr key={row.id}>
+                          <td>
+                            <div className="admin-icon-picker">
+                              <span className="admin-icon-picker__preview" aria-hidden="true">
+                                <span className="material-symbols-outlined">{iconName}</span>
+                              </span>
+                              <select
+                                className="admin-input"
+                                value={iconName}
+                                onChange={(e) => updateStatIcon(idx, e.target.value)}
+                                aria-label="아이콘"
+                              >
+                                {IMPACT_STAT_ICONS.map((opt) => (
+                                  <option key={opt.name} value={opt.name}>
+                                    {opt.label}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+                          </td>
+                          <td>
+                            <input
+                              className="admin-input"
+                              value={row.label}
+                              onChange={(e) => updateStat(idx, { label: e.target.value })}
+                              placeholder="사업 참여자 수"
+                              aria-label="항목명"
+                            />
+                          </td>
+                          <td>
+                            <input
+                              className="admin-input"
+                              value={row.value}
+                              onChange={(e) => updateStat(idx, { value: e.target.value })}
+                              placeholder="100,000"
+                              aria-label="숫자"
+                            />
+                          </td>
+                          <td>
+                            <input
+                              className="admin-input"
+                              value={row.unit ?? ''}
+                              onChange={(e) => updateStat(idx, { unit: e.target.value })}
+                              placeholder="비우면 숨김"
+                              aria-label="단위"
+                            />
+                          </td>
+                          <td>
+                            <button
+                              type="button"
+                              className="admin-btn admin-btn--sm admin-btn--danger-ghost"
+                              onClick={() => removeStat(idx)}
+                            >
+                              삭제
+                            </button>
+                          </td>
+                        </tr>
+                      )
+                    })
                   )}
                 </tbody>
               </table>
             </div>
             <p className="admin-upload__hint">
-              항목 ID는 언어 간 매칭용입니다. 숫자(value)는 언어별로 같게 두어도 되고, 표시 형식만 다르게
-              적을 수 있습니다.
+              아이콘은 Google Material Symbols이며 한·영 공통입니다. 항목 ID는 언어 간 매칭용입니다.
+              숫자(value)는 언어별로 같게 두어도 되고, 표시 형식만 다르게 적을 수 있습니다.
             </p>
           </section>
         </>

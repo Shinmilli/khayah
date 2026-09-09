@@ -90,15 +90,16 @@ export type Messages = {
       donutAria: (percent: string, label: string) => string
     }
     board: {
-      noticeTitle: string
-      noticeBadge: string
       moreAria: string
-      listAria: string
-      loadError: string
-      empty: string
-      promoTitle: string
+      blogTitle: string
+      blogDesc: string
+      blogAria: string
+      instagramTitle: string
+      instagramDesc: string
+      instagramAria: string
+      youtubeTitle: string
+      latestLabel: string
       promoError: string
-      promoEmpty: string
       watchOnYoutube: string
       promoMoreAria: string
       promoLoading: string
@@ -390,17 +391,18 @@ export const koMessages: Messages = {
         label ? `후원금의 ${percent.replace('%', '')}%는 ${label}에 사용됩니다` : `후원금의 ${percent}`,
     },
     board: {
-      noticeTitle: 'Notice',
-      noticeBadge: '공지글',
       moreAria: '더보기',
-      listAria: '공지글 목록',
-      loadError: '공지사항을 불러오지 못했습니다.',
-      empty: '등록된 공지사항이 없습니다.',
-      promoTitle: '홍보영상',
+      blogTitle: '블로그',
+      blogDesc: '카야의 이야기를 네이버 블로그에서 만나보세요.',
+      blogAria: '네이버 블로그 바로가기',
+      instagramTitle: '인스타그램',
+      instagramDesc: '현장의 순간을 인스타그램에서 확인하세요.',
+      instagramAria: '인스타그램 바로가기',
+      youtubeTitle: '유튜브',
+      latestLabel: '최신',
       promoError: '영상을 불러오지 못했습니다.',
-      promoEmpty: '등록된 홍보 영상이 없습니다.',
       watchOnYoutube: 'YouTube에서 보기',
-      promoMoreAria: '유튜브 채널에서 홍보영상 더보기',
+      promoMoreAria: '유튜브 채널에서 더보기',
       promoLoading: '불러오는 중…',
     },
     partners: {
