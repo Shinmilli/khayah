@@ -81,7 +81,13 @@ export function extractMediaFromHtml(html: string | null | undefined): StoredMed
       provider,
       resourceType:
         resourceType ||
-        (u.includes('/raw/upload/') ? 'raw' : provider === 'cloudinary' ? 'image' : undefined),
+        (u.includes('/raw/upload/')
+          ? 'raw'
+          : u.includes('/video/upload/') || /\.(mp4|webm|mov|m4v)(?:\?|$)/i.test(u)
+            ? 'video'
+            : provider === 'cloudinary'
+              ? 'image'
+              : undefined),
     })
   }
 
@@ -135,6 +141,7 @@ export function cloudinaryPublicIdCandidates(url: string, explicit?: string): st
 function cloudinaryResourceHint(url: string, explicit?: string): string | undefined {
   if (explicit) return explicit
   if (url.includes('/image/upload/')) return 'image'
+  if (url.includes('/video/upload/')) return 'video'
   if (url.includes('/raw/upload/')) return 'raw'
   if (url.toLowerCase().includes('.pdf')) return 'raw'
   return undefined

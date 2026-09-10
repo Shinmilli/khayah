@@ -20,6 +20,8 @@ import { PATH } from '../i18n/routes'
 import { useLocale } from '../i18n/LocaleContext'
 import { pageHeroImageForPath } from '../constants/pageHeroImages'
 import { ListStatus } from '../components/ListStatus'
+import { PostCoverThumb } from '../components/PostCoverThumb'
+import { postCoverMedia } from '../utils/postMedia'
 
 function formatDate(
   iso: string,
@@ -89,10 +91,12 @@ function newsletterPdfUrl(post: Post): string {
   return post.meta?.khayah_pdf_url?.trim() || ''
 }
 
-/** 연간소식지·활동소식 등 `meta.khayah_cover_url` 기반 썸네일 */
+/** 연간소식지·활동소식 등 `meta.khayah_cover_url` 또는 본문 첫 이미지/영상 썸네일 */
 function coverMetaUrl(post: Post): string | undefined {
-  const u = post.meta?.khayah_cover_url?.trim()
-  return u || undefined
+  const media = postCoverMedia(post)
+  if (media.kind === 'image') return media.src
+  if (media.kind === 'video') return media.poster || media.src
+  return undefined
 }
 
 function usePathKey(): string {
@@ -447,12 +451,7 @@ export function NewsArchivePage() {
                       >
                         <div className="activity-archive__thumb-wrap">
                           {cover ? (
-                            <img
-                              className="activity-archive__thumb"
-                              src={cover}
-                              alt=""
-                              loading="lazy"
-                            />
+                            <PostCoverThumb post={post} className="activity-archive__thumb" />
                           ) : (
                             <div
                               className="activity-archive__thumb activity-archive__thumb--placeholder"

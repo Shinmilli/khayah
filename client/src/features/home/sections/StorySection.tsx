@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { fetchPostsByKind } from '../../../services/api'
 import type { Post } from '../../../types/post'
 import { useLocale } from '../../../i18n/LocaleContext'
+import { PostCoverThumb } from '../../../components/PostCoverThumb'
 
 export function StorySection() {
   const { messages, localize } = useLocale()
@@ -124,8 +125,6 @@ export function StorySection() {
     }
   }, [])
 
-  const storyCoverSrc = (p: Post): string => p.meta?.khayah_cover_url?.trim() ?? ''
-
   const chipLabel = (p: Post): string => {
     const scope = p.meta?.khayah_story_scope ?? ''
     switch (scope) {
@@ -146,9 +145,19 @@ export function StorySection() {
   return (
     <section className="story-section" id="news" aria-label={m.aria}>
       <div className="story-container">
-        <header className="home-section-intro">
+        <header className="home-section-intro story-intro">
           <p className="home-section-intro__kicker">{m.kicker}</p>
-          <h2 className="home-section-intro__title">{m.title}</h2>
+          <div className="story-intro__row">
+            <h2 className="home-section-intro__title">
+              <Link className="story-intro__title-link" to={localize('/stories')}>
+                {m.title}
+              </Link>
+            </h2>
+            <Link className="story-intro__all" to={localize('/stories')} aria-label={m.viewAllAria}>
+              {m.viewAll}
+              <span aria-hidden="true">→</span>
+            </Link>
+          </div>
           <p className="home-section-intro__sub">{m.subtitle}</p>
         </header>
 
@@ -159,7 +168,7 @@ export function StorySection() {
               const cardInner = (
                 <>
                   <div className="story-card__media">
-                    {storyCoverSrc(p) ? <img src={storyCoverSrc(p)} alt="" loading="lazy" /> : null}
+                    <PostCoverThumb post={p} />
                   </div>
                   <div className="story-card__overlay" aria-hidden="true" />
                   <div className="story-card__content">

@@ -1,8 +1,8 @@
 /* Newsletter archive/detail (screenshot-like) */
 
 .newsletter-archive {
-  width: 92%;
-  max-width: 1100px;
+  width: 100%;
+  max-width: none;
   margin: 0 auto;
   padding: 10px 0 30px;
 }
@@ -52,7 +52,7 @@
 
 .newsletter-title {
   margin: 0 0 10px;
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 800;
   letter-spacing: -0.02em;
   color: #111827;
@@ -60,7 +60,7 @@
 
 .newsletter-excerpt {
   margin: 0;
-  font-size: 14px;
+  font-size: 15.5px;
   line-height: 1.55;
   color: #6b7280;
   display: -webkit-box;
@@ -89,8 +89,8 @@
 
 /* detail */
 .newsletter-detail {
-  width: 92%;
-  max-width: 1100px;
+  width: 100%;
+  max-width: none;
   margin: 0 auto;
   padding: 10px 0 30px;
 }
@@ -129,7 +129,8 @@
 
 /* 연간소식지 — API 게시글 목록 (/소식/연간소식지) */
 .yearly-nl-page .yearly-nl-archive {
-  width: min(100%, 1100px);
+  width: 100%;
+  max-width: none;
   margin: 0 auto;
   padding: 8px 0 28px;
 }

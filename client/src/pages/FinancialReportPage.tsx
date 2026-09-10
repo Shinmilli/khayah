@@ -159,7 +159,7 @@ export function FinancialReportPage() {
       <div className="financial-report-page">
         <PageHero
           title={nav.links.financialReport}
-          backgroundImageUrl={pageHeroImageForPath(PATH.newsFinancialReport)}
+          backgroundImageUrl={pageHeroImageForPath(PATH.aboutFinancialReport)}
           showScrollHint={false}
         />
         <div className="financial-report__inner">
@@ -174,7 +174,7 @@ export function FinancialReportPage() {
       <div className="financial-report-page">
         <PageHero
           title={nav.links.financialReport}
-          backgroundImageUrl={pageHeroImageForPath(PATH.newsFinancialReport)}
+          backgroundImageUrl={pageHeroImageForPath(PATH.aboutFinancialReport)}
           showScrollHint={false}
         />
         <div className="financial-report__inner">
@@ -195,7 +195,7 @@ export function FinancialReportPage() {
       <div className="financial-report-page">
         <PageHero
           title={nav.links.financialReport}
-          backgroundImageUrl={pageHeroImageForPath(PATH.newsFinancialReport)}
+          backgroundImageUrl={pageHeroImageForPath(PATH.aboutFinancialReport)}
           showScrollHint={false}
         />
         <div className="financial-report__inner">
@@ -213,7 +213,7 @@ export function FinancialReportPage() {
     <div className="financial-report-page">
       <PageHero
         title={fr.pageTitle(report.year)}
-        backgroundImageUrl={pageHeroImageForPath(PATH.newsFinancialReport)}
+        backgroundImageUrl={pageHeroImageForPath(PATH.aboutFinancialReport)}
         showScrollHint={false}
       />
 

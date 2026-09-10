@@ -294,7 +294,7 @@ export function AdminFinancialReportsPage() {
           <h1 className="admin-page__title">재정보고</h1>
           <p className="admin-page__desc">
             연도별 수입·지출 도넛 데이터와 재무상태표·운영성과표 이미지·기부금 공시 PDF를 저장합니다.
-            파일은 서버 <code>/uploads</code>에 두고 공개 페이지(`/news/financial-report`)는{' '}
+            파일은 서버 <code>/uploads</code>에 두고 공개 페이지(`/about/financial-report`)는{' '}
             <code>GET /api/financial-reports</code>로 불러옵니다.
           </p>
         </div>

@@ -6,6 +6,7 @@ import type { Messages } from '../i18n/messages/ko'
 import { PROJECT_REGION_TO_SLUG } from '../i18n/routes'
 import type { Post } from '../types/post'
 import { parsePdfAttachments, pdfOpenHref, type PdfAttachment } from '../utils/pdfAttachments'
+import { PostBody } from './PostBody'
 
 function PaperclipIcon() {
   return (
@@ -217,10 +218,7 @@ export function PostDetail({ post }: { post: Post }) {
 
       {isFeature ? <PostFileBar files={attachments} ariaLabel={pd.filesAria} /> : null}
 
-      <div
-        className="the_content_wrapper page-body post-board__body"
-        dangerouslySetInnerHTML={{ __html: post.content || post.excerpt || '' }}
-      />
+      <PostBody html={post.content || post.excerpt || ''} />
 
       {!isFeature ? <PostFileBar files={attachments} ariaLabel={pd.filesAria} /> : null}
 

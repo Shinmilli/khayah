@@ -9,6 +9,7 @@ import { paginate } from '../utils/paginate'
 import { useLocale } from '../i18n/LocaleContext'
 import { pageHeroImageForStoryScope } from '../constants/pageHeroImages'
 import { ListStatus } from '../components/ListStatus'
+import { PostCoverThumb } from '../components/PostCoverThumb'
 import '../styles/story.css'
 
 type StoryScopeKey = 'all' | 'domestic' | 'overseas' | 'advocacy' | 'support'
@@ -96,7 +97,7 @@ export function StoryArchivePage() {
     )
   }, [posts, scope])
 
-  const STORY_PER_PAGE = 9
+  const STORY_PER_PAGE = 12
   const paged = paginate(items, listPage, STORY_PER_PAGE)
 
   const scopeTabs: Array<{ key: StoryScopeKey; label: string }> = [
@@ -165,7 +166,7 @@ export function StoryArchivePage() {
               ) : null}
               <section className="story-archive__grid" aria-label={st.listAria} aria-busy={loading || undefined}>
                 {loading
-                  ? Array.from({ length: 6 }, (_, i) => (
+                  ? Array.from({ length: STORY_PER_PAGE }, (_, i) => (
                       <article key={i} className="story-archive__item story-archive__item--skeleton" aria-hidden>
                         <div className="story-list-card">
                           <div className="story-list-card__thumb" />
@@ -187,9 +188,7 @@ export function StoryArchivePage() {
                       <article key={p.id} className="story-archive__item">
                         <div className="story-list-card">
                           <div className="story-list-card__thumb">
-                            {p.meta?.khayah_cover_url?.trim() ? (
-                              <img src={p.meta.khayah_cover_url.trim()} alt="" loading="lazy" />
-                            ) : null}
+                            <PostCoverThumb post={p} />
                           </div>
                           <div className="story-list-card__body">
                             <h3 className="story-list-card__title">

@@ -1,6 +1,6 @@
 .projects-wrap {
-  max-width: 1120px;
-  width: var(--content-width, 92%);
+  max-width: var(--site-content-max, 1400px);
+  width: var(--site-content-width, 92%);
   margin: 0 auto;
   padding-bottom: 64px;
 }
@@ -86,7 +86,7 @@
 .projects-date {
   color: rgba(17, 17, 17, 0.55);
   font-weight: 800;
-  font-size: 0.95rem;
+  font-size: 1.05rem;
 }
 
 .projects-badge {
@@ -105,7 +105,7 @@
   margin-top: 8px;
   text-decoration: none;
   color: #111;
-  font-size: 1.38rem;
+  font-size: 1.52rem;
   font-weight: 900;
   letter-spacing: -0.03em;
   line-height: 1.25;

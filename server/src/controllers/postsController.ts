@@ -4,7 +4,7 @@ import { postsService } from '../services/postsService'
 export async function getPosts(req: Request, res: Response) {
   try {
     const page = Math.max(1, parseInt(req.query.page as string) || 1)
-    const perPage = Math.min(50, Math.max(1, parseInt(req.query.perPage as string) || 10))
+    const perPage = Math.min(200, Math.max(1, parseInt(req.query.perPage as string) || 10))
     const kind = typeof req.query.kind === 'string' ? req.query.kind : undefined
     const region = typeof req.query.region === 'string' ? req.query.region : undefined
     const result = await postsService.getPublishedPosts({ page, perPage, kind, region })

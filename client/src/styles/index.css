@@ -5,6 +5,8 @@
   --khayah-red-hover: #c78598;
   --text-dark: #404954;
   --text-muted: #737e86;
+  --site-content-width: 92%;
+  --site-content-max: 1200px;
   --font-sans:
     'Pretendard',
     -apple-system,
@@ -38,6 +40,13 @@ body.has-overlay-header {
 @media (min-width: 1280px) {
   :root {
     --site-header-height: 96px;
+    --site-content-max: 1320px;
+  }
+}
+
+@media (min-width: 1440px) {
+  :root {
+    --site-content-max: 1400px;
   }
 }
 
@@ -99,7 +108,7 @@ a:hover {
 }
 
 #Top_bar .container {
-  max-width: 1200px;
+  max-width: var(--site-content-max, 1400px);
   margin: 0 auto;
 }
 
@@ -197,9 +206,11 @@ a:hover {
 }
 
 .section_wrapper {
-  max-width: 1200px;
+  width: var(--site-content-width);
+  max-width: var(--site-content-max);
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 .clearfix::after {
@@ -388,8 +399,8 @@ a:hover {
 }
 
 #Footer .container {
-  width: min(92%, 1400px);
-  max-width: 1400px;
+  width: var(--site-content-width);
+  max-width: var(--site-content-max);
   margin: 0 auto;
 }
 
@@ -593,8 +604,8 @@ a:hover {
 
 /* 전역 플로팅 후원 (홈: 히어로 절반 이상 스크롤 아웃 시 / 그 외 페이지: 항상) */
 .site-floating-fab {
-  --fab-donate-size: 84px;
-  --fab-social-size: 50px;
+  --fab-donate-size: 70px;
+  --fab-social-size: 48px;
   --fab-social-gap: 10px;
   --fab-stack-gap: 12px;
   position: fixed;
@@ -756,8 +767,8 @@ a:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 16px;
-  height: 16px;
+  width: 15px;
+  height: 15px;
   flex-shrink: 0;
   color: #fff;
 }
@@ -769,7 +780,7 @@ a:hover {
 }
 
 .site-floating-fab__label {
-  font-size: 0.72rem;
+  font-size: 0.64rem;
   font-weight: 600;
   line-height: 1.1;
   letter-spacing: -0.02em;
@@ -779,8 +790,8 @@ a:hover {
 /* 데스크톱: 소셜 버튼 항상 표시. 모바일·태블릿은 hover/focus 유지 */
 @media (min-width: 1025px) {
   .site-floating-fab {
-    --fab-donate-size: 96px;
-    --fab-social-size: 54px;
+    --fab-donate-size: 78px;
+    --fab-social-size: 50px;
     --fab-social-gap: 12px;
     --fab-stack-gap: 14px;
   }
@@ -797,17 +808,17 @@ a:hover {
   }
 
   .site-floating-fab__heart {
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
   }
 
   .site-floating-fab__label {
-    font-size: 0.8rem;
+    font-size: 0.68rem;
   }
 
   .site-floating-fab__social svg {
-    width: 22px;
-    height: 22px;
+    width: 20px;
+    height: 20px;
   }
 }
 

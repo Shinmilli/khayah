@@ -11,6 +11,7 @@ const BY_PATH: Record<string, string> = {
   [PATH.aboutGreeting]: ABOUT,
   [PATH.aboutHistory]: ABOUT,
   [PATH.aboutLocation]: ABOUT,
+  [PATH.aboutFinancialReport]: ABOUT,
   'about/org-chart': ABOUT,
   'about/directors': ABOUT,
 
@@ -27,12 +28,11 @@ const BY_PATH: Record<string, string> = {
   [PATH.supportGuide]: '/images/banners/support.jpg',
   [PATH.supportApply]: '/images/banners/support.jpg',
 
-  // 소식 (공지·활동·연간·언론·재정·문의 통일)
+  // 소식 (공지·활동·연간·언론·문의 통일)
   [PATH.newsAnnouncements]: NEWS,
   [PATH.newsActivities]: NEWS,
   [PATH.newsNewsletter]: NEWS,
   [PATH.newsPress]: NEWS,
-  [PATH.newsFinancialReport]: NEWS,
   [PATH.newsInquiry]: NEWS,
   news: NEWS,
 }

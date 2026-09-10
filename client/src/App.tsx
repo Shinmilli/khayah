@@ -24,7 +24,7 @@ const publicChildRoutes = (
     <Route path="stories/:scope" element={<StoryArchivePage />} />
     <Route path="business/projects" element={<ProjectsPage />} />
     <Route path="business/projects/:region" element={<ProjectsPage />} />
-    <Route path="news/financial-report" element={<FinancialReportPage />} />
+    <Route path="about/financial-report" element={<FinancialReportPage />} />
     <Route path="about/khayah" element={<KhayahAboutHubPage />} />
     <Route path="*" element={<PageByPath />} />
   </>
@@ -43,7 +43,7 @@ function App() {
         <Route path="/stories/:scope" element={<StoryArchivePage />} />
         <Route path="/business/projects" element={<ProjectsPage />} />
         <Route path="/business/projects/:region" element={<ProjectsPage />} />
-        <Route path="/news/financial-report" element={<FinancialReportPage />} />
+        <Route path="/about/financial-report" element={<FinancialReportPage />} />
         <Route path="/about/khayah" element={<KhayahAboutHubPage />} />
         <Route path="*" element={<PageByPath />} />
       </Route>

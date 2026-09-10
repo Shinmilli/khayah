@@ -49,12 +49,14 @@ export async function uploadBufferToCloudinary(options: {
   buffer: Buffer
   originalName: string
   mimeType: string
-  kind: 'document' | 'image'
+  kind: 'document' | 'image' | 'video'
 }): Promise<CloudinaryUploadResult> {
   configureCloudinary()
 
-  const folder = `${folderPrefix()}/${options.kind === 'document' ? 'documents' : 'images'}`
-  const resourceType = options.kind === 'document' ? 'raw' : 'image'
+  const folder =
+    `${folderPrefix()}/` +
+    (options.kind === 'document' ? 'documents' : options.kind === 'video' ? 'videos' : 'images')
+  const resourceType = options.kind === 'document' ? 'raw' : options.kind === 'video' ? 'video' : 'image'
   // public_id에 .pdf를 넣으면 Cloudinary delivery URL이 401이 나는 경우가 있음 → 확장자 제외
   const publicId =
     options.kind === 'document'
@@ -137,10 +139,12 @@ export async function destroyCloudinaryAsset(
   configureCloudinary()
   const order =
     resourceTypeHint === 'image'
-      ? (['image', 'raw'] as const)
-      : resourceTypeHint === 'raw'
-        ? (['raw', 'image'] as const)
-        : (['raw', 'image'] as const)
+      ? (['image', 'video', 'raw'] as const)
+      : resourceTypeHint === 'video'
+        ? (['video', 'image', 'raw'] as const)
+        : resourceTypeHint === 'raw'
+          ? (['raw', 'image', 'video'] as const)
+          : (['raw', 'image', 'video'] as const)
 
   let sawNotFound = false
   for (const resource_type of order) {

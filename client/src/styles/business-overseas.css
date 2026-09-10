@@ -6,8 +6,8 @@
 }
 
 .overseas-page .ov-wrap {
-  max-width: 1120px;
-  width: var(--content-width, 92%);
+  max-width: none;
+  width: 100%;
   margin: 0 auto;
 }
 
@@ -52,7 +52,7 @@
 
 .overseas-lead {
   margin: 14px auto 0;
-  font-size: 1.02rem;
+  font-size: 1.12rem;
   line-height: 1.75;
   color: var(--ov-muted);
   max-width: 76ch;
@@ -187,7 +187,7 @@
 
 .overseas-card__title {
   margin: 0;
-  font-size: 1.18rem;
+  font-size: 1.28rem;
   font-weight: 900;
   letter-spacing: -0.02em;
   color: var(--ov-text);

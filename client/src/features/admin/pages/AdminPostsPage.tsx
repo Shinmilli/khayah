@@ -164,7 +164,7 @@ function PostEditorForm({
     initialPostType === '스토리' ? initialStoryScope : null,
   )
   const [projectRegion, setProjectRegion] = useState<ProjectRegion | null>(null)
-  const [yearlyMode, setYearlyMode] = useState<YearlyNewsletterMode>('글쓰기')
+  const [yearlyMode, setYearlyMode] = useState<YearlyNewsletterMode>('PDF소식지')
   const [title, setTitle] = useState<string>(initialTitle)
   const [saving, setSaving] = useState(false)
   const [saveError, setSaveError] = useState<string>('')
@@ -248,10 +248,11 @@ function PostEditorForm({
       setProjectRegion(null)
     }
     if (postType !== '연간소식지') {
-      setYearlyMode('글쓰기')
+      setYearlyMode('PDF소식지')
       setDocStatus('PDF 선택 시 자동 업로드 (10MB 이하는 Cloudinary, 초과는 Supabase)')
       setNewsletterIssue('')
     } else if (prevPostType.current !== '연간소식지') {
+      setYearlyMode('PDF소식지')
       setNewsletterYear(String(new Date().getFullYear()))
       setNewsletterYearEnd('')
       setNewsletterYearRange(false)
@@ -273,8 +274,8 @@ function PostEditorForm({
     // hydrate meta-backed fields when opening editor
     if (initialPostType === '연간소식지') {
       const m = initialMeta.khayah_newsletter_mode
-      if (m === 'PDF 업로드 모드' || m === 'PDF소식지') setYearlyMode('PDF소식지')
       if (m === '글쓰기 모드' || m === '글쓰기') setYearlyMode('글쓰기')
+      else setYearlyMode('PDF소식지')
       if (initialMeta.khayah_cover_url) setCoverPreviewUrl(initialMeta.khayah_cover_url)
       if (initialMeta.khayah_newsletter_issue) setNewsletterIssue(initialMeta.khayah_newsletter_issue)
       const yy = (initialMeta.khayah_newsletter_year ?? '').trim()
@@ -686,7 +687,7 @@ function PostEditorForm({
             <div className="admin-field admin-field--full">
               <span className="admin-field__label">연간소식지 작성 방식</span>
               <div className="admin-segmented admin-segmented--tight" role="group" aria-label="연간소식지 작성 방식">
-                {(['글쓰기', 'PDF소식지'] as const).map((m) => (
+                {(['PDF소식지', '글쓰기'] as const).map((m) => (
                   <button
                     key={m}
                     type="button"

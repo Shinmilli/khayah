@@ -208,6 +208,10 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
     title: '오시는 길',
     content: KHAYAH_LOCATION_PAGE_HTML,
   },
+  'about/financial-report': {
+    title: '재정보고',
+    content: '<p>연간 재정보고 및 사업보고 자료를 안내합니다.</p>',
+  },
   'about/org-chart': {
     title: '조직도',
     content: KHAYAH_ORG_BOARD_MERGED_HTML,
@@ -864,7 +868,7 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
   },
   'news': {
     title: '소식',
-    content: '<p>카야의 최신 소식, 공지사항, 활동소식, 연간소식지, 재정보고를 확인하실 수 있습니다.</p><p><a href="/news/announcements">공지사항</a> · <a href="/news/activities">활동소식</a> · <a href="/news/newsletter">연간소식지</a> · <a href="/news/press">언론보도</a> · <a href="/news/financial-report">재정보고</a></p>',
+    content: '<p>카야의 최신 소식, 공지사항, 활동소식, 연간소식지를 확인하실 수 있습니다.</p><p><a href="/news/announcements">공지사항</a> · <a href="/news/activities">활동소식</a> · <a href="/news/newsletter">연간소식지</a> · <a href="/news/press">언론보도</a></p>',
   },
   'news/activities': {
     title: '활동소식',
@@ -873,10 +877,6 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
   'news/newsletter': {
     title: '연간소식지',
     content: '<p>카야와 함께 변화하는 이 땅 곳곳의 이야기를 연간소식지로 전합니다.</p>',
-  },
-  'news/financial-report': {
-    title: '재정보고',
-    content: '<p>연간 재정보고 및 사업보고 자료를 안내합니다.</p>',
   },
   'news/press': {
     title: '언론보도',

@@ -4,7 +4,8 @@
 }
 
 .inquiry-shell {
-  width: min(100%, 920px);
+  width: 100%;
+  max-width: none;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -32,7 +33,7 @@
 
 .inquiry-section-title {
   margin: 0 0 6px;
-  font-size: clamp(1.2rem, 2.2vw, 1.45rem);
+  font-size: clamp(1.35rem, 2.4vw, 1.65rem);
   font-weight: 800;
   letter-spacing: -0.02em;
   color: #111827;
@@ -46,7 +47,7 @@
 
 .inquiry-section-sub {
   margin: 0;
-  font-size: 0.95rem;
+  font-size: 1.08rem;
   line-height: 1.55;
   color: #6b7280;
 }
@@ -101,7 +102,7 @@
 }
 
 .inquiry-faq__q-text {
-  font-size: 0.98rem;
+  font-size: 1.08rem;
   font-weight: 700;
   line-height: 1.45;
 }
@@ -128,7 +129,7 @@
 .inquiry-faq__a p {
   margin: 0;
   padding-top: 2px;
-  font-size: 0.94rem;
+  font-size: 1.06rem;
   line-height: 1.65;
   color: #4b5563;
   white-space: pre-wrap;
@@ -155,7 +156,7 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  font-size: 0.94rem;
+  font-size: 1.08rem;
   line-height: 1.6;
   color: #374151;
 }

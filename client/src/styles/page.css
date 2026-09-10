@@ -19,7 +19,7 @@
 .page-hero {
   position: relative;
   width: 100%;
-  min-height: clamp(220px, 30vw, 360px);
+  min-height: clamp(250px, 32vw, 400px);
   display: grid;
   place-items: center;
   overflow: hidden;
@@ -73,8 +73,8 @@
 .page-hero__inner {
   position: relative;
   z-index: 1;
-  width: 92%;
-  max-width: 1100px;
+  width: var(--site-content-width, 92%);
+  max-width: var(--site-content-max, 1400px);
   padding-top: calc(var(--site-header-height, 80px) * 0.2);
   padding-bottom: 10px;
   text-align: center;
@@ -86,7 +86,7 @@
   font-weight: 800;
   letter-spacing: -0.03em;
   line-height: 1.15;
-  font-size: clamp(1.7rem, 3.2vw, 2.6rem);
+  font-size: clamp(1.9rem, 3.5vw, 3rem);
   text-shadow: 0 4px 22px rgba(0, 0, 0, 0.35);
 }
 
@@ -143,17 +143,17 @@
 }
 
 .page-crumbs__inner {
-  width: 92%;
-  max-width: 1100px;
+  width: var(--site-content-width, 92%);
+  max-width: var(--site-content-max, 1400px);
   margin: 0 auto;
-  min-height: 76px;
+  min-height: 80px;
   padding: 10px 0;
   box-sizing: border-box;
   display: flex;
   align-items: center;
   gap: 14px;
   color: rgba(0, 0, 0, 0.55);
-  font-size: 15px;
+  font-size: 16px;
   letter-spacing: -0.01em;
 }
 
@@ -204,25 +204,25 @@
 }
 
 .page-content-wrapper .page-title {
-  font-size: 28px;
+  font-size: clamp(1.7rem, 2.2vw, 2.15rem);
   margin-bottom: 24px;
   color: var(--text-dark, #404954);
 }
 
 .page-content-wrapper .page-body {
-  font-size: 17px;
-  line-height: 1.7;
+  font-size: clamp(1.05rem, 0.25vw + 1rem, 1.2rem);
+  line-height: 1.75;
   color: #77818e;
 }
 
 .page-content-wrapper .page-body h2 {
-  font-size: 22px;
+  font-size: clamp(1.35rem, 1.4vw + 0.9rem, 1.7rem);
   margin: 32px 0 12px;
   color: var(--text-dark, #404954);
 }
 
 .page-content-wrapper .page-body h3 {
-  font-size: 18px;
+  font-size: clamp(1.12rem, 0.6vw + 0.95rem, 1.28rem);
   margin: 24px 0 8px;
   color: var(--khayah-red, #b20838);
 }
@@ -300,7 +300,7 @@
   padding: 12px 4px 14px;
   margin-bottom: 2px;
   border-bottom: 2px solid #222;
-  font-size: 0.92rem;
+  font-size: 1rem;
   font-weight: 700;
   color: #444;
   letter-spacing: -0.02em;
@@ -386,10 +386,15 @@
 }
 
 /* 활동소식 목록 — 왼쪽 정사각 썸네일, 오른쪽 제목·날짜 */
+.page-content-wrapper .column.one {
+  padding-left: 0;
+  padding-right: 0;
+}
+
 .activity-archive-page .activity-archive__list,
 .activity-archive-page .pager,
 .activity-archive-page .notice-archive__status {
-  max-width: 900px;
+  max-width: none;
   width: 100%;
   margin-left: auto;
   margin-right: auto;
@@ -1148,7 +1153,7 @@
   --kh-hist-month: #9aa3ad;
   --kh-hist-text: #5c6370;
   --kh-hist-year: #2a2e36;
-  max-width: 820px;
+  max-width: none;
   margin: 0 auto;
 }
 
@@ -1323,7 +1328,7 @@
 
 .post-board__title {
   margin: 0 0 12px;
-  font-size: clamp(1.25rem, 2.2vw, 1.7rem);
+  font-size: clamp(1.4rem, 2.4vw, 2rem);
   font-weight: 800;
   letter-spacing: -0.03em;
   line-height: 1.4;
@@ -1383,9 +1388,16 @@
 
 .post-board--feature .post-board__body img,
 .post-board--feature .post-board__body video,
-.post-board--feature .post-board__body iframe {
+.post-board--feature .post-board__body iframe,
+.post-board--feature .post-board__body .kh-gallery,
+.post-board--feature .post-board__body .kh-video {
   margin-left: auto;
   margin-right: auto;
+}
+
+.post-board--feature .post-board__body img,
+.post-board--feature .post-board__body video,
+.post-board--feature .post-board__body iframe {
   display: block;
 }
 
@@ -1432,15 +1444,15 @@
 .page-content-wrapper .page-body.post-board__body img,
 .page-content-wrapper .page-body.post-board__body video,
 .page-content-wrapper .page-body.post-board__body iframe {
-  max-width: min(100%, 720px);
+  max-width: min(100%, 960px);
   height: auto;
 }
 
-/* 스토리·활동소식·연간소식지: 큰 화면에서 본문 720px / 공지사항 등은 전폭 */
+/* 스토리·활동소식·연간소식지: 큰 화면에서 본문 폭 / 공지사항 등은 전폭 */
 @media (min-width: 960px) {
   .post-board--feature .page-body.post-board__body,
   .post-board--feature .post-board__body {
-    max-width: 720px;
+    max-width: 960px;
     width: 100%;
     margin-left: auto;
     margin-right: auto;

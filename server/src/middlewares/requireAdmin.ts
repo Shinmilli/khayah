@@ -93,6 +93,7 @@ export async function adminAuthGuard(req: Request, res: Response, next: NextFunc
   if (
     p === '/uploads/document' ||
     p === '/uploads/image' ||
+    p === '/uploads/video' ||
     p === '/uploads/delete'
   ) {
     await requireRoles(CONTENT)(req, res, next)

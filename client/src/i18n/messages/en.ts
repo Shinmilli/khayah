@@ -85,6 +85,8 @@ export const enMessages: Messages = {
       listAria: 'Story list',
       more: 'View all stories',
       moreAria: (title: string) => `View all stories. Preview: ${title}`,
+      viewAll: 'View all',
+      viewAllAria: 'View all stories',
       controls: 'Story slider controls',
       prev: 'Previous story',
       next: 'Next story',

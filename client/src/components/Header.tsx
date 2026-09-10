@@ -32,7 +32,7 @@ const NAV_COLUMNS: NavColumn[] = [
       { key: 'greeting', to: '/about/greeting' },
       { key: 'history', to: '/about/history' },
       { key: 'location', to: '/about/location' },
-      { key: 'financialReport', to: '/news/financial-report' },
+      { key: 'financialReport', to: '/about/financial-report' },
       { key: 'aboutKhayah', to: '/about/khayah' },
       { key: 'ci', to: '/about/khayah?tab=ci' },
       { key: 'org', to: '/about/khayah?tab=org' },

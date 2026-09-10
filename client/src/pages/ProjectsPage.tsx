@@ -9,6 +9,8 @@ import { useLocale } from '../i18n/LocaleContext'
 import { PATH, PROJECT_SLUG_TO_REGION, projectRegionHref } from '../i18n/routes'
 import { pageHeroImageForPath } from '../constants/pageHeroImages'
 import { ListStatus } from '../components/ListStatus'
+import { PostCoverThumb } from '../components/PostCoverThumb'
+import { postCoverMedia } from '../utils/postMedia'
 import '../styles/projects.css'
 
 const REGIONS = ['전체', '네팔', '키르기즈스탄', '미얀마', '국내'] as const
@@ -24,11 +26,10 @@ function normalizeRegion(param: string | undefined): Region {
 }
 
 function projectCoverUrl(post: Post): string | undefined {
-  const fromMeta = post.meta?.khayah_cover_url?.trim()
-  if (fromMeta) return fromMeta
-  const html = post.content || ''
-  const match = html.match(/<img[^>]+src=["']([^"']+)["']/i)
-  return match?.[1]?.trim() || undefined
+  const media = postCoverMedia(post)
+  if (media.kind === 'image') return media.src
+  if (media.kind === 'video') return media.poster || media.src
+  return undefined
 }
 
 export function ProjectsPage() {
@@ -109,7 +110,7 @@ export function ProjectsPage() {
                   tabIndex={-1}
                   aria-hidden="true"
                 >
-                  {cover ? <img src={cover} alt="" loading="lazy" /> : null}
+                  {cover ? <PostCoverThumb post={p} /> : null}
                 </Link>
                 <div className="projects-meta">
                   <div className="projects-meta__top">

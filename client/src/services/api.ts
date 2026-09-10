@@ -48,7 +48,7 @@ export function getAdminBearerToken(): string | null {
 }
 
 function needsAdminCredentials(url: string): boolean {
-  return /\/admin\/|\/auth\/|\/uploads\/(document|image|delete)/.test(url)
+  return /\/admin\/|\/auth\/|\/uploads\/(document|image|video|delete)/.test(url)
 }
 
 async function apiFetch(url: string, init?: RequestInit): Promise<Response> {
@@ -199,6 +199,18 @@ export async function uploadReportImage(file: File): Promise<DocumentUploadResul
   form.append('file', file)
   const res = await apiFetch(`${API_BASE}/uploads/image`, { method: 'POST', body: form })
   if (!res.ok) throw new Error(await readApiError(res, '이미지 업로드에 실패했습니다.'))
+  const data = (await res.json()) as DocumentUploadResult
+  if (!data?.url?.trim()) {
+    throw new Error('업로드 응답에 URL이 없습니다. API 서버와 Cloudinary 설정을 확인하세요.')
+  }
+  return data
+}
+
+export async function uploadPostVideo(file: File): Promise<DocumentUploadResult> {
+  const form = new FormData()
+  form.append('file', file)
+  const res = await apiFetch(`${API_BASE}/uploads/video`, { method: 'POST', body: form })
+  if (!res.ok) throw new Error(await readApiError(res, '동영상 업로드에 실패했습니다.'))
   const data = (await res.json()) as DocumentUploadResult
   if (!data?.url?.trim()) {
     throw new Error('업로드 응답에 URL이 없습니다. API 서버와 Cloudinary 설정을 확인하세요.')

@@ -1,7 +1,17 @@
 import type { ClipboardEvent, KeyboardEvent, ReactNode } from 'react'
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
-import { uploadReportImage, type DocumentUploadResult } from '../../../services/api'
+import { uploadPostVideo, uploadReportImage, type DocumentUploadResult } from '../../../services/api'
 import { sanitizePasteHtml, sanitizePlainTextPaste } from '../../../utils/sanitizePasteHtml'
+import {
+  cloudinaryVideoPoster,
+  galleryHtml,
+  naverTvEmbedHtml,
+  parseNaverTvId,
+  parseYoutubeId,
+  videoFileHtml,
+  youtubeEmbedHtml,
+} from '../../../utils/postMedia'
+import '../../../styles/post-media.css'
 
 function focusAndExec(editor: HTMLElement | null, command: string, value?: string) {
   if (!editor) return
@@ -152,7 +162,7 @@ function serializeEditorHtml(editor: HTMLElement): string {
   const align = editor.style.textAlign || ''
   if (align) bakeAlignIntoBlocks(editor, align)
   // 루트 style은 innerHTML에 안 들어가므로 블록에만 남김
-  return editor.innerHTML
+  return editor.innerHTML.replace(/\scontenteditable="false"/gi, '')
 }
 
 function Ico(props: { children: ReactNode }) {
@@ -241,6 +251,18 @@ const icons = {
       <path d="M21 15l-5-5L5 21" />
     </Ico>
   ),
+  gallery: (
+    <Ico>
+      <rect x="3" y="6" width="13" height="13" rx="2" />
+      <path d="M8 3h11a2 2 0 0 1 2 2v11" />
+    </Ico>
+  ),
+  video: (
+    <Ico>
+      <rect x="3" y="5" width="18" height="14" rx="2" />
+      <polygon points="10,9 16,12 10,15" fill="currentColor" stroke="none" />
+    </Ico>
+  ),
   textColor: (
     <Ico>
       <path d="M8 17L12 5l4 12" />
@@ -305,8 +327,11 @@ export const AdminRichTextEditor = forwardRef<
 >(function AdminRichTextEditor({ initialHtml, onImageUploaded }, ref) {
     const editorRef = useRef<HTMLDivElement>(null)
     const imageInputRef = useRef<HTMLInputElement>(null)
+    const galleryInputRef = useRef<HTMLInputElement>(null)
+    const videoInputRef = useRef<HTMLInputElement>(null)
     const savedRangeRef = useRef<Range | null>(null)
     const [imageUploading, setImageUploading] = useState(false)
+    const [videoUploading, setVideoUploading] = useState(false)
     const [imageStatus, setImageStatus] = useState('')
     const [customTextColor, setCustomTextColor] = useState('#b20838')
 
@@ -519,47 +544,174 @@ export const AdminRichTextEditor = forwardRef<
       [saveSelection],
     )
 
+    const insertHtmlBlock = useCallback((html: string) => {
+      const editor = editorRef.current
+      if (!editor) return
+      editor.focus()
+      restoreSelection(savedRangeRef.current)
+      wrapOrphanNodes(editor)
+      const temp = document.createElement('div')
+      temp.innerHTML = html
+      const node = temp.firstElementChild as HTMLElement | null
+      if (!node) return
+      node.setAttribute('contenteditable', 'false')
+      const current = getCurrentBlock(editor)
+      if (current) current.after(node)
+      else editor.appendChild(node)
+      const after = document.createElement('p')
+      after.innerHTML = '<br>'
+      node.after(after)
+      placeCaretIn(after)
+      saveSelection()
+    }, [saveSelection])
+
+    const insertImageParagraphs = useCallback((urls: string[], alts: string[]) => {
+      const editor = editorRef.current
+      if (!editor || urls.length === 0) return
+      editor.focus()
+      restoreSelection(savedRangeRef.current)
+      wrapOrphanNodes(editor)
+      let last: HTMLElement | null = getCurrentBlock(editor)
+      for (let i = 0; i < urls.length; i++) {
+        const p = document.createElement('p')
+        const img = document.createElement('img')
+        img.src = urls[i]!
+        img.alt = alts[i] || ''
+        img.style.maxWidth = '100%'
+        img.style.height = 'auto'
+        p.appendChild(img)
+        if (last) last.after(p)
+        else editor.appendChild(p)
+        last = p
+      }
+      const after = document.createElement('p')
+      after.innerHTML = '<br>'
+      last!.after(after)
+      placeCaretIn(after)
+      saveSelection()
+    }, [saveSelection])
+
+    const uploadImageFiles = useCallback(
+      async (list: File[]): Promise<{ urls: string[]; names: string[] }> => {
+        const urls: string[] = []
+        const names: string[] = []
+        for (let i = 0; i < list.length; i++) {
+          setImageStatus(`이미지 업로드 중… (${i + 1}/${list.length})`)
+          const uploaded = await uploadReportImage(list[i]!)
+          const url = uploaded.url?.trim()
+          if (!url) throw new Error('업로드 URL을 받지 못했습니다.')
+          onImageUploaded?.(uploaded)
+          urls.push(url)
+          names.push(list[i]!.name.replace(/\.[^.]+$/, '') || '본문 이미지')
+        }
+        return { urls, names }
+      },
+      [onImageUploaded],
+    )
+
     const openImagePicker = useCallback(() => {
-      if (imageUploading) return
+      if (imageUploading || videoUploading) return
       saveSelection()
       setImageStatus('')
       imageInputRef.current?.click()
-    }, [imageUploading, saveSelection])
+    }, [imageUploading, videoUploading, saveSelection])
 
-    const onImageFileChange = useCallback(async (file: File | null) => {
-      if (!file) return
-      if (!file.type.startsWith('image/')) {
+    const openGalleryPicker = useCallback(() => {
+      if (imageUploading || videoUploading) return
+      saveSelection()
+      setImageStatus('')
+      galleryInputRef.current?.click()
+    }, [imageUploading, videoUploading, saveSelection])
+
+    const onImageFileChange = useCallback(async (files: FileList | null) => {
+      const list = files ? Array.from(files).filter((f) => f.type.startsWith('image/')) : []
+      if (list.length === 0) {
         setImageStatus('이미지 파일만 업로드할 수 있습니다.')
         return
       }
       setImageUploading(true)
-      setImageStatus('이미지 업로드 중…')
       try {
-        const uploaded = await uploadReportImage(file)
-        const url = uploaded.url?.trim()
-        if (!url) throw new Error('업로드 URL을 받지 못했습니다.')
-        onImageUploaded?.(uploaded)
-        const editor = editorRef.current
-        if (editor) {
-          editor.focus()
-          restoreSelection(savedRangeRef.current)
-          document.execCommand('insertImage', false, url)
-          const imgs = editor.querySelectorAll('img')
-          const last = imgs[imgs.length - 1]
-          if (last && last.getAttribute('src') === url) {
-            last.setAttribute('alt', file.name.replace(/\.[^.]+$/, '') || '본문 이미지')
-            last.style.maxWidth = '100%'
-            last.style.height = 'auto'
-          }
-        }
-        setImageStatus('이미지가 본문에 삽입되었습니다.')
+        const { urls, names } = await uploadImageFiles(list)
+        insertImageParagraphs(urls, names)
+        setImageStatus(urls.length > 1 ? `사진 ${urls.length}장이 본문에 삽입되었습니다.` : '이미지가 본문에 삽입되었습니다.')
       } catch (e) {
         setImageStatus(e instanceof Error ? e.message : '이미지 업로드에 실패했습니다.')
       } finally {
         setImageUploading(false)
         if (imageInputRef.current) imageInputRef.current.value = ''
       }
-    }, [onImageUploaded])
+    }, [insertImageParagraphs, uploadImageFiles])
+
+    const onGalleryFileChange = useCallback(async (files: FileList | null) => {
+      const list = files ? Array.from(files).filter((f) => f.type.startsWith('image/')) : []
+      if (list.length < 2) {
+        setImageStatus('슬라이드는 사진 2장 이상을 선택해 주세요.')
+        return
+      }
+      setImageUploading(true)
+      try {
+        const { urls } = await uploadImageFiles(list)
+        insertHtmlBlock(galleryHtml(urls))
+        setImageStatus(`사진 슬라이드 ${urls.length}장이 본문에 삽입되었습니다.`)
+      } catch (e) {
+        setImageStatus(e instanceof Error ? e.message : '이미지 업로드에 실패했습니다.')
+      } finally {
+        setImageUploading(false)
+        if (galleryInputRef.current) galleryInputRef.current.value = ''
+      }
+    }, [insertHtmlBlock, uploadImageFiles])
+
+    const openVideoPicker = useCallback(() => {
+      if (imageUploading || videoUploading) return
+      saveSelection()
+      const raw = window.prompt(
+        '유튜브 또는 네이버TV 주소를 붙여넣으세요.\n파일을 올리려면 취소를 누른 뒤 동영상을 선택합니다.',
+      )
+      if (raw === null) {
+        videoInputRef.current?.click()
+        return
+      }
+      const url = raw.trim()
+      if (!url) return
+      const yt = parseYoutubeId(url)
+      if (yt) {
+        insertHtmlBlock(youtubeEmbedHtml(yt))
+        setImageStatus('유튜브 영상이 본문에 삽입되었습니다.')
+        return
+      }
+      const nv = parseNaverTvId(url)
+      if (nv) {
+        insertHtmlBlock(naverTvEmbedHtml(nv))
+        setImageStatus('네이버TV 영상이 본문에 삽입되었습니다.')
+        return
+      }
+      setImageStatus('유튜브 또는 네이버TV 주소만 넣을 수 있습니다.')
+    }, [imageUploading, insertHtmlBlock, saveSelection, videoUploading])
+
+    const onVideoFileChange = useCallback(async (file: File | null) => {
+      if (!file) return
+      if (!file.type.startsWith('video/') && !/\.(mp4|webm|mov|m4v)$/i.test(file.name)) {
+        setImageStatus('MP4, WebM, MOV 파일만 업로드할 수 있습니다.')
+        return
+      }
+      setVideoUploading(true)
+      setImageStatus('동영상 업로드 중…')
+      try {
+        const uploaded = await uploadPostVideo(file)
+        const url = uploaded.url?.trim()
+        if (!url) throw new Error('업로드 URL을 받지 못했습니다.')
+        onImageUploaded?.(uploaded)
+        const poster = cloudinaryVideoPoster(url) || undefined
+        const title = file.name.replace(/\.[^.]+$/, '').trim()
+        insertHtmlBlock(videoFileHtml(url, poster, title || undefined))
+        setImageStatus('동영상이 본문에 삽입되었습니다.')
+      } catch (e) {
+        setImageStatus(e instanceof Error ? e.message : '동영상 업로드에 실패했습니다.')
+      } finally {
+        setVideoUploading(false)
+        if (videoInputRef.current) videoInputRef.current.value = ''
+      }
+    }, [insertHtmlBlock, onImageUploaded])
 
     const applyHighlight = useCallback((hex: string) => {
       const editor = editorRef.current
@@ -668,10 +820,24 @@ export const AdminRichTextEditor = forwardRef<
         { key: 'link', title: '링크 삽입', ariaLabel: '링크 삽입', onClick: insertLink, icon: icons.link },
         {
           key: 'img',
-          title: imageUploading ? '이미지 업로드 중…' : '이미지 파일 업로드',
+          title: imageUploading ? '이미지 업로드 중…' : '이미지 업로드',
           ariaLabel: imageUploading ? '이미지 업로드 중' : '이미지 파일 업로드',
           onClick: openImagePicker,
           icon: icons.image,
+        },
+        {
+          key: 'gallery',
+          title: imageUploading ? '슬라이드 업로드 중…' : '사진 슬라이드 (2장 이상)',
+          ariaLabel: imageUploading ? '슬라이드 업로드 중' : '사진 슬라이드 삽입',
+          onClick: openGalleryPicker,
+          icon: icons.gallery,
+        },
+        {
+          key: 'video',
+          title: videoUploading ? '동영상 업로드 중…' : '동영상 삽입 (유튜브·네이버TV·파일)',
+          ariaLabel: videoUploading ? '동영상 업로드 중' : '동영상 삽입',
+          onClick: openVideoPicker,
+          icon: icons.video,
         },
         {
           key: 'hr',
@@ -689,12 +855,36 @@ export const AdminRichTextEditor = forwardRef<
           ref={imageInputRef}
           type="file"
           accept="image/jpeg,image/png,image/webp,image/gif,.jpg,.jpeg,.png,.webp,.gif"
+          multiple
+          className="admin-rich__file"
+          tabIndex={-1}
+          aria-hidden
+          onChange={(e) => {
+            void onImageFileChange(e.currentTarget.files)
+          }}
+        />
+        <input
+          ref={galleryInputRef}
+          type="file"
+          accept="image/jpeg,image/png,image/webp,image/gif,.jpg,.jpeg,.png,.webp,.gif"
+          multiple
+          className="admin-rich__file"
+          tabIndex={-1}
+          aria-hidden
+          onChange={(e) => {
+            void onGalleryFileChange(e.currentTarget.files)
+          }}
+        />
+        <input
+          ref={videoInputRef}
+          type="file"
+          accept="video/mp4,video/webm,video/quicktime,.mp4,.webm,.mov,.m4v"
           className="admin-rich__file"
           tabIndex={-1}
           aria-hidden
           onChange={(e) => {
             const file = e.currentTarget.files?.[0] ?? null
-            void onImageFileChange(file)
+            void onVideoFileChange(file)
           }}
         />
         <div className="admin-rich__toolbar" role="toolbar" aria-label="본문 서식">
@@ -705,11 +895,13 @@ export const AdminRichTextEditor = forwardRef<
                   key={btn.key}
                   type="button"
                   className={`admin-rich__btn${btn.label ? ' admin-rich__btn--text' : ''}${
-                    btn.key === 'img' && imageUploading ? ' is-busy' : ''
+                    btn.key === 'img' && imageUploading ? ' is-busy' : btn.key === 'video' && videoUploading ? ' is-busy' : ''
                   }`}
                   title={btn.title}
                   aria-label={btn.ariaLabel}
-                  disabled={btn.key === 'img' ? imageUploading : false}
+                  disabled={
+                    btn.key === 'img' ? imageUploading || videoUploading : btn.key === 'video' ? videoUploading || imageUploading : false
+                  }
                   onMouseDown={(e) => {
                     e.preventDefault()
                     saveSelection()
@@ -800,8 +992,8 @@ export const AdminRichTextEditor = forwardRef<
           </div>
         </div>
         <p className="admin-rich__hint">
-          웹에서 붙여넣으면 불필요한 스타일은 제거하고 본문만 넣습니다. 인용 안에서 Enter를 누르면
-          같은 인용이 늘어나고, 인용 버튼으로 해제합니다.
+          웹에서 붙여넣으면 불필요한 스타일은 제거하고 본문만 넣습니다. 사진은 이미지 버튼, 넘기는 슬라이드는
+          슬라이드 버튼(2장 이상)으로 넣습니다. 동영상은 유튜브·네이버TV 주소 또는 파일로 넣을 수 있습니다.
         </p>
         {imageStatus ? (
           <p className="admin-rich__status" role="status">

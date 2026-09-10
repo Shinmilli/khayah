@@ -39,10 +39,11 @@ export async function uploadBufferToSupabase(options: {
   buffer: Buffer
   originalName: string
   mimeType: string
-  kind: 'document' | 'image'
+  kind: 'document' | 'image' | 'video'
 }): Promise<StorageUploadResult> {
   const supabase = getAdminClient()
-  const folder = options.kind === 'document' ? 'documents' : 'images'
+  const folder =
+    options.kind === 'document' ? 'documents' : options.kind === 'video' ? 'videos' : 'images'
   const filename = safeFileName(options.originalName)
   const objectPath = `${folder}/${filename}`
 
@@ -67,7 +68,7 @@ export async function uploadBufferToSupabase(options: {
     filename,
     publicId: objectPath,
     bytes: options.buffer.length,
-    resourceType: options.kind === 'document' ? 'raw' : 'image',
+    resourceType: options.kind === 'document' ? 'raw' : options.kind === 'video' ? 'video' : 'image',
     provider: 'supabase',
   }
 }

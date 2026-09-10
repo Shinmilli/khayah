@@ -21,6 +21,10 @@ const ALLOWED = new Set([
   'BLOCKQUOTE',
   'IMG',
   'HR',
+  'MARK',
+  'VIDEO',
+  'SPAN',
+  'IFRAME',
 ])
 
 const UNWRAP_AS_BLOCK = new Set([
@@ -37,6 +41,35 @@ const UNWRAP_AS_BLOCK = new Set([
   'FONT',
   'LABEL',
 ])
+
+function isDefaultColor(raw: string): boolean {
+  const c = raw.replace(/\s/g, '').toLowerCase()
+  return !c || c === '#000' || c === '#000000' || c === 'black' || c === '#111' || c === '#111111' || c === '#333' || c === '#333333'
+}
+
+function isHighlightBg(raw: string): boolean {
+  const c = raw.replace(/\s/g, '').toLowerCase()
+  if (!c || c === 'transparent' || c === 'inherit' || c === 'initial') return false
+  if (c === '#fff' || c === '#ffffff' || c === 'white' || c === 'rgb(255,255,255)') return false
+  return true
+}
+
+function isSafeEmbedSrc(raw: string): boolean {
+  try {
+    const u = new URL(raw.trim())
+    if (u.protocol !== 'https:' && u.protocol !== 'http:') return false
+    const host = u.hostname.toLowerCase()
+    return (
+      host === 'www.youtube.com' ||
+      host === 'youtube.com' ||
+      host === 'www.youtube-nocookie.com' ||
+      host === 'youtube-nocookie.com' ||
+      host === 'tv.naver.com'
+    )
+  } catch {
+    return false
+  }
+}
 
 function isSafeUrl(raw: string, kind: 'href' | 'src'): boolean {
   const t = raw.trim()
@@ -93,11 +126,61 @@ function sanitizeNode(node: Node): Node[] {
     return []
   }
 
-  // span/font 등: 래퍼 제거하고 자식만
+  // span: 형광펜·글자색만 유지
   if (tag === 'SPAN' || tag === 'FONT' || tag === 'LABEL') {
-    const out: Node[] = []
-    for (const child of Array.from(el.childNodes)) out.push(...sanitizeNode(child))
-    return out
+    const style = el.getAttribute('style') || ''
+    const bg = /background-color:\s*([^;]+)/i.exec(style)?.[1]?.trim() ?? ''
+    const color = /(?:^|;)\s*color:\s*([^;]+)/i.exec(style)?.[1]?.trim() ?? ''
+    const wrap = document.createElement(isHighlightBg(bg) ? 'mark' : 'span')
+    if (isHighlightBg(bg)) wrap.style.backgroundColor = bg
+    if (color && !isDefaultColor(color)) wrap.style.color = color
+    appendSanitizedChildren(el, wrap)
+    if (!wrap.textContent?.trim() && !wrap.querySelector('img,br')) return []
+    if (wrap.tagName === 'SPAN' && !wrap.getAttribute('style')) {
+      return Array.from(wrap.childNodes)
+    }
+    return [wrap]
+  }
+
+  if (
+    tag === 'DIV' &&
+    (el.classList.contains('kh-gallery') ||
+      el.classList.contains('kh-video') ||
+      el.hasAttribute('data-kh-gallery') ||
+      el.hasAttribute('data-kh-video'))
+  ) {
+    const wrap = document.createElement('div')
+    wrap.className = el.classList.contains('kh-gallery') ? 'kh-gallery' : 'kh-video'
+    if (el.classList.contains('kh-gallery') || el.hasAttribute('data-kh-gallery')) {
+      wrap.setAttribute('data-kh-gallery', '')
+      const count = el.getAttribute('data-count')
+      if (count) wrap.setAttribute('data-count', count)
+    } else {
+      wrap.setAttribute('data-kh-video', '')
+      const title =
+        el.getAttribute('data-title')?.trim() ||
+        el.querySelector('.kh-video__title')?.textContent?.replace(/\s+/g, ' ').trim() ||
+        ''
+      if (title) wrap.setAttribute('data-title', title)
+    }
+    appendSanitizedChildren(el, wrap)
+    if (wrap.classList.contains('kh-video')) {
+      const title = wrap.getAttribute('data-title')?.trim()
+      if (title) {
+        const caption =
+          [...wrap.querySelectorAll('p')].find((p) => p.textContent?.replace(/\s+/g, ' ').trim() === title) ||
+          wrap.querySelector('.kh-video__title')
+        if (caption instanceof HTMLElement) {
+          caption.className = 'kh-video__title'
+        } else {
+          const p = document.createElement('p')
+          p.className = 'kh-video__title'
+          p.textContent = title
+          wrap.appendChild(p)
+        }
+      }
+    }
+    return [wrap]
   }
 
   if (UNWRAP_AS_BLOCK.has(tag)) {
@@ -125,6 +208,16 @@ function sanitizeNode(node: Node): Node[] {
   if (tag === 'BR') return [document.createElement('br')]
   if (tag === 'HR') return [document.createElement('hr')]
 
+  if (tag === 'MARK') {
+    const wrap = document.createElement('mark')
+    const style = el.getAttribute('style') || ''
+    const bg = /background-color:\s*([^;]+)/i.exec(style)?.[1]?.trim() ?? ''
+    if (isHighlightBg(bg)) wrap.style.backgroundColor = bg
+    appendSanitizedChildren(el, wrap)
+    if (!wrap.textContent?.trim()) return []
+    return [wrap]
+  }
+
   if (tag === 'IMG') {
     const src = el.getAttribute('src') || ''
     if (!isSafeUrl(src, 'src')) return []
@@ -135,6 +228,30 @@ function sanitizeNode(node: Node): Node[] {
     img.style.maxWidth = '100%'
     img.style.height = 'auto'
     return [img]
+  }
+
+  if (tag === 'VIDEO') {
+    const src = el.getAttribute('src') || ''
+    if (!isSafeUrl(src, 'src')) return []
+    const video = document.createElement('video')
+    video.setAttribute('src', src.trim())
+    const poster = el.getAttribute('poster') || ''
+    if (poster && isSafeUrl(poster, 'src')) video.setAttribute('poster', poster.trim())
+    video.setAttribute('controls', '')
+    video.setAttribute('playsinline', '')
+    video.setAttribute('preload', 'metadata')
+    return [video]
+  }
+
+  if (tag === 'IFRAME') {
+    const src = el.getAttribute('src') || ''
+    if (!isSafeEmbedSrc(src)) return []
+    const iframe = document.createElement('iframe')
+    iframe.setAttribute('src', src.trim())
+    iframe.setAttribute('allowfullscreen', '')
+    iframe.setAttribute('loading', 'lazy')
+    iframe.setAttribute('title', el.getAttribute('title') || '영상')
+    return [iframe]
   }
 
   const nextTag = tag === 'B' ? 'STRONG' : tag === 'I' ? 'EM' : tag === 'STRIKE' ? 'S' : tag
@@ -161,7 +278,7 @@ function sanitizeNode(node: Node): Node[] {
     nextTag !== 'HR' &&
     nextTag !== 'BR' &&
     !created.textContent?.trim() &&
-    !created.querySelector('img,br')
+    !created.querySelector('img,br,video,iframe')
   ) {
     return []
   }
@@ -193,7 +310,7 @@ export function sanitizePasteHtml(html: string, plainFallback?: string): string 
     .trim()
 
   // 블록 없이 텍스트만 있으면 p로 감싸기
-  if (out && !/^<(p|h[1-4]|ul|ol|blockquote|hr)\b/i.test(out)) {
+  if (out && !/^<(p|h[1-4]|ul|ol|blockquote|hr|div)\b/i.test(out)) {
     out = `<p>${out}</p>`
   }
 

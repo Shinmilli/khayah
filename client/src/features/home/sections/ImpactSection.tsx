@@ -102,7 +102,7 @@ export function ImpactSection() {
               </div>
             </div>
 
-            <Link className="impact-card__cta" to={localize(`/${PATH.newsFinancialReport}`)}>
+            <Link className="impact-card__cta" to={localize(`/${PATH.aboutFinancialReport}`)}>
               {m.cta}
             </Link>
           </article>

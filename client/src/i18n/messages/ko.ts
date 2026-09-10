@@ -68,6 +68,8 @@ export type Messages = {
       listAria: string
       more: string
       moreAria: (title: string) => string
+      viewAll: string
+      viewAllAria: string
       controls: string
       prev: string
       next: string
@@ -371,6 +373,8 @@ export const koMessages: Messages = {
       listAria: '스토리 목록',
       more: '스토리 더보기',
       moreAria: (title: string) => `스토리 더보기. 미리보기: ${title}`,
+      viewAll: '전체보기',
+      viewAllAria: '스토리 전체 보기',
       controls: '스토리 슬라이더 컨트롤',
       prev: '이전 스토리',
       next: '다음 스토리',

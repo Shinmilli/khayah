@@ -203,6 +203,10 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
     title: 'Directions',
     content: KHAYAH_LOCATION_PAGE_HTML,
   },
+  'about/financial-report': {
+    title: 'Financial Report',
+    content: '<p>Annual financial reports and program reports.</p>',
+  },
   'about/org-chart': {
     title: 'Org Chart',
     content: KHAYAH_ORG_BOARD_MERGED_HTML,
@@ -858,7 +862,7 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
   },
   'news': {
     title: 'News',
-    content: '<p>Find Khayah\'s latest updates, announcements, activity news, annual newsletter, and financial reports.</p><p><a href="/news/announcements">Announcements</a> · <a href="/news/activities">Activities</a> · <a href="/news/newsletter">Newsletter</a> · <a href="/news/press">Press</a> · <a href="/news/financial-report">Financial Report</a></p>',
+    content: '<p>Find Khayah\'s latest updates, announcements, activity news, and annual newsletter.</p><p><a href="/news/announcements">Announcements</a> · <a href="/news/activities">Activities</a> · <a href="/news/newsletter">Newsletter</a> · <a href="/news/press">Press</a></p>',
   },
   'news/activities': {
     title: 'Activities',
@@ -867,10 +871,6 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
   'news/newsletter': {
     title: 'Annual Newsletter',
     content: '<p>Stories of change from communities around the world, shared through Khayah\'s annual newsletter.</p>',
-  },
-  'news/financial-report': {
-    title: 'Financial Report',
-    content: '<p>Annual financial reports and program reports.</p>',
   },
   'news/press': {
     title: 'Press',

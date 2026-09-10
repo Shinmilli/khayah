@@ -20,7 +20,7 @@
   --gm-text: #1c1c1c;
   --gm-subtext: #666;
   --gm-red: var(--khayah-red, #b20838);
-  --gm-content-max: 1100px;
+  --gm-content-max: var(--site-content-max, 1400px);
   /* 시그 블록만 메인 그리드보다 살짝 넓게 */
   --gm-sig-extra: 72px;
   --gm-pad-x: clamp(20px, 5vw, 6%);
@@ -129,7 +129,7 @@
 
 .greeting-modern .article-lead {
   font-family: 'DM Serif Display', Georgia, serif;
-  font-size: clamp(1.2rem, 2.2vw, 1.45rem);
+  font-size: clamp(1.32rem, 2.4vw, 1.6rem);
   line-height: 1.65;
   color: var(--gm-black);
   margin: 0 0 48px;
@@ -140,7 +140,7 @@
 }
 
 .greeting-modern .article-body {
-  font-size: 0.94rem;
+  font-size: 1.1rem;
   line-height: 2.05;
   color: #444;
   margin: 0 0 28px;
