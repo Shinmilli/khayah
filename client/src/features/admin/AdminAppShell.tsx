@@ -11,18 +11,34 @@ function isContentAdminPath(pathname: string): boolean {
     pathname.startsWith('/admin/app/financial-reports') ||
     pathname.startsWith('/admin/app/impact-stats') ||
     pathname.startsWith('/admin/app/history') ||
+    pathname.startsWith('/admin/app/nav-menu-images') ||
+    pathname.startsWith('/admin/app/page-banners') ||
     pathname.startsWith('/admin/app/banner')
   )
 }
 
-const contentChildren = [
-  { to: '/admin/app/main-banner', label: '메인 배너 관리' },
-  { to: '/admin/app/popup', label: '팝업 관리' },
-  { to: '/admin/app/posts', label: '게시글 관리' },
-  { to: '/admin/app/financial-reports', label: '재정보고' },
-  { to: '/admin/app/impact-stats', label: '나눔의 결실' },
-  { to: '/admin/app/history', label: '연혁' },
+const contentGroups = [
+  {
+    label: '화면',
+    items: [
+      { to: '/admin/app/main-banner', label: '메인 배너' },
+      { to: '/admin/app/popup', label: '팝업' },
+      { to: '/admin/app/page-banners', label: '페이지 배너' },
+      { to: '/admin/app/nav-menu-images', label: '메뉴 이미지' },
+    ],
+  },
+  {
+    label: '자료',
+    items: [
+      { to: '/admin/app/posts', label: '게시글' },
+      { to: '/admin/app/history', label: '연혁' },
+      { to: '/admin/app/financial-reports', label: '재정보고' },
+      { to: '/admin/app/impact-stats', label: '나눔의 결실' },
+    ],
+  },
 ] as const
+
+const contentChildren = contentGroups.flatMap((group) => group.items)
 
 const otherNav = [
   { to: '/admin/app/inquiries', label: '고객 문의', roles: ['super', 'inquiry'] },
@@ -92,17 +108,22 @@ export function AdminAppShell() {
               </button>
               {contentOpen ? (
                 <div id={contentSubId} className="admin-app__nav-sub">
-                  {visibleContent.map(({ to, label }) => (
-                    <NavLink
-                      key={to}
-                      to={to}
-                      end
-                      className={({ isActive }) =>
-                        `admin-app__nav-link admin-app__nav-link--sub${isActive ? ' admin-app__nav-link--active' : ''}`
-                      }
-                    >
-                      {label}
-                    </NavLink>
+                  {contentGroups.map((group) => (
+                    <div key={group.label} className="admin-app__nav-cluster">
+                      <p className="admin-app__nav-subhead">{group.label}</p>
+                      {group.items.map(({ to, label }) => (
+                        <NavLink
+                          key={to}
+                          to={to}
+                          end
+                          className={({ isActive }) =>
+                            `admin-app__nav-link admin-app__nav-link--sub${isActive ? ' admin-app__nav-link--active' : ''}`
+                          }
+                        >
+                          {label}
+                        </NavLink>
+                      ))}
+                    </div>
                   ))}
                 </div>
               ) : null}

@@ -7,7 +7,7 @@ export type AdminMediaUploadProps = {
   hint?: string
   variant: 'image' | 'pdf'
   /** 배너·팝업 등 넓은 미리보기 */
-  layout?: 'default' | 'wide'
+  layout?: 'default' | 'wide' | 'portrait'
   value: string | null
   onChange: (url: string | null) => void
   disabled?: boolean
@@ -85,7 +85,11 @@ export function AdminMediaUpload({
       {hint ? <p className="admin-media-upload__hint">{hint}</p> : null}
 
       {value ? (
-        <div className={`admin-media-upload__preview${layout === 'wide' ? ' admin-media-upload__preview--wide' : ''}`}>
+        <div
+          className={`admin-media-upload__preview${
+            layout === 'wide' ? ' admin-media-upload__preview--wide' : ''
+          }${layout === 'portrait' ? ' admin-media-upload__preview--portrait' : ''}`}
+        >
           {variant === 'image' ? (
             <img src={value} alt="" className="admin-media-upload__thumb" />
           ) : previewHref ? (
@@ -111,7 +115,7 @@ export function AdminMediaUpload({
       ) : null}
 
       <div
-        className={`admin-media-upload__drop${dragOver ? ' is-active' : ''}${uploading ? ' is-busy' : ''}${disabled ? ' is-disabled' : ''}${layout === 'wide' ? ' admin-media-upload__drop--wide' : ''}`}
+        className={`admin-media-upload__drop${dragOver ? ' is-active' : ''}${uploading ? ' is-busy' : ''}${disabled ? ' is-disabled' : ''}${layout === 'wide' ? ' admin-media-upload__drop--wide' : ''}${layout === 'portrait' ? ' admin-media-upload__drop--portrait' : ''}`}
         onDragEnter={(e) => {
           if (disabled) return
           e.preventDefault()

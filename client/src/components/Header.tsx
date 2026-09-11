@@ -3,8 +3,11 @@ import { Link, useLocation } from 'react-router-dom'
 import { SITE_NAME } from '../constants'
 import { pageHeroImageForPath, prefetchPageHeroImage } from '../constants/pageHeroImages'
 import { splitLocalePath } from '../i18n/locale'
+import { PATH } from '../i18n/routes'
 import { useLocale } from '../i18n/LocaleContext'
 import type { NavLinkKey, NavTopKey } from '../i18n/messages/ko'
+import { fetchNavMenuImages } from '../services/api'
+import { DEFAULT_NAV_MENU_IMAGES } from '../features/nav/navMenuImagesTypes'
 import '../styles/site-header.css'
 
 const LOGO_SRC = '/images/logo/khayah_logo.png'
@@ -78,25 +81,30 @@ const NAV_COLUMNS: NavColumn[] = [
   },
 ]
 
-const TOP_LINKS: { key: NavTopKey; to: string }[] = [
-  { key: 'khayah', to: '/about/khayah' },
-  { key: 'business', to: '/business/domestic' },
-  { key: 'support', to: '/support/guide' },
-  { key: 'news', to: '/news/announcements' },
+const TOP_LINKS: { key: NavTopKey }[] = [
+  { key: 'khayah' },
+  { key: 'business' },
+  { key: 'support' },
+  { key: 'news' },
 ]
 
 const NAV_BY_KEY = new Map(NAV_COLUMNS.map((c) => [c.topKey, c]))
 
-const TOP_BANNER_URLS: Record<NavTopKey, string[]> = {
-  khayah: [pageHeroImageForPath('about/khayah')!].filter(Boolean),
-  business: [
-    pageHeroImageForPath('business/domestic')!,
-    pageHeroImageForPath('business/overseas')!,
-    pageHeroImageForPath('business/advocacy')!,
-    pageHeroImageForPath('business/projects')!,
-  ].filter(Boolean),
-  support: [pageHeroImageForPath('support/guide')!].filter(Boolean),
-  news: [pageHeroImageForPath('news/announcements')!].filter(Boolean),
+function topBannerUrls(key: NavTopKey): string[] {
+  const urls =
+    key === 'khayah'
+      ? [pageHeroImageForPath(PATH.aboutKhayah)]
+      : key === 'business'
+        ? [
+            pageHeroImageForPath(PATH.businessDomestic),
+            pageHeroImageForPath(PATH.businessOverseas),
+            pageHeroImageForPath(PATH.businessAdvocacy),
+            pageHeroImageForPath(PATH.businessProjects),
+          ]
+        : key === 'support'
+          ? [pageHeroImageForPath(PATH.supportGuide)]
+          : [pageHeroImageForPath(PATH.newsAnnouncements)]
+  return urls.filter((url): url is string => Boolean(url))
 }
 
 export function Header() {
@@ -104,6 +112,7 @@ export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [desktopMenuKey, setDesktopMenuKey] = useState<NavTopKey | null>(null)
   const desktopMenuCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [menuImages, setMenuImages] = useState(DEFAULT_NAV_MENU_IMAGES.images)
   const location = useLocation()
   const { locale, localize, swapLocale, messages } = useLocale()
   const nav = messages.nav
@@ -113,6 +122,20 @@ export function Header() {
   const linkLabel = (key: NavLinkKey) => nav.links[key]
   const { pathnameWithoutLocale } = splitLocalePath(location.pathname)
   const isHome = pathnameWithoutLocale === '/'
+
+  useEffect(() => {
+    let cancelled = false
+    fetchNavMenuImages()
+      .then((doc) => {
+        if (!cancelled) setMenuImages(doc.images)
+      })
+      .catch(() => {
+        if (!cancelled) setMenuImages(DEFAULT_NAV_MENU_IMAGES.images)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   const cancelDesktopMenuTimer = () => {
     if (desktopMenuCloseTimer.current) {
@@ -124,7 +147,7 @@ export function Header() {
   const openDesktopMenu = (key: NavTopKey) => {
     cancelDesktopMenuTimer()
     setDesktopMenuKey(key)
-    for (const url of TOP_BANNER_URLS[key] ?? []) prefetchPageHeroImage(url)
+    for (const url of topBannerUrls(key)) prefetchPageHeroImage(url)
   }
 
   const closeDesktopMenu = () => {
@@ -317,20 +340,36 @@ export function Header() {
 
                 return (
                   <li
-                    key={item.to}
+                    key={item.key}
                     className={`site-header__nav-item${subOpen ? ' is-menu-open' : ''}`}
-                    onMouseEnter={() => hasSub && openDesktopMenu(item.key)}
+                    onMouseEnter={(e) => {
+                      if (!hasSub) return
+                      const focused = document.activeElement
+                      if (
+                        focused instanceof HTMLElement &&
+                        focused.classList.contains('site-header__nav-link') &&
+                        !e.currentTarget.contains(focused)
+                      ) {
+                        focused.blur()
+                      }
+                      openDesktopMenu(item.key)
+                    }}
                     onMouseLeave={() => hasSub && scheduleCloseDesktopMenu()}
                   >
-                    <Link
-                      to={loc(item.to)}
+                    <button
+                      type="button"
                       className="site-header__nav-link"
                       aria-expanded={hasSub ? subOpen : undefined}
                       aria-haspopup={hasSub ? 'menu' : undefined}
-                      onClick={closeDesktopMenu}
+                      onFocus={() => {
+                        if (hasSub) openDesktopMenu(item.key)
+                      }}
+                      onClick={() => {
+                        if (hasSub) openDesktopMenu(item.key)
+                      }}
                     >
                       {sectionLabel}
-                    </Link>
+                    </button>
 
                     {hasSub && col ? (
                       <div
@@ -345,7 +384,11 @@ export function Header() {
                           if ((e.target as HTMLElement).closest('a[href]')) closeDesktopMenu()
                         }}
                       >
-                        <div className="site-header__submenu-inner">
+                        <div
+                          className={`site-header__submenu-inner${
+                            menuImages[col.topKey] ? '' : ' site-header__submenu-inner--no-visual'
+                          }`}
+                        >
                           <div className="site-header__submenu-left">
                             <p className="site-header__submenu-title">{topLabel(col.topKey)}</p>
                           </div>
@@ -354,6 +397,11 @@ export function Header() {
                               ? renderStackedList(col.links ?? [])
                               : renderLinkList(col.links ?? [])}
                           </div>
+                          {menuImages[col.topKey] ? (
+                            <div className="site-header__submenu-visual" aria-hidden="true">
+                              <img src={menuImages[col.topKey]} alt="" />
+                            </div>
+                          ) : null}
                         </div>
                       </div>
                     ) : null}

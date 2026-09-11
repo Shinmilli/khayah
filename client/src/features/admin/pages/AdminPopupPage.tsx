@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { AdminMediaUpload } from '../components/AdminMediaUpload'
+import { deleteUploadedMedia } from '../../../services/api'
 import {
   getDefaultPopupConfig,
   getDefaultPopupItem,
@@ -8,6 +9,22 @@ import {
   type PopupConfig,
   type PopupItem,
 } from '../../../utils/popup'
+
+function isRemoteMediaUrl(url: string): boolean {
+  return url.includes('res.cloudinary.com') || url.includes('cloudinary.com') || url.includes('/storage/v1/object/public/')
+}
+
+function popupImageUrls(config: PopupConfig): string[] {
+  return config.items.map((item) => item.imageUrl.trim()).filter(Boolean)
+}
+
+function purgeRemovedPopupImages(previous: PopupConfig, next: PopupConfig) {
+  const keep = new Set(popupImageUrls(next))
+  for (const url of popupImageUrls(previous)) {
+    if (keep.has(url) || !isRemoteMediaUrl(url)) continue
+    void deleteUploadedMedia({ url }).catch(() => undefined)
+  }
+}
 
 type PopupEditLocale = 'ko' | 'en'
 
@@ -30,7 +47,9 @@ export function AdminPopupPage() {
   }, [])
 
   const save = () => {
+    const previous = loadPopupConfig()
     const saved = savePopupConfig(config)
+    purgeRemovedPopupImages(previous, saved)
     setConfig(saved)
     setStatus('저장되었습니다. (일반 화면 새로고침 시 반영)')
     window.setTimeout(() => setStatus(''), 2500)

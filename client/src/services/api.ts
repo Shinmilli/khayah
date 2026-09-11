@@ -10,6 +10,8 @@ import type { InquiryFaqDocument, InquiryFaqPublicDocument } from '../types/inqu
 import type { ImpactStatsDocument, ImpactStatsLocaleContent } from '../features/home/impactStatsTypes'
 import type { HeroBannerDocument, HeroBannerPublicDocument } from '../features/home/heroBannerTypes'
 import type { HistoryDocument, HistoryLocaleContent } from '../features/history/historyTypes'
+import type { NavMenuImagesDocument } from '../features/nav/navMenuImagesTypes'
+import type { PageHeroBannersDocument } from '../features/page-hero/pageHeroBannerTypes'
 import type { Locale } from '../i18n/locale'
 import type { AdminRole, AdminUserPublic } from '../features/admin/adminRoles'
 
@@ -371,6 +373,56 @@ export async function adminPutHeroBanner(doc: HeroBannerDocument): Promise<HeroB
   if (!res.ok) {
     const text = await res.text().catch(() => '')
     throw new Error(text || 'Failed to save hero banner')
+  }
+  return res.json()
+}
+
+export async function fetchNavMenuImages(): Promise<NavMenuImagesDocument> {
+  const res = await fetch(`${API_BASE}/nav-menu-images`)
+  if (!res.ok) throw new Error('Failed to fetch nav menu images')
+  return res.json()
+}
+
+export async function adminFetchNavMenuImages(): Promise<NavMenuImagesDocument> {
+  const res = await apiFetch(`${API_BASE}/admin/nav-menu-images`)
+  if (!res.ok) throw new Error('Failed to fetch nav menu images')
+  return res.json()
+}
+
+export async function adminPutNavMenuImages(doc: NavMenuImagesDocument): Promise<NavMenuImagesDocument> {
+  const res = await apiFetch(`${API_BASE}/admin/nav-menu-images`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(doc),
+  })
+  if (!res.ok) {
+    const text = await res.text().catch(() => '')
+    throw new Error(text || 'Failed to save nav menu images')
+  }
+  return res.json()
+}
+
+export async function fetchPageHeroBanners(): Promise<PageHeroBannersDocument> {
+  const res = await fetch(`${API_BASE}/page-hero-banners`)
+  if (!res.ok) throw new Error('Failed to fetch page hero banners')
+  return res.json()
+}
+
+export async function adminFetchPageHeroBanners(): Promise<PageHeroBannersDocument> {
+  const res = await apiFetch(`${API_BASE}/admin/page-hero-banners`)
+  if (!res.ok) throw new Error('Failed to fetch page hero banners')
+  return res.json()
+}
+
+export async function adminPutPageHeroBanners(doc: PageHeroBannersDocument): Promise<PageHeroBannersDocument> {
+  const res = await apiFetch(`${API_BASE}/admin/page-hero-banners`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(doc),
+  })
+  if (!res.ok) {
+    const text = await res.text().catch(() => '')
+    throw new Error(text || 'Failed to save page hero banners')
   }
   return res.json()
 }

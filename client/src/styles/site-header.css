@@ -21,7 +21,7 @@
 }
 
 .site-header__bar {
-  max-width: 1360px;
+  max-width: var(--site-content-max, 1400px);
   width: var(--content-width, 92%);
   margin: 0 auto;
   height: var(--site-header-height, 80px);
@@ -159,12 +159,16 @@
 }
 
 .site-header__nav-item:hover::after,
-.site-header__nav-item.is-menu-open::after,
-.site-header__nav-item:focus-within::after {
+.site-header__nav-item.is-menu-open::after {
   width: 100%;
 }
 
 .site-header__nav-link {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
   text-decoration: none;
   color: var(--header-text);
   font-size: clamp(1.08rem, 0.22vw + 1.02rem, 1.22rem);
@@ -201,15 +205,19 @@
 }
 
 .site-header__submenu-inner {
-  max-width: 1360px;
+  max-width: var(--site-content-max, 1400px);
   width: var(--content-width, 92%);
   margin: 0 auto;
   padding: 48px 50px 56px clamp(40px, 4.5vw, 88px);
   box-sizing: border-box;
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-columns: auto minmax(0, 1fr) auto;
   column-gap: clamp(36px, 3.6vw, 64px);
-  align-items: flex-start;
+  align-items: start;
+}
+
+.site-header__submenu-inner--no-visual {
+  grid-template-columns: auto minmax(0, 1fr);
 }
 
 .site-header__submenu-title {
@@ -224,6 +232,22 @@
 .site-header__submenu-right {
   min-width: 0;
   padding-left: clamp(24px, 2.8vw, 48px);
+}
+
+.site-header__submenu-visual {
+  width: clamp(188px, 16.5vw, 252px);
+  aspect-ratio: 3 / 4;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #ececec;
+  align-self: start;
+}
+
+.site-header__submenu-visual img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .site-header__submenu-list {
@@ -303,9 +327,8 @@
 }
 
 @media (min-width: 1025px) {
-  /* JS(.is-open) + 키보드 포커스: fixed 패널은 CSS :hover만으로는 포인터 경로에서 끊기기 쉬움 */
-  .site-header__submenu.is-open,
-  .site-header__nav-item:focus-within .site-header__submenu {
+  /* 열린 메뉴는 JS(.is-open)만 사용 — :focus-within이면 클릭 포커스가 남은 채 다른 항목 hover 시 패널이 두 개 겹침 */
+  .site-header__submenu.is-open {
     display: block;
   }
 
@@ -364,7 +387,7 @@
 }
 
 .site-header__mega-inner {
-  max-width: 1360px;
+  max-width: var(--site-content-max, 1400px);
   width: var(--content-width, 92%);
   margin: 0 auto;
   padding: 22px 50px 26px;
@@ -538,12 +561,6 @@
 }
 
 @media (min-width: 1280px) {
-  .site-header__bar,
-  .site-header__submenu-inner,
-  .site-header__mega-inner {
-    max-width: 1520px;
-  }
-
   .site-header__logo img,
   .site-header__logo-img {
     height: 58px;

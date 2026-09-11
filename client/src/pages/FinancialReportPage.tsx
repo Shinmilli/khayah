@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { PageHero } from '../components/PageHero'
+import { KhayahSectionNav } from '../components/KhayahSectionNav'
 import { pageHeroImageForPath } from '../constants/pageHeroImages'
 import { PATH } from '../i18n/routes'
 import { FinancialDonutChart } from '../features/financial-report/FinancialDonutChart'
@@ -162,6 +163,7 @@ export function FinancialReportPage() {
           backgroundImageUrl={pageHeroImageForPath(PATH.aboutFinancialReport)}
           showScrollHint={false}
         />
+        <KhayahSectionNav />
         <div className="financial-report__inner">
           <p className="financial-report__status">{fr.loading}</p>
         </div>
@@ -177,6 +179,7 @@ export function FinancialReportPage() {
           backgroundImageUrl={pageHeroImageForPath(PATH.aboutFinancialReport)}
           showScrollHint={false}
         />
+        <KhayahSectionNav />
         <div className="financial-report__inner">
           <div className="financial-report__error" role="alert">
             <p>{error}</p>
@@ -198,6 +201,7 @@ export function FinancialReportPage() {
           backgroundImageUrl={pageHeroImageForPath(PATH.aboutFinancialReport)}
           showScrollHint={false}
         />
+        <KhayahSectionNav />
         <div className="financial-report__inner">
           <p className="financial-report__empty">
             {fr.empty}
@@ -216,6 +220,7 @@ export function FinancialReportPage() {
         backgroundImageUrl={pageHeroImageForPath(PATH.aboutFinancialReport)}
         showScrollHint={false}
       />
+      <KhayahSectionNav />
 
       <div className="financial-report__inner">
         <div className="financial-report__year-row">

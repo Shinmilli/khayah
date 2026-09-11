@@ -604,7 +604,7 @@ export const koMessages: Messages = {
     },
     aboutHub: {
       title: '카야 소개',
-      tabsAria: '카야 소개 하위 메뉴',
+      tabsAria: '카야 메뉴',
       tabs: {
         intro: '카야 소개',
         ci: 'CI',

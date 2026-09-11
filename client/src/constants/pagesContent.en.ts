@@ -301,15 +301,6 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
           <p class="overseas-card__desc">Khayah focuses on building residents' capacity to take the lead in improving nutrition, public hygiene, and housing conditions.</p>
           <a class="overseas-card__btn" href="/business/overseas/health-care">Learn more</a>
         </div>
-
-        <div class="overseas-card">
-          <div class="overseas-icon" aria-hidden="true">
-            <span class="material-symbols-outlined">public</span>
-          </div>
-          <h2 class="overseas-card__title">Active Projects</h2>
-          <p class="overseas-card__desc">All of Khayah's overseas projects are people-centered, researched and carried out with the goal that communities and residents reach ultimate self-reliance.</p>
-          <a class="overseas-card__btn" href="/business/projects">Learn more</a>
-        </div>
       </div>
     </div>
   </section>
@@ -667,17 +658,6 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
             Khayah runs innovative education programs so that marginalized neighbors can grow with ways and values for thriving as members of society and nature.
           </p>
           <a class="domestic-card__btn" href="/business/domestic/education">Learn more</a>
-        </div>
-
-        <div class="domestic-card">
-          <div class="domestic-card__icon" aria-hidden="true">
-            <span class="material-symbols-outlined">public</span>
-          </div>
-          <h2 class="domestic-card__title">Active Projects</h2>
-          <p class="domestic-card__desc">
-            All of Khayah's domestic projects are researched and carried out with people, nature, and the future at their center.
-          </p>
-          <a class="domestic-card__btn" href="/business/projects">Learn more</a>
         </div>
       </div>
     </div>

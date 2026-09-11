@@ -9,14 +9,14 @@
   --text-dark: #333;
   --text-light: #777;
   --header-height: var(--site-header-height, 88px);
-  --content-max-width: 1360px;
+  --content-max-width: var(--site-content-max, 1400px);
   --content-width: var(--site-content-width, 92%);
-  --main-max-width: var(--site-content-max, 1200px);
+  --main-max-width: var(--site-content-max, 1400px);
   --main-width: var(--site-content-width, 92%);
   --section-col-max: var(--main-max-width);
   --biz-max-width: 1040px;
-  --impact-inner-max-width: 1240px;
-  --impact-inline-pad: 50px;
+  --impact-inner-max-width: var(--site-content-max, 1400px);
+  --impact-inline-pad: var(--site-content-gutter, 50px);
   --impact-donut-reserve: clamp(200px, 13.5vw, 270px);
   --hero-viewport-height: clamp(680px, 100dvh, 960px);
   font-family: var(--font-sans);
@@ -27,17 +27,13 @@
 
 @media (min-width: 1280px) {
   .home-page {
-    --impact-inner-max-width: 1440px;
     --biz-max-width: 1140px;
-    --content-max-width: 1480px;
   }
 }
 
 @media (min-width: 1440px) {
   .home-page {
-    --impact-inner-max-width: 1520px;
     --biz-max-width: 1200px;
-    --content-max-width: 1600px;
   }
 }
 
@@ -74,7 +70,8 @@ body.has-overlay-header .home-page {
   max-width: var(--main-max-width);
   width: var(--main-width);
   margin: 0 auto;
-  padding: 60px 50px;
+  padding: 60px var(--impact-inline-pad);
+  box-sizing: border-box;
 }
 
 .container--board {
@@ -889,13 +886,6 @@ body.has-overlay-header .home-page {
 }
 
 /* 노트북·작은 화면: 스토리·나눔의 결실 본문 폭을 같이 맞춤 */
-@media (max-width: 1799px) {
-  .home-page {
-    --section-col-max: 1280px;
-  }
-}
-
-/* 아주 큰 화면만: 카드 트랙이 제목보다 살짝 밖으로 나감 */
 @media (min-width: 1800px) {
   .story-slider {
     --story-bleed: clamp(24px, 4vw, 72px);

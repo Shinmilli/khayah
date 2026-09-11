@@ -2,7 +2,8 @@
   max-width: var(--site-content-max, 1400px);
   width: var(--site-content-width, 92%);
   margin: 0 auto;
-  padding-bottom: 64px;
+  padding: 0 var(--site-content-gutter, 24px) 64px;
+  box-sizing: border-box;
 }
 
 .projects-tabs {

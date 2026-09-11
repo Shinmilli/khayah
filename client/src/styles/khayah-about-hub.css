@@ -1,17 +1,15 @@
 /* 카야 소개 허브 — 탭·본문 모두 홈 본문과 같은 폭 */
 .khayah-about-hub {
-  /* 사이트 핵심색(헤더와 동일 톤) */
-  --khayah-hub-accent: #b20838;
   background: #fff;
 }
 
 .khayah-about-tabs {
+  --khayah-hub-accent: #b20838;
   width: var(--site-content-width, 92%);
   max-width: var(--site-content-max, 1400px);
   margin: 0 auto;
   box-sizing: border-box;
-  padding-top: 1.35rem;
-  padding-bottom: 0;
+  padding: 1.35rem var(--site-content-gutter, 24px) 0;
   background: #fafafa;
   border-bottom: 2px solid var(--khayah-hub-accent);
 }
@@ -76,11 +74,33 @@
   font-weight: 700;
 }
 
+/* 카야 전 구간(인사말~조직도) 한 줄 메뉴 */
+.khayah-about-tabs--sections .khayah-about-tabs__tab {
+  padding: 0.7rem 0.35rem;
+  min-height: 52px;
+  font-size: clamp(0.78rem, 0.55vw + 0.68rem, 0.92rem);
+  line-height: 1.3;
+  text-decoration: none;
+}
+
+.khayah-about-tabs--sections .khayah-about-tabs__tab.is-active {
+  color: var(--khayah-hub-accent);
+  background: #fff;
+  border: 2px solid var(--khayah-hub-accent);
+  border-bottom-color: #fff;
+  margin-bottom: -2px;
+  padding-bottom: calc(0.7rem + 2px);
+}
+
+.khayah-about-tabs--sections .khayah-about-tabs__tab.is-active:hover {
+  color: var(--khayah-hub-accent);
+}
+
 .khayah-about-hub__inner {
   width: var(--site-content-width, 92%);
   max-width: var(--site-content-max, 1400px);
   margin: 0 auto;
-  padding: 1.75rem 0 3.5rem;
+  padding: 1.75rem var(--site-content-gutter, 24px) 3.5rem;
   box-sizing: border-box;
 }
 
@@ -115,6 +135,16 @@
     padding-bottom: 1.05rem;
     border: 2px solid var(--khayah-hub-accent);
   }
+
+  .khayah-about-tabs--sections .khayah-about-tabs__tab {
+    flex: 1 1 33.33%;
+    min-height: 46px;
+    padding: 0.6rem 0.3rem;
+  }
+
+  .khayah-about-tabs--sections .khayah-about-tabs__tab.is-active {
+    padding-bottom: 0.6rem;
+  }
 }
 
 @media (max-width: 520px) {
@@ -126,5 +156,10 @@
   .khayah-about-tabs__tab.is-active {
     border: 2px solid var(--khayah-hub-accent);
     border-radius: 0;
+  }
+
+  .khayah-about-tabs--sections .khayah-about-tabs__tab {
+    flex: 1 1 50%;
+    font-size: 0.78rem;
   }
 }

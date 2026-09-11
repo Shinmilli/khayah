@@ -317,7 +317,7 @@ export const enMessages: Messages = {
     },
     aboutHub: {
       title: 'About Khayah',
-      tabsAria: 'About Khayah sections',
+      tabsAria: 'Khayah menu',
       tabs: {
         intro: 'About Khayah',
         ci: 'CI',

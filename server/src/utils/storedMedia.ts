@@ -190,3 +190,46 @@ export function mediaNotIn(oldRefs: StoredMediaRef[], newRefs: StoredMediaRef[])
   const keep = new Set(newRefs.map((r) => r.url.trim()).filter(Boolean))
   return oldRefs.filter((r) => r.url.trim() && !keep.has(r.url.trim()))
 }
+
+/** JSON 문서 안의 Cloudinary·Supabase URL을 재귀적으로 모은다 */
+export function extractRemoteMediaFromValue(value: unknown): StoredMediaRef[] {
+  const out: StoredMediaRef[] = []
+  const seen = new Set<string>()
+  const push = (ref: StoredMediaRef) => {
+    const url = ref.url.trim()
+    if (!url || seen.has(url)) return
+    seen.add(url)
+    out.push({ ...ref, url })
+  }
+  const walk = (v: unknown) => {
+    if (typeof v === 'string') {
+      const t = v.trim()
+      if (!t) return
+      const provider = guessProvider(t)
+      if (provider) {
+        push({ url: t, provider })
+        return
+      }
+      if (t.includes('<') && (t.includes('src=') || t.includes('href='))) {
+        for (const ref of extractMediaFromHtml(t)) push(ref)
+      }
+      return
+    }
+    if (Array.isArray(v)) {
+      for (const item of v) walk(item)
+      return
+    }
+    if (v && typeof v === 'object') {
+      for (const item of Object.values(v as Record<string, unknown>)) walk(item)
+    }
+  }
+  walk(value)
+  return out
+}
+
+/** 저장 전후 JSON을 비교해 빠진 원격 파일을 Cloudinary·Supabase에서 지운다 */
+export async function deleteRemovedStoredMedia(previous: unknown, next: unknown): Promise<void> {
+  await deleteStoredMediaMany(
+    mediaNotIn(extractRemoteMediaFromValue(previous), extractRemoteMediaFromValue(next)),
+  )
+}

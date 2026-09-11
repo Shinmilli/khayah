@@ -113,7 +113,7 @@ export function AdminOperationsPage() {
             <strong>슈퍼 관리자</strong> — 모든 메뉴와 운영·권한(초대·역할 변경·삭제)
           </li>
           <li>
-            <strong>콘텐츠</strong> — 배너·팝업·게시글·재정보고·나눔의 결실·연혁·FAQ. 문의·권한 관리 제외
+            <strong>콘텐츠</strong> — 배너·팝업·게시글·재정보고·나눔의 결실·연혁·메뉴 이미지·FAQ. 문의·권한 관리 제외
           </li>
           <li>
             <strong>문의</strong> — 고객 문의와 FAQ. 사이트 콘텐츠·권한 관리 제외

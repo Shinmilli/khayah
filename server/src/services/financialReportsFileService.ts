@@ -2,6 +2,7 @@ import fs from 'fs/promises'
 import path from 'path'
 import seedDocument from '../seed/financial-reports.default.json'
 import { normalizeStoredMediaUrl } from '../utils/normalizeStoredMediaUrl'
+import { deleteRemovedStoredMedia } from '../utils/storedMedia'
 
 const DATA_FILE = path.resolve(process.cwd(), 'data', 'financial-reports.json')
 
@@ -234,6 +235,9 @@ export async function writeFinancialReportsDocument(body: unknown): Promise<void
     ;(err as Error & { status?: number }).status = 400
     throw err
   }
+  const cleaned = normalizeDocumentMedia(body)
+  const previous = await readFinancialReportsDocument()
   await fs.mkdir(path.dirname(DATA_FILE), { recursive: true })
-  await fs.writeFile(DATA_FILE, JSON.stringify(normalizeDocumentMedia(body), null, 2), 'utf8')
+  await fs.writeFile(DATA_FILE, JSON.stringify(cleaned, null, 2), 'utf8')
+  await deleteRemovedStoredMedia(previous, cleaned)
 }

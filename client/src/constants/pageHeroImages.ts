@@ -35,6 +35,34 @@ const BY_PATH: Record<string, string> = {
   [PATH.newsPress]: NEWS,
   [PATH.newsInquiry]: NEWS,
   news: NEWS,
+  [PATH.stories]: NEWS,
+}
+
+/** 관리자에서 올린 페이지별 배너. 비어 있으면 BY_PATH 기본값을 씀 */
+let customByPath: Record<string, string> = {}
+
+export function setPageHeroImageOverrides(images: Record<string, string> | null | undefined): void {
+  const next: Record<string, string> = {}
+  if (images) {
+    for (const [key, raw] of Object.entries(images)) {
+      const url = (raw ?? '').trim()
+      if (url) next[key] = url
+    }
+  }
+  customByPath = next
+}
+
+function custom(pathKey: string): string | undefined {
+  const url = customByPath[pathKey]
+  return url || undefined
+}
+
+function sectionKeyForPath(pathKey: string): 'khayah' | 'business' | 'support' | 'news' | null {
+  if (pathKey === 'about' || pathKey.startsWith('about/')) return 'khayah'
+  if (pathKey === 'business' || pathKey.startsWith('business/')) return 'business'
+  if (pathKey === 'support' || pathKey.startsWith('support/')) return 'support'
+  if (pathKey === 'news' || pathKey.startsWith('news/') || pathKey.startsWith('stories')) return 'news'
+  return null
 }
 
 /** 초소형 JPEG — 본 이미지 전에 블러로 깔아 체감 대기 시간을 줄임 */
@@ -55,8 +83,7 @@ const HERO_BLUR: Record<string, string> = {
     'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABcQERQRDhcUEhQaGBcbIjklIh8fIkYyNSk5UkhXVVFIUE5bZoNvW2F8Yk5QcptzfIeLkpSSWG2grJ+OqoOPko3/2wBDARgaGiIeIkMlJUONXlBejY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY3/wAARCAAKACADASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAABAUC/8QAIhAAAgEDBQADAQAAAAAAAAAAAQIDAAQRBRIhMUE1UVKx/8QAFQEBAQAAAAAAAAAAAAAAAAAAAQD/xAAZEQADAQEBAAAAAAAAAAAAAAAAAREhMVH/2gAMAwEAAhEDEQA/ABtewR3At7VnWPZhS4AO7vzvOKzDKA6xgIXYnBbrn3PlK16KONrN0jRWJGSFANRrkkXLYP5/gofo8xFWEPFctBMy7VGQgY7SaIsbT6isaxFQTksF4FWNU+MmPq4wfrkUvTVUWEbBQGI5OOTTI4TeU//Z',
 }
 
-export function pageHeroImageForPath(pathKey: string | null | undefined): string | null {
-  if (!pathKey) return null
+function defaultHeroImageForPath(pathKey: string): string | null {
   if (BY_PATH[pathKey]) return BY_PATH[pathKey]
   if (pathKey.startsWith('about/')) return ABOUT
   if (pathKey.startsWith('support/')) return BY_PATH[PATH.supportGuide]
@@ -68,9 +95,19 @@ export function pageHeroImageForPath(pathKey: string | null | undefined): string
   return null
 }
 
+export function pageHeroImageForPath(pathKey: string | null | undefined): string | null {
+  if (!pathKey) return null
+  const section = sectionKeyForPath(pathKey)
+  if (section) {
+    const override = custom(section)
+    if (override) return override
+  }
+  return defaultHeroImageForPath(pathKey)
+}
+
 /** 스토리 아카이브 — 범위 구분 없이 소식 공통 배너 */
 export function pageHeroImageForStoryScope(_scope?: string | null): string {
-  return NEWS
+  return pageHeroImageForPath(PATH.stories) ?? NEWS
 }
 
 /** 게시글 종류·스토리 범위에 맞는 히어로 배너 */
@@ -80,19 +117,19 @@ export function pageHeroImageForPostKind(
 ): string {
   switch (kind) {
     case '공지사항':
-      return BY_PATH[PATH.newsAnnouncements]
+      return pageHeroImageForPath(PATH.newsAnnouncements) ?? NEWS
     case '활동소식':
-      return BY_PATH[PATH.newsActivities]
+      return pageHeroImageForPath(PATH.newsActivities) ?? NEWS
     case '연간소식지':
-      return BY_PATH[PATH.newsNewsletter]
+      return pageHeroImageForPath(PATH.newsNewsletter) ?? NEWS
     case '언론보도':
-      return BY_PATH[PATH.newsPress]
+      return pageHeroImageForPath(PATH.newsPress) ?? NEWS
     case '진행사업':
-      return BY_PATH[PATH.businessProjects]
+      return pageHeroImageForPath(PATH.businessProjects) ?? BY_PATH[PATH.businessProjects]
     case '스토리':
       return pageHeroImageForStoryScope(storyScope)
     default:
-      return NEWS
+      return custom('news') || NEWS
   }
 }
 

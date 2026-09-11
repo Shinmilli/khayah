@@ -306,15 +306,6 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
           <p class="overseas-card__desc">카야는 주민 스스로 영양상태, 공중위생 및 주거환경을 개선하는 데 주도적인 역할을 수행할 수 있는 역량을 키우는 데 집중합니다.</p>
           <a class="overseas-card__btn" href="/business/overseas/health-care">자세히 보기</a>
         </div>
-
-        <div class="overseas-card">
-          <div class="overseas-icon" aria-hidden="true">
-            <span class="material-symbols-outlined">public</span>
-          </div>
-          <h2 class="overseas-card__title">진행사업</h2>
-          <p class="overseas-card__desc">카야의 모든 해외 프로젝트는 ‘사람’ 곧 참여자 중심으로 지역과 주민이 ‘궁극적 자립’에 이를 때까지를 목표로 연구하며 진행하고 있습니다.</p>
-          <a class="overseas-card__btn" href="/business/projects">자세히 보기</a>
-        </div>
       </div>
     </div>
   </section>
@@ -672,17 +663,6 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
             카야는 소외된 이웃이 사회와 자연의 일원으로의 성취 방법과 가치를 지향하며 성장할 수 있도록 혁신적인 교육 사업을 진행합니다.
           </p>
           <a class="domestic-card__btn" href="/business/domestic/education">자세히 보기</a>
-        </div>
-
-        <div class="domestic-card">
-          <div class="domestic-card__icon" aria-hidden="true">
-            <span class="material-symbols-outlined">public</span>
-          </div>
-          <h2 class="domestic-card__title">진행사업</h2>
-          <p class="domestic-card__desc">
-            카야의 모든 국내 프로젝트는 그 속에 ‘사람’과 ‘자연’ 그리고 ‘미래’가 모두 담기도록 연구하며 진행하고 있습니다.
-          </p>
-          <a class="domestic-card__btn" href="/business/projects">자세히 보기</a>
         </div>
       </div>
     </div>

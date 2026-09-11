@@ -7,6 +7,7 @@ import { PROJECT_REGION_TO_SLUG } from '../i18n/routes'
 import type { Post } from '../types/post'
 import { parsePdfAttachments, pdfOpenHref, type PdfAttachment } from '../utils/pdfAttachments'
 import { PostBody } from './PostBody'
+import { PostCoverThumb } from './PostCoverThumb'
 
 function PaperclipIcon() {
   return (
@@ -204,6 +205,39 @@ export function PostDetail({ post }: { post: Post }) {
   }, [siblings, post.id])
 
   const isFeature = kind === '활동소식' || kind === '연간소식지' || kind === '스토리'
+  const isStory = kind === '스토리'
+
+  const storyNavCard = (side: 'prev' | 'next', target: Post | null) => {
+    const isPrev = side === 'prev'
+    const label = isPrev ? pd.prev : pd.next
+    const empty = isPrev ? pd.prevEmpty : pd.nextEmpty
+    if (!target) {
+      return (
+        <div className={`story-post-nav__card story-post-nav__card--${side} is-empty`}>
+          <div className="story-post-nav__media" aria-hidden />
+          <div className="story-post-nav__copy">
+            <span className="story-post-nav__label">{label}</span>
+            <span className="story-post-nav__empty">{empty}</span>
+          </div>
+        </div>
+      )
+    }
+    return (
+      <Link
+        className={`story-post-nav__card story-post-nav__card--${side}`}
+        to={localize(`/posts/${encodeURIComponent(target.slug)}`)}
+        state={{ postKind: kind }}
+      >
+        <div className="story-post-nav__media">
+          <PostCoverThumb post={target} />
+        </div>
+        <div className="story-post-nav__copy">
+          <span className="story-post-nav__label">{label}</span>
+          <span className="story-post-nav__title">{target.title}</span>
+        </div>
+      </Link>
+    )
+  }
 
   return (
     <article className={`post-board${isFeature ? ' post-board--feature' : ''}`}>
@@ -228,6 +262,12 @@ export function PostDetail({ post }: { post: Post }) {
         </Link>
       </div>
 
+      {isStory ? (
+        <nav className="story-post-nav" aria-label={pd.navAria}>
+          {storyNavCard('next', newer)}
+          {storyNavCard('prev', older)}
+        </nav>
+      ) : (
       <nav className="post-board__nav" aria-label={pd.navAria}>
         {newer ? (
           <Link
@@ -282,6 +322,7 @@ export function PostDetail({ post }: { post: Post }) {
           </div>
         )}
       </nav>
+      )}
     </article>
   )
 }

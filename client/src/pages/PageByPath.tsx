@@ -10,6 +10,7 @@ import { NewsArchivePage } from './NewsArchivePage'
 import { InquiryPage } from './InquiryPage'
 import { HistoryPage } from './HistoryPage'
 import { PageHero } from '../components/PageHero'
+import { KhayahSectionNav } from '../components/KhayahSectionNav'
 import '../styles/page.css'
 import '../styles/greeting-modern.css'
 import '../styles/business-education.css'
@@ -21,6 +22,7 @@ import '../styles/business-advocacy.css'
 import '../styles/donor-guide.css'
 import { NANUM_DONATE_URL } from '../constants/nanumDonate'
 import { PATH } from '../i18n/routes'
+import { isKhayahSectionPathKey } from '../features/khayah-about/khayahAboutHubTabs'
 import { pageHeroImageForPath, pageHeroImageForPostKind } from '../constants/pageHeroImages'
 import { ListStatus } from '../components/ListStatus'
 
@@ -238,6 +240,7 @@ function PageByPathInner({ kindHint }: { kindHint: string }) {
           backgroundImageUrl={pageHeroImageForPath(pathKey)}
           showScrollHint={pathKey !== PATH.aboutLocation}
         />
+        {isKhayahSectionPathKey(pathKey) ? <KhayahSectionNav /> : null}
         <div className="section">
           <div className="section_wrapper clearfix">
             <div className="column one">
@@ -264,6 +267,7 @@ function PageByPathInner({ kindHint }: { kindHint: string }) {
     return (
       <div className="page-content-wrapper">
         <PageHero title={apiPage.title} backgroundImageUrl={pageHeroImageForPath(pathKey)} />
+        {isKhayahSectionPathKey(pathKey) ? <KhayahSectionNav /> : null}
         <div className="section">
           <div className="section_wrapper clearfix">
             <div className="column one">
@@ -310,6 +314,7 @@ function PageByPathInner({ kindHint }: { kindHint: string }) {
   return (
     <div className="page-content-wrapper">
       <PageHero title={title ?? messages.pages.loading} backgroundImageUrl={pageHeroImageForPath(pathKey)} />
+      {isKhayahSectionPathKey(pathKey) ? <KhayahSectionNav /> : null}
       <div className="section">
         <div className="section_wrapper clearfix">
           <div className="column one">

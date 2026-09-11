@@ -1,6 +1,7 @@
 import fs from 'fs/promises'
 import path from 'path'
 import seedDocument from '../seed/impact-stats.default.json'
+import { deleteRemovedStoredMedia } from '../utils/storedMedia'
 
 const DATA_FILE = path.resolve(process.cwd(), 'data', 'impact-stats.json')
 
@@ -133,6 +134,8 @@ export async function writeImpactStatsDocument(body: unknown): Promise<void> {
     ;(err as Error & { status?: number }).status = 400
     throw err
   }
+  const previous = await readImpactStatsDocument()
   await fs.mkdir(path.dirname(DATA_FILE), { recursive: true })
   await fs.writeFile(DATA_FILE, JSON.stringify(body, null, 2), 'utf8')
+  await deleteRemovedStoredMedia(previous, body)
 }

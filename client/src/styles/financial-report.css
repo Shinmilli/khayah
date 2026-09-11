@@ -14,7 +14,8 @@
   width: var(--site-content-width, 92%);
   max-width: var(--site-content-max, 1400px);
   margin: 0 auto;
-  padding: 2.5rem 0 4rem;
+  padding: 2.5rem var(--site-content-gutter, 24px) 4rem;
+  box-sizing: border-box;
 }
 
 .financial-report__banner {
