@@ -17,7 +17,12 @@ function isContentAdminPath(pathname: string): boolean {
   )
 }
 
-const contentGroups = [
+type AdminNavItem = {
+  to: string
+  label: string
+}
+
+const contentGroups: readonly { label: string; items: readonly AdminNavItem[] }[] = [
   {
     label: '화면',
     items: [
@@ -36,9 +41,9 @@ const contentGroups = [
       { to: '/admin/app/impact-stats', label: '나눔의 결실' },
     ],
   },
-] as const
+]
 
-const contentChildren = contentGroups.flatMap((group) => group.items)
+const contentChildren: readonly AdminNavItem[] = contentGroups.flatMap((group) => [...group.items])
 
 const otherNav = [
   { to: '/admin/app/inquiries', label: '고객 문의', roles: ['super', 'inquiry'] },
