@@ -27,10 +27,6 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
   </section>
   <div class="def-divider" aria-hidden="true"></div>
   <section id="vision" class="vmv-hero" aria-labelledby="vmv-hero-title">
-    <svg class="vmv-hero-cross" viewBox="0 0 120 400" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <rect x="48" y="0" width="24" height="400" fill="#fff"/>
-      <rect x="0" y="100" width="120" height="24" fill="#fff"/>
-    </svg>
     <h2 id="vmv-hero-title" class="vmv-hero-title">Vision &amp; Mission &amp; Value</h2>
     <div class="vmv-hero-line" aria-hidden="true"></div>
     <p class="vmv-hero-desc">카야가 꿈꾸는 세상은 세상의 모든 소외된 이웃들이<br />스스로 설 수 있는 방법을 찾게 하는 것입니다.</p>
@@ -844,7 +840,7 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
   },
   'support/apply': {
     title: '후원신청',
-    content: '<p>후원 신청 및 정기후원 안내 페이지입니다. 문의: khayahkorea@gmail.com / 031 689 3639</p>',
+    content: '<p>후원 신청 및 정기후원 안내 페이지입니다. 문의: khayahinternational@gmail.com / 070.5121.2198</p>',
   },
   'news': {
     title: '소식',

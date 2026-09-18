@@ -11,9 +11,9 @@ import { useLocale } from '../i18n/LocaleContext'
 import { pdfOpenHref } from '../utils/pdfAttachments'
 import '../styles/financial-report.css'
 
-const HOMETAX_DISCLOSURE_URL =
-  'https://hometax.go.kr/ui/pp/agitx_index.html?isCdn=Y&ST1BOX=1&ND2BOX=1&RD3BOX=1'
 const ACRC_URL = 'https://www.acrc.go.kr/'
+
+type PdfModalKind = 'donation' | 'publicInterest'
 
 const MAX_VISIBLE_YEARS = 5
 
@@ -118,7 +118,7 @@ export function FinancialReportPage() {
     [years, year, yearWindowStart, maxYearWindowStart],
   )
 
-  const [pdfModalOpen, setPdfModalOpen] = useState(false)
+  const [pdfModalKind, setPdfModalKind] = useState<PdfModalKind | null>(null)
 
   const report = useMemo(() => {
     if (!doc?.reports.length || year === null) return null
@@ -136,24 +136,25 @@ export function FinancialReportPage() {
   }, [report?.year, fr, messages.pages])
 
   useEffect(() => {
-    if (!pdfModalOpen) return
+    if (!pdfModalKind) return
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setPdfModalOpen(false)
+      if (e.key === 'Escape') setPdfModalKind(null)
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [pdfModalOpen])
+  }, [pdfModalKind])
 
-  const onDonationDisclosureClick = useCallback(() => {
-    if (!report) return
-    const raw = report.donationDisclosurePdfUrl?.trim()
-    if (raw) {
-      const href = pdfOpenHref(raw, `${report.year}년 기부금 공시.pdf`)
-      window.open(href, '_blank', 'noopener,noreferrer')
-      return
-    }
-    setPdfModalOpen(true)
-  }, [report])
+  const openYearPdf = useCallback(
+    (url: string | null | undefined, filename: string, kind: PdfModalKind) => {
+      const raw = url?.trim()
+      if (raw) {
+        window.open(pdfOpenHref(raw, filename), '_blank', 'noopener,noreferrer')
+        return
+      }
+      setPdfModalKind(kind)
+    },
+    [],
+  )
 
   if (loading) {
     return (
@@ -328,21 +329,32 @@ export function FinancialReportPage() {
 
         {settings.showActionButtons ? (
           <div className="financial-report__actions">
-            <a
+            <button
+              type="button"
               className="financial-report__action financial-report__action--teal"
-              href={HOMETAX_DISCLOSURE_URL}
-              target="_blank"
-              rel="noopener noreferrer"
+              onClick={() =>
+                openYearPdf(
+                  report.publicInterestDisclosurePdfUrl,
+                  `${report.year}년 공익법인 결산서류 공시.pdf`,
+                  'publicInterest',
+                )
+              }
             >
               <span>{fr.actionHometax}</span>
               <span className="financial-report__action-icon" aria-hidden="true">
                 <ArrowCircleIcon />
               </span>
-            </a>
+            </button>
             <button
               type="button"
               className="financial-report__action financial-report__action--yellow"
-              onClick={onDonationDisclosureClick}
+              onClick={() =>
+                openYearPdf(
+                  report.donationDisclosurePdfUrl,
+                  `${report.year}년 기부금 공시.pdf`,
+                  'donation',
+                )
+              }
             >
               <span>{fr.actionDonation}</span>
               <span className="financial-report__action-icon" aria-hidden="true">
@@ -371,11 +383,11 @@ export function FinancialReportPage() {
         ) : null}
       </div>
 
-      {pdfModalOpen && (
+      {pdfModalKind && (
         <div
           className="financial-report__modal-backdrop"
           role="presentation"
-          onClick={() => setPdfModalOpen(false)}
+          onClick={() => setPdfModalKind(null)}
         >
           <div
             className="financial-report__modal"
@@ -384,13 +396,15 @@ export function FinancialReportPage() {
             aria-labelledby="fr-pdf-modal-title"
             onClick={(e) => e.stopPropagation()}
           >
-            <h2 id="fr-pdf-modal-title">{fr.pdfModalTitle}</h2>
+            <h2 id="fr-pdf-modal-title">
+              {pdfModalKind === 'publicInterest' ? fr.pdfModalTitlePublicInterest : fr.pdfModalTitle}
+            </h2>
             <p>
-              {fr.pdfModalBody}
+              {pdfModalKind === 'publicInterest' ? fr.pdfModalBodyPublicInterest : fr.pdfModalBody}
             </p>
             <div className="financial-report__modal-actions">
-              <button type="button" className="financial-report__modal-btn" onClick={() => setPdfModalOpen(false)}>
-                닫기
+              <button type="button" className="financial-report__modal-btn" onClick={() => setPdfModalKind(null)}>
+                {fr.pdfModalClose}
               </button>
             </div>
           </div>

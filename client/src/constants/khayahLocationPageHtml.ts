@@ -34,7 +34,7 @@ export const KHAYAH_LOCATION_PAGE_HTML = `
         <ul class="khayah-location-list">
           <li>
             ${iconHouse}
-            <span class="khayah-location-list__text">경기도 성남시 분당구 이매동 81-3 (방아로 38)</span>
+            <span class="khayah-location-list__text">경기도 성남시 분당구 이매동 81-3 (방아로 38) 3층</span>
           </li>
           <li>
             ${iconPhone}

@@ -144,10 +144,23 @@
   font-weight: 700;
   line-height: 1.35;
   color: #111827;
+}
+
+.story-list-card__title a {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.story-list-card__title-text {
   display: -webkit-box;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  text-overflow: ellipsis;
+  overflow-wrap: anywhere;
+  max-height: calc(1.35em * 2);
 }
 
 .story-list-card__excerpt {

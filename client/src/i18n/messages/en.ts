@@ -52,7 +52,7 @@ export const enMessages: Messages = {
       kakao: 'Kakao Channel',
     },
     contactText:
-      'Khayah International\n81-3 Imae-dong, Bundang-gu, Seongnam, Gyeonggi-do (38 Banga-ro)\nT +82 70.5121.2198 | F +82 70.8650.3639\nE khayahinternational@gmail.com',
+      'Khayah International\n3F, 38, Banga-ro, Namsa-eup, Cheoin-gu, Yongin-si, Gyeonggi-do, Republic of Korea\nT +82-70-5121-2198 | F +82-70-8650-3639\nE khayahinternational@gmail.com',
     copyright: (year: number) => `© ${year} Khayah International. All Rights Reserved.`,
   },
   home: {
@@ -184,7 +184,10 @@ export const enMessages: Messages = {
       actionAcrc: 'Report public violations\nAnti-Corruption & Civil Rights Commission',
       pdfModalTitle: 'Donation disclosure PDF',
       pdfModalBody:
-        'No donation disclosure PDF URL for this year. Register one in Admin → Financial reports to open it in a new window.',
+        'No donation disclosure PDF for this year. Register one in Admin → Financial reports to open it in a new window.',
+      pdfModalTitlePublicInterest: 'Public interest corporation filings PDF',
+      pdfModalBodyPublicInterest:
+        'No public interest corporation filings PDF for this year. Register one in Admin → Financial reports to open it in a new window.',
       pdfModalClose: 'Close',
       incomeChart: 'Total income',
       expenseChart: 'Total expenses',

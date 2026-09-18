@@ -145,7 +145,7 @@
 
 .page-content-wrapper .page-body .sg-account {
   display: flex;
-  align-items: baseline;
+  align-items: flex-start;
   gap: 12px;
   padding: 14px 16px;
   background: #fff;
@@ -155,7 +155,8 @@
 
 .page-content-wrapper .page-body .sg-account dt {
   margin: 0;
-  flex: 0 0 2.5em;
+  flex: 0 0 auto;
+  min-width: 2.5em;
   font-weight: 800;
   font-size: 1.05rem;
   color: var(--sg-primary);
@@ -164,6 +165,15 @@
 .page-content-wrapper .page-body .sg-account dd {
   margin: 0;
   min-width: 0;
+}
+
+.page-content-wrapper .page-body .sg-swift {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--sg-muted);
 }
 
 .page-content-wrapper .page-body .sg-mono {
@@ -230,6 +240,17 @@
   min-height: 54px;
   padding: 0 32px;
   font-size: 1.05rem;
+}
+
+.page-content-wrapper .page-body .sg-btn--inline {
+  display: inline-flex;
+  min-height: 1.75em;
+  padding: 0.08em 0.72em;
+  margin: 0 0.12em;
+  font-size: 0.78rem;
+  letter-spacing: -0.01em;
+  vertical-align: middle;
+  gap: 4px;
 }
 
 .page-content-wrapper .page-body .sg-cards {

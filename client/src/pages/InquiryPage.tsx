@@ -505,13 +505,13 @@ export function InquiryPage() {
             </h2>
             <p className="inquiry-section-sub">{iq.detailSub}</p>
             <div className="inquiry-detail-cards">
-              <a className="inquiry-detail-card" href="mailto:khayahkorea@gmail.com">
+              <a className="inquiry-detail-card" href="mailto:khayahinternational@gmail.com">
                 <span className="inquiry-detail-card__label">{iq.emailLabel}</span>
-                <span className="inquiry-detail-card__value">khayahkorea@gmail.com</span>
+                <span className="inquiry-detail-card__value">khayahinternational@gmail.com</span>
               </a>
-              <a className="inquiry-detail-card" href="tel:031-689-3639">
+              <a className="inquiry-detail-card" href="tel:07051212198">
                 <span className="inquiry-detail-card__label">{iq.phoneLabel}</span>
-                <span className="inquiry-detail-card__value">031-689-3639</span>
+                <span className="inquiry-detail-card__value">070.5121.2198</span>
               </a>
             </div>
           </section>

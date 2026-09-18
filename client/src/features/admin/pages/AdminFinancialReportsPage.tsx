@@ -36,6 +36,7 @@ function emptyYearFromTemplate(year: number): FinancialReportYearDataV2 {
     balanceSheetImageUrl: null,
     operationsStatementImageUrl: null,
     donationDisclosurePdfUrl: null,
+    publicInterestDisclosurePdfUrl: null,
   }
 }
 
@@ -293,7 +294,7 @@ export function AdminFinancialReportsPage() {
         <div>
           <h1 className="admin-page__title">재정보고</h1>
           <p className="admin-page__desc">
-            연도별 수입·지출 도넛 데이터와 재무상태표·운영성과표 이미지·기부금 공시 PDF를 저장합니다.
+            연도별 수입·지출 도넛 데이터와 재무상태표·운영성과표 이미지·공익법인 결산서류·기부금 공시 PDF를 저장합니다.
             파일은 서버 <code>/uploads</code>에 두고 공개 페이지(`/about/financial-report`)는{' '}
             <code>GET /api/financial-reports</code>로 불러옵니다.
           </p>
@@ -469,6 +470,13 @@ export function AdminFinancialReportsPage() {
                   ariaLabel="하단 링크·버튼 영역 공개 표시"
                 />
               </div>
+              <AdminMediaUpload
+                label="공익법인 결산서류 등 공시 PDF"
+                hint="PDF만 업로드 · 공개 페이지 하단 「공익법인 결산서류 등 공시」 버튼에서 열립니다."
+                variant="pdf"
+                value={selected.publicInterestDisclosurePdfUrl ?? null}
+                onChange={(url) => updateSelected({ publicInterestDisclosurePdfUrl: url })}
+              />
               <AdminMediaUpload
                 label="기부금 모금액 및 활용 실적 공시 PDF"
                 hint="PDF만 업로드 · 공개 페이지 하단 「기부금 모금액 및 활용 실적 공시」 버튼에서 열립니다."

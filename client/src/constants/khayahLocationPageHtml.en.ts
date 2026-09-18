@@ -2,7 +2,7 @@
 
 const MAP_EMBED_SRC =
   'https://maps.google.com/maps?q=' +
-  encodeURIComponent('경기도 성남시 분당구 이매동 81-3 방아로 38') +
+  encodeURIComponent('경기도 용인시 처인구 남사읍 방아로 38') +
   '&hl=en&z=17&output=embed'
 
 const iconHouse = `<svg class="khayah-loc-icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3zm0 2.8l6 5.4V18h-2v-6H8v6H6v-6.8l6-5.4z"/></svg>`
@@ -34,15 +34,15 @@ export const KHAYAH_LOCATION_PAGE_HTML = `
         <ul class="khayah-location-list">
           <li>
             ${iconHouse}
-            <span class="khayah-location-list__text">81-3 Imae-dong, Bundang-gu, Seongnam-si, Gyeonggi-do (38 Banga-ro)</span>
+            <span class="khayah-location-list__text">3F, 38, Banga-ro, Namsa-eup, Cheoin-gu, Yongin-si, Gyeonggi-do, Republic of Korea</span>
           </li>
           <li>
             ${iconPhone}
-            <span class="khayah-location-list__text"><a href="tel:07051212198">070.5121.2198</a></span>
+            <span class="khayah-location-list__text"><a href="tel:+827051212198">+82-70-5121-2198</a></span>
           </li>
           <li>
             ${iconFax}
-            <span class="khayah-location-list__text">070.8650.3639</span>
+            <span class="khayah-location-list__text">+82-70-8650-3639</span>
           </li>
           <li>
             ${iconMail}
@@ -54,10 +54,10 @@ export const KHAYAH_LOCATION_PAGE_HTML = `
         <h3 id="khayah-loc-acc-heading" class="khayah-location-block__title">Donation Accounts</h3>
         <p class="khayah-location-accounts__holder">Account holder <strong>Khayah International</strong></p>
         <ul class="khayah-location-list khayah-location-list--accounts">
-          <li>${iconHeart}<span class="khayah-location-list__text"><strong>Woori</strong> 1005-403-029492</span></li>
-          <li>${iconHeart}<span class="khayah-location-list__text"><strong>NH</strong> 301-1122-4444-01</span></li>
-          <li>${iconHeart}<span class="khayah-location-list__text"><strong>KB</strong> 584101-01-286346</span></li>
-          <li>${iconHeart}<span class="khayah-location-list__text"><strong>Shinhan</strong> 100-034-744590</span></li>
+          <li>${iconHeart}<span class="khayah-location-list__text"><strong>Woori Bank</strong> 1005-403-029492<br /><span class="khayah-location-swift">SWIFT CODE: HVBKKRSEXXX</span></span></li>
+          <li>${iconHeart}<span class="khayah-location-list__text"><strong>Nonghyup Bank</strong> 301-1122-4444-01<br /><span class="khayah-location-swift">SWIFT CODE: NACFKRSEXXX</span></span></li>
+          <li>${iconHeart}<span class="khayah-location-list__text"><strong>Kookmin Bank</strong> 584101-01-286346<br /><span class="khayah-location-swift">SWIFT CODE: CZNBKRSEXXX</span></span></li>
+          <li>${iconHeart}<span class="khayah-location-list__text"><strong>Shinhan Bank</strong> 100-034-744590<br /><span class="khayah-location-swift">SWIFT CODE: SHBKKRSEXXX</span></span></li>
         </ul>
       </section>
     </div>

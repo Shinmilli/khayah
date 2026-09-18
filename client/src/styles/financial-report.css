@@ -487,7 +487,9 @@
 }
 
 .financial-report-page a.financial-report__action--teal:hover,
-.financial-report-page a.financial-report__action--teal:focus-visible {
+.financial-report-page a.financial-report__action--teal:focus-visible,
+.financial-report-page button.financial-report__action--teal:hover,
+.financial-report-page button.financial-report__action--teal:focus-visible {
   color: #fff;
 }
 
@@ -502,7 +504,9 @@
 }
 
 .page-content-wrapper .page-body .financial-report-page a.financial-report__action--teal:hover,
-.page-content-wrapper .page-body .financial-report-page a.financial-report__action--teal:focus-visible {
+.page-content-wrapper .page-body .financial-report-page a.financial-report__action--teal:focus-visible,
+.page-content-wrapper .page-body .financial-report-page button.financial-report__action--teal:hover,
+.page-content-wrapper .page-body .financial-report-page button.financial-report__action--teal:focus-visible {
   color: #fff;
   text-decoration: none;
 }

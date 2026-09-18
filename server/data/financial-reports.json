@@ -88,7 +88,8 @@
       "expenseTotalWon": 2754856299,
       "balanceSheetImageUrl": null,
       "operationsStatementImageUrl": null,
-      "donationDisclosurePdfUrl": null
+      "donationDisclosurePdfUrl": null,
+      "publicInterestDisclosurePdfUrl": null
     },
     {
       "year": 2023,
@@ -172,7 +173,8 @@
       "expenseTotalWon": 460659841,
       "balanceSheetImageUrl": null,
       "operationsStatementImageUrl": null,
-      "donationDisclosurePdfUrl": null
+      "donationDisclosurePdfUrl": null,
+      "publicInterestDisclosurePdfUrl": null
     },
     {
       "year": 2022,
@@ -256,7 +258,8 @@
       "expenseTotalWon": 412000000,
       "balanceSheetImageUrl": null,
       "operationsStatementImageUrl": null,
-      "donationDisclosurePdfUrl": null
+      "donationDisclosurePdfUrl": null,
+      "publicInterestDisclosurePdfUrl": null
     }
   ]
 }

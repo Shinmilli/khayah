@@ -1,5 +1,12 @@
 import { NANUM_DONATE_URL } from './nanumDonate'
 
+const EN_DONATION_ACCOUNTS = `
+        <div class="sg-account"><dt>Woori Bank</dt><dd><span class="sg-mono">1005-403-029492</span><span class="sg-swift">SWIFT CODE: HVBKKRSEXXX</span></dd></div>
+        <div class="sg-account"><dt>Nonghyup Bank</dt><dd><span class="sg-mono">301-1122-4444-01</span><span class="sg-swift">SWIFT CODE: NACFKRSEXXX</span></dd></div>
+        <div class="sg-account"><dt>Kookmin Bank</dt><dd><span class="sg-mono">584101-01-286346</span><span class="sg-swift">SWIFT CODE: CZNBKRSEXXX</span></dd></div>
+        <div class="sg-account"><dt>Shinhan Bank</dt><dd><span class="sg-mono">100-034-744590</span><span class="sg-swift">SWIFT CODE: SHBKKRSEXXX</span></dd></div>
+`.trim()
+
 /** Donor guide static page content (path: support/guide) */
 export const DONOR_GUIDE_PAGE_HTML = `
 <div class="sg-page">
@@ -20,10 +27,7 @@ export const DONOR_GUIDE_PAGE_HTML = `
       <h2 id="sg-accounts-heading" class="sg-h2">Khayah International Donation Accounts</h2>
       <p class="sg-note">Account holder: Khayah International</p>
       <dl class="sg-accounts">
-        <div class="sg-account"><dt>Woori</dt><dd><span class="sg-mono">1005-403-029492</span></dd></div>
-        <div class="sg-account"><dt>NH</dt><dd><span class="sg-mono">301-1122-4444-01</span></dd></div>
-        <div class="sg-account"><dt>KB</dt><dd><span class="sg-mono">584101-01-286346</span></dd></div>
-        <div class="sg-account"><dt>Shinhan</dt><dd><span class="sg-mono">100-034-744590</span></dd></div>
+        ${EN_DONATION_ACCOUNTS}
       </dl>
       <div class="sg-cta-row">
         <a class="sg-btn sg-btn--primary" href="${NANUM_DONATE_URL}" target="_blank" rel="noopener noreferrer">Donate ♥</a>
@@ -62,7 +66,7 @@ export const DONOR_GUIDE_PAGE_HTML = `
           <span class="sg-card__icon sg-card__icon--blue" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></span>
           <h3 class="sg-card__title">Application Guide</h3>
           <ul class="sg-ul">
-            <li>Apply through our website or mobile web. Please click <strong>Donate</strong>.</li>
+            <li>Apply through our website or mobile web. Please click <a class="sg-btn sg-btn--primary sg-btn--inline" href="${NANUM_DONATE_URL}" target="_blank" rel="noopener noreferrer">Donate ♥</a>.</li>
             <li>Membership: You are automatically registered when you apply to donate.</li>
             <li>Payment methods: CMS auto-debit, credit card, mobile payment, bank transfer</li>
           </ul>
@@ -130,7 +134,7 @@ export const DONOR_GUIDE_PAGE_HTML = `
             <p>Your donation is charged automatically to your credit or debit card.</p>
             <p>Your first payment is processed in real time when you apply; subsequent monthly payments are charged on the same date each month.</p>
             <p>You will receive confirmation texts when you apply and for each monthly payment.</p>
-            <p>If your card expires or is reissued, donations may not go through. Please contact Khayah at <a href="tel:070-5121-2198">070-5121-2198</a> or <a href="mailto:khayahinternational@gmail.com">khayahinternational@gmail.com</a> with any changes.</p>
+            <p>If your card expires or is reissued, donations may not go through. Please contact Khayah at <a href="tel:+827051212198">+82-70-5121-2198</a> or <a href="mailto:khayahinternational@gmail.com">khayahinternational@gmail.com</a> with any changes.</p>
           </div>
         </li>
         <li class="sg-method">
@@ -155,10 +159,7 @@ export const DONOR_GUIDE_PAGE_HTML = `
             <h3 class="sg-method__title">Bank Transfer</h3>
             <p>Deposit directly into a Khayah donation account for one-time or commemorative gifts.</p>
             <dl class="sg-accounts sg-accounts--inline">
-              <div class="sg-account"><dt>Woori</dt><dd><span class="sg-mono">1005-403-029492</span></dd></div>
-              <div class="sg-account"><dt>NH</dt><dd><span class="sg-mono">301-1122-4444-01</span></dd></div>
-              <div class="sg-account"><dt>KB</dt><dd><span class="sg-mono">584101-01-286346</span></dd></div>
-              <div class="sg-account"><dt>Shinhan</dt><dd><span class="sg-mono">100-034-744590</span></dd></div>
+              ${EN_DONATION_ACCOUNTS}
             </dl>
           </div>
         </li>
@@ -175,7 +176,7 @@ export const DONOR_GUIDE_PAGE_HTML = `
       </ol>
       <div class="sg-contact-card">
         <h3 class="sg-contact-card__title">Contact</h3>
-        <p class="sg-contact-card__row"><span class="sg-contact-card__label">T</span> <a href="tel:070-5121-2198">070-5121-2198</a></p>
+        <p class="sg-contact-card__row"><span class="sg-contact-card__label">T</span> <a href="tel:+827051212198">+82-70-5121-2198</a></p>
         <p class="sg-contact-card__row"><span class="sg-contact-card__label">E</span> <a href="mailto:khayahinternational@gmail.com">khayahinternational@gmail.com</a></p>
       </div>
     </div>
@@ -229,7 +230,7 @@ export const DONOR_GUIDE_PAGE_HTML = `
     <div class="sg-wrap sg-footer-cta__inner">
       <p class="sg-footer-cta__hint">If online application is difficult, please call us.</p>
       <p class="sg-footer-cta__phone-label">Main number</p>
-      <p class="sg-footer-cta__phone"><a href="tel:070-5121-2198">070-5121-2198</a></p>
+      <p class="sg-footer-cta__phone"><a href="tel:+827051212198">+82-70-5121-2198</a></p>
       <a class="sg-btn sg-btn--primary sg-btn--lg" href="${NANUM_DONATE_URL}" target="_blank" rel="noopener noreferrer">Donate ♥</a>
     </div>
   </section>

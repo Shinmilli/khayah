@@ -13,7 +13,6 @@ export const KHAYAH_CI_PAGE_HTML = `
           class="khayah-ci-lockup__logo"
           width="360"
         />
-        <p class="khayah-ci-lockup__intl">International</p>
       </div>
     </div>
   </div>

@@ -151,6 +151,7 @@ function buildCrumbs(
       }
     }
     const crumbs: Array<{ label: string; to: string }> = [
+      { label: messages.nav.top.news, to: L('/stories') },
       { label: messages.nav.links.stories, to: L('/stories') },
     ]
     if (parts[1]) {

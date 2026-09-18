@@ -160,6 +160,8 @@ export type Messages = {
       actionAcrc: string
       pdfModalTitle: string
       pdfModalBody: string
+      pdfModalTitlePublicInterest: string
+      pdfModalBodyPublicInterest: string
       pdfModalClose: string
       incomeChart: string
       expenseChart: string
@@ -339,7 +341,7 @@ export const koMessages: Messages = {
       kakao: '카카오채널',
     },
     contactText:
-      '사단법인 카야인터내셔널\n경기도 성남시 분당구 이매동 81-3 (방아로 38)\nT 070.5121.2198 | F 070.8650.3639\nE khayahinternational@gmail.com',
+      '사단법인 카야인터내셔널\n경기도 성남시 분당구 이매동 81-3 (방아로 38) 3층\nT 070.5121.2198 | F 070.8650.3639\nE khayahinternational@gmail.com',
     copyright: (year: number) =>
       `© ${year} 사단법인 카야인터내셔널. All Rights Reserved.`,
   },
@@ -471,7 +473,10 @@ export const koMessages: Messages = {
       actionAcrc: '공공위반사항 제보\n"국민권익위원회"',
       pdfModalTitle: '기부금 공시 PDF',
       pdfModalBody:
-        '이 연도에 기부금 공시 PDF URL이 없습니다. 관리자 화면의 재정보고 메뉴에서 해당 연도의 PDF 주소를 등록하면 새 창으로 열립니다.',
+        '이 연도에 기부금 공시 PDF가 없습니다. 관리자 화면의 재정보고 메뉴에서 해당 연도의 PDF를 등록하면 새 창으로 열립니다.',
+      pdfModalTitlePublicInterest: '공익법인 결산서류 공시 PDF',
+      pdfModalBodyPublicInterest:
+        '이 연도에 공익법인 결산서류 공시 PDF가 없습니다. 관리자 화면의 재정보고 메뉴에서 해당 연도의 PDF를 등록하면 새 창으로 열립니다.',
       pdfModalClose: '닫기',
       incomeChart: '수입총액',
       expenseChart: '지출총액',

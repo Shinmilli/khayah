@@ -58,12 +58,25 @@ export function KhayahAboutHubPage() {
   const orgBoardMergedHtml = getStaticPage('about/org-chart', locale)?.content ?? ''
   const ciHtml = locale === 'en' ? KHAYAH_CI_PAGE_HTML_EN : KHAYAH_CI_PAGE_HTML
 
+  const crumbs = useMemo(() => {
+    const about = { label: messages.nav.top.khayah, to: '/about/khayah' }
+    const intro = { label: messages.nav.links.aboutKhayah, to: '/about/khayah' }
+    if (activeTab === 'ci') {
+      return [about, intro, { label: messages.nav.links.ci, to: '/about/khayah?tab=ci' }]
+    }
+    if (activeTab === 'org') {
+      return [about, intro, { label: messages.nav.links.org, to: '/about/khayah?tab=org' }]
+    }
+    return [about, intro]
+  }, [activeTab, messages.nav])
+
   return (
     <div className="khayah-about-hub">
       <PageHero
         title={
           activeTab === 'ci' ? messages.nav.links.ci : activeTab === 'org' ? messages.nav.links.org : hub.title
         }
+        crumbs={crumbs}
         backgroundImageUrl={pageHeroImageForPath(PATH.aboutKhayah)}
         showScrollHint={false}
       />

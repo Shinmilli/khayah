@@ -13,6 +13,7 @@
       "balanceSheetImageUrl": null,
       "operationsStatementImageUrl": null,
       "donationDisclosurePdfUrl": null,
+      "publicInterestDisclosurePdfUrl": null,
       "incomeSegments": [
         {
           "id": "misc",
@@ -97,6 +98,7 @@
       "balanceSheetImageUrl": null,
       "operationsStatementImageUrl": null,
       "donationDisclosurePdfUrl": null,
+      "publicInterestDisclosurePdfUrl": null,
       "incomeSegments": [
         {
           "id": "misc",
@@ -181,6 +183,7 @@
       "balanceSheetImageUrl": null,
       "operationsStatementImageUrl": null,
       "donationDisclosurePdfUrl": null,
+      "publicInterestDisclosurePdfUrl": null,
       "incomeSegments": [
         {
           "id": "misc",

@@ -196,7 +196,7 @@ export function StoryArchivePage() {
                                 to={localize(`/posts/${encodeURIComponent(p.slug)}`)}
                                 state={{ postKind: '스토리' }}
                               >
-                                {p.title}
+                                <span className="story-list-card__title-text">{p.title}</span>
                               </Link>
                             </h3>
                             <p className="story-list-card__excerpt">{p.excerpt || ''}</p>

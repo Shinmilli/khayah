@@ -22,10 +22,6 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
   </section>
   <div class="def-divider" aria-hidden="true"></div>
   <section id="vision" class="vmv-hero" aria-labelledby="vmv-hero-title">
-    <svg class="vmv-hero-cross" viewBox="0 0 120 400" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <rect x="48" y="0" width="24" height="400" fill="#fff"/>
-      <rect x="0" y="100" width="120" height="24" fill="#fff"/>
-    </svg>
     <h2 id="vmv-hero-title" class="vmv-hero-title">Vision &amp; Mission &amp; Value</h2>
     <div class="vmv-hero-line" aria-hidden="true"></div>
     <p class="vmv-hero-desc">The world Khayah envisions is one where all marginalized neighbors<br />find ways to stand on their own.</p>
@@ -838,7 +834,7 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
   },
   'support/apply': {
     title: 'Apply to Donate',
-    content: '<p>Information about applying to donate and monthly giving. Contact: khayahkorea@gmail.com / 031 689 3639</p>',
+    content: '<p>Information about applying to donate and monthly giving. Contact: khayahinternational@gmail.com / 070.5121.2198</p>',
   },
   'news': {
     title: 'News',

@@ -17,7 +17,7 @@ export const DONOR_GUIDE_PAGE_HTML = `
 
   <section class="sg-section" aria-labelledby="sg-accounts-heading">
     <div class="sg-wrap">
-      <h2 id="sg-accounts-heading" class="sg-h2">카야 인터내셔널 후원계좌</h2>
+      <h2 id="sg-accounts-heading" class="sg-h2">카야인터내셔널 후원계좌</h2>
       <p class="sg-note">예금주: (사)카야인터내셔널</p>
       <dl class="sg-accounts">
         <div class="sg-account"><dt>우리</dt><dd><span class="sg-mono">1005-403-029492</span></dd></div>
@@ -62,7 +62,7 @@ export const DONOR_GUIDE_PAGE_HTML = `
           <span class="sg-card__icon sg-card__icon--blue" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></span>
           <h3 class="sg-card__title">신청 안내</h3>
           <ul class="sg-ul">
-            <li>후원 신청 홈페이지 또는 모바일웹을 통해서 진행합니다. <strong>후원하기</strong>를 눌러 주세요.</li>
+            <li>후원 신청 홈페이지 또는 모바일웹을 통해서 진행합니다. <a class="sg-btn sg-btn--primary sg-btn--inline" href="${NANUM_DONATE_URL}" target="_blank" rel="noopener noreferrer">후원하기 ♥</a> 를 눌러 주세요.</li>
             <li>회원가입: 후원 신청 시 회원가입은 자동으로 진행됩니다.</li>
             <li>후원 납부 방법: CMS 자동이체, 신용카드, 휴대폰 결제, 계좌이체</li>
           </ul>

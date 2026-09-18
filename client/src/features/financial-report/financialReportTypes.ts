@@ -25,6 +25,7 @@ export type FinancialReportYearDataV2 = {
   balanceSheetImageUrl?: string | null
   operationsStatementImageUrl?: string | null
   donationDisclosurePdfUrl?: string | null
+  publicInterestDisclosurePdfUrl?: string | null
 }
 
 export type FinancialReportYearData = Omit<FinancialReportYearDataV2, 'incomeSegments' | 'expenseSegments'> & {

@@ -55,16 +55,6 @@
   filter: drop-shadow(0 8px 28px rgba(139, 21, 56, 0.12));
 }
 
-.khayah-ci-lockup__intl {
-  margin: 0.5rem 0 0;
-  font-size: clamp(0.72rem, 2vw, 0.88rem);
-  font-weight: 500;
-  letter-spacing: 0.42em;
-  text-transform: none;
-  color: #8b1538;
-  padding-left: 0.42em;
-}
-
 .khayah-ci-legend {
   list-style: none;
   margin: 0 0 2rem;

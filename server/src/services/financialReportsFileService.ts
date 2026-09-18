@@ -30,6 +30,7 @@ export type FinancialReportYearDataV2 = {
   balanceSheetImageUrl?: string | null
   operationsStatementImageUrl?: string | null
   donationDisclosurePdfUrl?: string | null
+  publicInterestDisclosurePdfUrl?: string | null
 }
 
 export type FinancialReportsDocumentV2 = {
@@ -181,6 +182,7 @@ function normalizeDocumentMedia(doc: FinancialReportsDocumentV2): FinancialRepor
       balanceSheetImageUrl: normalizeStoredMediaUrl(r.balanceSheetImageUrl),
       operationsStatementImageUrl: normalizeStoredMediaUrl(r.operationsStatementImageUrl),
       donationDisclosurePdfUrl: normalizeStoredMediaUrl(r.donationDisclosurePdfUrl),
+      publicInterestDisclosurePdfUrl: normalizeStoredMediaUrl(r.publicInterestDisclosurePdfUrl),
     })),
   }
 }

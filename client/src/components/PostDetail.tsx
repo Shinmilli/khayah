@@ -109,7 +109,10 @@ function crumbsForKind(kind: string, messages: Messages): Array<{ label: string;
         { label: nav.links.projects, to: '/business/projects' },
       ]
     case '스토리':
-      return [{ label: pages.stories.title, to: '/stories' }]
+      return [
+        { label: nav.top.news, to: '/stories' },
+        { label: pages.stories.title, to: '/stories' },
+      ]
     default:
       return [{ label: nav.top.news, to: '/stories' }]
   }

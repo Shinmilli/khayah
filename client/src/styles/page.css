@@ -655,18 +655,6 @@
   border-radius: 10px;
 }
 
-.khayah-about-def-vmv .vmv-hero-cross {
-  position: absolute;
-  /* 왼쪽 여백을 두고 더 오른쪽으로 이동 */
-  left: clamp(52px, 7vw, 112px);
-  /* 십자가 세로는 예전처럼 꽉 차게 */
-  top: 0;
-  bottom: 0;
-  width: min(96px, 14vw);
-  opacity: 0.18;
-  pointer-events: none;
-}
-
 .khayah-about-def-vmv .vmv-hero-title {
   font-size: clamp(21px, 2.6vw, 28px);
   font-weight: 600;
