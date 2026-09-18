@@ -5,6 +5,7 @@ import {
   DEFAULT_IMPACT_STATS,
   formatImpactPercent,
   impactStatsForLocale,
+  normalizeImpactDonut,
   visibleImpactStats,
   visiblePrimaryCards,
   type ImpactPrimaryCardView,
@@ -45,7 +46,16 @@ export function ImpactSection() {
     let cancelled = false
     fetchImpactStats(locale)
       .then((doc) => {
-        if (!cancelled) setContent(doc)
+        if (!cancelled) {
+          setContent({
+            ...doc,
+            primaryCards: (doc.primaryCards ?? []).map((card) => ({
+              ...card,
+              showDonut: card.showDonut !== false,
+              donut: normalizeImpactDonut(card.donut),
+            })),
+          })
+        }
       })
       .catch(() => {
         if (!cancelled) setContent(impactStatsForLocale(DEFAULT_IMPACT_STATS, locale))
@@ -184,15 +194,17 @@ function PrimaryImpactCard({
   localize: (path: string) => string
   ariaFn: (percent: string, label: string) => string
 }) {
-  const labelLines = card.donut.labelLines.map((line) => line.trim()).filter(Boolean)
-  const percentText = formatImpactPercent(card.donut.percent)
+  const donut = normalizeImpactDonut(card.donut)
+  const labelLines = donut.labelLines.map((line) => line.trim()).filter(Boolean)
+  const percentText = formatImpactPercent(donut.percent)
   const href = card.ctaHref.trim()
   const ctaLabel = card.ctaLabel.trim()
+  const showDonut = card.showDonut !== false
 
   return (
     <article
       className={`impact-card impact-card--primary${compact ? ' impact-card--compact' : ''}${
-        card.showDonut === false ? ' impact-card--no-donut' : ''
+        showDonut ? '' : ' impact-card--no-donut'
       }`}
       style={primaryCardStyle(card)}
       role="listitem"
@@ -205,8 +217,8 @@ function PrimaryImpactCard({
         </div>
       </div>
 
-      {card.showDonut !== false ? (
-      <div className="donut" style={{ '--p': card.donut.percent } as CSSProperties} aria-label={ariaFn(percentText, labelLines.join(' '))}>
+      {showDonut ? (
+      <div className="donut" style={{ '--p': donut.percent } as CSSProperties} aria-label={ariaFn(percentText, labelLines.join(' '))}>
         <div className="donut__center">
           <div className="donut__value">{percentText}</div>
           {labelLines.length > 0 ? (

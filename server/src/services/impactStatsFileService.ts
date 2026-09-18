@@ -390,12 +390,20 @@ export async function readImpactStatsForLocale(locale: ImpactLocale): Promise<Im
     backgroundImageUrl: bg,
     introColors: doc.introColors,
     intro: doc.intro[locale],
-    primaryCards: doc.primaryCards.map((card) => ({
-      id: card.id,
-      showDonut: card.showDonut !== false,
-      colors: card.colors,
-      ...card.locales[locale],
-    })),
+    primaryCards: doc.primaryCards.map((card) => {
+      const loc = card.locales[locale] ?? card.locales.ko
+      return {
+        id: card.id,
+        showDonut: card.showDonut !== false,
+        colors: card.colors,
+        kicker: loc.kicker,
+        title: loc.title,
+        desc: loc.desc,
+        ctaLabel: loc.ctaLabel,
+        ctaHref: loc.ctaHref,
+        donut: asDonut(loc.donut, { percent: 0, labelLines: [] }),
+      }
+    }),
     stats: doc.stats.map((row) => ({
       id: row.id,
       icon: row.icon,

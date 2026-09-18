@@ -284,12 +284,22 @@ export function formatImpactPercent(n: number): string {
   return Number.isInteger(rounded) ? `${rounded}%` : `${rounded.toFixed(1)}%`
 }
 
+export const EMPTY_IMPACT_DONUT: ImpactDonut = { percent: 0, labelLines: [] }
+
+export function normalizeImpactDonut(v: ImpactDonut | null | undefined): ImpactDonut {
+  if (!v || typeof v !== 'object') return { ...EMPTY_IMPACT_DONUT, labelLines: [] }
+  return {
+    percent: Number.isFinite(v.percent) ? v.percent : 0,
+    labelLines: Array.isArray(v.labelLines) ? v.labelLines.filter((line) => typeof line === 'string') : [],
+  }
+}
+
 export function visibleImpactStats(stats: ImpactStatView[]): ImpactStatView[] {
   return stats.filter((row) => row.label.trim().length > 0)
 }
 
-export function visiblePrimaryCards(cards: ImpactPrimaryCardView[]): ImpactPrimaryCardView[] {
-  return cards
+export function visiblePrimaryCards(cards: ImpactPrimaryCardView[] | undefined): ImpactPrimaryCardView[] {
+  return Array.isArray(cards) ? cards : []
 }
 
 export function resolvedImpactBg(url: string | undefined): string {
@@ -305,12 +315,20 @@ export function impactStatsForLocale(
     backgroundImageUrl: resolvedImpactBg(doc.backgroundImageUrl),
     introColors: { ...DEFAULT_INTRO_COLORS, ...doc.introColors },
     intro: doc.intro[locale],
-    primaryCards: doc.primaryCards.map((card) => ({
-      id: card.id,
-      showDonut: card.showDonut !== false,
-      colors: { ...DEFAULT_PRIMARY_CARD_COLORS, ...card.colors },
-      ...card.locales[locale],
-    })),
+    primaryCards: (doc.primaryCards ?? []).map((card) => {
+      const loc = card.locales?.[locale] ?? card.locales?.ko
+      return {
+        id: card.id,
+        showDonut: card.showDonut !== false,
+        colors: { ...DEFAULT_PRIMARY_CARD_COLORS, ...card.colors },
+        kicker: loc?.kicker ?? '',
+        title: loc?.title ?? '',
+        desc: loc?.desc ?? '',
+        ctaLabel: loc?.ctaLabel ?? '',
+        ctaHref: loc?.ctaHref ?? '',
+        donut: normalizeImpactDonut(loc?.donut),
+      }
+    }),
     stats: doc.stats.map((row) => ({
       id: row.id,
       icon: row.icon,

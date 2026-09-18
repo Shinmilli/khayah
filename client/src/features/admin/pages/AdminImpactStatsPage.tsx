@@ -5,6 +5,7 @@ import {
   DEFAULT_IMPACT_STATS,
   emptyPrimaryCard,
   emptyStatItem,
+  normalizeImpactDonut,
   type ImpactEditLocale,
   type ImpactPrimaryCard,
   type ImpactPrimaryCardColors,
@@ -289,6 +290,7 @@ export function AdminImpactStatsPage() {
           ) : (
             doc.primaryCards.map((card, idx) => {
               const loc = card.locales[editLocale]
+              const donut = normalizeImpactDonut(loc?.donut)
               return (
                 <div key={card.id} className="admin-impact-card-editor">
                   <div className="admin-page__head admin-page__head--inline">
@@ -412,13 +414,19 @@ export function AdminImpactStatsPage() {
                         min={0}
                         max={100}
                         step={0.1}
-                        value={Number.isFinite(loc.donut.percent) ? loc.donut.percent : 0}
+                        value={Number.isFinite(donut.percent) ? donut.percent : 0}
                         onChange={(e) => {
                           const percent = parseFloat(e.target.value) || 0
                           updatePrimary(idx, {
                             locales: {
-                              ko: { ...card.locales.ko, donut: { ...card.locales.ko.donut, percent } },
-                              en: { ...card.locales.en, donut: { ...card.locales.en.donut, percent } },
+                              ko: {
+                                ...card.locales.ko,
+                                donut: { ...normalizeImpactDonut(card.locales.ko?.donut), percent },
+                              },
+                              en: {
+                                ...card.locales.en,
+                                donut: { ...normalizeImpactDonut(card.locales.en?.donut), percent },
+                              },
                             },
                           })
                         }}
@@ -429,14 +437,14 @@ export function AdminImpactStatsPage() {
                       <textarea
                         className="admin-input admin-input--area"
                         rows={3}
-                        value={loc.donut.labelLines.join('\n')}
+                        value={donut.labelLines.join('\n')}
                         onChange={(e) =>
                           updatePrimary(idx, {
                             locales: {
                               ...card.locales,
                               [editLocale]: {
                                 ...loc,
-                                donut: { ...loc.donut, labelLines: e.target.value.split('\n') },
+                                donut: { ...donut, labelLines: e.target.value.split('\n') },
                               },
                             },
                           })
