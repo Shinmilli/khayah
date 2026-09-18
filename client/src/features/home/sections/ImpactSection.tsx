@@ -49,7 +49,7 @@ export function ImpactSection() {
         if (!cancelled) {
           setContent({
             ...doc,
-            primaryCards: (doc.primaryCards ?? []).map((card) => ({
+            primaryCards: (doc.primaryCards ?? []).map((card: ImpactPrimaryCardView) => ({
               ...card,
               showDonut: card.showDonut !== false,
               donut: normalizeImpactDonut(card.donut),

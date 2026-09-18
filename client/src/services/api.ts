@@ -7,7 +7,7 @@ import type { Post } from '../types/post'
 import type { FinancialReportsDocument, FinancialReportsPublicDocument } from '../features/financial-report/financialReportTypes'
 import type { InquiryAdmin, InquiryPublic } from '../types/inquiry'
 import type { InquiryFaqDocument, InquiryFaqPublicDocument } from '../types/inquiryFaq'
-import type { ImpactStatsDocument, ImpactStatsLocaleContent } from '../features/home/impactStatsTypes'
+import type { ImpactStatsDocument, ImpactStatsPublicView } from '../features/home/impactStatsTypes'
 import type { HeroBannerDocument, HeroBannerPublicDocument } from '../features/home/heroBannerTypes'
 import type { HistoryDocument, HistoryLocaleContent } from '../features/history/historyTypes'
 import type { NavMenuImagesDocument } from '../features/nav/navMenuImagesTypes'
@@ -308,7 +308,7 @@ export async function adminPutFinancialReports(doc: FinancialReportsDocument): P
   return res.json()
 }
 
-export async function fetchImpactStats(locale: Locale = 'ko'): Promise<ImpactStatsLocaleContent> {
+export async function fetchImpactStats(locale: Locale = 'ko'): Promise<ImpactStatsPublicView> {
   const res = await fetch(`${API_BASE}/impact-stats?lang=${encodeURIComponent(locale)}`)
   if (!res.ok) throw new Error('Failed to fetch impact stats')
   return res.json()
