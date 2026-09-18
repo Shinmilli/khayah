@@ -273,45 +273,6 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
       </ol>
     </div>
   </section>
-
-  <section class="overseas-cta" aria-label="Overseas program subpages">
-    <div class="ov-wrap">
-      <div class="overseas-cards">
-        <div class="overseas-card">
-          <div class="overseas-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 3.4 2 8.4l10 5 10-5-10-5Zm-7.2 7.3v4.8c0 1.5 3.6 4 7.2 4s7.2-2.5 7.2-4v-4.8l-7.2 3.6-7.2-3.6Z"/>
-            </svg>
-          </div>
-          <h2 class="overseas-card__title">Education</h2>
-          <p class="overseas-card__desc">Khayah runs education programs that build foundational learning, career exploration, and future skills together, and improves the quality of local education. Through this, residents recognize the need and possibility of change, and we help create the capacity and foundation for them to take the lead in community growth.</p>
-          <a class="overseas-card__btn" href="/business/overseas/education">Learn more</a>
-        </div>
-
-        <div class="overseas-card">
-          <div class="overseas-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-              <path d="M9 11a4 4 0 1 0-4-4 4 4 0 0 0 4 4Zm6 0a3.5 3.5 0 1 0-3.5-3.5A3.5 3.5 0 0 0 15 11ZM9 13c-3.3 0-6 2.1-6 4.8V20h12v-2.2C15 15.1 12.3 13 9 13Zm6 .5c-.4 0-.8 0-1.2.1 1.8 1.1 3.2 2.8 3.2 4.7V20h4v-1.6c0-2.5-2.4-4.9-6-4.9Z"/>
-            </svg>
-          </div>
-          <h2 class="overseas-card__title">Overseas Volunteer Dispatch</h2>
-          <p class="overseas-card__desc">Khayah offers Korean youth and participants with diverse experience and passion the chance to understand local community challenges firsthand and seek solutions together through international cooperation. We propose and implement practical models the field needs, so that sustainable community change and participants' growth happen together.</p>
-          <a class="overseas-card__btn" href="/business/overseas/volunteer">Learn more</a>
-        </div>
-
-        <div class="overseas-card">
-          <div class="overseas-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-              <path d="M4 4h7.2L14 7.2H20v13H4Zm2 4v10h12V9.2h-5.2L10.6 6H6Z"/>
-            </svg>
-          </div>
-          <h2 class="overseas-card__title">Active Projects</h2>
-          <p class="overseas-card__desc">Every Khayah overseas project centers on people — participants and the needs of the region — and is researched and carried out with the goal of leading change for communities and residents until they reach ultimate self-reliance.</p>
-          <a class="overseas-card__btn" href="/business/projects">Learn more</a>
-        </div>
-      </div>
-    </div>
-  </section>
 </div>
 `,
   },
@@ -683,39 +644,6 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
         </li>
       </ol>
 
-    </div>
-  </section>
-
-  <section class="domestic-cta" aria-label="Domestic program subpages">
-    <div class="dom-wrap">
-      <div class="domestic-cards">
-        <div class="domestic-card">
-          <div class="domestic-card__icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 3.4 2 8.4l10 5 10-5-10-5Zm-7.2 7.3v4.8c0 1.5 3.6 4 7.2 4s7.2-2.5 7.2-4v-4.8l-7.2 3.6-7.2-3.6Z"/>
-            </svg>
-          </div>
-          <h2 class="domestic-card__title">Education</h2>
-          <p class="domestic-card__desc">
-            Khayah runs innovative education programs so that marginalized neighbors can grow with ways and values for thriving as members of society and nature.
-          </p>
-          <a class="domestic-card__btn" href="/business/domestic/education">Learn more</a>
-        </div>
-        <div class="domestic-card">
-          <div class="domestic-card__icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" xmlns="http://www.w3.org/2000/svg">
-              <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
-              <circle cx="9" cy="7" r="4"/>
-              <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
-            </svg>
-          </div>
-          <h2 class="domestic-card__title">Active projects</h2>
-          <p class="domestic-card__desc">
-            Every domestic Khayah project is researched and carried out so that ‘people,’ ‘nature,’ and the ‘future’ are all present within it.
-          </p>
-          <a class="domestic-card__btn" href="/business/projects">Learn more</a>
-        </div>
-      </div>
     </div>
   </section>
 </div>

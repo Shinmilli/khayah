@@ -25,6 +25,7 @@ import { PATH } from '../i18n/routes'
 import { isKhayahSectionPathKey } from '../features/khayah-about/khayahAboutHubTabs'
 import { pageHeroImageForPath, pageHeroImageForPostKind } from '../constants/pageHeroImages'
 import { ListStatus } from '../components/ListStatus'
+import { BusinessHubCards } from '../features/business/BusinessHubCards'
 
 function storyCtaForPathKey(
   pathKey: string,
@@ -248,6 +249,8 @@ function PageByPathInner({ kindHint }: { kindHint: string }) {
                 className="the_content_wrapper page-body"
                 dangerouslySetInnerHTML={{ __html: staticPage.content }}
               />
+              {pathKey === PATH.businessOverseas ? <BusinessHubCards hub="overseas" /> : null}
+              {pathKey === PATH.businessDomestic ? <BusinessHubCards hub="domestic" /> : null}
               {storyCta ? (
                 <div className="page-story-cta">
                   <Link className="page-story-cta__btn" to={localize(storyCta.to)}>

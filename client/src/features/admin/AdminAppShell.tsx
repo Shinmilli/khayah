@@ -12,7 +12,9 @@ function isContentAdminPath(pathname: string): boolean {
     pathname.startsWith('/admin/app/impact-stats') ||
     pathname.startsWith('/admin/app/history') ||
     pathname.startsWith('/admin/app/nav-menu-images') ||
+    pathname.startsWith('/admin/app/nav-visibility') ||
     pathname.startsWith('/admin/app/page-banners') ||
+    pathname.startsWith('/admin/app/business-hub-cards') ||
     pathname.startsWith('/admin/app/banner')
   )
 }
@@ -30,6 +32,8 @@ const contentGroups: readonly { label: string; items: readonly AdminNavItem[] }[
       { to: '/admin/app/popup', label: '팝업' },
       { to: '/admin/app/page-banners', label: '페이지 배너' },
       { to: '/admin/app/nav-menu-images', label: '메뉴 이미지' },
+      { to: '/admin/app/nav-visibility', label: '메뉴 표시' },
+      { to: '/admin/app/business-hub-cards', label: '국내·해외 카드' },
     ],
   },
   {

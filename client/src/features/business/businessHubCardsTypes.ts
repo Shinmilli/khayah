@@ -1,0 +1,187 @@
+export const BUSINESS_HUBS = ['overseas', 'domestic'] as const
+export type BusinessHub = (typeof BUSINESS_HUBS)[number]
+
+export const BUSINESS_HUB_ICONS = ['education', 'volunteer', 'projects', 'people'] as const
+export type BusinessHubIcon = (typeof BUSINESS_HUB_ICONS)[number]
+
+export type BusinessHubCardLocaleCopy = {
+  title: string
+  description: string
+  buttonLabel: string
+}
+
+export type BusinessHubCard = {
+  id: string
+  hub: BusinessHub
+  order: number
+  enabled: boolean
+  href: string
+  icon: BusinessHubIcon
+  locales: {
+    ko: BusinessHubCardLocaleCopy
+    en: BusinessHubCardLocaleCopy
+  }
+}
+
+export type BusinessHubCardsDocument = {
+  version: 1
+  cards: BusinessHubCard[]
+}
+
+export type BusinessHubCardPublic = {
+  id: string
+  hub: BusinessHub
+  order: number
+  href: string
+  icon: BusinessHubIcon
+  title: string
+  description: string
+  buttonLabel: string
+}
+
+export type BusinessHubCardsPublicDocument = {
+  version: 1
+  cards: BusinessHubCardPublic[]
+}
+
+export type BusinessHubEditLocale = 'ko' | 'en'
+
+export const DEFAULT_BUSINESS_HUB_CARDS: BusinessHubCardsDocument = {
+  version: 1,
+  cards: [
+    {
+      id: 'overseas-education',
+      hub: 'overseas',
+      order: 1,
+      enabled: true,
+      href: '/business/overseas/education',
+      icon: 'education',
+      locales: {
+        ko: {
+          title: '교육',
+          description:
+            '카야는 기초 학습 역량과 진로 탐색과 미래 역량을 함께 키우는 교육 프로그램을 운영하고, 현지 교육의 질을 개선합니다. 이를 통해 주민 스스로 변화의 필요성과 가능성을 인식하고 지역사회의 성장에 주도적으로 참여할 역량과 기반을 만들어갑니다.',
+          buttonLabel: '자세히 보기',
+        },
+        en: {
+          title: 'Education',
+          description:
+            'Khayah runs education programs that build foundational learning, career exploration, and future skills together, and improves the quality of local education. Through this, residents recognize the need and possibility of change, and we help create the capacity and foundation for them to take the lead in community growth.',
+          buttonLabel: 'Learn more',
+        },
+      },
+    },
+    {
+      id: 'overseas-volunteer',
+      hub: 'overseas',
+      order: 2,
+      enabled: true,
+      href: '/business/overseas/volunteer',
+      icon: 'volunteer',
+      locales: {
+        ko: {
+          title: '해외봉사단 파견',
+          description:
+            '카야는 국내 청년과 다양한 분야 경험과 열정을 가진 참여자들이 현지 지역사회 과제를 직접 이해하고, 함께 해결방안을 찾는 국제협력활동 기회를 제공합니다. 현지에 필요한 실천 모델을 제안하고 실행하며 지역사회의 지속가능한 변화와 참여자의 동반 성장이 함께 이뤄지도록 합니다.',
+          buttonLabel: '자세히 보기',
+        },
+        en: {
+          title: 'Overseas Volunteer Dispatch',
+          description:
+            "Khayah offers Korean youth and participants with diverse experience and passion the chance to understand local community challenges firsthand and seek solutions together through international cooperation. We propose and implement practical models the field needs, so that sustainable community change and participants' growth happen together.",
+          buttonLabel: 'Learn more',
+        },
+      },
+    },
+    {
+      id: 'overseas-projects',
+      hub: 'overseas',
+      order: 3,
+      enabled: true,
+      href: '/business/projects',
+      icon: 'projects',
+      locales: {
+        ko: {
+          title: '진행사업',
+          description:
+            '카야의 모든 해외 프로젝트는 ‘사람’ 곧 참여자와 지역의 필요를 중심으로 지역과 주민의 변화를 이끌어 ‘궁극적 자립’에 이를 때까지를 목표로 연구하며 진행하고 있습니다.',
+          buttonLabel: '자세히 보기',
+        },
+        en: {
+          title: 'Active Projects',
+          description:
+            'Every Khayah overseas project centers on people — participants and the needs of the region — and is researched and carried out with the goal of leading change for communities and residents until they reach ultimate self-reliance.',
+          buttonLabel: 'Learn more',
+        },
+      },
+    },
+    {
+      id: 'domestic-education',
+      hub: 'domestic',
+      order: 1,
+      enabled: true,
+      href: '/business/domestic/education',
+      icon: 'education',
+      locales: {
+        ko: {
+          title: '교육',
+          description:
+            '카야는 소외된 이웃이 사회와 자연의 일원으로의 성취 방법과 가치를 지향하며 성장할 수 있도록 혁신적인 교육 사업을 진행합니다.',
+          buttonLabel: '자세히 보기',
+        },
+        en: {
+          title: 'Education',
+          description:
+            'Khayah runs innovative education programs so that marginalized neighbors can grow with ways and values for thriving as members of society and nature.',
+          buttonLabel: 'Learn more',
+        },
+      },
+    },
+    {
+      id: 'domestic-projects',
+      hub: 'domestic',
+      order: 2,
+      enabled: true,
+      href: '/business/projects',
+      icon: 'people',
+      locales: {
+        ko: {
+          title: '진행사업',
+          description:
+            '카야의 모든 국내 프로젝트는 그 속에 ‘사람’과 ‘자연’ 그리고 ‘미래’가 모두 담기도록 연구하며 진행하고 있습니다.',
+          buttonLabel: '자세히 보기',
+        },
+        en: {
+          title: 'Active projects',
+          description:
+            "Every domestic Khayah project is researched and carried out so that ‘people,’ ‘nature,’ and the ‘future’ are all present within it.",
+          buttonLabel: 'Learn more',
+        },
+      },
+    },
+  ],
+}
+
+export function publicCardsFromDocument(
+  doc: BusinessHubCardsDocument,
+  locale: BusinessHubEditLocale,
+  hub?: BusinessHub,
+): BusinessHubCardPublic[] {
+  return [...doc.cards]
+    .filter((card) => card.enabled && (!hub || card.hub === hub) && card.locales[locale].title.trim())
+    .sort((a, b) => a.order - b.order)
+    .map((card) => ({
+      id: card.id,
+      hub: card.hub,
+      order: card.order,
+      href: card.href,
+      icon: card.icon,
+      title: card.locales[locale].title,
+      description: card.locales[locale].description,
+      buttonLabel: card.locales[locale].buttonLabel,
+    }))
+}
+
+export function isBusinessHubIcon(v: string): v is BusinessHubIcon {
+  return (BUSINESS_HUB_ICONS as readonly string[]).includes(v)
+}

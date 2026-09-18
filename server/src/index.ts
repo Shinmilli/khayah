@@ -14,7 +14,9 @@ import { impactStatsRouter } from './routes/impactStats'
 import { heroBannerRouter } from './routes/heroBanner'
 import { historyRouter } from './routes/history'
 import { navMenuImagesRouter } from './routes/navMenuImages'
+import { navVisibilityRouter } from './routes/navVisibility'
 import { pageHeroBannersRouter } from './routes/pageHeroBanners'
+import { businessHubCardsRouter } from './routes/businessHubCards'
 import { authRouter } from './routes/auth'
 import { adminUsersRouter } from './routes/adminUsers'
 import { adminAuthGuard } from './middlewares/requireAdmin'
@@ -56,7 +58,9 @@ app.use('/api', impactStatsRouter)
 app.use('/api', heroBannerRouter)
 app.use('/api', historyRouter)
 app.use('/api', navMenuImagesRouter)
+app.use('/api', navVisibilityRouter)
 app.use('/api', pageHeroBannersRouter)
+app.use('/api', businessHubCardsRouter)
 
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok' })

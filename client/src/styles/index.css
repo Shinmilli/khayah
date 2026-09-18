@@ -3,6 +3,8 @@
   --site-header-height: 88px;
   --khayah-red: #b20838;
   --khayah-red-hover: #c78598;
+  --khayah-wash-warm: 240, 106, 66;
+  --khayah-wash-rose: 232, 72, 96;
   --text-dark: #404954;
   --text-muted: #737e86;
   --site-content-width: 92%;
@@ -877,6 +879,44 @@ a:hover {
   text-align: center;
   color: #666;
   padding: 2rem;
+}
+
+/* 스크롤 진입 시 제목·소제목 등장 */
+.reveal-copy[data-reveal-armed='1'] .reveal-copy__item {
+  opacity: 0;
+  transform: translate3d(0, 1.05rem, 0);
+  transition:
+    opacity 0.76s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.76s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: calc(var(--reveal-i, 0) * 100ms);
+}
+
+.reveal-copy.is-revealed .reveal-copy__item {
+  opacity: 1;
+  transform: none;
+}
+
+.reveal-block[data-reveal-armed='1'] {
+  opacity: 0;
+  transform: translate3d(0, 1.1rem, 0);
+  transition:
+    opacity 0.68s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.68s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: 50ms;
+}
+
+.reveal-block.is-revealed {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-copy[data-reveal-armed='1'] .reveal-copy__item,
+  .reveal-block[data-reveal-armed='1'] {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
 }
 
 /* Responsive menu */

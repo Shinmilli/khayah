@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { SITE_NAME } from '../constants'
 import { pageHeroImageForPath, prefetchPageHeroImage } from '../constants/pageHeroImages'
@@ -8,78 +8,23 @@ import { useLocale } from '../i18n/LocaleContext'
 import type { NavLinkKey, NavTopKey } from '../i18n/messages/ko'
 import { fetchNavMenuImages } from '../services/api'
 import { DEFAULT_NAV_MENU_IMAGES } from '../features/nav/navMenuImagesTypes'
+import {
+  filterNavColumns,
+  NAV_MENU_COLUMNS,
+  type NavMenuColumn,
+  type NavMenuLinkDef,
+} from '../features/nav/navVisibilityTypes'
+import { useNavVisibility } from '../features/nav/useNavVisibility'
 import '../styles/site-header.css'
 
 const LOGO_SRC = '/images/logo/khayah_logo.png'
 const LOGO_WHITE_SRC = '/images/logo/khayahLogoWhite.png'
 const FALLBACK_LOGO = '/images/logo/khayah_logo.png'
 
-type NavLinkDef = { key: NavLinkKey; to: string; children?: NavLinkDef[] }
-
-type NavColumn = {
-  id: string
-  topKey: NavTopKey
-  links?: NavLinkDef[]
-}
-
-function columnAllLinks(col: NavColumn): NavLinkDef[] {
+function columnAllLinks(col: NavMenuColumn): NavMenuLinkDef[] {
   const base = col.links ?? []
   return base.flatMap((l) => [l, ...(l.children ?? [])])
 }
-
-const NAV_COLUMNS: NavColumn[] = [
-  {
-    id: 'khaya-col',
-    topKey: 'khayah',
-    links: [
-      { key: 'greeting', to: '/about/greeting' },
-      { key: 'history', to: '/about/history' },
-      { key: 'location', to: '/about/location' },
-      { key: 'financialReport', to: '/about/financial-report' },
-      { key: 'aboutKhayah', to: '/about/khayah' },
-      { key: 'ci', to: '/about/khayah?tab=ci' },
-      { key: 'org', to: '/about/khayah?tab=org' },
-    ],
-  },
-  {
-    id: 'business-col',
-    topKey: 'business',
-    links: [
-      {
-        key: 'domestic',
-        to: '/business/domestic',
-        children: [{ key: 'domesticEducation', to: '/business/domestic/education' }],
-      },
-      {
-        key: 'overseas',
-        to: '/business/overseas',
-        children: [
-          { key: 'overseasEducation', to: '/business/overseas/education' },
-          { key: 'overseasVolunteer', to: '/business/overseas/volunteer' },
-        ],
-      },
-      { key: 'advocacy', to: '/business/advocacy' },
-      { key: 'projects', to: '/business/projects' },
-    ],
-  },
-  {
-    id: 'support-col',
-    topKey: 'support',
-    links: [{ key: 'supportGuide', to: '/support/guide' }],
-  },
-  {
-    id: 'news-col',
-    topKey: 'news',
-    links: [
-      { key: 'announcements', to: '/news/announcements' },
-      { key: 'activities', to: '/news/activities' },
-      { key: 'stories', to: '/stories' },
-      { key: 'newsletter', to: '/news/newsletter' },
-      { key: 'press', to: '/news/press' },
-      { key: 'inquiry', to: '/news/inquiry' },
-    ],
-  },
-]
 
 const TOP_LINKS: { key: NavTopKey }[] = [
   { key: 'khayah' },
@@ -87,8 +32,6 @@ const TOP_LINKS: { key: NavTopKey }[] = [
   { key: 'support' },
   { key: 'news' },
 ]
-
-const NAV_BY_KEY = new Map(NAV_COLUMNS.map((c) => [c.topKey, c]))
 
 function topBannerUrls(key: NavTopKey): string[] {
   const urls =
@@ -113,6 +56,7 @@ export function Header() {
   const [desktopMenuKey, setDesktopMenuKey] = useState<NavTopKey | null>(null)
   const desktopMenuCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [menuImages, setMenuImages] = useState(DEFAULT_NAV_MENU_IMAGES.images)
+  const navVisibility = useNavVisibility()
   const location = useLocation()
   const { locale, localize, swapLocale, messages } = useLocale()
   const nav = messages.nav
@@ -122,6 +66,16 @@ export function Header() {
   const linkLabel = (key: NavLinkKey) => nav.links[key]
   const { pathnameWithoutLocale } = splitLocalePath(location.pathname)
   const isHome = pathnameWithoutLocale === '/'
+
+  const navColumns = useMemo(
+    () => filterNavColumns(NAV_MENU_COLUMNS, navVisibility),
+    [navVisibility],
+  )
+  const navByKey = useMemo(() => new Map(navColumns.map((c) => [c.topKey, c])), [navColumns])
+  const visibleTopLinks = useMemo(
+    () => TOP_LINKS.filter((item) => navColumns.some((col) => col.topKey === item.key)),
+    [navColumns],
+  )
 
   useEffect(() => {
     let cancelled = false
@@ -219,7 +173,7 @@ export function Header() {
 
   const closeMobile = () => setMobileOpen(false)
 
-  const renderStackedList = (links: NavLinkDef[]) => (
+  const renderStackedList = (links: NavMenuLinkDef[]) => (
     <div className="site-header__submenu-list site-header__submenu-list--stack">
       {links.map((l) => (
         <Link
@@ -235,7 +189,7 @@ export function Header() {
     </div>
   )
 
-  const renderLinkList = (links: NavLinkDef[]) => (
+  const renderLinkList = (links: NavMenuLinkDef[]) => (
     <div className="site-header__submenu-list">
       {links.map((l) => {
         const label = linkLabel(l.key)
@@ -269,7 +223,7 @@ export function Header() {
     </div>
   )
 
-  const renderMobileLinks = (col: NavColumn) => {
+  const renderMobileLinks = (col: NavMenuColumn) => {
     if (!col.links?.length) {
       return columnAllLinks(col).map((l) => (
         <Link key={`${l.to}-${l.key}`} to={loc(l.to)} onClick={closeMobile}>
@@ -331,8 +285,8 @@ export function Header() {
 
           <nav aria-label={nav.aria.main}>
             <ul className="site-header__nav">
-              {TOP_LINKS.map((item) => {
-                const col = NAV_BY_KEY.get(item.key)
+              {visibleTopLinks.map((item) => {
+                const col = navByKey.get(item.key)
                 const linksFlat = col ? columnAllLinks(col) : []
                 const hasSub = linksFlat.length > 0
                 const subOpen = hasSub && desktopMenuKey === item.key
@@ -447,7 +401,7 @@ export function Header() {
       </div>
 
       <div className={`site-header__mobile${mobileOpen ? ' is-open' : ''}`} id="site-header-mobile-panel">
-        {NAV_COLUMNS.map((col) => (
+        {navColumns.map((col) => (
           <details key={col.id} className="site-header__mobile-group" open>
             <summary>{topLabel(col.topKey)}</summary>
             <div className="site-header__mobile-links">

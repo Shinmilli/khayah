@@ -1,0 +1,282 @@
+{
+  "version": 3,
+  "backgroundImageUrl": "",
+  "introColors": {
+    "kicker": "#b20838",
+    "title": "#333333",
+    "subtitle": "#777777",
+    "rotator": "#ffffff"
+  },
+  "intro": {
+    "ko": {
+      "kicker": "Impact",
+      "title": "나눔의 결실",
+      "subtitle": "함께 만든 희망의 열매들",
+      "rotator": [
+        "01. 투명하게 증명합니다",
+        "02. 현장의 변화를 우선합니다",
+        "03. 소중한 마음을 연결합니다"
+      ]
+    },
+    "en": {
+      "kicker": "Impact",
+      "title": "Impact of giving",
+      "subtitle": "Fruit of hope, grown together",
+      "rotator": [
+        "01. We prove it transparently",
+        "02. Change on the ground comes first",
+        "03. We connect generous hearts"
+      ]
+    }
+  },
+  "primaryCards": [
+    {
+      "id": "fund-use",
+      "colors": {
+        "cardBg": "#b20838",
+        "kicker": "#df84a1",
+        "title": "#ffffff",
+        "desc": "#ffffff",
+        "ctaBg": "#ffffff",
+        "ctaText": "#b20838",
+        "donutFill": "#ffd6e6",
+        "donutTrack": "#e96c9c",
+        "donutHole": "#b20838",
+        "donutValue": "#ffffff",
+        "donutSub": "#ffffff"
+      },
+      "locales": {
+        "ko": {
+          "kicker": "Our Work",
+          "title": "후원금은 이렇게 사용됩니다",
+          "desc": "Khayah는 후원금을 가장 가치 있는 일에 사용하기 위해 노력합니다.",
+          "ctaLabel": "자세히보기",
+          "ctaHref": "/about/financial-report",
+          "donut": {
+            "percent": 85.5,
+            "labelLines": [
+              "수혜된 아동의",
+              "교육지원"
+            ]
+          }
+        },
+        "en": {
+          "kicker": "Our Work",
+          "title": "How your donation is used",
+          "desc": "Khayah strives to use every gift where it creates the most value.",
+          "ctaLabel": "Learn more",
+          "ctaHref": "/about/financial-report",
+          "donut": {
+            "percent": 85.5,
+            "labelLines": [
+              "Education support",
+              "for children we serve"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "primary-c4bfe2db-6371-4d24-9b28-0eac63decd8f",
+      "colors": {
+        "cardBg": "#b20838",
+        "kicker": "#df84a1",
+        "title": "#ffffff",
+        "desc": "#ffffff",
+        "ctaBg": "#ffffff",
+        "ctaText": "#b20838",
+        "donutFill": "#ffd6e6",
+        "donutTrack": "#e96c9c",
+        "donutHole": "#b20838",
+        "donutValue": "#ffffff",
+        "donutSub": "#ffffff"
+      },
+      "locales": {
+        "ko": {
+          "kicker": "Our Work",
+          "title": "",
+          "desc": "",
+          "ctaLabel": "자세히보기",
+          "ctaHref": "",
+          "donut": {
+            "percent": 0,
+            "labelLines": []
+          }
+        },
+        "en": {
+          "kicker": "Our Work",
+          "title": "",
+          "desc": "",
+          "ctaLabel": "Learn more",
+          "ctaHref": "",
+          "donut": {
+            "percent": 0,
+            "labelLines": []
+          }
+        }
+      }
+    },
+    {
+      "id": "primary-9b7b0458-aaee-4ac2-823a-c51b81fe2ce5",
+      "colors": {
+        "cardBg": "#b20838",
+        "kicker": "#df84a1",
+        "title": "#ffffff",
+        "desc": "#ffffff",
+        "ctaBg": "#ffffff",
+        "ctaText": "#b20838",
+        "donutFill": "#ffd6e6",
+        "donutTrack": "#e96c9c",
+        "donutHole": "#b20838",
+        "donutValue": "#ffffff",
+        "donutSub": "#ffffff"
+      },
+      "locales": {
+        "ko": {
+          "kicker": "Our Work",
+          "title": "",
+          "desc": "",
+          "ctaLabel": "자세히보기",
+          "ctaHref": "",
+          "donut": {
+            "percent": 0,
+            "labelLines": []
+          }
+        },
+        "en": {
+          "kicker": "Our Work",
+          "title": "",
+          "desc": "",
+          "ctaLabel": "Learn more",
+          "ctaHref": "",
+          "donut": {
+            "percent": 0,
+            "labelLines": []
+          }
+        }
+      }
+    }
+  ],
+  "stats": [
+    {
+      "id": "participants",
+      "icon": "groups",
+      "colors": {
+        "cardBg": "#ffffff",
+        "label": "#555555",
+        "value": "#b20838",
+        "unit": "#b20838",
+        "iconBg": "#d4d4d4",
+        "iconColor": "#ffffff"
+      },
+      "locales": {
+        "ko": {
+          "label": "사업 참여자 수",
+          "value": "100,000",
+          "unit": "명"
+        },
+        "en": {
+          "label": "Program participants",
+          "value": "100,000",
+          "unit": ""
+        }
+      }
+    },
+    {
+      "id": "regions",
+      "icon": "location_on",
+      "colors": {
+        "cardBg": "#ffffff",
+        "label": "#555555",
+        "value": "#b20838",
+        "unit": "#b20838",
+        "iconBg": "#d4d4d4",
+        "iconColor": "#ffffff"
+      },
+      "locales": {
+        "ko": {
+          "label": "지원받은 지역/마을 수",
+          "value": "0000",
+          "unit": ""
+        },
+        "en": {
+          "label": "Communities / villages supported",
+          "value": "0000",
+          "unit": ""
+        }
+      }
+    },
+    {
+      "id": "facilities",
+      "icon": "local_shipping",
+      "colors": {
+        "cardBg": "#ffffff",
+        "label": "#555555",
+        "value": "#b20838",
+        "unit": "#b20838",
+        "iconBg": "#d4d4d4",
+        "iconColor": "#ffffff"
+      },
+      "locales": {
+        "ko": {
+          "label": "건설 지원 시설 혹은 제공한 카트 수",
+          "value": "0000",
+          "unit": ""
+        },
+        "en": {
+          "label": "Facilities built or carts provided",
+          "value": "0000",
+          "unit": ""
+        }
+      }
+    },
+    {
+      "id": "stat-c39fc474-0534-40f7-9882-54b7cf173aee",
+      "icon": "groups",
+      "colors": {
+        "cardBg": "#ffffff",
+        "label": "#555555",
+        "value": "#b20838",
+        "unit": "#b20838",
+        "iconBg": "#d4d4d4",
+        "iconColor": "#ffffff"
+      },
+      "locales": {
+        "ko": {
+          "label": "---",
+          "value": "000",
+          "unit": ""
+        },
+        "en": {
+          "label": "",
+          "value": "",
+          "unit": ""
+        }
+      }
+    },
+    {
+      "id": "stat-a71f7f23-7d17-4bc7-86e6-57ed8c4ca3b6",
+      "icon": "groups",
+      "colors": {
+        "cardBg": "#ffffff",
+        "label": "#555555",
+        "value": "#b20838",
+        "unit": "#b20838",
+        "iconBg": "#d4d4d4",
+        "iconColor": "#ffffff"
+      },
+      "locales": {
+        "ko": {
+          "label": "----",
+          "value": "0000",
+          "unit": ""
+        },
+        "en": {
+          "label": "",
+          "value": "",
+          "unit": ""
+        }
+      }
+    }
+  ]
+}

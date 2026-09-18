@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "top": {
+    "khayah": true,
+    "business": true,
+    "support": true,
+    "news": true
+  },
+  "links": {
+    "greeting": true,
+    "history": true,
+    "location": true,
+    "financialReport": true,
+    "aboutKhayah": true,
+    "ci": true,
+    "org": true,
+    "domestic": true,
+    "domesticEducation": true,
+    "overseas": true,
+    "overseasEducation": true,
+    "overseasVolunteer": true,
+    "advocacy": true,
+    "projects": true,
+    "supportGuide": true,
+    "announcements": true,
+    "activities": true,
+    "stories": true,
+    "newsletter": true,
+    "press": true,
+    "inquiry": true
+  }
+}

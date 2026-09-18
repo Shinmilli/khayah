@@ -76,8 +76,8 @@
   width: 100vw;
   transform: translateX(-50%);
   background:
-    radial-gradient(920px 420px at 30% 25%, rgba(178, 8, 56, 0.12), transparent 60%),
-    radial-gradient(860px 380px at 78% 70%, rgba(178, 8, 56, 0.08), transparent 62%),
+    radial-gradient(920px 420px at 30% 25%, rgba(var(--khayah-wash-warm), 0.18), transparent 60%),
+    radial-gradient(860px 380px at 78% 70%, rgba(var(--khayah-wash-rose), 0.12), transparent 62%),
     linear-gradient(180deg, rgba(0, 0, 0, 0.018), transparent 60%);
   z-index: -1;
 }

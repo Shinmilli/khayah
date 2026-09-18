@@ -6,6 +6,7 @@ import { Header } from './Header'
 import { SitePopup } from './SitePopup'
 import { LegacyPathRedirect } from '../i18n/LegacyPathRedirect'
 import { PageHeroBannerProvider, usePageHeroBannerImages } from '../features/page-hero/PageHeroBannerProvider'
+import { useScrollReveal } from '../hooks/useScrollReveal'
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -25,6 +26,7 @@ export function Layout() {
 
 function LayoutInner() {
   usePageHeroBannerImages()
+  useScrollReveal()
   return (
     <div id="Wrapper" className="site">
       <ScrollToTop />

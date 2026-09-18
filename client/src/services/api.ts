@@ -11,7 +11,13 @@ import type { ImpactStatsDocument, ImpactStatsLocaleContent } from '../features/
 import type { HeroBannerDocument, HeroBannerPublicDocument } from '../features/home/heroBannerTypes'
 import type { HistoryDocument, HistoryLocaleContent } from '../features/history/historyTypes'
 import type { NavMenuImagesDocument } from '../features/nav/navMenuImagesTypes'
+import type { NavVisibilityDocument } from '../features/nav/navVisibilityTypes'
 import type { PageHeroBannersDocument } from '../features/page-hero/pageHeroBannerTypes'
+import type {
+  BusinessHub,
+  BusinessHubCardsDocument,
+  BusinessHubCardsPublicDocument,
+} from '../features/business/businessHubCardsTypes'
 import type { Locale } from '../i18n/locale'
 import type { AdminRole, AdminUserPublic } from '../features/admin/adminRoles'
 
@@ -402,6 +408,31 @@ export async function adminPutNavMenuImages(doc: NavMenuImagesDocument): Promise
   return res.json()
 }
 
+export async function fetchNavVisibility(): Promise<NavVisibilityDocument> {
+  const res = await fetch(`${API_BASE}/nav-visibility`)
+  if (!res.ok) throw new Error('Failed to fetch nav visibility')
+  return res.json()
+}
+
+export async function adminFetchNavVisibility(): Promise<NavVisibilityDocument> {
+  const res = await apiFetch(`${API_BASE}/admin/nav-visibility`)
+  if (!res.ok) throw new Error('Failed to fetch nav visibility')
+  return res.json()
+}
+
+export async function adminPutNavVisibility(doc: NavVisibilityDocument): Promise<NavVisibilityDocument> {
+  const res = await apiFetch(`${API_BASE}/admin/nav-visibility`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(doc),
+  })
+  if (!res.ok) {
+    const text = await res.text().catch(() => '')
+    throw new Error(text || 'Failed to save nav visibility')
+  }
+  return res.json()
+}
+
 export async function fetchPageHeroBanners(): Promise<PageHeroBannersDocument> {
   const res = await fetch(`${API_BASE}/page-hero-banners`)
   if (!res.ok) throw new Error('Failed to fetch page hero banners')
@@ -423,6 +454,38 @@ export async function adminPutPageHeroBanners(doc: PageHeroBannersDocument): Pro
   if (!res.ok) {
     const text = await res.text().catch(() => '')
     throw new Error(text || 'Failed to save page hero banners')
+  }
+  return res.json()
+}
+
+export async function fetchBusinessHubCards(
+  locale: Locale = 'ko',
+  hub?: BusinessHub,
+): Promise<BusinessHubCardsPublicDocument> {
+  const params = new URLSearchParams({ lang: locale })
+  if (hub) params.set('hub', hub)
+  const res = await fetch(`${API_BASE}/business-hub-cards?${params}`)
+  if (!res.ok) throw new Error('Failed to fetch business hub cards')
+  return res.json()
+}
+
+export async function adminFetchBusinessHubCards(): Promise<BusinessHubCardsDocument> {
+  const res = await apiFetch(`${API_BASE}/admin/business-hub-cards`)
+  if (!res.ok) throw new Error('Failed to fetch business hub cards')
+  return res.json()
+}
+
+export async function adminPutBusinessHubCards(
+  doc: BusinessHubCardsDocument,
+): Promise<BusinessHubCardsDocument> {
+  const res = await apiFetch(`${API_BASE}/admin/business-hub-cards`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(doc),
+  })
+  if (!res.ok) {
+    const text = await res.text().catch(() => '')
+    throw new Error(text || 'Failed to save business hub cards')
   }
   return res.json()
 }

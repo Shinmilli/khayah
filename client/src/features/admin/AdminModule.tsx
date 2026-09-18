@@ -15,7 +15,9 @@ import { AdminInquiryFaqPage } from './pages/AdminInquiryFaqPage'
 import { AdminImpactStatsPage } from './pages/AdminImpactStatsPage'
 import { AdminHistoryPage } from './pages/AdminHistoryPage'
 import { AdminNavMenuImagesPage } from './pages/AdminNavMenuImagesPage'
+import { AdminNavVisibilityPage } from './pages/AdminNavVisibilityPage'
 import { AdminPageBannersPage } from './pages/AdminPageBannersPage'
+import { AdminBusinessHubCardsPage } from './pages/AdminBusinessHubCardsPage'
 
 export function AdminModule() {
   return (
@@ -33,9 +35,12 @@ export function AdminModule() {
               <Route path="content" element={<Navigate to="/admin/app/main-banner" replace />} />
               <Route path="financial-reports" element={<AdminFinancialReportsPage />} />
               <Route path="impact-stats" element={<AdminImpactStatsPage />} />
+              <Route path="impact-stats/:section" element={<Navigate to="/admin/app/impact-stats" replace />} />
               <Route path="history" element={<AdminHistoryPage />} />
               <Route path="nav-menu-images" element={<AdminNavMenuImagesPage />} />
+              <Route path="nav-visibility" element={<AdminNavVisibilityPage />} />
               <Route path="page-banners" element={<AdminPageBannersPage />} />
+              <Route path="business-hub-cards" element={<AdminBusinessHubCardsPage />} />
             </Route>
             <Route element={<AdminRequireRole roles={['super', 'inquiry']} />}>
               <Route path="inquiries" element={<AdminInquiriesPage />} />

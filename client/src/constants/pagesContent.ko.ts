@@ -278,45 +278,6 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
       </ol>
     </div>
   </section>
-
-  <section class="overseas-cta" aria-label="해외사업 하위 메뉴">
-    <div class="ov-wrap">
-      <div class="overseas-cards">
-        <div class="overseas-card">
-          <div class="overseas-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 3.4 2 8.4l10 5 10-5-10-5Zm-7.2 7.3v4.8c0 1.5 3.6 4 7.2 4s7.2-2.5 7.2-4v-4.8l-7.2 3.6-7.2-3.6Z"/>
-            </svg>
-          </div>
-          <h2 class="overseas-card__title">교육</h2>
-          <p class="overseas-card__desc">카야는 기초 학습 역량과 진로 탐색과 미래 역량을 함께 키우는 교육 프로그램을 운영하고, 현지 교육의 질을 개선합니다. 이를 통해 주민 스스로 변화의 필요성과 가능성을 인식하고 지역사회의 성장에 주도적으로 참여할 역량과 기반을 만들어갑니다.</p>
-          <a class="overseas-card__btn" href="/business/overseas/education">자세히 보기</a>
-        </div>
-
-        <div class="overseas-card">
-          <div class="overseas-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-              <path d="M9 11a4 4 0 1 0-4-4 4 4 0 0 0 4 4Zm6 0a3.5 3.5 0 1 0-3.5-3.5A3.5 3.5 0 0 0 15 11ZM9 13c-3.3 0-6 2.1-6 4.8V20h12v-2.2C15 15.1 12.3 13 9 13Zm6 .5c-.4 0-.8 0-1.2.1 1.8 1.1 3.2 2.8 3.2 4.7V20h4v-1.6c0-2.5-2.4-4.9-6-4.9Z"/>
-            </svg>
-          </div>
-          <h2 class="overseas-card__title">해외봉사단 파견</h2>
-          <p class="overseas-card__desc">카야는 국내 청년과 다양한 분야 경험과 열정을 가진 참여자들이 현지 지역사회 과제를 직접 이해하고, 함께 해결방안을 찾는 국제협력활동 기회를 제공합니다. 현지에 필요한 실천 모델을 제안하고 실행하며 지역사회의 지속가능한 변화와 참여자의 동반 성장이 함께 이뤄지도록 합니다.</p>
-          <a class="overseas-card__btn" href="/business/overseas/volunteer">자세히 보기</a>
-        </div>
-
-        <div class="overseas-card">
-          <div class="overseas-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-              <path d="M4 4h7.2L14 7.2H20v13H4Zm2 4v10h12V9.2h-5.2L10.6 6H6Z"/>
-            </svg>
-          </div>
-          <h2 class="overseas-card__title">진행사업</h2>
-          <p class="overseas-card__desc">카야의 모든 해외 프로젝트는 ‘사람’ 곧 참여자와 지역의 필요를 중심으로 지역과 주민의 변화를 이끌어 ‘궁극적 자립’에 이를 때까지를 목표로 연구하며 진행하고 있습니다.</p>
-          <a class="overseas-card__btn" href="/business/projects">자세히 보기</a>
-        </div>
-      </div>
-    </div>
-  </section>
 </div>
 `,
   },
@@ -689,39 +650,6 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
         </li>
       </ol>
 
-    </div>
-  </section>
-
-  <section class="domestic-cta" aria-label="국내사업 하위 메뉴">
-    <div class="dom-wrap">
-      <div class="domestic-cards">
-        <div class="domestic-card">
-          <div class="domestic-card__icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 3.4 2 8.4l10 5 10-5-10-5Zm-7.2 7.3v4.8c0 1.5 3.6 4 7.2 4s7.2-2.5 7.2-4v-4.8l-7.2 3.6-7.2-3.6Z"/>
-            </svg>
-          </div>
-          <h2 class="domestic-card__title">교육</h2>
-          <p class="domestic-card__desc">
-            카야는 소외된 이웃이 사회와 자연의 일원으로의 성취 방법과 가치를 지향하며 성장할 수 있도록 혁신적인 교육 사업을 진행합니다.
-          </p>
-          <a class="domestic-card__btn" href="/business/domestic/education">자세히 보기</a>
-        </div>
-        <div class="domestic-card">
-          <div class="domestic-card__icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" xmlns="http://www.w3.org/2000/svg">
-              <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
-              <circle cx="9" cy="7" r="4"/>
-              <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
-            </svg>
-          </div>
-          <h2 class="domestic-card__title">진행사업</h2>
-          <p class="domestic-card__desc">
-            카야의 모든 국내 프로젝트는 그 속에 ‘사람’과 ‘자연’ 그리고 ‘미래’가 모두 담기도록 연구하며 진행하고 있습니다.
-          </p>
-          <a class="domestic-card__btn" href="/business/projects">자세히 보기</a>
-        </div>
-      </div>
     </div>
   </section>
 </div>

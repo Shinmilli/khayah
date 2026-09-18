@@ -25,8 +25,8 @@
   width: 100vw;
   transform: translateX(-50%);
   background:
-    radial-gradient(920px 420px at 30% 25%, rgba(178, 8, 56, 0.12), transparent 60%),
-    radial-gradient(860px 380px at 78% 70%, rgba(178, 8, 56, 0.08), transparent 62%),
+    radial-gradient(920px 420px at 30% 25%, rgba(var(--khayah-wash-warm), 0.18), transparent 60%),
+    radial-gradient(860px 380px at 78% 70%, rgba(var(--khayah-wash-rose), 0.12), transparent 62%),
     linear-gradient(180deg, rgba(0, 0, 0, 0.018), transparent 60%);
   z-index: -1;
 }
@@ -132,29 +132,40 @@
   margin-top: 0;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(14px, 2vw, 22px);
+  gap: clamp(16px, 2.2vw, 24px);
+  align-items: stretch;
   width: 100%;
   box-sizing: border-box;
+}
+
+.overseas-cards[data-count="1"] {
+  grid-template-columns: 1fr;
+  max-width: 420px;
+  margin-inline: auto;
+}
+
+.overseas-cards[data-count="2"] {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .overseas-card {
   border: 0;
   border-radius: 0;
   background: #fff;
-  padding: 22px 20px 18px;
-  display: grid;
-  grid-template-rows: auto auto 1fr auto;
-  gap: 6px;
-  min-height: 280px;
-  box-sizing: border-box;
+  padding: 28px 24px 24px;
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-items: center;
   text-align: center;
+  min-height: 0;
+  height: 100%;
+  box-sizing: border-box;
 }
 
 .overseas-icon {
   width: 56px;
   height: 56px;
+  flex: none;
   border-radius: 999px;
   display: inline-flex;
   align-items: center;
@@ -170,19 +181,24 @@
 }
 
 .overseas-card__title {
-  margin: 0;
+  margin: 16px 0 0;
   font-size: 1.28rem;
   font-weight: 900;
   letter-spacing: -0.02em;
+  line-height: 1.35;
   color: var(--ov-text);
   width: 100%;
+  min-height: 1.35em;
+  word-break: keep-all;
 }
 
 .overseas-card__desc {
-  margin: 0;
+  margin: 12px 0 0;
   color: var(--ov-muted);
   line-height: 1.7;
   width: 100%;
+  flex: 1 1 auto;
+  word-break: keep-all;
 }
 
 .overseas-card__btn {
@@ -190,7 +206,9 @@
   align-items: center;
   justify-content: center;
   height: 40px;
-  padding: 0 14px;
+  padding: 0 16px;
+  margin-top: 20px;
+  margin-bottom: 0;
   border-radius: 0;
   border: 1px solid rgba(178, 8, 56, 0.25);
   background: rgba(178, 8, 56, 0.06);
@@ -199,8 +217,7 @@
   font-weight: 900;
   letter-spacing: -0.01em;
   width: fit-content;
-  margin-top: 6px;
-  margin-bottom: 12px;
+  flex: none;
 }
 
 .overseas-card__btn:hover,
@@ -209,8 +226,11 @@
 }
 
 @media (max-width: 1100px) {
-  .overseas-cards {
+  .overseas-cards,
+  .overseas-cards[data-count="1"],
+  .overseas-cards[data-count="2"] {
     grid-template-columns: 1fr;
+    max-width: none;
   }
 }
 

@@ -71,8 +71,8 @@
   height: 100%;
   transform: translateX(-50%);
   background:
-    radial-gradient(900px 400px at 28% 30%, rgba(178, 8, 56, 0.14), transparent 58%),
-    radial-gradient(820px 360px at 82% 72%, rgba(178, 8, 56, 0.09), transparent 60%),
+    radial-gradient(900px 400px at 28% 30%, rgba(var(--khayah-wash-warm), 0.20), transparent 58%),
+    radial-gradient(820px 360px at 82% 72%, rgba(var(--khayah-wash-rose), 0.13), transparent 60%),
     linear-gradient(180deg, rgba(0, 0, 0, 0.02), transparent 55%);
   z-index: 0;
 }
@@ -539,8 +539,8 @@
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(600px 280px at 20% 40%, rgba(178, 8, 56, 0.25), transparent 55%),
-    radial-gradient(500px 240px at 88% 60%, rgba(178, 8, 56, 0.12), transparent 50%);
+    radial-gradient(600px 280px at 20% 40%, rgba(var(--khayah-wash-warm), 0.32), transparent 55%),
+    radial-gradient(500px 240px at 88% 60%, rgba(var(--khayah-wash-rose), 0.16), transparent 50%);
   pointer-events: none;
 }
 
