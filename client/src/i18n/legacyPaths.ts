@@ -11,7 +11,8 @@ export const LEGACY_PATH_KEY_MAP: Record<string, string> = {
   '카야/핵심사업': PATH.aboutKhayah,
   '해외사업': PATH.businessOverseas,
   '해외사업/교육': PATH.businessOverseasEducation,
-  '해외사업/보건의료': PATH.businessOverseasHealth,
+  '해외사업/해외봉사단': PATH.businessOverseasVolunteer,
+  '해외사업/보건의료': PATH.businessOverseasVolunteer,
   '국내사업': PATH.businessDomestic,
   '국내사업/교육': PATH.businessDomesticEducation,
   '사업/옹호사업': PATH.businessAdvocacy,
@@ -69,6 +70,9 @@ export function legacyRedirectTarget(
   }
   if (pathKey === '카야/이사회-전문위원') {
     return { pathKey: PATH.aboutKhayah, search: '?tab=org', hash: hash || '#directors' }
+  }
+  if (pathKey === PATH.businessOverseasHealth) {
+    return { pathKey: PATH.businessOverseasVolunteer, search, hash }
   }
   const resolved = resolveLegacyPathKey(pathKey)
   if (!resolved || resolved === pathKey) return null

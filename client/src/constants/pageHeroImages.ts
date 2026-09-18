@@ -20,6 +20,7 @@ const BY_PATH: Record<string, string> = {
   [PATH.businessDomesticEducation]: '/images/banners/business-domestic.jpg',
   [PATH.businessOverseas]: '/images/banners/business-overseas.jpg',
   [PATH.businessOverseasEducation]: '/images/banners/business-overseas.jpg',
+  [PATH.businessOverseasVolunteer]: '/images/banners/business-overseas.jpg',
   [PATH.businessOverseasHealth]: '/images/banners/business-overseas.jpg',
   [PATH.businessAdvocacy]: '/images/banners/business-advocacy.jpg',
   [PATH.businessProjects]: '/images/banners/business-projects.jpg',

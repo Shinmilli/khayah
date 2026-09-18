@@ -55,7 +55,7 @@ const NAV_COLUMNS: NavColumn[] = [
         to: '/business/overseas',
         children: [
           { key: 'overseasEducation', to: '/business/overseas/education' },
-          { key: 'overseasHealth', to: '/business/overseas/health-care' },
+          { key: 'overseasVolunteer', to: '/business/overseas/volunteer' },
         ],
       },
       { key: 'advocacy', to: '/business/advocacy' },

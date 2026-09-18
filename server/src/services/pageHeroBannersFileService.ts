@@ -23,6 +23,7 @@ const LEGACY_BY_SECTION: Record<PageHeroBannerKey, string[]> = {
     'business/projects',
     'business/domestic/education',
     'business/overseas/education',
+    'business/overseas/volunteer',
     'business/overseas/health-care',
   ],
   support: ['support/guide', 'support/apply'],

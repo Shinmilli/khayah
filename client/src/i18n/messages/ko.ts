@@ -13,6 +13,7 @@ export type NavLinkKey =
   | 'overseas'
   | 'overseasEducation'
   | 'overseasHealth'
+  | 'overseasVolunteer'
   | 'advocacy'
   | 'projects'
   | 'supportGuide'
@@ -258,6 +259,7 @@ export type Messages = {
     }
     projects: {
       title: string
+      lead: string
       filterAria: string
       listAria: string
       loading: string
@@ -319,7 +321,8 @@ export const koMessages: Messages = {
       overseas: '해외사업',
       overseasEducation: '교육',
       overseasHealth: '보건의료',
-      advocacy: '옹호사업',
+      overseasVolunteer: '해외봉사단',
+      advocacy: '연구사업',
       projects: '진행사업',
       supportGuide: '후원 안내',
       stories: '스토리',
@@ -351,7 +354,7 @@ export const koMessages: Messages = {
       slideLabel: (n: number) => `${n}번 슬라이드`,
       slidesNavAria: '히어로 슬라이드',
       bizStrip: '사업 분야',
-      bizLabels: ['국내사업', '해외사업', '옹호사업', '진행사업'],
+      bizLabels: ['국내사업', '해외사업', '연구사업', '진행사업'],
       slides: [
         {
           alt: '아이들 이미지',
@@ -446,7 +449,7 @@ export const koMessages: Messages = {
     storyCta: {
       domestic: '국내 스토리 확인하기',
       overseas: '해외 스토리 확인하기',
-      advocacy: '옹호 스토리 확인하기',
+      advocacy: '연구사업 스토리 확인하기',
       support: '지원 스토리 확인하기',
     },
     supportGuide: {
@@ -593,6 +596,7 @@ export const koMessages: Messages = {
     },
     projects: {
       title: '진행사업',
+      lead: '국내외 현장에서 이어지는 카야의 활동과 사업별 이야기를 만나보세요.',
       filterAria: '진행사업 지역 필터',
       listAria: '진행사업 목록',
       loading: '불러오는 중…',

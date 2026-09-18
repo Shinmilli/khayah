@@ -11,6 +11,7 @@ export const PATH = {
   aboutFinancialReport: 'about/financial-report',
   businessOverseas: 'business/overseas',
   businessOverseasEducation: 'business/overseas/education',
+  businessOverseasVolunteer: 'business/overseas/volunteer',
   businessOverseasHealth: 'business/overseas/health-care',
   businessDomestic: 'business/domestic',
   businessDomesticEducation: 'business/domestic/education',

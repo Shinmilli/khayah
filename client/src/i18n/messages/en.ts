@@ -30,7 +30,8 @@ export const enMessages: Messages = {
       overseas: 'Overseas programs',
       overseasEducation: 'Education',
       overseasHealth: 'Health care',
-      advocacy: 'Advocacy',
+      overseasVolunteer: 'Overseas volunteers',
+      advocacy: 'Research',
       projects: 'Active projects',
       supportGuide: 'How to support',
       stories: 'Stories',
@@ -61,7 +62,7 @@ export const enMessages: Messages = {
       slideLabel: (n: number) => `Slide ${n}`,
       slidesNavAria: 'Hero slides',
       bizStrip: 'Our work',
-      bizLabels: ['Domestic', 'Overseas', 'Advocacy', 'Projects'],
+      bizLabels: ['Domestic', 'Overseas', 'Research', 'Projects'],
       slides: [
         {
           alt: 'Children',
@@ -157,7 +158,7 @@ export const enMessages: Messages = {
     storyCta: {
       domestic: 'View domestic stories',
       overseas: 'View overseas stories',
-      advocacy: 'View advocacy stories',
+      advocacy: 'View research stories',
       support: 'View project stories',
     },
     supportGuide: {
@@ -304,6 +305,7 @@ export const enMessages: Messages = {
     },
     projects: {
       title: 'Active projects',
+      lead: 'Explore Khayah’s ongoing work in Korea and overseas, and the stories behind each program.',
       filterAria: 'Filter by region',
       listAria: 'Project list',
       loading: 'Loading…',

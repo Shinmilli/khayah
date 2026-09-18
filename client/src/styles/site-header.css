@@ -541,7 +541,7 @@
   border-left: 0;
 }
 
-/* 3단(국내·해외 하위: 교육, 보건의료 등) — 상위 구분보다 얇게 */
+/* 3단(국내·해외 하위: 교육, 해외봉사단 등) — 상위 구분보다 얇게 */
 .site-header__mobile-sublinks a {
   font-weight: 400;
   font-size: 1.08rem;

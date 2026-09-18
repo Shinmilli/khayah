@@ -71,8 +71,9 @@ function labelForSlug(seg: string, messages: Messages): string {
       return nav.links.projects
     case 'education':
       return nav.links.domesticEducation
+    case 'volunteer':
     case 'health-care':
-      return nav.links.overseasHealth
+      return nav.links.overseasVolunteer
     case 'support':
       return nav.top.support
     case 'guide':

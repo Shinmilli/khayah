@@ -218,9 +218,9 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
   <section class="overseas-hero">
     <div class="ov-wrap">
       <p class="overseas-kicker">Overseas Programs</p>
-      <h1 class="overseas-title">Khayah works so that marginalized neighbors around the world<br />can become agents of change.</h1>
+      <h1 class="overseas-title">Together with local communities, we expand educational opportunities<br />and help build the foundations for communities to grow on their own.</h1>
       <p class="overseas-lead">
-        Khayah goes beyond simple aid, pursuing development cooperation in which we learn and act together with local communities.
+        We learn and act together with local residents, pursuing development cooperation in which communities themselves grow the power to change.
       </p>
       <div class="overseas-divider" aria-hidden="true"></div>
     </div>
@@ -234,7 +234,8 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
           <div>
             <h2 class="overseas-h2">Participation &amp; Cooperation</h2>
             <p class="overseas-desc">
-              Rather than a donor-beneficiary relationship, we learn from one another through participation and cooperation.
+              Khayah respects local residents not as aid recipients, but as partners in participation and cooperation.
+              We share experience and knowledge, and together create the change communities need.
             </p>
           </div>
         </li>
@@ -245,7 +246,7 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
             <h2 class="overseas-h2">Integration with Local Communities</h2>
             <p class="overseas-desc">
               True change is possible only when local residents' will to participate and their right understanding of that change are supported.
-              For this reason, Khayah makes integration with local communities an essential step in every project and fosters their voluntary participation.
+              For this reason, Khayah makes integration with local communities — understanding the lives of the region and its people, and building dialogue and trust — an essential step in every project. We set and share the direction of our work together, and foster their voluntary participation.
             </p>
           </div>
         </li>
@@ -255,7 +256,7 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
           <div>
             <h2 class="overseas-h2">Participatory Methodology</h2>
             <p class="overseas-desc">
-              We use participatory methods that involve local residents throughout the entire project cycle — research, analysis, planning, implementation, and monitoring &amp; evaluation.
+              We involve residents throughout the entire project cycle (research, analysis, planning, implementation, and monitoring &amp; evaluation), reflect their experience and opinions in the work, and review results and improvements together.
             </p>
           </div>
         </li>
@@ -265,7 +266,7 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
           <div>
             <h2 class="overseas-h2">Sustainability</h2>
             <p class="overseas-desc">
-              We study the full project cycle and seek answers so that development cooperation can be sustainable.
+              We study the full project cycle and seek answers so that development cooperation can continue as sustainable operations within the community, based on local resources and partnership systems.
             </p>
           </div>
         </li>
@@ -283,19 +284,30 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
             </svg>
           </div>
           <h2 class="overseas-card__title">Education</h2>
-          <p class="overseas-card__desc">Khayah runs various education programs to build a foundation of local residents' will to participate and a right understanding of change.</p>
+          <p class="overseas-card__desc">Khayah runs education programs that build foundational learning, career exploration, and future skills together, and improves the quality of local education. Through this, residents recognize the need and possibility of change, and we help create the capacity and foundation for them to take the lead in community growth.</p>
           <a class="overseas-card__btn" href="/business/overseas/education">Learn more</a>
         </div>
 
         <div class="overseas-card">
           <div class="overseas-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20Zm1.1 5.6h-2.2v3.3H7.6v2.2h3.3v3.3h2.2v-3.3h3.3v-2.2h-3.3V7.6Z"/>
+              <path d="M9 11a4 4 0 1 0-4-4 4 4 0 0 0 4 4Zm6 0a3.5 3.5 0 1 0-3.5-3.5A3.5 3.5 0 0 0 15 11ZM9 13c-3.3 0-6 2.1-6 4.8V20h12v-2.2C15 15.1 12.3 13 9 13Zm6 .5c-.4 0-.8 0-1.2.1 1.8 1.1 3.2 2.8 3.2 4.7V20h4v-1.6c0-2.5-2.4-4.9-6-4.9Z"/>
             </svg>
           </div>
-          <h2 class="overseas-card__title">Health Care</h2>
-          <p class="overseas-card__desc">Khayah focuses on building residents' capacity to take the lead in improving nutrition, public hygiene, and housing conditions.</p>
-          <a class="overseas-card__btn" href="/business/overseas/health-care">Learn more</a>
+          <h2 class="overseas-card__title">Overseas Volunteer Dispatch</h2>
+          <p class="overseas-card__desc">Khayah offers Korean youth and participants with diverse experience and passion the chance to understand local community challenges firsthand and seek solutions together through international cooperation. We propose and implement practical models the field needs, so that sustainable community change and participants' growth happen together.</p>
+          <a class="overseas-card__btn" href="/business/overseas/volunteer">Learn more</a>
+        </div>
+
+        <div class="overseas-card">
+          <div class="overseas-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <path d="M4 4h7.2L14 7.2H20v13H4Zm2 4v10h12V9.2h-5.2L10.6 6H6Z"/>
+            </svg>
+          </div>
+          <h2 class="overseas-card__title">Active Projects</h2>
+          <p class="overseas-card__desc">Every Khayah overseas project centers on people — participants and the needs of the region — and is researched and carried out with the goal of leading change for communities and residents until they reach ultimate self-reliance.</p>
+          <a class="overseas-card__btn" href="/business/projects">Learn more</a>
         </div>
       </div>
     </div>
@@ -322,35 +334,31 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
   <section class="ov-edu-section">
     <div class="ov-edu-wrap">
       <div class="ov-edu-head">
-        <h2 class="ov-edu-head__ko">Foundational\nCapacity Building</h2>
+        <div class="ov-edu-head__titles">
+          <p class="ov-edu-head__kicker">Foundational Capacity Building</p>
+          <h2 class="ov-edu-head__ko">Foundational\nCapacity Building</h2>
+        </div>
         <div>
           <p class="ov-edu-head__en">Power to accept change</p>
           <p class="ov-edu-head__p">
             For a person or community to change, they must first have the capacity to accept that change.
-            Khayah focuses on strengthening the foundational capacity of all participants through diverse programs,
-            which becomes a great source of strength in the many hardships they face in life.
+            Khayah supports well-rounded growth by combining foundational knowledge — such as mathematics, science, English, and Korean — with inner-growth programs based on self-understanding and community understanding, so that people can live as agents of their own lives.
           </p>
         </div>
       </div>
 
       <div class="ov-edu-table" role="table" aria-label="Foundational capacity building components">
-        <div class="ov-edu-table__row" role="rowgroup">
+        <div class="ov-edu-table__row ov-edu-table__row--2" role="rowgroup">
+          <div class="ov-edu-cell" role="row">
+            <p class="ov-edu-cell__head" role="columnheader">Foundational Learning</p>
+            <p class="ov-edu-cell__p" role="cell">
+              Essential knowledge for advancing to deeper study: Korean (reading/speaking/writing), English, mathematics, science, and more
+            </p>
+          </div>
           <div class="ov-edu-cell" role="row">
             <p class="ov-edu-cell__head" role="columnheader">Life Skills</p>
             <p class="ov-edu-cell__p" role="cell">
-              Basic education in communication, interpersonal relations, financial management, health care, problem-solving, and other essentials for daily life
-            </p>
-          </div>
-          <div class="ov-edu-cell" role="row">
-            <p class="ov-edu-cell__head" role="columnheader">Reading Club (Dream Attic)</p>
-            <p class="ov-edu-cell__p" role="cell">
-              Participants read books provided through Life Skills education, discuss together, and broaden their thinking through mutual learning
-            </p>
-          </div>
-          <div class="ov-edu-cell" role="row">
-            <p class="ov-edu-cell__head" role="columnheader">Mentoring</p>
-            <p class="ov-edu-cell__p" role="cell">
-              Drawing on a pool of local experts who work with Khayah, we provide diverse mentoring for youth in the fields they need
+              Communication, interpersonal relations, financial management, health care, logical/critical/creative thinking, problem-solving, and more
             </p>
           </div>
         </div>
@@ -373,33 +381,45 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
     </div>
   </section>
 
-  <section class="ov-edu-section" style="background:rgba(0,0,0,0.03)">
+  <section class="ov-edu-section ov-edu-section--surface">
     <div class="ov-edu-wrap">
       <div class="ov-edu-head">
-        <h2 class="ov-edu-head__ko">Tailored\nVocational Training</h2>
+        <div class="ov-edu-head__titles">
+          <p class="ov-edu-head__kicker">Future-Oriented Education</p>
+          <h2 class="ov-edu-head__ko">Future-Oriented\nEducation</h2>
+        </div>
         <div>
           <p class="ov-edu-head__en">Dream Seekers</p>
           <p class="ov-edu-head__p">
-            Khayah designs tailored vocational skills programs after thorough research and analysis,
-            taking into account the business environment in the supported region while respecting the diversity of local residents.
+            Khayah aims to raise future leaders who can drive community change among the regions and participants where we work,
+            and runs growth programs shaped by analysis of what the times, global currents, and each country and community will need.
           </p>
         </div>
       </div>
 
-      <div class="ov-edu-table" role="table" aria-label="Tailored vocational training components">
-        <div class="ov-edu-table__row ov-edu-table__row--2" role="rowgroup">
+      <div class="ov-edu-table" role="table" aria-label="Future-oriented education components">
+        <div class="ov-edu-table__row" role="rowgroup">
           <div class="ov-edu-cell" role="row">
-            <p class="ov-edu-cell__head" role="columnheader">Participant-Tailored</p>
+            <p class="ov-edu-cell__head" role="columnheader">Tailored Vocational Training</p>
+            <p class="ov-edu-cell__sub">Participant-tailored</p>
             <p class="ov-edu-cell__p" role="cell">
-              Youth who have never had the chance to think about how to live or what career to choose, due to lack of proper education,
-              are given opportunities through diverse programs to discover their aptitudes and prepare for work
+              Youth who have never had the chance to think about how to live or what career to choose, due to lack of proper education, are given opportunities through diverse programs to discover their aptitudes and prepare for work.
+            </p>
+            <p class="ov-edu-cell__sub">Enterprise-tailored</p>
+            <p class="ov-edu-cell__p" role="cell">
+              In partnership with promising industries and companies in the project country and region, we connect people in poverty with jobs and companies with trained skilled workers, contributing to local economic development.
             </p>
           </div>
           <div class="ov-edu-cell" role="row">
-            <p class="ov-edu-cell__head" role="columnheader">Enterprise-Tailored</p>
+            <p class="ov-edu-cell__head" role="columnheader">Mentoring</p>
             <p class="ov-edu-cell__p" role="cell">
-              In partnership with promising industries and companies in the project country and region,
-              we connect the poor with jobs and companies with trained skilled workers, contributing to local economic development
+              Drawing on a pool of local experts who work with Khayah, we provide diverse mentoring for adolescents and young adults in the fields they want to pursue.
+            </p>
+          </div>
+          <div class="ov-edu-cell" role="row">
+            <p class="ov-edu-cell__head" role="columnheader">STEM Education</p>
+            <p class="ov-edu-cell__p" role="cell">
+              Through science, technology, engineering, and mathematics, we support the growth of future talent that fits both local communities and global currents.
             </p>
           </div>
         </div>
@@ -425,28 +445,45 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
   <section class="ov-edu-section">
     <div class="ov-edu-wrap">
       <div class="ov-edu-head">
-        <h2 class="ov-edu-head__ko">Education Quality\nImprovement</h2>
+        <div class="ov-edu-head__titles">
+          <p class="ov-edu-head__kicker">Education Quality Improvement</p>
+          <h2 class="ov-edu-head__ko">Education Quality\nImprovement</h2>
+        </div>
         <div>
-          <p class="ov-edu-head__en">Better learning environment</p>
+          <p class="ov-edu-head__en">EQUIP (Education Quality Improvement Program)</p>
           <p class="ov-edu-head__p">
-            The quality of learning is connected to the environment beyond the classroom.
-            Khayah supports education suited to local conditions so that students and teachers can learn and grow in better environments.
+            As part of education quality improvement, Khayah supports HDCS (Human Development &amp; Community Services), a Nepal NGO that visits schools in mountain regions and works to share sound teaching methods with local teachers.
           </p>
         </div>
       </div>
 
-      <div class="ov-edu-quality" aria-label="Education quality improvement examples">
-        <div class="ov-edu-qcard">
-          <h3 class="ov-edu-qcard__title">Learning Environment Improvement</h3>
-          <p class="ov-edu-qcard__p">
-            We assess basic infrastructure in classrooms and learning spaces and work together on improvements that can be sustained on the ground.
-          </p>
-        </div>
-        <div class="ov-edu-qcard">
-          <h3 class="ov-edu-qcard__title">Teaching Capacity Building</h3>
-          <p class="ov-edu-qcard__p">
-            We strengthen the capacity of teachers and learning support staff and provide materials and methods so that student-centered lessons can spread.
-          </p>
+      <div class="ov-edu-table" role="table" aria-label="Education quality improvement components">
+        <div class="ov-edu-table__row" role="rowgroup">
+          <div class="ov-edu-cell" role="row">
+            <p class="ov-edu-cell__head" role="columnheader">Teacher Pedagogy Training</p>
+            <ul class="ov-edu-cell__list">
+              <li>School leaders and leadership (leadership and management education)</li>
+              <li>Teacher education (pedagogy centered on creative and analytical thinking)</li>
+              <li>Parents (awareness education)</li>
+            </ul>
+          </div>
+          <div class="ov-edu-cell" role="row">
+            <p class="ov-edu-cell__head" role="columnheader">Education Support</p>
+            <ul class="ov-edu-cell__list">
+              <li>Reading education (Classroom Reading)</li>
+              <li>Arts and physical education (PE/art/music, and more)</li>
+              <li>School farm education</li>
+              <li>Scholarship support</li>
+            </ul>
+          </div>
+          <div class="ov-edu-cell" role="row">
+            <p class="ov-edu-cell__head" role="columnheader">Health, Hygiene &amp; Adolescent Sexual Health Education</p>
+            <ul class="ov-edu-cell__list">
+              <li>Awareness education for teachers and parents</li>
+              <li>Youth education and peer-group activities</li>
+              <li>Installation and repair of sanitation facilities such as toilets and water supply</li>
+            </ul>
+          </div>
         </div>
       </div>
 
@@ -469,18 +506,17 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
 </div>
 `,
   },
-  'business/overseas/health-care': {
-    title: 'Health Care',
+  'business/overseas/volunteer': {
+    title: 'Overseas Volunteer Dispatch',
     content: `
 <div class="ov-health-page">
   <section class="ov-health-hero">
     <div class="ov-health-wrap">
-      <p class="ov-health-kicker">Overseas Programs · Health Care</p>
-      <h1 class="ov-health-title">We build residents' health capacity to improve nutrition,<br />public hygiene, and housing conditions.</h1>
+      <p class="ov-health-kicker">Overseas Programs · Volunteers</p>
+      <h1 class="ov-health-title">We build residents’ health capacity<br />for better nutrition, hygiene, and living environments.</h1>
       <p class="ov-health-desc">
-        The regions Khayah supports are urban slum villages with extremely poor health environments even among developing countries.
-        Rather than one-time medical service support, Khayah focuses on community-based participatory health care projects
-        that guide residents to create clean health environments themselves — seeking more fundamental solutions.
+        The communities Khayah supports are among the most underserved villages in developing countries, with very poor health conditions.
+        Rather than one-off medical services, we focus on participatory community health-care projects that help residents create a cleaner health environment themselves — a more fundamental solution.
       </p>
       <div class="ov-health-divider" aria-hidden="true"></div>
     </div>
@@ -489,13 +525,16 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
   <section class="ovh-block ovh-block--ltr">
     <div class="ov-health-wrap">
       <div class="ovh-block__head ovh-block__head--cols-4">
-        <h2 class="ovh-block__title">Community-Based\nParticipatory\nHealth Care</h2>
+        <div class="ovh-block__title-wrap">
+          <p class="ovh-block__en">Community-Based Health Care</p>
+          <h2 class="ovh-block__title">Community-Based\nParticipatory\nHealth Care</h2>
+        </div>
         <p class="ovh-block__desc">
           Building local residents' capacity for self-care through health promotion activities by community organizations linked to primary health care facilities
         </p>
       </div>
 
-      <div class="ovh-cards ovh-cards--scroll" aria-label="Key activities" tabindex="0">
+      <div class="ovh-cards ovh-cards--scroll" aria-label="Key activities">
         <div class="ovh-card">
           <div class="ovh-card__icon" aria-hidden="true">
             <svg viewBox="0 0 64 64" fill="currentColor"><path d="M32 16c-2-4-7-5-12-3-3 1-5 4-5 8 0 1 0 2 1 3-2 1-4 4-5 7-2 4-2 9-1 14 1 7 6 13 11 13 2 0 3-1 5-1s2 1 5 1c5 0 10-6 11-13 1-5 1-10-1-14-1-3-3-6-5-7 1-1 1-2 1-3 0-4-2-7-5-8-5-2-10-1-12 3z"/><path d="M30 14c-1-3-1-5 0-7 2-1 4-1 5 1 1 2 0 4-1 6-1 1-3 1-4 0z"/></svg>
@@ -518,7 +557,7 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
           <div class="ovh-card__icon" aria-hidden="true">
             <svg viewBox="0 0 64 64" fill="currentColor"><path d="M32 4 8 14v18c0 14 10 24 24 28 14-4 24-14 24-28V14zm-3 16h6v8h8v6h-8v8h-6v-8h-8v-6h8z"/></svg>
           </div>
-          <p class="ovh-card__label">Region-specific disease prevention &amp; management</p>
+          <p class="ovh-card__label">Prevention and management of major local diseases</p>
         </div>
       </div>
     </div>
@@ -527,8 +566,11 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
   <section class="ovh-block ovh-block--rtl ovh-block--alt">
     <div class="ov-health-wrap">
       <div class="ovh-block__head ovh-block__head--cols-5">
-        <p class="ovh-block__desc">We run programs to reduce maternal and infant mortality rates.</p>
-        <h2 class="ovh-block__title">Maternal &amp; Child Health</h2>
+        <p class="ovh-block__desc">We run programs to reduce maternal and infant mortality.</p>
+        <div class="ovh-block__title-wrap">
+          <p class="ovh-block__en">Maternal and Child Health</p>
+          <h2 class="ovh-block__title">Maternal and Child Health</h2>
+        </div>
       </div>
 
       <div class="ovh-cards ovh-cards--cols-5 ovh-cards--white" aria-label="Key activities">
@@ -536,17 +578,17 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
           <div class="ovh-card__icon" aria-hidden="true">
             <svg viewBox="0 0 64 64" fill="currentColor"><circle cx="32" cy="12" r="6"/><path d="M40 26c0-3-3-6-8-6s-8 3-8 6v6c-3 2-6 6-6 12 0 5 3 8 6 8v8h16v-8c3 0 6-3 6-8 0-6-3-10-6-12z"/></svg>
           </div>
-          <p class="ovh-card__label">Prenatal &amp; postnatal care</p>
+          <p class="ovh-card__label">Antenatal and postnatal care</p>
         </div>
         <div class="ovh-card">
           <div class="ovh-card__icon" aria-hidden="true">
             <svg viewBox="0 0 64 64" fill="currentColor"><path d="M32 56C18 46 6 36 6 22c0-7 5-12 12-12 6 0 10 4 14 10 4-6 8-10 14-10 7 0 12 5 12 12 0 14-12 24-26 34z"/><circle cx="22" cy="22" r="3" fill="#fff"/><circle cx="42" cy="22" r="3" fill="#fff"/></svg>
           </div>
-          <p class="ovh-card__label">Family planning &amp; reproductive health</p>
+          <p class="ovh-card__label">Family planning and reproductive health</p>
         </div>
         <div class="ovh-card">
           <div class="ovh-card__icon" aria-hidden="true">
-            <svg viewBox="0 0 64 64" fill="currentColor"><path d="M8 56V22l24-12 24 12v34H40V40H24v16zm21-26h6v6h6v6h-6v6h-6v-6h-6v-6h6z"/></svg>
+            <svg viewBox="0 0 64 64" fill="currentColor"><path d="M32 8 8 28v28h18V40h12v16h18V28z"/></svg>
           </div>
           <p class="ovh-card__label">Support for facility-based delivery</p>
         </div>
@@ -554,13 +596,13 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
           <div class="ovh-card__icon" aria-hidden="true">
             <svg viewBox="0 0 64 64" fill="currentColor"><path d="M22 4h20v8h-2v6c4 2 6 6 6 12v24c0 4-2 6-6 6H24c-4 0-6-2-6-6V30c0-6 2-10 6-12v-6h-2zm6 8v8h8v-8zm-4 18v6h16v-6zm0 12v6h16v-6z"/></svg>
           </div>
-          <p class="ovh-card__label">Nutrition improvement for mothers &amp; infants</p>
+          <p class="ovh-card__label">Nutrition for mothers, infants, and young children</p>
         </div>
         <div class="ovh-card">
           <div class="ovh-card__icon" aria-hidden="true">
             <svg viewBox="0 0 64 64" fill="currentColor"><path d="M48 4 44 8l-4-4-4 4 4 4-20 20-4-2-4 4 14 14 4-4-2-4 20-20 4 4 4-4-4-4 4-4zM12 46l-6 6 4 4 6-6z"/></svg>
           </div>
-          <p class="ovh-card__label">Infant immunization &amp; health management education</p>
+          <p class="ovh-card__label">Infant immunization and health management education</p>
         </div>
       </div>
     </div>
@@ -569,7 +611,10 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
   <section class="ovh-block ovh-block--center">
     <div class="ov-health-wrap">
       <div class="ovh-block__head">
-        <h2 class="ovh-block__title">School Health</h2>
+        <div class="ovh-block__title-wrap">
+          <p class="ovh-block__en">School Health</p>
+          <h2 class="ovh-block__title">School Health</h2>
+        </div>
         <p class="ovh-block__desc">
           We run school-based health activities for healthy physical development and proper eating habits<br />among school-age children and adolescents.
         </p>
@@ -577,11 +622,12 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
 
       <ol class="ovh-numlist" aria-label="School health key activities">
         <li class="ovh-numlist__item"><span class="ovh-numlist__label">Physical examinations</span></li>
-        <li class="ovh-numlist__item"><span class="ovh-numlist__label">Hygiene &amp; basic health education</span></li>
+        <li class="ovh-numlist__item"><span class="ovh-numlist__label">Hygiene and basic health education</span></li>
         <li class="ovh-numlist__item"><span class="ovh-numlist__label">Adolescent sexual health education</span></li>
-        <li class="ovh-numlist__item"><span class="ovh-numlist__label">Health seminars for parents &amp; teachers</span></li>
-        <li class="ovh-numlist__item"><span class="ovh-numlist__label">Health booklet development &amp; distribution</span></li>
-        <li class="ovh-numlist__item"><span class="ovh-numlist__label">Physical activity support · Health Scout wellness programs</span></li>
+        <li class="ovh-numlist__item"><span class="ovh-numlist__label">Health seminars for parents and teachers</span></li>
+        <li class="ovh-numlist__item"><span class="ovh-numlist__label">Health booklet development and distribution</span></li>
+        <li class="ovh-numlist__item"><span class="ovh-numlist__label">Physical activity support</span></li>
+        <li class="ovh-numlist__item"><span class="ovh-numlist__label">Health promotion through Health Scout organizations</span></li>
       </ol>
     </div>
   </section>
@@ -595,7 +641,7 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
   <section class="domestic-hero">
     <div class="dom-wrap">
       <p class="domestic-kicker">Domestic Programs</p>
-      <h1 class="domestic-title">Khayah works so that marginalized neighbors across Korea<br />can become agents of change.</h1>
+      <h1 class="domestic-title">Khayah connects opportunities for learning and practice,<br />walking with our neighbors as they lead change in their own lives and communities.</h1>
       <p class="domestic-lead">
         We connect education and support needed in domestic communities, working together so that participants' voices lead to local change.
       </p>
@@ -621,7 +667,7 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
           <div class="domestic-body">
             <h2 class="domestic-h2">Human-Centered &amp; Eco-Friendly Education</h2>
             <p class="domestic-desc">
-              We honor human dignity while remembering that humans are also part of nature. Khayah rejects frameworks that treat people as resources or tools, and all projects are developed with environmental protection at their foundation.
+              Khayah respects people as dignified agents, not as instruments of development. In every program we consider the present and future of local communities and the natural environment, and we reject indiscriminate development that does not coexist with ecosystems. We practice education in which human growth and nature’s sustainability go together.
             </p>
           </div>
         </li>
@@ -629,9 +675,9 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
         <li class="domestic-item">
           <div class="domestic-num" aria-hidden="true">03</div>
           <div class="domestic-body">
-            <h2 class="domestic-h2">Linking Domestic Programs to Overseas Development Cooperation</h2>
+            <h2 class="domestic-h2">Development Cooperation from Korea to the World</h2>
             <p class="domestic-desc">
-              Programs such as skills and entrepreneurship training for migrant workers and first steps in social business for North and South Korean youth connect to overseas development cooperation — equipping participants with socially valuable skills and entrepreneurship that can contribute to local development when they work in developing countries.
+              Through career exploration and capacity building, social entrepreneurship and self-reliance, and climate and environment education, we connect experience and expertise built in Korea to overseas development cooperation. We work so that what participants learn — adolescents and youth, migrant workers, North Korean defector youth, and others — can be applied to each region’s social and cultural context and needs, and can contribute to local communities.
             </p>
           </div>
         </li>
@@ -655,6 +701,20 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
           </p>
           <a class="domestic-card__btn" href="/business/domestic/education">Learn more</a>
         </div>
+        <div class="domestic-card">
+          <div class="domestic-card__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" xmlns="http://www.w3.org/2000/svg">
+              <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+            </svg>
+          </div>
+          <h2 class="domestic-card__title">Active projects</h2>
+          <p class="domestic-card__desc">
+            Every domestic Khayah project is researched and carried out so that ‘people,’ ‘nature,’ and the ‘future’ are all present within it.
+          </p>
+          <a class="domestic-card__btn" href="/business/projects">Learn more</a>
+        </div>
       </div>
     </div>
   </section>
@@ -668,10 +728,9 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
   <section class="edu-ref-hero">
     <div class="edu-wrap">
       <p class="edu-ref-hero__kicker">Domestic Programs · Education</p>
-      <h1 class="edu-ref-hero__title">We provide diverse education programs<br />so our neighbors can carry their dreams and hope forward.</h1>
+      <h1 class="edu-ref-hero__title">Through education, Khayah helps create both<br />individual growth and community transformation.</h1>
       <p class="edu-ref-hero__desc">
-        Khayah seeks to create both individual growth and community transformation through education.
-        For migrant workers, North Korean defector youth, adolescents, and many other neighbors in Korea,
+        For migrant workers, North Korean defector youth, adolescents, and many other neighbors,
         we offer education and experiential opportunities rooted in social value so they can build their capacity and share what they learn.
       </p>
       <div class="edu-divider" aria-hidden="true"></div>
@@ -683,16 +742,17 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
       <div class="edu-ref-grid">
         <div>
           <p class="edu-ref-label"><span class="edu-ref-label__badge">1</span> Education Program</p>
-          <h2 class="edu-ref-h2">Migrant Worker Rights &amp; Empowerment</h2>
-          <p class="edu-ref-sub">Skills &amp; entrepreneurship training, cultural exploration, awareness programs</p>
+          <h2 class="edu-ref-h2">Career Exploration &amp; Capacity Building</h2>
+          <p class="edu-ref-sub">Self-understanding / Life Design / Foundational job skills / Career experience &amp; mentoring / Social &amp; cultural experience</p>
           <p class="edu-ref-p">
-            We provide migrant workers in Korea with skills and entrepreneurship training rooted in social value,
-            so that through their activities after returning home they can contribute to local community development and sharing with those who are marginalized.
+            We provide step-by-step career education so adolescents and young adults can understand themselves and shape their futures.
+            From self-understanding to community and the world of work, exploration and planning help them discover their potential
+            and turn chosen futures into concrete action.
           </p>
         </div>
         <div class="edu-ref-media" aria-hidden="true">
-          <img class="edu-ref-media__img" src="/images/business/domestic-edu-1.jpg" alt="" loading="lazy" />
-          <div class="edu-ref-media__caption">Program on the ground</div>
+          <img class="edu-ref-media__img" src="/images/business/domestic-edu-2.jpg" alt="" loading="lazy" />
+          <div class="edu-ref-media__caption">Career exploration &amp; capacity building</div>
         </div>
       </div>
     </div>
@@ -702,16 +762,16 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
     <div class="edu-wrap">
       <div class="edu-ref-grid">
         <div class="edu-ref-media" aria-hidden="true">
-          <img class="edu-ref-media__img" src="/images/business/domestic-edu-2.jpg" alt="" loading="lazy" />
-          <div class="edu-ref-media__caption">Education &amp; mentoring</div>
+          <img class="edu-ref-media__img" src="/images/business/domestic-edu-1.jpg" alt="" loading="lazy" />
+          <div class="edu-ref-media__caption">Social entrepreneurship &amp; self-reliance</div>
         </div>
         <div>
           <p class="edu-ref-label"><span class="edu-ref-label__badge">2</span> Education Program</p>
-          <h2 class="edu-ref-h2">North Korean Defector Youth Entrepreneurship</h2>
-          <p class="edu-ref-sub">Social business, domestic &amp; international entrepreneurship, international development cooperation education</p>
+          <h2 class="edu-ref-h2">Social-Value Social Entrepreneurship &amp; Self-Reliance</h2>
+          <p class="edu-ref-sub">Social business education / Domestic &amp; international entrepreneurship / International development cooperation education</p>
           <p class="edu-ref-p">
-            Through social business education rooted in social value and entrepreneurial spirit,
-            we help North Korean defector youth build pride as members of Korean society while exploring diverse paths at home and abroad.
+            Grounded in social value and entrepreneurial spirit, we support entrepreneurship and self-reliance for migrant workers, North Korean defector youth, and young people who have had fewer education and career opportunities.
+            We walk with participants as they discover their experience and strengths, develop community needs into business ideas, and seek new career and activity paths at home and abroad.
           </p>
         </div>
       </div>
@@ -723,16 +783,17 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
       <div class="edu-ref-grid">
         <div>
           <p class="edu-ref-label"><span class="edu-ref-label__badge">3</span> Education Program</p>
-          <h2 class="edu-ref-h2">Youth Future Education</h2>
-          <p class="edu-ref-sub">Democratic citizenship &amp; global citizenship</p>
+          <h2 class="edu-ref-h2">Climate &amp; Environment Awareness Education</h2>
+          <p class="edu-ref-sub">Climate &amp; environment education / Thematic book clubs / Awareness content production &amp; distribution / Climate-response volunteer training and action</p>
           <p class="edu-ref-p">
-            A 2017 KDI (Korea Development Institute) survey found that 80% of Korean university students remember their high school years as a 'battlefield.'
-            In a society where competition is taken for granted, we run programs that help young people grow into true democratic and global citizens.
+            We support the growth of global citizens who understand the climate crisis and practice change in daily life and local communities.
+            Through related education, book clubs, content creation, and volunteering, we help people connect environmental issues to their own lives,
+            so individual action can lead to community and international cooperation.
           </p>
         </div>
         <div class="edu-ref-media" aria-hidden="true">
           <img class="edu-ref-media__img" src="/images/business/domestic-edu-3.jpg" alt="" loading="lazy" />
-          <div class="edu-ref-media__caption">Youth growth program</div>
+          <div class="edu-ref-media__caption">Climate &amp; environment awareness education</div>
         </div>
       </div>
     </div>
@@ -741,15 +802,15 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
 `,
   },
   'business/advocacy': {
-    title: 'Advocacy',
+    title: 'Research',
     content: `
 <div class="adv-page">
   <section class="adv-hero">
     <div class="adv-wrap">
-      <p class="adv-kicker">Advocacy</p>
+      <p class="adv-kicker">Research</p>
       <h1 class="adv-title">We nurture global citizens who understand<br />the values of respect, cooperation, and sharing.</h1>
-      <p class="adv-desc">
-        Khayah's advocacy helps the public and youth understand international development cooperation,
+      <p class="adv-lead">
+        Khayah’s advocacy helps the public and youth understand international development cooperation,
         learn the values of respect, cooperation, and sharing for neighbors around the world,
         and grow into responsible global citizens.
       </p>
@@ -810,7 +871,7 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
   },
   'business/projects': {
     title: 'Active Projects',
-    content: '<p>Explore our current projects by region and field.</p><p><a href="/business/projects/nepal">Nepal</a> · <a href="/business/projects/myanmar">Myanmar</a> · <a href="/business/projects/kyrgyzstan">Kyrgyzstan</a> · <a href="/business/projects/domestic">Domestic</a></p>',
+    content: '<p>Explore Khayah’s ongoing work in Korea and overseas, and the stories behind each program.</p><p><a href="/business/projects/nepal">Nepal</a> · <a href="/business/projects/myanmar">Myanmar</a> · <a href="/business/projects/kyrgyzstan">Kyrgyzstan</a> · <a href="/business/projects/domestic">Domestic</a></p>',
   },
   'business/projects/nepal': {
     title: 'Nepal',

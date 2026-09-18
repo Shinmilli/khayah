@@ -511,7 +511,7 @@ export function InquiryPage() {
               </a>
               <a className="inquiry-detail-card" href="tel:07051212198">
                 <span className="inquiry-detail-card__label">{iq.phoneLabel}</span>
-                <span className="inquiry-detail-card__value">070.5121.2198</span>
+                <span className="inquiry-detail-card__value">070-5121-2198</span>
               </a>
             </div>
           </section>

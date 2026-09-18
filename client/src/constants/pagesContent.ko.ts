@@ -223,9 +223,9 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
   <section class="overseas-hero">
     <div class="ov-wrap">
       <p class="overseas-kicker">해외 사업</p>
-      <h1 class="overseas-title">카야는 세계 곳곳의 소외된 이웃들이<br />변화를 이끌 수 있는 주체가 되도록 노력합니다.</h1>
+      <h1 class="overseas-title">현지 주민과 함께 교육의 기회를 넓히고,<br />지역사회가 스스로 성장할 수 있는 기반을 마련합니다.</h1>
       <p class="overseas-lead">
-        카야는 단순한 지원을 넘어, 현지 주민과 함께 배우고 함께 실행하는 개발협력 사업을 지향합니다.
+        현지 주민과 함께 배우고 함께 실행하며, 지역사회가 스스로 변화의 힘을 키우는 개발협력을 지향합니다.
       </p>
       <div class="overseas-divider" aria-hidden="true"></div>
     </div>
@@ -239,7 +239,8 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
           <div>
             <h2 class="overseas-h2">참여와 협력</h2>
             <p class="overseas-desc">
-              단순 후원 기관과 수혜자의 관계가 아닌, 참여와 협력의 관계로 서로가 서로에게 배웁니다.
+              카야는 현지 주민을 단순 후원과 수혜의 관계가 아닌, 참여와 협력의 관계로 존중합니다.
+              서로의 경험과 지식을 나누며, 지역사회가 필요로 하는 변화를 함께 만들어갑니다.
             </p>
           </div>
         </li>
@@ -250,7 +251,7 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
             <h2 class="overseas-h2">현지와의 동화</h2>
             <p class="overseas-desc">
               진정한 변화는 현지 주민의 참여 의지와 그 변화에 대한 올바른 인식이 뒷받침 될 때만 가능합니다.
-              이를 위해 카야는 모든 프로젝트에 현지와의 동화 단계를 필수 요소로 삼고, 그들의 자발적 참여를 이끌어냅니다.
+              이를 위해 카야는 모든 프로젝트에 지역과 주민의 삶을 이해하고 충분한 대화와 신뢰를 형성하는 현지와의 동화 단계를 필수 요소로 삼아 사업 방향을 정하고 공유하며, 그들의 자발적 참여를 이끌어냅니다.
             </p>
           </div>
         </li>
@@ -260,7 +261,7 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
           <div>
             <h2 class="overseas-h2">참여적 방법론</h2>
             <p class="overseas-desc">
-              프로젝트의 전 과정(조사, 분석, 기획, 실행, 모니터링&amp;평가) 속에 현지 주민을 참여시키는 참여적 방법론을 활용합니다.
+              프로젝트의 전 과정(조사, 분석, 기획, 실행, 모니터링&amp;평가) 속에 주민이 참여하도록 하며, 주민의 경험과 의견을 사업에 반영하고, 사업과 개선 성과도 함께 확인합니다.
             </p>
           </div>
         </li>
@@ -270,7 +271,7 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
           <div>
             <h2 class="overseas-h2">지속가능성</h2>
             <p class="overseas-desc">
-              지속가능한 개발협력사업이 될 수 있도록 프로젝트의 전 과정을 연구하고 해답을 찾아 나갑니다.
+              프로젝트 지역의 자원활용과 협력체계를 바탕으로 지역사회 안에서 지속가능한 운영을 이어가는 개발협력사업이 될 수 있도록 프로젝트의 전 과정을 연구하고 해답을 찾아 나갑니다.
             </p>
           </div>
         </li>
@@ -288,19 +289,30 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
             </svg>
           </div>
           <h2 class="overseas-card__title">교육</h2>
-          <p class="overseas-card__desc">카야는 해당 지역 주민들의 참여 의지와 변화에 대한 올바른 인식 확립의 토대를 위해 여러 교육 사업을 진행합니다.</p>
+          <p class="overseas-card__desc">카야는 기초 학습 역량과 진로 탐색과 미래 역량을 함께 키우는 교육 프로그램을 운영하고, 현지 교육의 질을 개선합니다. 이를 통해 주민 스스로 변화의 필요성과 가능성을 인식하고 지역사회의 성장에 주도적으로 참여할 역량과 기반을 만들어갑니다.</p>
           <a class="overseas-card__btn" href="/business/overseas/education">자세히 보기</a>
         </div>
 
         <div class="overseas-card">
           <div class="overseas-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20Zm1.1 5.6h-2.2v3.3H7.6v2.2h3.3v3.3h2.2v-3.3h3.3v-2.2h-3.3V7.6Z"/>
+              <path d="M9 11a4 4 0 1 0-4-4 4 4 0 0 0 4 4Zm6 0a3.5 3.5 0 1 0-3.5-3.5A3.5 3.5 0 0 0 15 11ZM9 13c-3.3 0-6 2.1-6 4.8V20h12v-2.2C15 15.1 12.3 13 9 13Zm6 .5c-.4 0-.8 0-1.2.1 1.8 1.1 3.2 2.8 3.2 4.7V20h4v-1.6c0-2.5-2.4-4.9-6-4.9Z"/>
             </svg>
           </div>
-          <h2 class="overseas-card__title">보건의료</h2>
-          <p class="overseas-card__desc">카야는 주민 스스로 영양상태, 공중위생 및 주거환경을 개선하는 데 주도적인 역할을 수행할 수 있는 역량을 키우는 데 집중합니다.</p>
-          <a class="overseas-card__btn" href="/business/overseas/health-care">자세히 보기</a>
+          <h2 class="overseas-card__title">해외봉사단 파견</h2>
+          <p class="overseas-card__desc">카야는 국내 청년과 다양한 분야 경험과 열정을 가진 참여자들이 현지 지역사회 과제를 직접 이해하고, 함께 해결방안을 찾는 국제협력활동 기회를 제공합니다. 현지에 필요한 실천 모델을 제안하고 실행하며 지역사회의 지속가능한 변화와 참여자의 동반 성장이 함께 이뤄지도록 합니다.</p>
+          <a class="overseas-card__btn" href="/business/overseas/volunteer">자세히 보기</a>
+        </div>
+
+        <div class="overseas-card">
+          <div class="overseas-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <path d="M4 4h7.2L14 7.2H20v13H4Zm2 4v10h12V9.2h-5.2L10.6 6H6Z"/>
+            </svg>
+          </div>
+          <h2 class="overseas-card__title">진행사업</h2>
+          <p class="overseas-card__desc">카야의 모든 해외 프로젝트는 ‘사람’ 곧 참여자와 지역의 필요를 중심으로 지역과 주민의 변화를 이끌어 ‘궁극적 자립’에 이를 때까지를 목표로 연구하며 진행하고 있습니다.</p>
+          <a class="overseas-card__btn" href="/business/projects">자세히 보기</a>
         </div>
       </div>
     </div>
@@ -327,35 +339,31 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
   <section class="ov-edu-section">
     <div class="ov-edu-wrap">
       <div class="ov-edu-head">
-        <h2 class="ov-edu-head__ko">기초역량\n강화사업</h2>
+        <div class="ov-edu-head__titles">
+          <p class="ov-edu-head__kicker">Foundational Capacity Building</p>
+          <h2 class="ov-edu-head__ko">기초역량\n강화사업</h2>
+        </div>
         <div>
           <p class="ov-edu-head__en">Power to accept change</p>
           <p class="ov-edu-head__p">
             사람 또는 지역이 변화하기 위해서는 그 변화를 받아들일 수 있는 역량이 우선되어야 합니다.
-            카야는 다양한 프로그램을 통해 모든 참여자들의 기초 역량을 강화하는데 중점을 두며,
-            이는 향후 이들이 삶 속에서 겪게 되는 여러 고난의 상황에서 큰 힘을 발휘합니다.
+            카야는 수학, 과학, 영어, 국어 등과 같은 기초지식 함양과 더불어 자기 및 공동체 이해를 기반한 주체적 삶을 위한 다양한 내면 성장 프로그램을 병행하여 내외가 고루 발전된 인재 성장을 지원합니다.
           </p>
         </div>
       </div>
 
       <div class="ov-edu-table" role="table" aria-label="기초역량 강화사업 구성">
-        <div class="ov-edu-table__row" role="rowgroup">
+        <div class="ov-edu-table__row ov-edu-table__row--2" role="rowgroup">
+          <div class="ov-edu-cell" role="row">
+            <p class="ov-edu-cell__head" role="columnheader">기초학습역량</p>
+            <p class="ov-edu-cell__p" role="cell">
+              국어(읽기/말하기/쓰기), 영어, 수학, 과학 등 심화교육으로 나아가기 위한 필수 기본 지식
+            </p>
+          </div>
           <div class="ov-edu-cell" role="row">
             <p class="ov-edu-cell__head" role="columnheader">Life Skills</p>
             <p class="ov-edu-cell__p" role="cell">
-              의사소통, 대인관계, 재정관리, 건강관리, 문제해결 능력 등 삶을 영위하는 데 있어 기본적인 소양 교육을 진행
-            </p>
-          </div>
-          <div class="ov-edu-cell" role="row">
-            <p class="ov-edu-cell__head" role="columnheader">독서클럽 (꿈꾸는 다락방)</p>
-            <p class="ov-edu-cell__p" role="cell">
-              Life Skills 교육 시 제공되는 책을 읽고 함께 토론하며 상호간의 배움을 통해 생각의 장을 넓혀감
-            </p>
-          </div>
-          <div class="ov-edu-cell" role="row">
-            <p class="ov-edu-cell__head" role="columnheader">멘토링</p>
-            <p class="ov-edu-cell__p" role="cell">
-              카야와 함께 하는 현지 각 분야 전문가 풀을 활용하여, 청소년&middot;청년들에게 필요한 분야의 다양한 멘토링을 제공
+              의사소통, 대인관계, 재정관리, 건강관리, 논리/비판/창의적 사고, 문제해결 능력 등
             </p>
           </div>
         </div>
@@ -378,33 +386,45 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
     </div>
   </section>
 
-  <section class="ov-edu-section" style="background:rgba(0,0,0,0.03)">
+  <section class="ov-edu-section ov-edu-section--surface">
     <div class="ov-edu-wrap">
       <div class="ov-edu-head">
-        <h2 class="ov-edu-head__ko">맞춤형\n직업훈련</h2>
+        <div class="ov-edu-head__titles">
+          <p class="ov-edu-head__kicker">Future-Oriented Education</p>
+          <h2 class="ov-edu-head__ko">미래지향\n교육</h2>
+        </div>
         <div>
           <p class="ov-edu-head__en">Dream Seekers</p>
           <p class="ov-edu-head__p">
-            카야는 지원하는 지역 내 기업환경을 고려함과 동시에 지역 주민의 다양성도 함께 존중 받을 수 있도록
-            충분한 사전조사와 분석 후 맞춤형 직업 기술교육 프로그램을 설계합니다.
+            카야는 프로젝트를 펼치는 지역과 참여자 속에서 지역사회 변화를 끌어낼 미래 리더 배출을 지향하며,
+            현시대와 글로벌 흐름에 발맞추면서도 속한 국가와 지역사회에서의 미래와 적합성 분석이 반영된 필요 인재 성장 교육 프로그램을 운영합니다.
           </p>
         </div>
       </div>
 
-      <div class="ov-edu-table" role="table" aria-label="맞춤형 직업훈련 구성">
-        <div class="ov-edu-table__row ov-edu-table__row--2" role="rowgroup">
+      <div class="ov-edu-table" role="table" aria-label="미래지향 교육 구성">
+        <div class="ov-edu-table__row" role="rowgroup">
           <div class="ov-edu-cell" role="row">
-            <p class="ov-edu-cell__head" role="columnheader">참여자 맞춤형</p>
+            <p class="ov-edu-cell__head" role="columnheader">맞춤형 직업훈련</p>
+            <p class="ov-edu-cell__sub">참여자 맞춤형</p>
             <p class="ov-edu-cell__p" role="cell">
-              올바른 교육의 부재로 삶을 어떻게 영위해 나가야 하는지, 어떤 직업을 선택할 수 있는지 생각조차 못해본
-              청소년 및 청년들이 다양한 프로그램을 통해 자신의 적성을 찾고 직업을 준비할 수 있는 기회를 제공
+              올바른 교육의 부재로 삶을 어떻게 영위해 나가야 하는지, 어떤 직업을 선택할 수 있는지 생각조차 못해본 청소년 및 청년들이 다양한 프로그램을 통해 자신의 적성을 찾고 직업을 준비할 수 있는 기회를 제공합니다.
+            </p>
+            <p class="ov-edu-cell__sub">기업 맞춤형</p>
+            <p class="ov-edu-cell__p" role="cell">
+              프로젝트 대상 국가 및 지역 내 유망한 산업 및 기업들과 연계하여 빈민들에게는 일자리를, 기업에게는 훈련된 고급 인력을 제공하며, 인력 수요 공급의 연결고리 역할을 통해 지역 경제 발전을 돕습니다.
             </p>
           </div>
           <div class="ov-edu-cell" role="row">
-            <p class="ov-edu-cell__head" role="columnheader">기업 맞춤형</p>
+            <p class="ov-edu-cell__head" role="columnheader">멘토링</p>
             <p class="ov-edu-cell__p" role="cell">
-              프로젝트 대상 국가 및 지역 내 유망한 산업 및 기업들과 연계하여 빈민들에게는 일자리를,
-              기업에게는 훈련된 고급 인력을 제공하며, 인력 수요 공급의 연결고리 역할을 통해 지역 경제 발전을 도모
+              카야와 함께 하는 현지 각 분야 전문가 풀을 활용하여, 청소년&middot;청년들에게 원하는 분야의 다양한 멘토링을 제공합니다.
+            </p>
+          </div>
+          <div class="ov-edu-cell" role="row">
+            <p class="ov-edu-cell__head" role="columnheader">STEM Education</p>
+            <p class="ov-edu-cell__p" role="cell">
+              과학, 기술, 공학, 수학을 바탕으로 지역 사회와 글로벌 흐름에 맞는 미래 인재의 성장을 지원합니다.
             </p>
           </div>
         </div>
@@ -430,28 +450,45 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
   <section class="ov-edu-section">
     <div class="ov-edu-wrap">
       <div class="ov-edu-head">
-        <h2 class="ov-edu-head__ko">교육 질\n개선사업</h2>
+        <div class="ov-edu-head__titles">
+          <p class="ov-edu-head__kicker">Education Quality Improvement</p>
+          <h2 class="ov-edu-head__ko">교육 질\n개선사업</h2>
+        </div>
         <div>
-          <p class="ov-edu-head__en">Better learning environment</p>
+          <p class="ov-edu-head__en">EQUIP (Education Quality Improvement Program)</p>
           <p class="ov-edu-head__p">
-            배움의 질은 교실 밖 환경과도 연결됩니다. 카야는 현지 상황에 맞는 교육 지원을 통해
-            학생과 교사가 더 나은 환경에서 학습하고 성장할 수 있도록 돕습니다.
+            카야는 교육의 질 개선 활동의 일환으로 네팔 산악지역에 소재한 학교들을 방문하며 현지 교사들에게 올바른 교육법 전수를 위해 노력하는 네팔 NGO HDCS(Human Development &amp; Community Services)를 지원합니다.
           </p>
         </div>
       </div>
 
-      <div class="ov-edu-quality" aria-label="교육 질 개선사업 예시">
-        <div class="ov-edu-qcard">
-          <h3 class="ov-edu-qcard__title">학습 환경 개선</h3>
-          <p class="ov-edu-qcard__p">
-            교실&middot;학습 공간의 기본 인프라를 점검하고, 현장에서 지속적으로 유지될 수 있는 개선 방안을 함께 마련합니다.
-          </p>
-        </div>
-        <div class="ov-edu-qcard">
-          <h3 class="ov-edu-qcard__title">수업 역량 강화</h3>
-          <p class="ov-edu-qcard__p">
-            교사와 학습 보조 인력의 역량을 강화하고, 학생 참여 중심의 수업이 확산될 수 있도록 교육 자료와 방법을 지원합니다.
-          </p>
+      <div class="ov-edu-table" role="table" aria-label="교육 질 개선사업 구성">
+        <div class="ov-edu-table__row" role="rowgroup">
+          <div class="ov-edu-cell" role="row">
+            <p class="ov-edu-cell__head" role="columnheader">교사 교수법 Training</p>
+            <ul class="ov-edu-cell__list">
+              <li>학교장 및 리더십(리더십과 경영 교육)</li>
+              <li>교사 교육(창의적이고 분석적 사고 중심의 교수법 교육)</li>
+              <li>학부모(인식개선 교육)</li>
+            </ul>
+          </div>
+          <div class="ov-edu-cell" role="row">
+            <p class="ov-edu-cell__head" role="columnheader">교육 지원</p>
+            <ul class="ov-edu-cell__list">
+              <li>독서 교육(Classroom Reading)</li>
+              <li>예체능 교육(체육/미술/음악 등)</li>
+              <li>학교농장 교육</li>
+              <li>장학금 지원</li>
+            </ul>
+          </div>
+          <div class="ov-edu-cell" role="row">
+            <p class="ov-edu-cell__head" role="columnheader">보건 위생 및 청소년 성교육</p>
+            <ul class="ov-edu-cell__list">
+              <li>교사 &amp; 학부모 인식개선</li>
+              <li>청소년 교육 및 Peer Group 활동</li>
+              <li>화장실, 수도 등 위생시설 설치 및 보수</li>
+            </ul>
+          </div>
         </div>
       </div>
 
@@ -474,18 +511,18 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
 </div>
 `,
   },
-  'business/overseas/health-care': {
-    title: '보건의료',
+  'business/overseas/volunteer': {
+    title: '해외봉사단 파견',
     content: `
 <div class="ov-health-page">
   <section class="ov-health-hero">
     <div class="ov-health-wrap">
-      <p class="ov-health-kicker">해외사업 · 보건의료</p>
+      <p class="ov-health-kicker">해외사업 · 해외봉사단</p>
       <h1 class="ov-health-title">영양상태, 공중위생 및 주거환경 개선을 위한<br />주민들의 보건 역량을 키웁니다.</h1>
       <p class="ov-health-desc">
         카야가 지원하는 지역들은 개발도상국 내에서도 보건 환경이 매우 열악한 빈민 마을들입니다.
         카야는 일회성 의료서비스 지원보다는 주민들 스스로 깨끗한 보건 환경을 마련하도록 인도하는
-        주민참여형 건강케어 프로젝트로 보다 근본적인 해결 방법 마련에 집중합니다.
+        주민 참여형 건강케어 프로젝트로 보다 근본적인 해결 방법 마련에 집중합니다.
       </p>
       <div class="ov-health-divider" aria-hidden="true"></div>
     </div>
@@ -494,13 +531,16 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
   <section class="ovh-block ovh-block--ltr">
     <div class="ov-health-wrap">
       <div class="ovh-block__head ovh-block__head--cols-4">
-        <h2 class="ovh-block__title">지역사회기반\n주민참여형\n건강 케어</h2>
+        <div class="ovh-block__title-wrap">
+          <p class="ovh-block__en">Community-Based Health Care</p>
+          <h2 class="ovh-block__title">지역사회기반\n주민참여형\n건강 케어</h2>
+        </div>
         <p class="ovh-block__desc">
           지역 내 1차 보건의료기관과 연계된 주민조직의 건강증진 활동을 통하여 지역 주민 스스로의 건강 돌봄 능력 배양
         </p>
       </div>
 
-      <div class="ovh-cards ovh-cards--scroll" aria-label="주요 활동" tabindex="0">
+      <div class="ovh-cards ovh-cards--scroll" aria-label="주요 활동">
         <div class="ovh-card">
           <div class="ovh-card__icon" aria-hidden="true">
             <svg viewBox="0 0 64 64" fill="currentColor"><path d="M32 16c-2-4-7-5-12-3-3 1-5 4-5 8 0 1 0 2 1 3-2 1-4 4-5 7-2 4-2 9-1 14 1 7 6 13 11 13 2 0 3-1 5-1s2 1 5 1c5 0 10-6 11-13 1-5 1-10-1-14-1-3-3-6-5-7 1-1 1-2 1-3 0-4-2-7-5-8-5-2-10-1-12 3z"/><path d="M30 14c-1-3-1-5 0-7 2-1 4-1 5 1 1 2 0 4-1 6-1 1-3 1-4 0z"/></svg>
@@ -533,7 +573,10 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
     <div class="ov-health-wrap">
       <div class="ovh-block__head ovh-block__head--cols-5">
         <p class="ovh-block__desc">모성사망률과 영아사망률의 감소를 위한 사업을 진행합니다.</p>
-        <h2 class="ovh-block__title">모자보건</h2>
+        <div class="ovh-block__title-wrap">
+          <p class="ovh-block__en">Maternal and Child Health</p>
+          <h2 class="ovh-block__title">모자보건</h2>
+        </div>
       </div>
 
       <div class="ovh-cards ovh-cards--cols-5 ovh-cards--white" aria-label="주요 활동">
@@ -551,7 +594,7 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
         </div>
         <div class="ovh-card">
           <div class="ovh-card__icon" aria-hidden="true">
-            <svg viewBox="0 0 64 64" fill="currentColor"><path d="M8 56V22l24-12 24 12v34H40V40H24v16zm21-26h6v6h6v6h-6v6h-6v-6h-6v-6h6z"/></svg>
+            <svg viewBox="0 0 64 64" fill="currentColor"><path d="M32 8 8 28v28h18V40h12v16h18V28z"/></svg>
           </div>
           <p class="ovh-card__label">시설분만을 위한 지원</p>
         </div>
@@ -574,7 +617,10 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
   <section class="ovh-block ovh-block--center">
     <div class="ov-health-wrap">
       <div class="ovh-block__head">
-        <h2 class="ovh-block__title">학교보건</h2>
+        <div class="ovh-block__title-wrap">
+          <p class="ovh-block__en">School Health</p>
+          <h2 class="ovh-block__title">학교보건</h2>
+        </div>
         <p class="ovh-block__desc">
           학령기 아동 및 청소년들의 건강한 신체발달과 올바른 식생활 습관을 위한<br />학교 기반의 보건활동을 진행합니다.
         </p>
@@ -586,7 +632,8 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
         <li class="ovh-numlist__item"><span class="ovh-numlist__label">청소년 성 보건교육</span></li>
         <li class="ovh-numlist__item"><span class="ovh-numlist__label">학부모 및 교사를 위한 보건 세미나</span></li>
         <li class="ovh-numlist__item"><span class="ovh-numlist__label">보건책자 개발 및 배포</span></li>
-        <li class="ovh-numlist__item"><span class="ovh-numlist__label">체육활동 지원 · 헬스스카웃 건강증진</span></li>
+        <li class="ovh-numlist__item"><span class="ovh-numlist__label">체육활동 지원</span></li>
+        <li class="ovh-numlist__item"><span class="ovh-numlist__label">헬스스카웃 조직을 통한 건강증진 활동</span></li>
       </ol>
     </div>
   </section>
@@ -600,7 +647,7 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
   <section class="domestic-hero">
     <div class="dom-wrap">
       <p class="domestic-kicker">국내사업</p>
-      <h1 class="domestic-title">카야는 국내 곳곳의 소외된 이웃들이<br />변화의 주체가 되도록 노력합니다.</h1>
+      <h1 class="domestic-title">카야는 배움과 실천의 기회를 연결하여,<br />우리 이웃이 자신의 삶과 지역사회의 변화를 이끌도록 함께합니다.</h1>
       <p class="domestic-lead">
         국내 현장에서 필요한 교육과 지원을 연결하고, 당사자의 목소리가 지역의 변화로 이어지도록 함께합니다.
       </p>
@@ -626,7 +673,7 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
           <div class="domestic-body">
             <h2 class="domestic-h2">인간 중심 &amp; 자연친화적 교육</h2>
             <p class="domestic-desc">
-              인간 존엄에 무게를 두지만 인간 또한 대자연의 일부임을 잊지 않습니다. 카야는 ‘인적자원’ 등의 사람을 자원화 &amp; 도구화 시키는 기존의 프레임을 지양하며, 모든 프로젝트는 자연환경보호 정신을 토대로 개발합니다.
+              카야는 사람을 개발의 수단이 아닌 존엄한 주체로 존중합니다. 모든 사업에서 지역사회와 자연환경의 현재와 미래를 함께 고려하며, 생태계와 상생하지 않는 무분별한 개발을 지양합니다. 사람의 성장과 자연의 지속가능성이 함께하는 교육을 실천합니다.
             </p>
           </div>
         </li>
@@ -634,9 +681,9 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
         <li class="domestic-item">
           <div class="domestic-num" aria-hidden="true">03</div>
           <div class="domestic-body">
-            <h2 class="domestic-h2">국내 사업이 해외 개발협력사업으로 이어가는 연계</h2>
+            <h2 class="domestic-h2">국내에서 세계로 이어지는 개발협력</h2>
             <p class="domestic-desc">
-              ‘외국인 노동자 기술 &amp; 창업 교육’, ‘남북한 청년이 함께하는 소셜 비지니스 첫걸음’ 등, 카야의 국내 사업은 참여자들이 해외개발도상국에서 활동할 시 해당 지역 발전에 도움 되는 사회적 가치 기반 기술과 창업 교육이라는 점에서 해외개발협력 사업의 연속성을 갖고 있습니다.
+              카야는 진로 탐색과 역량개발, 소셜 창업과 자립, 기후·환경 교육을 통해 국내에서 쌓은 경험과 전문성을 해외 개발협력 현장으로 연결합니다. 청소년과 청년, 외국인 노동자, 탈북 청년 등 참여자의 배움이 각 지역의 사회·문화적 환경과 필요에 맞게 활용되고, 지역사회에 기여할 수 있도록 함께합니다.
             </p>
           </div>
         </li>
@@ -660,6 +707,20 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
           </p>
           <a class="domestic-card__btn" href="/business/domestic/education">자세히 보기</a>
         </div>
+        <div class="domestic-card">
+          <div class="domestic-card__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" xmlns="http://www.w3.org/2000/svg">
+              <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+            </svg>
+          </div>
+          <h2 class="domestic-card__title">진행사업</h2>
+          <p class="domestic-card__desc">
+            카야의 모든 국내 프로젝트는 그 속에 ‘사람’과 ‘자연’ 그리고 ‘미래’가 모두 담기도록 연구하며 진행하고 있습니다.
+          </p>
+          <a class="domestic-card__btn" href="/business/projects">자세히 보기</a>
+        </div>
       </div>
     </div>
   </section>
@@ -673,11 +734,10 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
   <section class="edu-ref-hero">
     <div class="edu-wrap">
       <p class="edu-ref-hero__kicker">국내사업 · 교육</p>
-      <h1 class="edu-ref-hero__title">우리 이웃들이 꿈과 희망을 이어갈 수 있도록<br />다양한 교육 프로그램을 제공합니다.</h1>
+      <h1 class="edu-ref-hero__title">카야는 교육을 통해 개인의 성장과<br />공동체의 변화를 함께 만들어갑니다.</h1>
       <p class="edu-ref-hero__desc">
-        카야는 교육을 통해 개인의 성장과 공동체의 변화를 함께 만들어가고자 합니다.
-        국내에서 일하고 있는 외국인 노동자, 탈북 청년, 청소년 등 다양한 이웃들이
-        스스로의 역량을 키우고 배운 것을 다시 나눌 수 있도록 ‘사회적 가치’를 바탕으로 교육과 경험의 기회를 제공합니다.
+        외국인 노동자, 탈북 청년, 청소년 등 다양한 이웃이 자신의 역량을 키우고 배움을 나눌 수 있도록,
+        사회적 가치를 바탕으로 교육과 경험의 기회를 제공합니다.
       </p>
       <div class="edu-divider" aria-hidden="true"></div>
     </div>
@@ -688,16 +748,17 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
       <div class="edu-ref-grid">
         <div>
           <p class="edu-ref-label"><span class="edu-ref-label__badge">1</span> Education Program</p>
-          <h2 class="edu-ref-h2">외국인노동자 권익증진</h2>
-          <p class="edu-ref-sub">기술교육 및 창업교육, 문화탐방, 인식개선 사업</p>
+          <h2 class="edu-ref-h2">진로 탐색과 역량개발 교육</h2>
+          <p class="edu-ref-sub">자기이해 / Life Design / 직업기초역량 / 진로 체험·멘토링 / 사회·문화 체험</p>
           <p class="edu-ref-p">
-            국내에서 일하고 있는 외국인 노동자들에게 ‘사회적 가치’를 토대로 한 각종 기술교육 및 창업교육을 실시하여,
-            이들의 귀국 후 활동을 통해 개발도상국의 지역 사회 발전 및 소외된 이들에 대한 나눔을 추구합니다.
+            청소년과 청년이 자신을 이해하고 미래를 주도적으로 설계할 수 있도록 단계적인 진로교육을 제공합니다.
+            자기이해에서 공동체와 직업세계에 대한 이해, 진로 탐색과 설계로 이어지는 배움을 통해 자신의 가능성을 발견하고,
+            선택한 미래를 구체적인 실천으로 옮기도록 지원합니다.
           </p>
         </div>
         <div class="edu-ref-media" aria-hidden="true">
-          <img class="edu-ref-media__img" src="/images/business/domestic-edu-1.jpg" alt="" loading="lazy" />
-          <div class="edu-ref-media__caption">프로그램 현장</div>
+          <img class="edu-ref-media__img" src="/images/business/domestic-edu-2.jpg" alt="" loading="lazy" />
+          <div class="edu-ref-media__caption">진로 탐색과 역량개발 교육</div>
         </div>
       </div>
     </div>
@@ -707,16 +768,16 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
     <div class="edu-wrap">
       <div class="edu-ref-grid">
         <div class="edu-ref-media" aria-hidden="true">
-          <img class="edu-ref-media__img" src="/images/business/domestic-edu-2.jpg" alt="" loading="lazy" />
-          <div class="edu-ref-media__caption">교육 · 멘토링</div>
+          <img class="edu-ref-media__img" src="/images/business/domestic-edu-1.jpg" alt="" loading="lazy" />
+          <div class="edu-ref-media__caption">사회적 가치 기반 소셜 창업과 자립 교육</div>
         </div>
         <div>
           <p class="edu-ref-label"><span class="edu-ref-label__badge">2</span> Education Program</p>
-          <h2 class="edu-ref-h2">탈북청년 창업교육</h2>
-          <p class="edu-ref-sub">소셜 비지니스와 국내·외 창업, 국제개발협력 교육</p>
+          <h2 class="edu-ref-h2">사회적 가치 기반 소셜 창업과 자립 교육</h2>
+          <p class="edu-ref-sub">소셜 비즈니스 교육 / 국내외 창업 / 국제개발협력 교육</p>
           <p class="edu-ref-p">
-            탈북 청년들에게 사회적 가치와 기업가 정신을 토대로 한 소셜 비지니스 교육을 통해
-            한국 사회 일원으로서의 자부심을 키움과 동시에 국내외 다양한 분야로의 진출을 함께 모색합니다.
+            사회적 가치와 기업가정신을 바탕으로, 외국인 노동자와 탈북 청년, 교육과 진로 기회에서 소외된 청(소)년의 창업과 자립을 지원합니다.
+            참여자가 자신의 경험과 강점을 발견하고, 지역사회의 필요를 사업 아이디어로 발전시키며 국내외에서 새로운 진로와 활동 기회를 모색하도록 함께합니다.
           </p>
         </div>
       </div>
@@ -728,16 +789,17 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
       <div class="edu-ref-grid">
         <div>
           <p class="edu-ref-label"><span class="edu-ref-label__badge">3</span> Education Program</p>
-          <h2 class="edu-ref-h2">청소년 미래교육</h2>
-          <p class="edu-ref-sub">민주시민, 세계시민 양성</p>
+          <h2 class="edu-ref-h2">기후·환경 인식개선 교육</h2>
+          <p class="edu-ref-sub">기후·환경 교육 / 주제별 북클럽 / 인식개선 콘텐츠 제작·배포 / 기후위기 대응 봉사단 교육 및 활동</p>
           <p class="edu-ref-p">
-            2017년 KDI(한국개발연구원) 조사에 의하면 우리나라 대학생의 80%가 고등학교 시절을 '전쟁터'로 기억하고 있다고 합니다.
-            경쟁이 당연한 사회에서 교육 받는 아이들을 위해 진정한 민주시민, 세계시민으로 거듭날 수 있는 각종 교육 프로그램을 운영합니다.
+            기후위기를 이해하고 일상과 지역사회에서 변화를 실천하는 세계시민의 성장을 지원합니다.
+            관련 교육과 북클럽, 콘텐츠 제작, 봉사활동을 통해 환경문제를 자신의 삶과 연결하고,
+            개인의 실천이 지역사회와 국제적 협력으로 이어지도록 돕습니다.
           </p>
         </div>
         <div class="edu-ref-media" aria-hidden="true">
           <img class="edu-ref-media__img" src="/images/business/domestic-edu-3.jpg" alt="" loading="lazy" />
-          <div class="edu-ref-media__caption">청소년 성장 프로그램</div>
+          <div class="edu-ref-media__caption">기후·환경 인식개선 교육</div>
         </div>
       </div>
     </div>
@@ -746,14 +808,14 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
 `,
   },
   'business/advocacy': {
-    title: '옹호사업',
+    title: '연구사업',
     content: `
 <div class="adv-page">
   <section class="adv-hero">
     <div class="adv-wrap">
-      <p class="adv-kicker">옹호사업</p>
+      <p class="adv-kicker">연구사업</p>
       <h1 class="adv-title">존중과 협력, 나눔의 가치를 아는<br />올바른 세계시민을 키워냅니다.</h1>
-      <p class="adv-desc">
+      <p class="adv-lead">
         카야의 옹호활동은 국제개발협력에 대한 대중과 청소년들의 이해를 돕고
         지구촌 이웃에 대한 존중과 협력, 나눔의 가치를 알게 하여
         올바른 세계시민으로 거듭날 수 있도록 하는데 목표를 두고 있습니다.
@@ -816,7 +878,7 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
   },
   'business/projects': {
     title: '진행사업',
-    content: '<p>현재 진행 중인 사업을 지역별·분야별로 안내합니다.</p><p><a href="/business/projects/nepal">네팔</a> · <a href="/business/projects/myanmar">미얀마</a> · <a href="/business/projects/kyrgyzstan">키르기즈스탄</a> · <a href="/business/projects/domestic">국내</a></p>',
+    content: '<p>국내외 현장에서 이어지는 카야의 활동과 사업별 이야기를 만나보세요.</p><p><a href="/business/projects/nepal">네팔</a> · <a href="/business/projects/myanmar">미얀마</a> · <a href="/business/projects/kyrgyzstan">키르기즈스탄</a> · <a href="/business/projects/domestic">국내</a></p>',
   },
   'business/projects/nepal': {
     title: '네팔',

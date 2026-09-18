@@ -136,7 +136,7 @@
   display: contents;
 }
 
-.ovh-block--ltr .ovh-block__head--cols-4 .ovh-block__title {
+.ovh-block--ltr .ovh-block__head--cols-4 .ovh-block__title-wrap {
   grid-column: 1 / 2;
   grid-row: 1 / span 2;
 }
@@ -149,7 +149,7 @@
   grid-column: span 4;
   order: 1;
 }
-.ovh-block--rtl .ovh-block__head--cols-5 .ovh-block__title {
+.ovh-block--rtl .ovh-block__head--cols-5 .ovh-block__title-wrap {
   grid-column: span 1;
   order: 2;
 }
@@ -162,19 +162,55 @@
   padding-bottom: clamp(28px, 3.6vw, 44px);
 }
 
+.ovh-block__title-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.ovh-block__en {
+  margin: 0;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ovh-primary);
+  line-height: 1.45;
+}
+
 .ovh-block__title {
   margin: 0;
-  font-size: clamp(26px, 2.8vw, 34px);
-  letter-spacing: -0.05em;
-  line-height: 1.2;
-  color: var(--ovh-primary);
-  font-weight: 900;
+  font-size: clamp(1.5rem, 2.2vw, 2rem);
+  letter-spacing: -0.03em;
+  line-height: 1.25;
+  color: var(--ovh-text);
+  font-weight: 800;
   white-space: pre-line;
+}
+
+.ovh-block--rtl .ovh-block__title-wrap {
+  align-items: flex-end;
+  text-align: right;
 }
 
 .ovh-block--rtl .ovh-block__title {
   text-align: right;
   white-space: nowrap;
+}
+
+.ovh-block--rtl .ovh-block__head {
+  align-items: end;
+}
+
+.ovh-block--rtl .ovh-block__desc {
+  align-self: end;
+  padding-top: 0;
+}
+
+.ovh-block--center .ovh-block__title-wrap {
+  align-items: center;
+  text-align: center;
 }
 
 .ovh-block--center .ovh-block__title {
@@ -211,23 +247,12 @@
   grid-template-columns: repeat(5, minmax(0, 1fr));
 }
 
-/* Horizontally draggable / scrollable card row.
- * Stays inside .ov-health-wrap. Cards have a fixed minimum width so the
- * row overflows the wrap on narrower viewports and the user can drag to
- * see the rest. */
 .ovh-cards--scroll {
-  display: flex;
-  grid-template-columns: none;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   width: 100%;
   box-sizing: border-box;
-  overflow-x: auto;
-  gap: clamp(12px, 1.6vw, 22px);
-  padding-bottom: 10px;
-  scroll-snap-type: x proximity;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.18) transparent;
-  cursor: grab;
+  gap: clamp(8px, 1.2vw, 14px);
 }
 
 .ovh-block--ltr .ovh-cards--scroll {
@@ -235,27 +260,22 @@
   grid-row: 2;
 }
 
-.ovh-cards--scroll:active {
-  cursor: grabbing;
-}
-
-.ovh-cards--scroll::-webkit-scrollbar {
-  height: 6px;
-}
-
-.ovh-cards--scroll::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.16);
-  border-radius: 3px;
-}
-
-.ovh-cards--scroll::-webkit-scrollbar-track {
-  background: transparent;
-}
-
 .ovh-cards--scroll > .ovh-card {
-  flex: 0 0 auto;
-  width: clamp(220px, 22vw, 260px);
-  scroll-snap-align: start;
+  width: 100%;
+  min-width: 0;
+  min-height: 148px;
+  padding: clamp(16px, 1.8vw, 22px) 10px clamp(14px, 1.6vw, 18px);
+  gap: 12px;
+}
+
+.ovh-cards--scroll .ovh-card__icon {
+  width: clamp(40px, 4.2vw, 52px);
+  height: clamp(40px, 4.2vw, 52px);
+}
+
+.ovh-cards--scroll .ovh-card__label {
+  font-size: 0.84rem;
+  padding-left: 8px;
 }
 
 .ovh-card {
@@ -382,14 +402,14 @@
     gap: 14px;
   }
   /* 데스크톱용 grid-column/row가 남아 암시 열이 생기며 옆으로 붙는 문제 제거 */
-  .ovh-block--ltr .ovh-block__head--cols-4 .ovh-block__title,
+  .ovh-block--ltr .ovh-block__head--cols-4 .ovh-block__title-wrap,
   .ovh-block--ltr .ovh-block__head--cols-4 .ovh-block__desc {
     grid-column: 1 / -1;
     grid-row: auto;
     width: 100%;
     max-width: 100%;
   }
-  .ovh-block--rtl .ovh-block__head--cols-5 .ovh-block__title,
+  .ovh-block--rtl .ovh-block__head--cols-5 .ovh-block__title-wrap,
   .ovh-block--rtl .ovh-block__head--cols-5 .ovh-block__desc {
     grid-column: 1 / -1;
     grid-row: auto;
@@ -397,11 +417,11 @@
     max-width: 100%;
   }
   /* 모바일: 제목 → 서브 문구 순 (모자보건은 DOM이 desc 먼저라 order로 맞춤) */
-  .ovh-block--rtl .ovh-block__head--cols-5 .ovh-block__title {
+  .ovh-block--rtl .ovh-block__head--cols-5 .ovh-block__title-wrap {
     order: -1;
   }
-  .ovh-block--ltr .ovh-block__head--cols-4 .ovh-block__title,
-  .ovh-block--rtl .ovh-block__head--cols-5 .ovh-block__title {
+  .ovh-block--ltr .ovh-block__head--cols-4 .ovh-block__title-wrap,
+  .ovh-block--rtl .ovh-block__head--cols-5 .ovh-block__title-wrap {
     margin-bottom: 0;
   }
   .ovh-block--ltr .ovh-block__head--cols-4 .ovh-block__desc,
@@ -412,6 +432,14 @@
     font-size: 0.92rem;
     line-height: 1.68;
     color: rgba(17, 17, 17, 0.7);
+    align-self: start;
+  }
+  .ovh-block--rtl .ovh-block__head {
+    align-items: start;
+  }
+  .ovh-block--rtl .ovh-block__title-wrap {
+    align-items: flex-start;
+    text-align: left;
   }
   .ovh-block--rtl .ovh-block__title {
     text-align: left;
@@ -425,6 +453,7 @@
     grid-row: unset;
     width: 100%;
     margin-top: clamp(8px, 2vw, 16px);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .ovh-cards--cols-4,
   .ovh-cards--cols-5 {
@@ -432,25 +461,9 @@
   }
 }
 
-/* 보건의료 스크롤 카드 행: 가로 스크롤 대신 줄바꿈·축소로 모두 노출 */
 @media (max-width: 1200px) {
   .ovh-cards--scroll {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
-    overflow-x: visible;
-    scroll-snap-type: none;
-    cursor: default;
-    padding-bottom: 0;
-    gap: clamp(10px, 2vw, 14px);
-  }
-  .ovh-cards--scroll:active {
-    cursor: default;
-  }
-  .ovh-cards--scroll > .ovh-card {
-    width: 100%;
-    min-width: 0;
-    flex: unset;
-    scroll-snap-align: unset;
+    gap: clamp(8px, 1.6vw, 12px);
   }
   .ovh-cards--scroll .ovh-card {
     min-height: 128px;
@@ -471,7 +484,8 @@
 @media (max-width: 560px) {
   .ovh-cards--cols-4,
   .ovh-cards--cols-5,
-  .ovh-numlist {
+  .ovh-numlist,
+  .ovh-cards--scroll {
     grid-template-columns: 1fr;
   }
 }
@@ -493,16 +507,22 @@
 .ov-health-page p.ov-health-desc {
   margin: 18px auto 0;
 }
+.page-content-wrapper .page-body p.ovh-block__en {
+  margin: 0;
+}
 .ov-health-page h2.ovh-block__title {
   margin: 0;
-  font-size: clamp(26px, 2.8vw, 34px);
-  color: var(--ovh-primary);
+  font-size: clamp(1.5rem, 2.2vw, 2rem);
+  color: var(--ovh-text);
 }
 .ov-health-page p.ovh-block__desc {
   margin: 0;
   padding-top: 4px;
   font-size: 1.1rem;
   color: rgba(17, 17, 17, 0.86);
+}
+.ov-health-page .ovh-block--rtl p.ovh-block__desc {
+  padding-top: 0;
 }
 .ov-health-page .ovh-block--center p.ovh-block__desc {
   margin: 0;

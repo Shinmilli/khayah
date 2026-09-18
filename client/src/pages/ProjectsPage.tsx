@@ -77,6 +77,7 @@ export function ProjectsPage() {
       <PageHero title={pj.title} backgroundImageUrl={pageHeroImageForPath(PATH.businessProjects)} />
 
       <div className="projects-wrap">
+        <p className="projects-lead">{pj.lead}</p>
         <nav className="projects-tabs" aria-label={pj.filterAria}>
           {REGIONS.map((r) => {
             const active = r === region
