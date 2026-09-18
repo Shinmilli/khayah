@@ -385,6 +385,26 @@ export function AdminImpactStatsPage() {
                       />
                     </label>
                     <label className="admin-field">
+                      <span className="admin-field__label">도넛 표시</span>
+                      <label className="admin-onoff">
+                        <span className={`admin-onoff__state${card.showDonut !== false ? ' is-on' : ''}`} aria-hidden>
+                          {card.showDonut !== false ? 'ON' : 'OFF'}
+                        </span>
+                        <input
+                          type="checkbox"
+                          role="switch"
+                          checked={card.showDonut !== false}
+                          onChange={(e) => updatePrimary(idx, { showDonut: e.target.checked })}
+                          aria-label="도넛 표시"
+                        />
+                        <span className="admin-onoff__track" aria-hidden>
+                          <span className="admin-onoff__thumb" />
+                        </span>
+                      </label>
+                    </label>
+                    {card.showDonut !== false ? (
+                      <>
+                    <label className="admin-field">
                       <span className="admin-field__label">도넛 비율 (%) — 한·영 공통</span>
                       <input
                         className="admin-input"
@@ -423,12 +443,17 @@ export function AdminImpactStatsPage() {
                         }
                       />
                     </label>
+                      </>
+                    ) : null}
                   </div>
                   <p className="admin-upload__hint" style={{ marginTop: 12 }}>
-                    카드·글자·도넛 색상
+                    {card.showDonut !== false ? '카드·글자·도넛 색상' : '카드·글자 색상'}
                   </p>
                   <div className="admin-color-grid">
-                    {PRIMARY_COLOR_FIELDS.map(({ key, label }) => (
+                    {(card.showDonut !== false
+                      ? PRIMARY_COLOR_FIELDS
+                      : PRIMARY_COLOR_FIELDS.filter((f) => !f.key.startsWith('donut'))
+                    ).map(({ key, label }) => (
                       <ColorField
                         key={key}
                         label={label}

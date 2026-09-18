@@ -44,6 +44,7 @@ export type ImpactPrimaryCardLocale = {
 
 export type ImpactPrimaryCard = {
   id: string
+  showDonut: boolean
   colors: ImpactPrimaryCardColors
   locales: {
     ko: ImpactPrimaryCardLocale
@@ -90,6 +91,7 @@ export type ImpactStatsDocument = {
 
 export type ImpactPrimaryCardView = {
   id: string
+  showDonut: boolean
   colors: ImpactPrimaryCardColors
   kicker: string
   title: string
@@ -179,6 +181,7 @@ export const DEFAULT_IMPACT_STATS: ImpactStatsDocument = {
   primaryCards: [
     {
       id: DEFAULT_PRIMARY_ID,
+      showDonut: true,
       colors: { ...DEFAULT_PRIMARY_CARD_COLORS },
       locales: {
         ko: {
@@ -240,6 +243,7 @@ export function newImpactId(prefix: string): string {
 export function emptyPrimaryCard(): ImpactPrimaryCard {
   return {
     id: newImpactId('primary'),
+    showDonut: true,
     colors: { ...DEFAULT_PRIMARY_CARD_COLORS },
     locales: {
       ko: {
@@ -303,6 +307,7 @@ export function impactStatsForLocale(
     intro: doc.intro[locale],
     primaryCards: doc.primaryCards.map((card) => ({
       id: card.id,
+      showDonut: card.showDonut !== false,
       colors: { ...DEFAULT_PRIMARY_CARD_COLORS, ...card.colors },
       ...card.locales[locale],
     })),

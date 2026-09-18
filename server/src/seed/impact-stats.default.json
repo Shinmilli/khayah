@@ -32,6 +32,7 @@
   "primaryCards": [
     {
       "id": "fund-use",
+      "showDonut": true,
       "colors": {
         "cardBg": "#b20838",
         "kicker": "#df84a1",

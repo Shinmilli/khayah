@@ -36,6 +36,7 @@ type ImpactPrimaryCardLocale = {
 }
 type ImpactPrimaryCard = {
   id: string
+  showDonut: boolean
   colors: ImpactPrimaryCardColors
   locales: { ko: ImpactPrimaryCardLocale; en: ImpactPrimaryCardLocale }
 }
@@ -75,7 +76,7 @@ export type ImpactStatsPublicView = {
   backgroundImageUrl: string
   introColors: ImpactIntroColors
   intro: ImpactIntroLocale
-  primaryCards: Array<ImpactPrimaryCardLocale & { id: string; colors: ImpactPrimaryCardColors }>
+  primaryCards: Array<ImpactPrimaryCardLocale & { id: string; showDonut: boolean; colors: ImpactPrimaryCardColors }>
   stats: Array<ImpactStatLocale & { id: string; icon?: string; colors: ImpactStatColors }>
 }
 
@@ -90,6 +91,10 @@ function asString(v: unknown, fallback = ''): string {
 function asColor(v: unknown, fallback: string): string {
   const s = asString(v).trim()
   return COLOR_RE.test(s) ? s : fallback
+}
+
+function asBool(v: unknown, fallback = true): boolean {
+  return typeof v === 'boolean' ? v : fallback
 }
 
 function asPercent(v: unknown): number {
@@ -220,6 +225,7 @@ function migrateV2ToV3(v2: ImpactStatsDocumentV2): ImpactStatsDocumentV3 {
     primaryCards: [
       {
         id: 'fund-use',
+        showDonut: true,
         colors: clone(DEFAULT_PRIMARY_COLORS),
         locales: {
           ko: {
@@ -292,6 +298,7 @@ function parseDocumentV3(body: unknown): ImpactStatsDocumentV3 | null {
     const localesRaw = isPlainObject(raw.locales) ? raw.locales : {}
     primaryCards.push({
       id,
+      showDonut: asBool(raw.showDonut, true),
       colors: parsePrimaryColors(raw.colors),
       locales: {
         ko: parsePrimaryLocale(localesRaw.ko, seed.primaryCards[0].locales.ko),
@@ -385,6 +392,7 @@ export async function readImpactStatsForLocale(locale: ImpactLocale): Promise<Im
     intro: doc.intro[locale],
     primaryCards: doc.primaryCards.map((card) => ({
       id: card.id,
+      showDonut: card.showDonut !== false,
       colors: card.colors,
       ...card.locales[locale],
     })),

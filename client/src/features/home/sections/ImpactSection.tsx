@@ -191,7 +191,9 @@ function PrimaryImpactCard({
 
   return (
     <article
-      className={`impact-card impact-card--primary${compact ? ' impact-card--compact' : ''}`}
+      className={`impact-card impact-card--primary${compact ? ' impact-card--compact' : ''}${
+        card.showDonut === false ? ' impact-card--no-donut' : ''
+      }`}
       style={primaryCardStyle(card)}
       role="listitem"
     >
@@ -203,6 +205,7 @@ function PrimaryImpactCard({
         </div>
       </div>
 
+      {card.showDonut !== false ? (
       <div className="donut" style={{ '--p': card.donut.percent } as CSSProperties} aria-label={ariaFn(percentText, labelLines.join(' '))}>
         <div className="donut__center">
           <div className="donut__value">{percentText}</div>
@@ -218,6 +221,7 @@ function PrimaryImpactCard({
           ) : null}
         </div>
       </div>
+      ) : null}
 
       {href && ctaLabel ? (
         isExternalHref(href) ? (

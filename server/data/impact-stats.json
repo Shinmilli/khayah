@@ -32,6 +32,7 @@
   "primaryCards": [
     {
       "id": "fund-use",
+      "showDonut": true,
       "colors": {
         "cardBg": "#b20838",
         "kicker": "#df84a1",
@@ -78,6 +79,7 @@
     },
     {
       "id": "primary-c4bfe2db-6371-4d24-9b28-0eac63decd8f",
+      "showDonut": true,
       "colors": {
         "cardBg": "#b20838",
         "kicker": "#df84a1",
@@ -94,12 +96,12 @@
       "locales": {
         "ko": {
           "kicker": "Our Work",
-          "title": "",
+          "title": "New project1",
           "desc": "",
           "ctaLabel": "자세히보기",
           "ctaHref": "",
           "donut": {
-            "percent": 0,
+            "percent": 30,
             "labelLines": []
           }
         },
@@ -110,7 +112,7 @@
           "ctaLabel": "Learn more",
           "ctaHref": "",
           "donut": {
-            "percent": 0,
+            "percent": 30,
             "labelLines": []
           }
         }
@@ -118,6 +120,7 @@
     },
     {
       "id": "primary-9b7b0458-aaee-4ac2-823a-c51b81fe2ce5",
+      "showDonut": true,
       "colors": {
         "cardBg": "#b20838",
         "kicker": "#df84a1",
@@ -134,12 +137,12 @@
       "locales": {
         "ko": {
           "kicker": "Our Work",
-          "title": "",
+          "title": "New project2",
           "desc": "",
           "ctaLabel": "자세히보기",
           "ctaHref": "",
           "donut": {
-            "percent": 0,
+            "percent": 40,
             "labelLines": []
           }
         },
@@ -150,7 +153,7 @@
           "ctaLabel": "Learn more",
           "ctaHref": "",
           "donut": {
-            "percent": 0,
+            "percent": 40,
             "labelLines": []
           }
         }

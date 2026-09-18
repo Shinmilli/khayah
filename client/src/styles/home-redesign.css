@@ -1482,6 +1482,11 @@ body.has-overlay-header .home-page {
   font-size: 0.9rem;
 }
 
+.impact-card--no-donut .impact-card__content,
+.impact-card--compact.impact-card--no-donut .impact-card__content {
+  max-width: none;
+}
+
 /* ----- Board ----- */
 .board-section {
   margin: 0;
@@ -2182,6 +2187,10 @@ body.has-overlay-header .home-page {
     padding: clamp(22px, 1.7vw, 30px)
       calc(clamp(22px, 1.7vw, 32px) + var(--impact-donut-reserve))
       clamp(18px, 1.4vw, 26px) clamp(28px, 2.4vw, 52px);
+  }
+
+  .impact-card--primary:not(.impact-card--compact).impact-card--no-donut {
+    padding-right: clamp(22px, 1.7vw, 32px);
   }
 
   .impact-card__kicker {
