@@ -1,8 +1,6 @@
-import fs from 'fs/promises'
-import path from 'path'
-import seedDocument from '../seed/nav-visibility.default.json'
+import { readJsonDocument, writeJsonDocument } from './siteDocumentStore'
 
-const DATA_FILE = path.resolve(process.cwd(), 'data', 'nav-visibility.json')
+const DOCUMENT_KEY = 'nav-visibility'
 
 export const NAV_VISIBILITY_TOP_KEYS = ['khayah', 'business', 'support', 'news'] as const
 export type NavVisibilityTopKey = (typeof NAV_VISIBILITY_TOP_KEYS)[number]
@@ -80,20 +78,9 @@ export function validateNavVisibilityDocument(body: unknown): body is NavVisibil
 }
 
 export async function readNavVisibilityDocument(): Promise<NavVisibilityDocument> {
-  try {
-    const raw = await fs.readFile(DATA_FILE, 'utf8')
-    const parsed: unknown = JSON.parse(raw)
-    const normalized = normalizeNavVisibilityDocument(parsed)
-    if (!validateNavVisibilityDocument(parsed)) {
-      await fs.mkdir(path.dirname(DATA_FILE), { recursive: true })
-      await fs.writeFile(DATA_FILE, JSON.stringify(normalized, null, 2), 'utf8')
-    }
-    return normalized
-  } catch (e) {
-    const code = (e as NodeJS.ErrnoException)?.code
-    if (code !== 'ENOENT') console.warn('[nav-visibility] read failed, using seed:', e)
-  }
-  return normalizeNavVisibilityDocument(seedDocument)
+  const parsed = await readJsonDocument(DOCUMENT_KEY)
+  if (!validateNavVisibilityDocument(parsed)) throw new Error('Invalid nav visibility document')
+  return normalizeNavVisibilityDocument(parsed)
 }
 
 export async function writeNavVisibilityDocument(body: unknown): Promise<void> {
@@ -103,6 +90,5 @@ export async function writeNavVisibilityDocument(body: unknown): Promise<void> {
     throw err
   }
   const cleaned = normalizeNavVisibilityDocument(body)
-  await fs.mkdir(path.dirname(DATA_FILE), { recursive: true })
-  await fs.writeFile(DATA_FILE, JSON.stringify(cleaned, null, 2), 'utf8')
+  await writeJsonDocument(DOCUMENT_KEY, cleaned)
 }

@@ -1,8 +1,6 @@
-import fs from 'fs/promises'
-import path from 'path'
-import seedDocument from '../seed/business-hub-cards.default.json'
+import { readJsonDocument, writeJsonDocument } from './siteDocumentStore'
 
-const DATA_FILE = path.resolve(process.cwd(), 'data', 'business-hub-cards.json')
+const DOCUMENT_KEY = 'business-hub-cards'
 
 export const BUSINESS_HUBS = ['overseas', 'domestic'] as const
 export type BusinessHub = (typeof BUSINESS_HUBS)[number]
@@ -133,16 +131,9 @@ export function parseBusinessHub(raw: unknown): BusinessHub | null {
 }
 
 export async function readBusinessHubCardsDocument(): Promise<BusinessHubCardsDocument> {
-  try {
-    const raw = await fs.readFile(DATA_FILE, 'utf8')
-    const parsed: unknown = JSON.parse(raw)
-    if (validateDocument(parsed)) return normalizeDocument(parsed)
-    console.warn('[business-hub-cards] invalid file content, using seed')
-  } catch (e) {
-    const code = (e as NodeJS.ErrnoException)?.code
-    if (code !== 'ENOENT') console.warn('[business-hub-cards] read failed, using seed:', e)
-  }
-  return normalizeDocument(seedDocument as BusinessHubCardsDocument)
+  const parsed = await readJsonDocument(DOCUMENT_KEY)
+  if (!validateDocument(parsed)) throw new Error('Invalid business hub cards document')
+  return normalizeDocument(parsed)
 }
 
 export async function readBusinessHubCardsForLocale(
@@ -172,6 +163,5 @@ export async function writeBusinessHubCardsDocument(body: unknown): Promise<void
     throw err
   }
   const cleaned = normalizeDocument(body)
-  await fs.mkdir(path.dirname(DATA_FILE), { recursive: true })
-  await fs.writeFile(DATA_FILE, JSON.stringify(cleaned, null, 2), 'utf8')
+  await writeJsonDocument(DOCUMENT_KEY, cleaned)
 }

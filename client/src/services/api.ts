@@ -18,6 +18,7 @@ import type {
   BusinessHubCardsDocument,
   BusinessHubCardsPublicDocument,
 } from '../features/business/businessHubCardsTypes'
+import type { PopupConfig } from '../utils/popup'
 import type { Locale } from '../i18n/locale'
 import type { AdminRole, AdminUserPublic } from '../features/admin/adminRoles'
 
@@ -504,6 +505,32 @@ export async function createInquiry(input: {
     body: JSON.stringify(input),
   })
   if (!res.ok) throw new Error(await readApiError(res, '문의 접수에 실패했습니다.'))
+  return res.json()
+}
+
+export async function fetchPopup(): Promise<PopupConfig> {
+  const res = await fetch(`${API_BASE}/popup`)
+  if (!res.ok) throw new Error(await readApiError(res, '팝업을 불러오지 못했습니다.'))
+  return res.json()
+}
+
+export async function adminFetchPopup(): Promise<PopupConfig> {
+  const res = await apiFetch(`${API_BASE}/admin/popup`)
+  if (!res.ok) {
+    const err = new Error(await readApiError(res, '팝업을 불러오지 못했습니다.')) as Error & { status?: number }
+    err.status = res.status
+    throw err
+  }
+  return res.json()
+}
+
+export async function adminPutPopup(doc: PopupConfig): Promise<PopupConfig> {
+  const res = await apiFetch(`${API_BASE}/admin/popup`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(doc),
+  })
+  if (!res.ok) throw new Error(await readApiError(res, '팝업 저장에 실패했습니다.'))
   return res.json()
 }
 

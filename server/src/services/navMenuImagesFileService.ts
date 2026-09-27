@@ -1,10 +1,8 @@
-import fs from 'fs/promises'
-import path from 'path'
-import seedDocument from '../seed/nav-menu-images.default.json'
 import { normalizeStoredMediaUrl } from '../utils/normalizeStoredMediaUrl'
 import { deleteRemovedStoredMedia } from '../utils/storedMedia'
+import { readJsonDocument, writeJsonDocument } from './siteDocumentStore'
 
-const DATA_FILE = path.resolve(process.cwd(), 'data', 'nav-menu-images.json')
+const DOCUMENT_KEY = 'nav-menu-images'
 
 export const NAV_MENU_IMAGE_KEYS = ['khayah', 'business', 'support', 'news'] as const
 export type NavMenuImageKey = (typeof NAV_MENU_IMAGE_KEYS)[number]
@@ -53,16 +51,9 @@ export function normalizeNavMenuImagesDocument(body: unknown): NavMenuImagesDocu
 }
 
 export async function readNavMenuImagesDocument(): Promise<NavMenuImagesDocument> {
-  try {
-    const raw = await fs.readFile(DATA_FILE, 'utf8')
-    const parsed: unknown = JSON.parse(raw)
-    if (validateNavMenuImagesDocument(parsed)) return normalizeNavMenuImagesDocument(parsed)
-    console.warn('[nav-menu-images] invalid file content, using seed')
-  } catch (e) {
-    const code = (e as NodeJS.ErrnoException)?.code
-    if (code !== 'ENOENT') console.warn('[nav-menu-images] read failed, using seed:', e)
-  }
-  return normalizeNavMenuImagesDocument(seedDocument)
+  const parsed = await readJsonDocument(DOCUMENT_KEY)
+  if (!validateNavMenuImagesDocument(parsed)) throw new Error('Invalid nav menu images document')
+  return normalizeNavMenuImagesDocument(parsed)
 }
 
 export async function writeNavMenuImagesDocument(body: unknown): Promise<void> {
@@ -73,7 +64,6 @@ export async function writeNavMenuImagesDocument(body: unknown): Promise<void> {
   }
   const cleaned = normalizeNavMenuImagesDocument(body)
   const previous = await readNavMenuImagesDocument()
-  await fs.mkdir(path.dirname(DATA_FILE), { recursive: true })
-  await fs.writeFile(DATA_FILE, JSON.stringify(cleaned, null, 2), 'utf8')
+  await writeJsonDocument(DOCUMENT_KEY, cleaned)
   await deleteRemovedStoredMedia(previous, cleaned)
 }

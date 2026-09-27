@@ -176,3 +176,12 @@ model AdminUser {
 
   @@map("admin_users")
 }
+
+/// 관리자 화면 설정(연혁, 재정보고, 배너 등). 배포로 지워지는 로컬 JSON 대신 보관한다.
+model SiteDocument {
+  key       String   @id @db.VarChar(64)
+  body      Json
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@map("site_documents")
+}

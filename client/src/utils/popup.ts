@@ -19,7 +19,7 @@ export type PopupConfig = {
 const CONFIG_KEY = 'khayah.popup.config'
 const HIDE_TODAY_PREFIX = 'khayah.popup.hideToday.'
 
-/** 같은 탭에서도 팝업 설정 반영용 (savePopupConfig에서 발행) */
+/** 관리자 저장 후 같은 브라우저의 홈 팝업을 다시 받게 함 */
 export const POPUP_CONFIG_CHANGED_EVENT = 'khayah-popups-config-changed'
 
 const SESSION_DISMISSED_KEY = 'khayah.popup.sessionDismissedIds'
@@ -156,18 +156,28 @@ export function loadPopupConfig(): PopupConfig {
   }
 }
 
-export function savePopupConfig(config: PopupConfig): PopupConfig {
-  const normalized = normalizePopupConfig(config)
-  localStorage.setItem(CONFIG_KEY, JSON.stringify(normalized))
-  window.dispatchEvent(new Event(POPUP_CONFIG_CHANGED_EVENT))
-  return normalized
+/** 서버에 문서가 없을 때, 이 브라우저에만 남아 있던 초안. 없으면 null */
+export function loadStoredPopupDraft(): PopupConfig | null {
+  try {
+    if (!localStorage.getItem(CONFIG_KEY)) return null
+  } catch {
+    return null
+  }
+  return loadPopupConfig()
+}
+
+export function clearStoredPopupConfig() {
+  try {
+    localStorage.removeItem(CONFIG_KEY)
+  } catch {
+    /* private mode */
+  }
 }
 
 /** 홈에서 순차 표시할 팝업 목록(활성 + 오늘 그만보기 제외 + 이번 탭에서 닫은 항목 제외, 배열 순서 유지) */
-export function buildVisiblePopupQueue(): PopupItem[] {
-  const cfg = loadPopupConfig()
+export function buildVisiblePopupQueue(config: PopupConfig): PopupItem[] {
   const sessionSkip = readSessionDismissedIds()
-  return cfg.items.filter(
+  return config.items.filter(
     (p) => p.enabled && p.imageUrl.trim() && !isPopupHiddenToday(p.id) && !sessionSkip.has(p.id),
   )
 }

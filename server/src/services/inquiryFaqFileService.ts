@@ -1,8 +1,7 @@
-import fs from 'fs/promises'
-import path from 'path'
 import seedDocument from '../seed/inquiry-faq.default.json'
+import { readJsonDocument, writeJsonDocument } from './siteDocumentStore'
 
-const DATA_FILE = path.resolve(process.cwd(), 'data', 'inquiry-faq.json')
+const DOCUMENT_KEY = 'inquiry-faq'
 
 export type InquiryFaqItem = {
   id: string
@@ -82,31 +81,15 @@ function migrateV1ToV2(v1: InquiryFaqDocumentV1): InquiryFaqDocumentV2 {
   }
 }
 
-function normalizeDocument(body: unknown): InquiryFaqDocumentV2 {
-  if (validateDocumentV2(body)) return body
-  if (validateDocumentV1(body)) return migrateV1ToV2(body)
-  return seedDocument as InquiryFaqDocumentV2
-}
-
 export function parseInquiryFaqLocale(raw: unknown): InquiryLocale {
   return raw === 'en' ? 'en' : 'ko'
 }
 
 export async function readInquiryFaqDocument(): Promise<InquiryFaqDocumentV2> {
-  try {
-    const raw = await fs.readFile(DATA_FILE, 'utf8')
-    const parsed: unknown = JSON.parse(raw)
-    const normalized = normalizeDocument(parsed)
-    if (!validateDocumentV2(parsed)) {
-      await fs.mkdir(path.dirname(DATA_FILE), { recursive: true })
-      await fs.writeFile(DATA_FILE, JSON.stringify(normalized, null, 2), 'utf8')
-    }
-    return normalized
-  } catch (e) {
-    const code = (e as NodeJS.ErrnoException)?.code
-    if (code !== 'ENOENT') console.warn('[inquiry-faq] read failed, using seed:', e)
-  }
-  return seedDocument as InquiryFaqDocumentV2
+  const parsed = await readJsonDocument(DOCUMENT_KEY)
+  if (validateDocumentV2(parsed)) return parsed
+  if (validateDocumentV1(parsed)) return migrateV1ToV2(parsed)
+  throw new Error('Invalid FAQ document')
 }
 
 export async function readInquiryFaqForLocale(locale: InquiryLocale): Promise<InquiryFaqLocaleContent> {
@@ -143,6 +126,5 @@ export async function writeInquiryFaqDocument(body: unknown): Promise<void> {
       },
     },
   }
-  await fs.mkdir(path.dirname(DATA_FILE), { recursive: true })
-  await fs.writeFile(DATA_FILE, JSON.stringify(cleaned, null, 2), 'utf8')
+  await writeJsonDocument(DOCUMENT_KEY, cleaned)
 }

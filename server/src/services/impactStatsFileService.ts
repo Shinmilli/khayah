@@ -1,9 +1,8 @@
-import fs from 'fs/promises'
-import path from 'path'
 import seedDocument from '../seed/impact-stats.default.json'
 import { deleteRemovedStoredMedia } from '../utils/storedMedia'
+import { readJsonDocument, writeJsonDocument } from './siteDocumentStore'
 
-const DATA_FILE = path.resolve(process.cwd(), 'data', 'impact-stats.json')
+const DOCUMENT_KEY = 'impact-stats'
 const ICON_NAME_RE = /^[a-z0-9_]{1,64}$/
 const COLOR_RE = /^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/
 const DEFAULT_BG = '/images/Home/impact_background.png'
@@ -354,33 +353,17 @@ function isV1(body: unknown): body is ImpactStatsDocumentV1 {
   return isPlainObject(body.donut) && Array.isArray(body.stats)
 }
 
-function normalizeDocument(body: unknown): ImpactStatsDocumentV3 {
-  const v3 = parseDocumentV3(body)
-  if (v3) return v3
-  if (isV2(body)) return migrateV2ToV3(body)
-  if (isV1(body)) return migrateV1ToV3(body)
-  return clone(seed)
-}
-
 export function parseImpactLocale(raw: unknown): ImpactLocale {
   return raw === 'en' ? 'en' : 'ko'
 }
 
 export async function readImpactStatsDocument(): Promise<ImpactStatsDocumentV3> {
-  try {
-    const raw = await fs.readFile(DATA_FILE, 'utf8')
-    const parsed: unknown = JSON.parse(raw)
-    const normalized = normalizeDocument(parsed)
-    if (parseDocumentV3(parsed) == null) {
-      await fs.mkdir(path.dirname(DATA_FILE), { recursive: true })
-      await fs.writeFile(DATA_FILE, JSON.stringify(normalized, null, 2), 'utf8')
-    }
-    return normalized
-  } catch (e) {
-    const code = (e as NodeJS.ErrnoException)?.code
-    if (code !== 'ENOENT') console.warn('[impact-stats] read failed, using seed:', e)
-  }
-  return clone(seed)
+  const parsed = await readJsonDocument(DOCUMENT_KEY)
+  const v3 = parseDocumentV3(parsed)
+  if (v3) return v3
+  if (isV2(parsed)) return migrateV2ToV3(parsed)
+  if (isV1(parsed)) return migrateV1ToV3(parsed)
+  throw new Error('Invalid impact stats document')
 }
 
 export async function readImpactStatsForLocale(locale: ImpactLocale): Promise<ImpactStatsPublicView> {
@@ -421,7 +404,6 @@ export async function writeImpactStatsDocument(body: unknown): Promise<void> {
     throw err
   }
   const previous = await readImpactStatsDocument()
-  await fs.mkdir(path.dirname(DATA_FILE), { recursive: true })
-  await fs.writeFile(DATA_FILE, JSON.stringify(normalized, null, 2), 'utf8')
+  await writeJsonDocument(DOCUMENT_KEY, normalized)
   await deleteRemovedStoredMedia(previous, normalized)
 }

@@ -1,11 +1,13 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { AdminMediaUpload } from '../components/AdminMediaUpload'
-import { deleteUploadedMedia } from '../../../services/api'
+import { adminFetchPopup, adminPutPopup, deleteUploadedMedia } from '../../../services/api'
 import {
+  POPUP_CONFIG_CHANGED_EVENT,
+  clearStoredPopupConfig,
   getDefaultPopupConfig,
   getDefaultPopupItem,
-  loadPopupConfig,
-  savePopupConfig,
+  loadStoredPopupDraft,
+  normalizePopupConfig,
   type PopupConfig,
   type PopupItem,
 } from '../../../utils/popup'
@@ -34,25 +36,75 @@ const EDIT_LOCALES: { id: PopupEditLocale; label: string }[] = [
 ]
 
 export function AdminPopupPage() {
-  const defaults = useMemo(() => getDefaultPopupConfig(), [])
-  const [config, setConfig] = useState<PopupConfig>(defaults)
+  const [config, setConfig] = useState<PopupConfig>({ items: [] })
   const [selectedId, setSelectedId] = useState<string>('')
   const [editLocale, setEditLocale] = useState<PopupEditLocale>('ko')
   const [status, setStatus] = useState<string>('')
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
+  const [needsFirstSave, setNeedsFirstSave] = useState(false)
+  const [loadBlocked, setLoadBlocked] = useState(false)
+  const persistedRef = useRef<PopupConfig>({ items: [] })
 
   useEffect(() => {
-    const loaded = loadPopupConfig()
-    setConfig(loaded)
-    setSelectedId(loaded.items[0]?.id ?? '')
+    let cancelled = false
+    adminFetchPopup()
+      .then((doc) => {
+        if (cancelled) return
+        const next = { items: doc.items?.length ? doc.items : [getDefaultPopupItem()] }
+        persistedRef.current = doc
+        setConfig(next)
+        setSelectedId(next.items[0]?.id ?? '')
+        setNeedsFirstSave(false)
+      })
+      .catch((e: unknown) => {
+        if (cancelled) return
+        const statusCode = (e as { status?: number }).status
+        if (statusCode === 404) {
+          const draft = loadStoredPopupDraft() ?? getDefaultPopupConfig()
+          persistedRef.current = draft
+          setConfig(draft)
+          setSelectedId(draft.items[0]?.id ?? '')
+          setNeedsFirstSave(true)
+          setStatus(
+            draft.items.some((item) => item.imageUrl.trim() || item.enabled)
+              ? '이 브라우저에만 있던 팝업을 불러왔습니다. 저장하면 서버에 올라가 모든 관리자와 방문자에게 같습니다.'
+              : '아직 서버에 저장된 팝업이 없습니다. 저장하면 모든 방문자에게 적용됩니다.',
+          )
+          return
+        }
+        setLoadBlocked(true)
+        setStatus(e instanceof Error ? e.message : '팝업을 불러오지 못했습니다.')
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false)
+      })
+    return () => {
+      cancelled = true
+    }
   }, [])
 
-  const save = () => {
-    const previous = loadPopupConfig()
-    const saved = savePopupConfig(config)
-    purgeRemovedPopupImages(previous, saved)
-    setConfig(saved)
-    setStatus('저장되었습니다. (일반 화면 새로고침 시 반영)')
-    window.setTimeout(() => setStatus(''), 2500)
+  const save = async () => {
+    if (saving || loading || loadBlocked) return
+    setSaving(true)
+    setStatus('')
+    try {
+      const saved = await adminPutPopup(normalizePopupConfig(config))
+      purgeRemovedPopupImages(persistedRef.current, saved)
+      persistedRef.current = saved
+      clearStoredPopupConfig()
+      const next = { items: saved.items.length ? saved.items : [getDefaultPopupItem()] }
+      setConfig(next)
+      setSelectedId((id) => (next.items.some((item) => item.id === id) ? id : (next.items[0]?.id ?? '')))
+      setNeedsFirstSave(false)
+      window.dispatchEvent(new Event(POPUP_CONFIG_CHANGED_EVENT))
+      setStatus('저장되었습니다. 새로고침하면 모든 방문자에게 같은 팝업이 적용됩니다.')
+      window.setTimeout(() => setStatus(''), 2500)
+    } catch (e) {
+      setStatus(e instanceof Error ? e.message : '팝업 저장에 실패했습니다.')
+    } finally {
+      setSaving(false)
+    }
   }
 
   const selected = config.items.find((i) => i.id === selectedId) ?? config.items[0] ?? null
@@ -69,12 +121,16 @@ export function AdminPopupPage() {
       <div className="admin-page__head">
         <div>
           <h1 className="admin-page__title">팝업 관리</h1>
-          <p className="admin-page__desc">여러 개의 팝업을 등록하고, 표시 여부/이미지/링크를 관리합니다. 버튼 문구는 한·영 별도 (localStorage 기반)</p>
+          <p className="admin-page__desc">
+            여러 개의 팝업을 등록하고, 표시 여부/이미지/링크를 관리합니다. 저장하면 서버에 남아 모든 관리자와 방문자에게
+            같습니다. 버튼 문구는 한·영 별도입니다. ‘오늘 그만보기’만 방문자 브라우저에 남습니다.
+          </p>
         </div>
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
           <button
             type="button"
             className="admin-btn admin-btn--ghost"
+            disabled={loading || saving || loadBlocked}
             onClick={() => {
               const item = getDefaultPopupItem()
               setConfig((c) => ({ items: [item, ...c.items].slice(0, 20) }))
@@ -83,8 +139,8 @@ export function AdminPopupPage() {
           >
             팝업 추가
           </button>
-          <button type="button" className="admin-btn admin-btn--primary" onClick={save}>
-            저장
+          <button type="button" className="admin-btn admin-btn--primary" onClick={() => void save()} disabled={loading || saving || loadBlocked}>
+            {saving ? '저장 중…' : '저장'}
           </button>
         </div>
       </div>
@@ -121,6 +177,10 @@ export function AdminPopupPage() {
               ))}
             </div>
             <p className="admin-upload__hint">숫자가 작을수록 우선 표시됩니다. (최대 20개)</p>
+            {loading ? <p className="admin-upload__hint">서버에서 불러오는 중…</p> : null}
+            {needsFirstSave && !loading ? (
+              <p className="admin-upload__hint">저장하기 전에는 다른 관리자 화면과 방문자에게 반영되지 않습니다.</p>
+            ) : null}
           </div>
 
           <div className="admin-field admin-field--full">

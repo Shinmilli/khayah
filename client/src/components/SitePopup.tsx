@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { splitLocalePath } from '../i18n/locale'
 import { useLocale } from '../i18n/LocaleContext'
+import { fetchPopup } from '../services/api'
 import {
   POPUP_CONFIG_CHANGED_EVENT,
   buildVisiblePopupQueue,
@@ -10,6 +11,7 @@ import {
   rememberPopupDismissedThisSession,
   resolvePopupButtonLinkUrl,
   resolvePopupImageLinkUrl,
+  type PopupConfig,
   type PopupItem,
 } from '../utils/popup'
 import '../styles/popup.css'
@@ -32,8 +34,30 @@ export function SitePopup() {
   const location = useLocation()
   const { locale, messages } = useLocale()
   const popupMsg = messages.pages.popup
-  const [loaded, setLoaded] = useState(false)
+  const [ready, setReady] = useState(false)
+  const [config, setConfig] = useState<PopupConfig>({ items: [] })
   const [queue, setQueue] = useState<PopupItem[]>([])
+  const loadSeq = useRef(0)
+
+  const reloadConfig = useCallback(() => {
+    const seq = ++loadSeq.current
+    fetchPopup()
+      .then((doc) => {
+        if (loadSeq.current !== seq) return
+        setConfig({ items: Array.isArray(doc.items) ? doc.items : [] })
+      })
+      .catch(() => {
+        if (loadSeq.current !== seq) return
+        setConfig({ items: [] })
+      })
+      .finally(() => {
+        if (loadSeq.current === seq) setReady(true)
+      })
+  }, [])
+
+  useEffect(() => {
+    reloadConfig()
+  }, [reloadConfig])
 
   const syncQueue = useCallback(() => {
     const { pathnameWithoutLocale } = splitLocalePath(location.pathname)
@@ -41,43 +65,42 @@ export function SitePopup() {
       setQueue([])
       return
     }
-    setQueue(buildVisiblePopupQueue())
-  }, [location.pathname])
-
-  useEffect(() => {
-    setLoaded(true)
-  }, [])
+    setQueue(buildVisiblePopupQueue(config))
+  }, [config, location.pathname])
 
   useEffect(() => {
     syncQueue()
   }, [syncQueue])
 
   useEffect(() => {
-    const onCfg = () => syncQueue()
+    const onCfg = () => {
+      reloadConfig()
+    }
+    const onStorage = () => syncQueue()
     window.addEventListener(POPUP_CONFIG_CHANGED_EVENT, onCfg)
-    window.addEventListener('storage', onCfg)
+    window.addEventListener('storage', onStorage)
     return () => {
       window.removeEventListener(POPUP_CONFIG_CHANGED_EVENT, onCfg)
-      window.removeEventListener('storage', onCfg)
+      window.removeEventListener('storage', onStorage)
     }
-  }, [syncQueue])
+  }, [reloadConfig, syncQueue])
 
   const current = queue[0] ?? null
 
   const advanceAfterClose = () => {
     const cur = queue[0]
     if (cur) rememberPopupDismissedThisSession(cur.id)
-    setQueue(buildVisiblePopupQueue())
+    setQueue(buildVisiblePopupQueue(config))
   }
 
   const onHideToday = () => {
     const cur = queue[0]
     if (!cur) return
     hidePopupToday(cur.id)
-    setQueue(buildVisiblePopupQueue())
+    setQueue(buildVisiblePopupQueue(config))
   }
 
-  if (!loaded || splitLocalePath(location.pathname).pathnameWithoutLocale !== '/' || !current) return null
+  if (!ready || splitLocalePath(location.pathname).pathnameWithoutLocale !== '/' || !current) return null
 
   const imageLinkHref = resolvePopupImageLinkUrl(current)
   const ctaHref = current.buttonEnabled ? resolvePopupButtonLinkUrl(current) : ''

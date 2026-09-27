@@ -626,7 +626,6 @@ a:hover {
     visibility 0.25s ease;
 }
 
-/* 후원 버튼→소셜 사이 빈 구간에서도 hover 유지 (마우스 경로 끊김 방지) */
 .site-floating-fab::before {
   content: '';
   position: absolute;
@@ -637,7 +636,7 @@ a:hover {
     var(--fab-social-size) * 3 + var(--fab-social-gap) * 2 + var(--fab-stack-gap)
   );
   transform: translateX(-50%);
-  pointer-events: auto;
+  pointer-events: none;
   z-index: 0;
 }
 
@@ -647,7 +646,7 @@ a:hover {
   pointer-events: auto;
 }
 
-/* 소셜: 후원 버튼 가로 중앙 정렬, 클릭은 브리지 위로 */
+/* 소셜: 후원 버튼이 보일 때(메인 배너 밖) 호버 없이 항상 표시 */
 .site-floating-fab__socials {
   position: absolute;
   left: 50%;
@@ -668,8 +667,7 @@ a:hover {
     transform 0.22s ease;
 }
 
-.site-floating-fab.is-visible:hover .site-floating-fab__socials,
-.site-floating-fab.is-visible:focus-within .site-floating-fab__socials {
+.site-floating-fab.is-visible .site-floating-fab__socials {
   opacity: 1;
   visibility: visible;
   transform: translate(-50%, 0);
@@ -790,24 +788,12 @@ a:hover {
   text-align: center;
 }
 
-/* 데스크톱: 소셜 버튼 항상 표시. 모바일·태블릿은 hover/focus 유지 */
 @media (min-width: 1025px) {
   .site-floating-fab {
     --fab-donate-size: 78px;
     --fab-social-size: 50px;
     --fab-social-gap: 12px;
     --fab-stack-gap: 14px;
-  }
-
-  .site-floating-fab::before {
-    pointer-events: none;
-  }
-
-  .site-floating-fab.is-visible .site-floating-fab__socials {
-    opacity: 1;
-    visibility: visible;
-    transform: translate(-50%, 0);
-    pointer-events: auto;
   }
 
   .site-floating-fab__heart {

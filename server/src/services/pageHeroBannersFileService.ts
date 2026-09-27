@@ -1,10 +1,8 @@
-import fs from 'fs/promises'
-import path from 'path'
-import seedDocument from '../seed/page-hero-banners.default.json'
 import { normalizeStoredMediaUrl } from '../utils/normalizeStoredMediaUrl'
 import { deleteRemovedStoredMedia } from '../utils/storedMedia'
+import { readJsonDocument, writeJsonDocument } from './siteDocumentStore'
 
-const DATA_FILE = path.resolve(process.cwd(), 'data', 'page-hero-banners.json')
+const DOCUMENT_KEY = 'page-hero-banners'
 
 export const PAGE_HERO_BANNER_KEYS = ['khayah', 'business', 'support', 'news'] as const
 export type PageHeroBannerKey = (typeof PAGE_HERO_BANNER_KEYS)[number]
@@ -76,15 +74,9 @@ export function normalizePageHeroBannersDocument(body: unknown): PageHeroBanners
 }
 
 export async function readPageHeroBannersDocument(): Promise<PageHeroBannersDocument> {
-  try {
-    const raw = await fs.readFile(DATA_FILE, 'utf8')
-    const parsed: unknown = JSON.parse(raw)
-    return normalizePageHeroBannersDocument(parsed)
-  } catch (e) {
-    const code = (e as NodeJS.ErrnoException)?.code
-    if (code !== 'ENOENT') console.warn('[page-hero-banners] read failed, using seed:', e)
-  }
-  return normalizePageHeroBannersDocument(seedDocument)
+  const parsed = await readJsonDocument(DOCUMENT_KEY)
+  if (!validatePageHeroBannersDocument(parsed)) throw new Error('Invalid page hero banners document')
+  return normalizePageHeroBannersDocument(parsed)
 }
 
 export async function writePageHeroBannersDocument(body: unknown): Promise<void> {
@@ -95,7 +87,6 @@ export async function writePageHeroBannersDocument(body: unknown): Promise<void>
   }
   const cleaned = normalizePageHeroBannersDocument(body)
   const previous = await readPageHeroBannersDocument()
-  await fs.mkdir(path.dirname(DATA_FILE), { recursive: true })
-  await fs.writeFile(DATA_FILE, JSON.stringify(cleaned, null, 2), 'utf8')
+  await writeJsonDocument(DOCUMENT_KEY, cleaned)
   await deleteRemovedStoredMedia(previous, cleaned)
 }

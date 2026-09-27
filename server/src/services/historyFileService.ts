@@ -1,8 +1,6 @@
-import fs from 'fs/promises'
-import path from 'path'
-import seedDocument from '../seed/history.default.json'
+import { readJsonDocument, writeJsonDocument } from './siteDocumentStore'
 
-const DATA_FILE = path.resolve(process.cwd(), 'data', 'history.json')
+const DOCUMENT_KEY = 'history'
 
 export type HistoryItem = {
   id: string
@@ -64,11 +62,6 @@ function validateDocument(body: unknown): body is HistoryDocument {
   return validateLocaleContent(locales.ko) && validateLocaleContent(locales.en)
 }
 
-function normalizeDocument(body: unknown): HistoryDocument {
-  if (validateDocument(body)) return body
-  return seedDocument as HistoryDocument
-}
-
 export type HistoryLocale = 'ko' | 'en'
 
 export function parseHistoryLocale(raw: unknown): HistoryLocale {
@@ -76,20 +69,11 @@ export function parseHistoryLocale(raw: unknown): HistoryLocale {
 }
 
 export async function readHistoryDocument(): Promise<HistoryDocument> {
-  try {
-    const raw = await fs.readFile(DATA_FILE, 'utf8')
-    const parsed: unknown = JSON.parse(raw)
-    const normalized = normalizeDocument(parsed)
-    if (!validateDocument(parsed)) {
-      await fs.mkdir(path.dirname(DATA_FILE), { recursive: true })
-      await fs.writeFile(DATA_FILE, JSON.stringify(normalized, null, 2), 'utf8')
-    }
-    return normalized
-  } catch (e) {
-    const code = (e as NodeJS.ErrnoException)?.code
-    if (code !== 'ENOENT') console.warn('[history] read failed, using seed:', e)
+  const parsed = await readJsonDocument(DOCUMENT_KEY)
+  if (!validateDocument(parsed)) {
+    throw new Error('Invalid history document')
   }
-  return seedDocument as HistoryDocument
+  return parsed
 }
 
 export async function readHistoryForLocale(locale: HistoryLocale): Promise<HistoryLocaleContent> {
@@ -103,6 +87,5 @@ export async function writeHistoryDocument(body: unknown): Promise<void> {
     ;(err as Error & { status?: number }).status = 400
     throw err
   }
-  await fs.mkdir(path.dirname(DATA_FILE), { recursive: true })
-  await fs.writeFile(DATA_FILE, JSON.stringify(body, null, 2), 'utf8')
+  await writeJsonDocument(DOCUMENT_KEY, body)
 }

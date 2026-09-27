@@ -1,10 +1,8 @@
-import fs from 'fs/promises'
-import path from 'path'
-import seedDocument from '../seed/financial-reports.default.json'
 import { normalizeStoredMediaUrl } from '../utils/normalizeStoredMediaUrl'
 import { deleteRemovedStoredMedia } from '../utils/storedMedia'
+import { readJsonDocument, writeJsonDocument } from './siteDocumentStore'
 
-const DATA_FILE = path.resolve(process.cwd(), 'data', 'financial-reports.json')
+const DOCUMENT_KEY = 'financial-reports'
 
 export type FinancialReportSegmentLabels = { ko: string; en: string }
 
@@ -168,12 +166,6 @@ function migrateV1ToV2(v1: FinancialReportsDocumentV1): FinancialReportsDocument
   }
 }
 
-function normalizeDocument(body: unknown): FinancialReportsDocumentV2 {
-  if (validateDocumentV2(body)) return normalizeDocumentMedia(body)
-  if (validateDocumentV1(body)) return normalizeDocumentMedia(migrateV1ToV2(body))
-  return normalizeDocumentMedia(seedDocument as FinancialReportsDocumentV2)
-}
-
 function normalizeDocumentMedia(doc: FinancialReportsDocumentV2): FinancialReportsDocumentV2 {
   return {
     ...doc,
@@ -210,20 +202,10 @@ function toPublicDocument(doc: FinancialReportsDocumentV2, locale: FinancialLoca
 }
 
 export async function readFinancialReportsDocument(): Promise<FinancialReportsDocumentV2> {
-  try {
-    const raw = await fs.readFile(DATA_FILE, 'utf8')
-    const parsed: unknown = JSON.parse(raw)
-    const normalized = normalizeDocument(parsed)
-    if (!validateDocumentV2(parsed)) {
-      await fs.mkdir(path.dirname(DATA_FILE), { recursive: true })
-      await fs.writeFile(DATA_FILE, JSON.stringify(normalized, null, 2), 'utf8')
-    }
-    return normalized
-  } catch (e) {
-    const code = (e as NodeJS.ErrnoException)?.code
-    if (code !== 'ENOENT') console.warn('[financial-reports] read failed, using seed:', e)
-  }
-  return normalizeDocumentMedia(seedDocument as FinancialReportsDocumentV2)
+  const parsed = await readJsonDocument(DOCUMENT_KEY)
+  if (validateDocumentV2(parsed)) return normalizeDocumentMedia(parsed)
+  if (validateDocumentV1(parsed)) return normalizeDocumentMedia(migrateV1ToV2(parsed))
+  throw new Error('Invalid financial reports document')
 }
 
 export async function readFinancialReportsForLocale(locale: FinancialLocale): Promise<FinancialReportsPublicDocument> {
@@ -239,7 +221,6 @@ export async function writeFinancialReportsDocument(body: unknown): Promise<void
   }
   const cleaned = normalizeDocumentMedia(body)
   const previous = await readFinancialReportsDocument()
-  await fs.mkdir(path.dirname(DATA_FILE), { recursive: true })
-  await fs.writeFile(DATA_FILE, JSON.stringify(cleaned, null, 2), 'utf8')
+  await writeJsonDocument(DOCUMENT_KEY, cleaned)
   await deleteRemovedStoredMedia(previous, cleaned)
 }

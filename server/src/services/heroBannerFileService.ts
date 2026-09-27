@@ -1,10 +1,8 @@
-import fs from 'fs/promises'
-import path from 'path'
-import seedDocument from '../seed/hero-banner.default.json'
 import { normalizeStoredMediaUrl } from '../utils/normalizeStoredMediaUrl'
 import { deleteRemovedStoredMedia } from '../utils/storedMedia'
+import { readJsonDocument, writeJsonDocument } from './siteDocumentStore'
 
-const DATA_FILE = path.resolve(process.cwd(), 'data', 'hero-banner.json')
+const DOCUMENT_KEY = 'hero-banner'
 
 export type HeroBannerLocaleCopy = {
   alt: string
@@ -102,16 +100,9 @@ export function parseHeroLocale(raw: unknown): HeroLocale {
 }
 
 export async function readHeroBannerDocument(): Promise<HeroBannerDocument> {
-  try {
-    const raw = await fs.readFile(DATA_FILE, 'utf8')
-    const parsed: unknown = JSON.parse(raw)
-    if (validateDocument(parsed)) return normalizeDocument(parsed)
-    console.warn('[hero-banner] invalid file content, using seed')
-  } catch (e) {
-    const code = (e as NodeJS.ErrnoException)?.code
-    if (code !== 'ENOENT') console.warn('[hero-banner] read failed, using seed:', e)
-  }
-  return normalizeDocument(seedDocument as HeroBannerDocument)
+  const parsed = await readJsonDocument(DOCUMENT_KEY)
+  if (!validateDocument(parsed)) throw new Error('Invalid hero banner document')
+  return normalizeDocument(parsed)
 }
 
 export async function readHeroBannerForLocale(locale: HeroLocale): Promise<HeroBannerPublicSlide[]> {
@@ -137,7 +128,6 @@ export async function writeHeroBannerDocument(body: unknown): Promise<void> {
   }
   const cleaned = normalizeDocument(body)
   const previous = await readHeroBannerDocument()
-  await fs.mkdir(path.dirname(DATA_FILE), { recursive: true })
-  await fs.writeFile(DATA_FILE, JSON.stringify(cleaned, null, 2), 'utf8')
+  await writeJsonDocument(DOCUMENT_KEY, cleaned)
   await deleteRemovedStoredMedia(previous, cleaned)
 }
