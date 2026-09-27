@@ -5,6 +5,7 @@ import { HERO_BIZ_LINKS, HERO_SLIDE_IMAGES } from '../homeRedesignData'
 import type { HeroBannerPublicSlide } from '../heroBannerTypes'
 import { useLocale } from '../../../i18n/LocaleContext'
 import { fetchHeroBanner } from '../../../services/api'
+import { toCloudinaryWebpUrl } from '../../../utils/cloudinaryWebp'
 
 const BIZ_ICONS = ['home', 'public', 'menu_book', 'groups'] as const
 
@@ -60,7 +61,7 @@ export function HeroSection() {
       <div className="hero-slider">
         {slides.map((slide, i) => (
           <div key={slide.id || slide.image} className={`hero-slide${i === index ? ' active' : ''}`}>
-            <img src={slide.image} alt={slide.alt} />
+            <img src={toCloudinaryWebpUrl(slide.image)} alt={slide.alt} />
             <div className="hero-content">
               <div className="hero-content-inner">
                 <div className="hero-text">

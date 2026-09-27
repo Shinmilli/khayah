@@ -1,3 +1,5 @@
+import { toCloudinaryWebpUrl } from './cloudinaryWebp'
+
 export type PostCoverMedia =
   | { kind: 'image'; src: string }
   | { kind: 'video'; src: string; poster?: string }
@@ -55,12 +57,12 @@ export function extractCoverFromHtml(html: string | null | undefined): PostCover
   if (!raw) return { kind: 'none' }
 
   const img = raw.match(/<img\b[^>]*\bsrc=["']([^"']+)["'][^>]*>/i)
-  if (img?.[1]) return { kind: 'image', src: img[1] }
+  if (img?.[1]) return { kind: 'image', src: toCloudinaryWebpUrl(img[1]) }
 
   const poster = raw.match(/<video\b[^>]*\bposter=["']([^"']+)["'][^>]*>/i)
   const videoSrc = raw.match(/<video\b[^>]*\bsrc=["']([^"']+)["'][^>]*>/i)
   if (poster?.[1]) {
-    return { kind: 'image', src: poster[1] }
+    return { kind: 'image', src: toCloudinaryWebpUrl(poster[1]) }
   }
   if (videoSrc?.[1]) {
     const derived = cloudinaryVideoPoster(videoSrc[1])
@@ -87,9 +89,9 @@ export function postCoverMedia(post: {
   if (cover) {
     if (/\.(mp4|webm|mov|m4v)(?:\?|$)/i.test(cover) || cover.includes('/video/upload/')) {
       const poster = cloudinaryVideoPoster(cover)
-      return poster ? { kind: 'image', src: poster } : { kind: 'video', src: cover }
+      return poster ? { kind: 'image', src: toCloudinaryWebpUrl(poster) } : { kind: 'video', src: cover }
     }
-    return { kind: 'image', src: cover }
+    return { kind: 'image', src: toCloudinaryWebpUrl(cover) }
   }
   return extractCoverFromHtml(post.content)
 }

@@ -1,4 +1,5 @@
 import { postCoverMedia } from '../utils/postMedia'
+import { toCloudinaryWebpUrl } from '../utils/cloudinaryWebp'
 import type { Post } from '../types/post'
 
 export function PostCoverThumb({
@@ -10,14 +11,14 @@ export function PostCoverThumb({
 }) {
   const media = postCoverMedia(post)
   if (media.kind === 'image') {
-    return <img className={className} src={media.src} alt="" loading="lazy" />
+    return <img className={className} src={toCloudinaryWebpUrl(media.src)} alt="" loading="lazy" />
   }
   if (media.kind === 'video') {
     return (
       <video
         className={className}
         src={media.src}
-        poster={media.poster}
+        poster={media.poster ? toCloudinaryWebpUrl(media.poster) : undefined}
         muted
         playsInline
         preload="metadata"

@@ -1,5 +1,6 @@
 import { useMemo, useRef, useState } from 'react'
 import { parseNaverTvId, parseYoutubeId } from '../utils/postMedia'
+import { rewriteCloudinaryImagesInHtml, toCloudinaryWebpUrl } from '../utils/cloudinaryWebp'
 import '../styles/post-media.css'
 
 type Segment =
@@ -23,7 +24,7 @@ function galleryFromEl(el: Element): Segment | null {
     src: img.getAttribute('src')?.trim() || '',
     alt: img.getAttribute('alt') || '',
   }))
-  const srcs = imgs.map((i) => i.src).filter(Boolean)
+  const srcs = imgs.map((i) => toCloudinaryWebpUrl(i.src)).filter(Boolean)
   if (srcs.length === 0) return null
   return { type: 'gallery', srcs, alts: imgs.map((i) => i.alt) }
 }
@@ -35,7 +36,7 @@ function videoFromEl(el: Element): Segment | null {
   if (video) {
     const src = video.getAttribute('src')?.trim() || video.querySelector('source')?.getAttribute('src')?.trim()
     if (!src) return null
-    return { type: 'video', src, poster: video.getAttribute('poster')?.trim() || undefined, title }
+    return { type: 'video', src, poster: video.getAttribute('poster')?.trim() ? toCloudinaryWebpUrl(video.getAttribute('poster')!.trim()) : undefined, title }
   }
   const iframe = el.tagName === 'IFRAME' ? (el as HTMLIFrameElement) : el.querySelector('iframe')
   const src = iframe?.getAttribute('src')?.trim() || ''
@@ -81,7 +82,7 @@ function parseSegments(html: string): Segment[] {
       out.push(video)
       continue
     }
-    htmlBuf.push((node as HTMLElement).outerHTML)
+    htmlBuf.push(rewriteCloudinaryImagesInHtml((node as HTMLElement).outerHTML))
   }
   flushHtml()
   return out

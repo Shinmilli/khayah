@@ -5,6 +5,7 @@ import { splitLocalePath } from '../i18n/locale'
 import { useLocale } from '../i18n/LocaleContext'
 import type { Messages } from '../i18n/messages/ko'
 import { PATH } from '../i18n/routes'
+import { toCloudinaryWebpUrl } from '../utils/cloudinaryWebp'
 
 interface PageHeroProps {
   title: string
@@ -323,20 +324,21 @@ function imageAlreadyReady(url: string): boolean {
 }
 
 function HeroBackdrop({ src }: { src: string | null }) {
+  const photo = src ? toCloudinaryWebpUrl(src) : null
   const blur = pageHeroBlurForUrl(src)
-  const [ready, setReady] = useState(() => (src ? imageAlreadyReady(src) : true))
+  const [ready, setReady] = useState(() => (photo ? imageAlreadyReady(photo) : true))
 
   useEffect(() => {
-    if (!src) {
+    if (!photo) {
       setReady(true)
       return
     }
-    if (imageAlreadyReady(src)) {
+    if (imageAlreadyReady(photo)) {
       setReady(true)
       return
     }
     setReady(false)
-  }, [src])
+  }, [photo])
 
   return (
     <div
@@ -346,10 +348,10 @@ function HeroBackdrop({ src }: { src: string | null }) {
       {blur ? (
         <div className="page-hero__blur" style={{ backgroundImage: `url('${blur}')` }} />
       ) : null}
-      {src ? (
+      {photo ? (
         <img
           className="page-hero__photo"
-          src={src}
+          src={photo}
           alt=""
           fetchPriority="high"
           decoding="async"

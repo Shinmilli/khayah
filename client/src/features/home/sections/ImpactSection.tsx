@@ -14,6 +14,7 @@ import {
 import { fetchImpactStats } from '../../../services/api'
 import { useLocale } from '../../../i18n/LocaleContext'
 import { ImpactStack } from './ImpactStack'
+import { toCloudinaryWebpUrl } from '../../../utils/cloudinaryWebp'
 
 function isExternalHref(href: string): boolean {
   return /^https?:\/\//i.test(href) || href.startsWith('mailto:')
@@ -95,7 +96,7 @@ export function ImpactSection() {
         <div
           className="impact-banner__bg"
           aria-hidden="true"
-          style={{ backgroundImage: `url(${content.backgroundImageUrl})` }}
+          style={{ backgroundImage: `url(${toCloudinaryWebpUrl(content.backgroundImageUrl)})` }}
         />
 
         {rotatorLen > 0 ? (

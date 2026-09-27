@@ -18,6 +18,7 @@ import '../styles/page.css'
 import '../styles/newsletter.css'
 import { PATH } from '../i18n/routes'
 import { useLocale } from '../i18n/LocaleContext'
+import { toCloudinaryWebpUrl } from '../utils/cloudinaryWebp'
 import { pageHeroImageForPath } from '../constants/pageHeroImages'
 import { ListStatus } from '../components/ListStatus'
 import { PostCoverThumb } from '../components/PostCoverThumb'
@@ -354,7 +355,7 @@ export function NewsArchivePage() {
                           </div>
                           <div className="yearly-nl-card__cover-wrap">
                             {cover ? (
-                              <img className="yearly-nl-card__cover" src={cover} alt="" loading="lazy" />
+                              <img className="yearly-nl-card__cover" src={toCloudinaryWebpUrl(cover)} alt="" loading="lazy" />
                             ) : !coverIsBlank(post.meta) && pdf ? (
                               <PdfFirstPagePreview url={pdf} className="yearly-nl-card__cover yearly-nl-card__cover--pdf" />
                             ) : (

@@ -14,6 +14,7 @@ import {
   type PopupConfig,
   type PopupItem,
 } from '../utils/popup'
+import { toCloudinaryWebpUrl } from '../utils/cloudinaryWebp'
 import '../styles/popup.css'
 
 function CloseIcon() {
@@ -108,7 +109,7 @@ export function SitePopup() {
   const ctaLabel = getPopupButtonLabel(current, locale)
 
   const image = (
-    <img className="site-popup__img" src={current.imageUrl} alt={popupMsg.imageAlt} loading="eager" />
+    <img className="site-popup__img" src={toCloudinaryWebpUrl(current.imageUrl)} alt={popupMsg.imageAlt} loading="eager" />
   )
 
   return (

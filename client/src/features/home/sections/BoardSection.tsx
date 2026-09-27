@@ -5,6 +5,7 @@ import { fetchSocialLatest, fetchYoutubeLatest } from '../../../services/api'
 import type { SocialPreview } from '../../../types/social'
 import type { YoutubeLatestVideo } from '../../../types/youtube'
 import { useLocale } from '../../../i18n/LocaleContext'
+import { toCloudinaryWebpUrl } from '../../../utils/cloudinaryWebp'
 
 function formatPublished(iso: string): string {
   const d = new Date(iso)
@@ -72,7 +73,7 @@ function ChannelCard({
         {showPhoto ? (
           <img
             className="board-channel__photo"
-            src={image ?? ''}
+            src={image ? toCloudinaryWebpUrl(image) : ''}
             alt=""
             onError={() => setImgFailed(true)}
           />

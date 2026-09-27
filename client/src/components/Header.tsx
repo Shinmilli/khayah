@@ -15,6 +15,7 @@ import {
   type NavMenuLinkDef,
 } from '../features/nav/navVisibilityTypes'
 import { useNavVisibility } from '../features/nav/useNavVisibility'
+import { toCloudinaryWebpUrl } from '../utils/cloudinaryWebp'
 import '../styles/site-header.css'
 
 const LOGO_SRC = '/images/logo/khayah_logo.png'
@@ -353,7 +354,7 @@ export function Header() {
                           </div>
                           {menuImages[col.topKey] ? (
                             <div className="site-header__submenu-visual" aria-hidden="true">
-                              <img src={menuImages[col.topKey]} alt="" />
+                              <img src={toCloudinaryWebpUrl(menuImages[col.topKey])} alt="" />
                             </div>
                           ) : null}
                         </div>

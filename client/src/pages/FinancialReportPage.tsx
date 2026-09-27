@@ -9,6 +9,7 @@ import type { FinancialReportsPublicDocument } from '../features/financial-repor
 import { fetchFinancialReports } from '../services/api'
 import { useLocale } from '../i18n/LocaleContext'
 import { pdfOpenHref } from '../utils/pdfAttachments'
+import { toCloudinaryWebpUrl } from '../utils/cloudinaryWebp'
 import '../styles/financial-report.css'
 
 const ACRC_URL = 'https://www.acrc.go.kr/'
@@ -298,7 +299,7 @@ export function FinancialReportPage() {
               <div className="financial-report__table-card">
                 <div className="financial-report__table-head">{fr.balanceSheet(report.year)}</div>
                 {report.balanceSheetImageUrl ? (
-                  <img src={report.balanceSheetImageUrl} alt={`${fr.balanceSheet(report.year)}`} />
+                  <img src={toCloudinaryWebpUrl(report.balanceSheetImageUrl)} alt={`${fr.balanceSheet(report.year)}`} />
                 ) : (
                   <div className="financial-report__table-placeholder">
                     {fr.tablePlaceholderBalance}
@@ -313,7 +314,7 @@ export function FinancialReportPage() {
               <div className="financial-report__table-card">
                 <div className="financial-report__table-head">{fr.operationsStatement(report.year)}</div>
                 {report.operationsStatementImageUrl ? (
-                  <img src={report.operationsStatementImageUrl} alt={`${fr.operationsStatement(report.year)}`} />
+                  <img src={toCloudinaryWebpUrl(report.operationsStatementImageUrl)} alt={`${fr.operationsStatement(report.year)}`} />
                 ) : (
                   <div className="financial-report__table-placeholder">
                     {fr.tablePlaceholderOps}
