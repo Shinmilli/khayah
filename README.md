@@ -2,24 +2,24 @@
 
 # Khayah
 
-**사단법인 카야 인터내셔널** 공식 웹사이트  
+**사단법인 카야 인터내셔널** 공식 웹사이트
 WordPress(BeTheme)에서 **React + Express** 스택으로 현대화한 프로젝트입니다.
 
 <br />
 
-![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=white)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
-![Vite](https://img.shields.io/badge/Vite-7-646CFF?style=for-the-badge&logo=vite&logoColor=white)
-![Node.js](https://img.shields.io/badge/Node.js-18+-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
-![Express](https://img.shields.io/badge/Express-5-000000?style=for-the-badge&logo=express&logoColor=white)
-![Prisma](https://img.shields.io/badge/Prisma-7-2D3748?style=for-the-badge&logo=prisma&logoColor=white)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Supabase-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
-![Cloudinary](https://img.shields.io/badge/Cloudinary-Media-3448C5?style=for-the-badge&logo=cloudinary&logoColor=white)
+![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=20232a&labelColor=61DAFB)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?style=for-the-badge&logo=typescript&logoColor=white&labelColor=3178C6)
+![Vite](https://img.shields.io/badge/Vite-7-646CFF?style=for-the-badge&logo=vite&logoColor=white&labelColor=646CFF)
+![Node.js](https://img.shields.io/badge/Node.js-18+-339933?style=for-the-badge&logo=nodedotjs&logoColor=white&labelColor=339933)
+![Express](https://img.shields.io/badge/Express-5-000000?style=for-the-badge&logo=express&logoColor=white&labelColor=000000)
+![Prisma](https://img.shields.io/badge/Prisma-7-2D3748?style=for-the-badge&logo=prisma&logoColor=white&labelColor=2D3748)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Supabase-4169E1?style=for-the-badge&logo=postgresql&logoColor=white&labelColor=4169E1)
+![Cloudinary](https://img.shields.io/badge/Cloudinary-Media-3448C5?style=for-the-badge&logo=cloudinary&logoColor=white&labelColor=3448C5)
 
 <br />
 
-[![Deploy Guide](https://img.shields.io/badge/Deploy-docs%2FDEPLOY.md-b20838?style=flat-square)](docs/DEPLOY.md)
-[![Local Dev](https://img.shields.io/badge/Local_Dev-Setup-555?style=flat-square)](#local-development)
+[![Deploy Guide](https://img.shields.io/badge/Deploy-docs%2FDEPLOY.md-b20838?style=flat-square&labelColor=b20838)](docs/DEPLOY.md)
+[![Local Dev](https://img.shields.io/badge/Local_Dev-Setup-2563EB?style=flat-square&labelColor=2563EB)](#local-development)
 
 </div>
 

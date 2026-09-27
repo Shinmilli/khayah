@@ -120,7 +120,7 @@
     },
     {
       "id": "primary-9b7b0458-aaee-4ac2-823a-c51b81fe2ce5",
-      "showDonut": true,
+      "showDonut": false,
       "colors": {
         "cardBg": "#b20838",
         "kicker": "#df84a1",
