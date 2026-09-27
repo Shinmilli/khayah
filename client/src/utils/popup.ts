@@ -14,6 +14,8 @@ export type PopupItem = {
 
 export type PopupConfig = {
   items: PopupItem[]
+  /** 관리자 조회 전용. false면 서버에 아직 저장된 문서가 없다 */
+  stored?: boolean
 }
 
 const CONFIG_KEY = 'khayah.popup.config'

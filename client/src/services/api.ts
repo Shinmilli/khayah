@@ -516,11 +516,7 @@ export async function fetchPopup(): Promise<PopupConfig> {
 
 export async function adminFetchPopup(): Promise<PopupConfig> {
   const res = await apiFetch(`${API_BASE}/admin/popup`)
-  if (!res.ok) {
-    const err = new Error(await readApiError(res, '팝업을 불러오지 못했습니다.')) as Error & { status?: number }
-    err.status = res.status
-    throw err
-  }
+  if (!res.ok) throw new Error(await readApiError(res, '팝업을 불러오지 못했습니다.'))
   return res.json()
 }
 

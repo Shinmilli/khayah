@@ -19,10 +19,10 @@ export async function getAdminPopup(_req: Request, res: Response) {
   try {
     const doc = await readPopupDocument()
     if (!doc) {
-      res.status(404).json({ error: 'Missing popup document' })
+      res.json({ ...emptyPopupDocument(), stored: false })
       return
     }
-    res.json(doc)
+    res.json({ ...doc, stored: true })
   } catch (e) {
     console.error(e)
     res.status(500).json({ error: 'Failed to load popup' })

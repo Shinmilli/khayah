@@ -51,16 +51,7 @@ export function AdminPopupPage() {
     adminFetchPopup()
       .then((doc) => {
         if (cancelled) return
-        const next = { items: doc.items?.length ? doc.items : [getDefaultPopupItem()] }
-        persistedRef.current = doc
-        setConfig(next)
-        setSelectedId(next.items[0]?.id ?? '')
-        setNeedsFirstSave(false)
-      })
-      .catch((e: unknown) => {
-        if (cancelled) return
-        const statusCode = (e as { status?: number }).status
-        if (statusCode === 404) {
+        if (doc.stored === false) {
           const draft = loadStoredPopupDraft() ?? getDefaultPopupConfig()
           persistedRef.current = draft
           setConfig(draft)
@@ -73,6 +64,14 @@ export function AdminPopupPage() {
           )
           return
         }
+        const next = { items: doc.items?.length ? doc.items : [getDefaultPopupItem()] }
+        persistedRef.current = doc
+        setConfig(next)
+        setSelectedId(next.items[0]?.id ?? '')
+        setNeedsFirstSave(false)
+      })
+      .catch((e: unknown) => {
+        if (cancelled) return
         setLoadBlocked(true)
         setStatus(e instanceof Error ? e.message : '팝업을 불러오지 못했습니다.')
       })
