@@ -44,11 +44,19 @@ const SOCIAL_LINKS = [
     label: '네이버 블로그',
     className: 'site-floating-fab__social site-floating-fab__social--blog',
     icon: (
-      <svg viewBox="0 0 24 24" width={18} height={18} aria-hidden focusable="false">
-        <path
+      <svg viewBox="0 0 24 24" width={22} height={22} aria-hidden focusable="false">
+        <text
+          x="12"
+          y="15.6"
+          textAnchor="middle"
           fill="currentColor"
-          d="M4 5h16v2H4V5zm0 6h10v2H4v-2zm0 6h16v2H4v-2zm12-6h4v2h-4v-2z"
-        />
+          fontSize="8.4"
+          fontWeight="800"
+          fontFamily="Arial, Helvetica, sans-serif"
+          letterSpacing="-0.35"
+        >
+          blog
+        </text>
       </svg>
     ),
   },

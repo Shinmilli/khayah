@@ -1,6 +1,9 @@
 /* 카야 소개 — CI 탭 */
 .khayah-ci-page {
-  padding: 0.15rem 0 0.5rem;
+  padding: 2.5rem 0 0.5rem;
+  margin-top: 2.5rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  scroll-margin-top: calc(var(--site-header-height, 80px) + 4.5rem);
 }
 
 .khayah-ci-page__h {

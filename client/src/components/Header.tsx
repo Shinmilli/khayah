@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { SITE_NAME } from '../constants'
+import { NANUM_DONATE_URL } from '../constants/nanumDonate'
 import { pageHeroImageForPath, prefetchPageHeroImage } from '../constants/pageHeroImages'
 import { splitLocalePath } from '../i18n/locale'
 import { PATH } from '../i18n/routes'
@@ -33,6 +34,21 @@ const TOP_LINKS: { key: NavTopKey }[] = [
   { key: 'support' },
   { key: 'news' },
 ]
+
+/** 대카테고리 클릭 시 이동할 하위 페이지. 숨김이면 보이는 첫 항목으로 대체 */
+const TOP_LANDING_KEY: Record<NavTopKey, NavLinkKey> = {
+  khayah: 'aboutKhayah',
+  business: 'domestic',
+  support: 'supportGuide',
+  news: 'announcements',
+}
+
+function topLandingPath(col: NavMenuColumn | undefined, key: NavTopKey): string | null {
+  if (!col) return null
+  const links = columnAllLinks(col)
+  const preferred = links.find((link) => link.key === TOP_LANDING_KEY[key])
+  return (preferred ?? links[0])?.to ?? null
+}
 
 function topBannerUrls(key: NavTopKey): string[] {
   const urls =
@@ -292,6 +308,7 @@ export function Header() {
                 const hasSub = linksFlat.length > 0
                 const subOpen = hasSub && desktopMenuKey === item.key
                 const sectionLabel = topLabel(item.key)
+                const landingPath = topLandingPath(col, item.key)
 
                 return (
                   <li
@@ -311,20 +328,22 @@ export function Header() {
                     }}
                     onMouseLeave={() => hasSub && scheduleCloseDesktopMenu()}
                   >
-                    <button
-                      type="button"
-                      className="site-header__nav-link"
-                      aria-expanded={hasSub ? subOpen : undefined}
-                      aria-haspopup={hasSub ? 'menu' : undefined}
-                      onFocus={() => {
-                        if (hasSub) openDesktopMenu(item.key)
-                      }}
-                      onClick={() => {
-                        if (hasSub) openDesktopMenu(item.key)
-                      }}
-                    >
-                      {sectionLabel}
-                    </button>
+                    {landingPath ? (
+                      <Link
+                        to={loc(landingPath)}
+                        className="site-header__nav-link"
+                        aria-expanded={hasSub ? subOpen : undefined}
+                        aria-haspopup={hasSub ? 'menu' : undefined}
+                        onFocus={() => {
+                          if (hasSub) openDesktopMenu(item.key)
+                        }}
+                        onClick={closeDesktopMenu}
+                      >
+                        {sectionLabel}
+                      </Link>
+                    ) : (
+                      <span className="site-header__nav-link">{sectionLabel}</span>
+                    )}
 
                     {hasSub && col ? (
                       <div
@@ -368,6 +387,14 @@ export function Header() {
         </div>
 
         <div className="site-header__right">
+          <a
+            href={NANUM_DONATE_URL}
+            className="site-header__donate"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {messages.home.hero.donate}
+          </a>
           <nav className="site-header__locale" aria-label={nav.aria.locale}>
             <Link
               to={swapLocale('ko')}

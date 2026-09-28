@@ -15,22 +15,6 @@ export const DONOR_GUIDE_PAGE_HTML = `
     </div>
   </section>
 
-  <section class="sg-section" aria-labelledby="sg-accounts-heading">
-    <div class="sg-wrap">
-      <h2 id="sg-accounts-heading" class="sg-h2">카야인터내셔널 후원계좌</h2>
-      <p class="sg-note">예금주: (사)카야인터내셔널</p>
-      <dl class="sg-accounts">
-        <div class="sg-account"><dt>우리</dt><dd><span class="sg-mono">1005-403-029492</span></dd></div>
-        <div class="sg-account"><dt>농협</dt><dd><span class="sg-mono">301-1122-4444-01</span></dd></div>
-        <div class="sg-account"><dt>국민</dt><dd><span class="sg-mono">584101-01-286346</span></dd></div>
-        <div class="sg-account"><dt>신한</dt><dd><span class="sg-mono">100-034-744590</span></dd></div>
-      </dl>
-      <div class="sg-cta-row">
-        <a class="sg-btn sg-btn--primary" href="${NANUM_DONATE_URL}" target="_blank" rel="noopener noreferrer">후원하기 ♥</a>
-      </div>
-    </div>
-  </section>
-
   <section class="sg-section sg-section--surface" aria-labelledby="sg-types-heading">
     <div class="sg-wrap">
       <h2 id="sg-types-heading" class="sg-h2">후원금 종류</h2>
@@ -51,6 +35,22 @@ export const DONOR_GUIDE_PAGE_HTML = `
           <p class="sg-card__p">생일, 첫돌, 결혼기념일 등의 특별한 날에 지정하신 금액을 후원합니다.</p>
         </article>
       </div>
+      <div class="sg-cta-row">
+        <a class="sg-btn sg-btn--primary" href="${NANUM_DONATE_URL}" target="_blank" rel="noopener noreferrer">지금 바로 후원하기♥</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="sg-section" aria-labelledby="sg-accounts-heading">
+    <div class="sg-wrap">
+      <h2 id="sg-accounts-heading" class="sg-h2">카야인터내셔널 후원계좌</h2>
+      <p class="sg-note">예금주: (사)카야인터내셔널</p>
+      <dl class="sg-accounts">
+        <div class="sg-account"><dt>우리</dt><dd><span class="sg-mono">1005-403-029492</span></dd></div>
+        <div class="sg-account"><dt>농협</dt><dd><span class="sg-mono">301-1122-4444-01</span></dd></div>
+        <div class="sg-account"><dt>국민</dt><dd><span class="sg-mono">584101-01-286346</span></dd></div>
+        <div class="sg-account"><dt>신한</dt><dd><span class="sg-mono">100-034-744590</span></dd></div>
+      </dl>
     </div>
   </section>
 
@@ -227,10 +227,10 @@ export const DONOR_GUIDE_PAGE_HTML = `
 
   <section class="sg-footer-cta" aria-label="문의 및 후원">
     <div class="sg-wrap sg-footer-cta__inner">
+      <a class="sg-btn sg-btn--primary sg-btn--lg" href="${NANUM_DONATE_URL}" target="_blank" rel="noopener noreferrer">지금 바로 후원하기♥</a>
       <p class="sg-footer-cta__hint">온라인 신청이 어려우시면 전화로 문의해 주세요.</p>
       <p class="sg-footer-cta__phone-label">대표번호</p>
       <p class="sg-footer-cta__phone"><a href="tel:070-5121-2198">070-5121-2198</a></p>
-      <a class="sg-btn sg-btn--primary sg-btn--lg" href="${NANUM_DONATE_URL}" target="_blank" rel="noopener noreferrer">후원하기 ♥</a>
     </div>
   </section>
 </div>

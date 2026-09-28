@@ -188,6 +188,7 @@
   flex-wrap: wrap;
   gap: 12px;
   justify-content: center;
+  margin-top: 28px;
 }
 
 .page-content-wrapper .page-body .sg-btn {
@@ -672,6 +673,10 @@
   gap: 8px;
 }
 
+.page-content-wrapper .page-body .sg-footer-cta__inner > .sg-btn {
+  margin-bottom: 18px;
+}
+
 .page-content-wrapper .page-body .sg-footer-cta__hint {
   margin: 0 0 8px;
   font-size: 1rem;
@@ -686,7 +691,7 @@
 }
 
 .page-content-wrapper .page-body .sg-footer-cta__phone {
-  margin: 0 0 20px;
+  margin: 0;
   font-size: clamp(1.6rem, 4vw, 2.1rem);
   font-weight: 900;
   letter-spacing: -0.03em;

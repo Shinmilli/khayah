@@ -776,7 +776,7 @@ function PostEditorForm({
             <div className="admin-field admin-field--full">
               <span className="admin-field__label">언론보도 입력</span>
               <p className="admin-fieldset__hint admin-fieldset__hint--flush">
-                언론보도는 메타 정보만 등록합니다. (기사 제목 / 신문사 / 기사 링크 / 날짜)
+                언론보도는 기사 제목, 신문사, 기사 링크, 날짜를 등록하고 나중에 수정할 수 있습니다.
               </p>
               <div className="admin-form-grid">
                 <label className="admin-field admin-field--full">
@@ -787,7 +787,6 @@ function PostEditorForm({
                     placeholder="예: ○○일보 인터뷰 — 현장 이야기"
                     value={pressTitle}
                     onChange={(e) => setPressTitle(e.currentTarget.value)}
-                    disabled={isEditLocked}
                   />
                 </label>
                 <label className="admin-field">
@@ -798,7 +797,6 @@ function PostEditorForm({
                     placeholder="예: OO일보"
                     value={pressPublisher}
                     onChange={(e) => setPressPublisher(e.currentTarget.value)}
-                    disabled={isEditLocked}
                   />
                 </label>
                 <label className="admin-field">
@@ -809,7 +807,6 @@ function PostEditorForm({
                     placeholder="https://..."
                     value={pressUrl}
                     onChange={(e) => setPressUrl(e.currentTarget.value)}
-                    disabled={isEditLocked}
                   />
                 </label>
                 <label className="admin-field">
@@ -819,7 +816,6 @@ function PostEditorForm({
                     type="date"
                     value={pressDate}
                     onChange={(e) => setPressDate(e.currentTarget.value)}
-                    disabled={isEditLocked}
                   />
                 </label>
               </div>

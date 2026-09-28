@@ -35,6 +35,14 @@ export function KhayahAboutHubPage() {
   }, [activeTab, hub.tabs, messages.pages])
 
   useEffect(() => {
+    if (activeTab !== 'ci') return
+    const timer = window.setTimeout(() => {
+      document.getElementById('ci')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }, 120)
+    return () => window.clearTimeout(timer)
+  }, [activeTab])
+
+  useEffect(() => {
     const h = location.hash.replace(/^#/, '').toLowerCase()
     if (h === 'ci' && !location.search.includes('tab=')) {
       navigate({ pathname: aboutPath, search: '?tab=ci', hash: '' }, { replace: true })
@@ -73,9 +81,7 @@ export function KhayahAboutHubPage() {
   return (
     <div className="khayah-about-hub">
       <PageHero
-        title={
-          activeTab === 'ci' ? messages.nav.links.ci : activeTab === 'org' ? messages.nav.links.org : hub.title
-        }
+        title={activeTab === 'org' ? messages.nav.links.org : hub.title}
         crumbs={crumbs}
         backgroundImageUrl={pageHeroImageForPath(PATH.aboutKhayah)}
         showScrollHint={false}
@@ -85,14 +91,17 @@ export function KhayahAboutHubPage() {
 
       <div className="khayah-about-hub__inner">
         <div className="khayah-about-hub__panel">
-          {activeTab === 'intro' && (
-            <div
-              className="the_content_wrapper page-body khayah-about-hub__html"
-              dangerouslySetInnerHTML={{ __html: introHtml }}
-            />
-          )}
-          {activeTab === 'ci' && (
-            <div className="the_content_wrapper page-body khayah-about-hub__html" dangerouslySetInnerHTML={{ __html: ciHtml }} />
+          {(activeTab === 'intro' || activeTab === 'ci') && (
+            <>
+              <div
+                className="the_content_wrapper page-body khayah-about-hub__html"
+                dangerouslySetInnerHTML={{ __html: introHtml }}
+              />
+              <div
+                className="the_content_wrapper page-body khayah-about-hub__html khayah-about-hub__ci"
+                dangerouslySetInnerHTML={{ __html: ciHtml }}
+              />
+            </>
           )}
           {activeTab === 'org' && (
             <div

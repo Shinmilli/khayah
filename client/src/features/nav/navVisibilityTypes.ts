@@ -51,13 +51,12 @@ export const NAV_MENU_COLUMNS: NavMenuColumn[] = [
     id: 'khaya-col',
     topKey: 'khayah',
     links: [
+      { key: 'aboutKhayah', to: '/about/khayah' },
       { key: 'greeting', to: '/about/greeting' },
       { key: 'history', to: '/about/history' },
-      { key: 'location', to: '/about/location' },
-      { key: 'financialReport', to: '/about/financial-report' },
-      { key: 'aboutKhayah', to: '/about/khayah' },
-      { key: 'ci', to: '/about/khayah?tab=ci' },
       { key: 'org', to: '/about/khayah?tab=org' },
+      { key: 'financialReport', to: '/about/financial-report' },
+      { key: 'location', to: '/about/location' },
     ],
   },
   {

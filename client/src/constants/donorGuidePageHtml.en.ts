@@ -22,19 +22,6 @@ export const DONOR_GUIDE_PAGE_HTML = `
     </div>
   </section>
 
-  <section class="sg-section" aria-labelledby="sg-accounts-heading">
-    <div class="sg-wrap">
-      <h2 id="sg-accounts-heading" class="sg-h2">Khayah International Donation Accounts</h2>
-      <p class="sg-note">Account holder: Khayah International</p>
-      <dl class="sg-accounts">
-        ${EN_DONATION_ACCOUNTS}
-      </dl>
-      <div class="sg-cta-row">
-        <a class="sg-btn sg-btn--primary" href="${NANUM_DONATE_URL}" target="_blank" rel="noopener noreferrer">Donate ♥</a>
-      </div>
-    </div>
-  </section>
-
   <section class="sg-section sg-section--surface" aria-labelledby="sg-types-heading">
     <div class="sg-wrap">
       <h2 id="sg-types-heading" class="sg-h2">Types of Donations</h2>
@@ -55,6 +42,19 @@ export const DONOR_GUIDE_PAGE_HTML = `
           <p class="sg-card__p">Give on special occasions such as birthdays, first birthdays, or wedding anniversaries.</p>
         </article>
       </div>
+      <div class="sg-cta-row">
+        <a class="sg-btn sg-btn--primary" href="${NANUM_DONATE_URL}" target="_blank" rel="noopener noreferrer">Donate now ♥</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="sg-section" aria-labelledby="sg-accounts-heading">
+    <div class="sg-wrap">
+      <h2 id="sg-accounts-heading" class="sg-h2">Khayah International Donation Accounts</h2>
+      <p class="sg-note">Account holder: Khayah International</p>
+      <dl class="sg-accounts">
+        ${EN_DONATION_ACCOUNTS}
+      </dl>
     </div>
   </section>
 
@@ -228,10 +228,10 @@ export const DONOR_GUIDE_PAGE_HTML = `
 
   <section class="sg-footer-cta" aria-label="Contact and donate">
     <div class="sg-wrap sg-footer-cta__inner">
+      <a class="sg-btn sg-btn--primary sg-btn--lg" href="${NANUM_DONATE_URL}" target="_blank" rel="noopener noreferrer">Donate now ♥</a>
       <p class="sg-footer-cta__hint">If online application is difficult, please call us.</p>
       <p class="sg-footer-cta__phone-label">Main number</p>
       <p class="sg-footer-cta__phone"><a href="tel:+827051212198">+82-70-5121-2198</a></p>
-      <a class="sg-btn sg-btn--primary sg-btn--lg" href="${NANUM_DONATE_URL}" target="_blank" rel="noopener noreferrer">Donate ♥</a>
     </div>
   </section>
 </div>
