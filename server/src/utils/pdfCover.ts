@@ -4,8 +4,8 @@ import { createRequire } from 'module'
 import os from 'os'
 import path from 'path'
 
-const require = createRequire(__filename)
-const pdfjsRoot = path.dirname(require.resolve('pdfjs-dist/package.json'))
+const nodeRequire = createRequire(__filename)
+const pdfjsRoot = path.dirname(nodeRequire.resolve('pdfjs-dist/package.json'))
 const cMapUrl = path.join(pdfjsRoot, 'cmaps') + path.sep
 const standardFontDataUrl = path.join(pdfjsRoot, 'standard_fonts') + path.sep
 

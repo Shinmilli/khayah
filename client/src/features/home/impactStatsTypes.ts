@@ -79,6 +79,8 @@ export type ImpactStatItem = {
 
 export type ImpactStatsDocument = {
   version: 3
+  /** 메인 페이지 나눔의 결실 전체. 없으면 표시 */
+  visible?: boolean
   backgroundImageUrl: string
   introColors: ImpactIntroColors
   intro: {
@@ -111,6 +113,7 @@ export type ImpactStatView = {
 }
 
 export type ImpactStatsPublicView = {
+  visible: boolean
   backgroundImageUrl: string
   introColors: ImpactIntroColors
   intro: ImpactIntroLocale
@@ -154,6 +157,7 @@ const DEFAULT_PRIMARY_ID = 'fund-use'
 
 export const DEFAULT_IMPACT_STATS: ImpactStatsDocument = {
   version: 3,
+  visible: true,
   backgroundImageUrl: '',
   introColors: { ...DEFAULT_INTRO_COLORS },
   intro: {
@@ -312,6 +316,7 @@ export function impactStatsForLocale(
   locale: ImpactEditLocale,
 ): ImpactStatsPublicView {
   return {
+    visible: doc.visible !== false,
     backgroundImageUrl: resolvedImpactBg(doc.backgroundImageUrl),
     introColors: { ...DEFAULT_INTRO_COLORS, ...doc.introColors },
     intro: doc.intro[locale],

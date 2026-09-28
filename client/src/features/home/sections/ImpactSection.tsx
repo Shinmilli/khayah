@@ -50,6 +50,7 @@ export function ImpactSection() {
         if (!cancelled) {
           setContent({
             ...doc,
+            visible: doc.visible !== false,
             primaryCards: (doc.primaryCards ?? []).map((card: ImpactPrimaryCardView) => ({
               ...card,
               showDonut: card.showDonut !== false,
@@ -83,6 +84,8 @@ export function ImpactSection() {
   const statsSlot = 3
   const statsVisibleCount = statsVisible.length <= 1 ? 1 : statsSlot
   const intro = content.intro
+
+  if (!content.visible) return null
 
   return (
     <section className="impact-banner" id="support" aria-label={m.aria}>

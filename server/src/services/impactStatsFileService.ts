@@ -57,6 +57,7 @@ type ImpactStatItem = {
 
 export type ImpactStatsDocumentV3 = {
   version: 3
+  visible: boolean
   backgroundImageUrl: string
   introColors: ImpactIntroColors
   intro: { ko: ImpactIntroLocale; en: ImpactIntroLocale }
@@ -72,6 +73,7 @@ type ImpactStatsDocumentV1 = { version: 1; donut: ImpactDonut; stats: ImpactStat
 export type ImpactStatsDocument = ImpactStatsDocumentV3
 
 export type ImpactStatsPublicView = {
+  visible: boolean
   backgroundImageUrl: string
   introColors: ImpactIntroColors
   intro: ImpactIntroLocale
@@ -218,6 +220,7 @@ function migrateV2ToV3(v2: ImpactStatsDocumentV2): ImpactStatsDocumentV3 {
   const enById = new Map(v2.locales.en.stats.map((row) => [row.id, row]))
   return {
     version: 3,
+    visible: true,
     backgroundImageUrl: '',
     introColors: clone(seed.introColors),
     intro: clone(seed.intro),
@@ -328,6 +331,7 @@ function parseDocumentV3(body: unknown): ImpactStatsDocumentV3 | null {
 
   return {
     version: 3,
+    visible: asBool(body.visible, true),
     backgroundImageUrl: asString(body.backgroundImageUrl),
     introColors: {
       kicker: asColor(introColorsSrc.kicker, DEFAULT_INTRO_COLORS.kicker),
@@ -370,6 +374,7 @@ export async function readImpactStatsForLocale(locale: ImpactLocale): Promise<Im
   const doc = await readImpactStatsDocument()
   const bg = doc.backgroundImageUrl.trim() || DEFAULT_BG
   return {
+    visible: doc.visible !== false,
     backgroundImageUrl: bg,
     introColors: doc.introColors,
     intro: doc.intro[locale],

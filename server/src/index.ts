@@ -98,10 +98,9 @@ async function healthDb(_req: express.Request, res: express.Response) {
 app.get('/health/db', healthDb)
 app.get('/api/health/db', healthDb)
 
-warmPdfCoverRenderer()
-
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`)
+  warmPdfCoverRenderer()
   if (!prisma) {
     console.warn('[prisma] not connected:', prismaInitStatus.reason ?? 'unknown', prismaInitStatus.message ?? '')
     console.warn('[prisma] Set DATABASE_URL in server/.env (see .env.example), then restart.')

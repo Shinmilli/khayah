@@ -167,6 +167,34 @@ export function AdminImpactStatsPage() {
         </button>
       </div>
 
+      <section className="admin-panel" aria-label="나눔의 결실 표시" style={{ marginBottom: '1rem' }}>
+        <div className="admin-field admin-field--full">
+          <span className="admin-field__label">메인 페이지 표시</span>
+          <div className="admin-segmented admin-segmented--tight" role="group" aria-label="나눔의 결실 표시">
+            <button
+              type="button"
+              className={`admin-segmented__btn${doc.visible !== false ? ' admin-segmented__btn--active' : ''}`}
+              onClick={() => setDoc((prev) => ({ ...prev, visible: true }))}
+              disabled={loading}
+            >
+              ON
+            </button>
+            <button
+              type="button"
+              className={`admin-segmented__btn${doc.visible === false ? ' admin-segmented__btn--active' : ''}`}
+              onClick={() => setDoc((prev) => ({ ...prev, visible: false }))}
+              disabled={loading}
+            >
+              OFF
+            </button>
+          </div>
+          <p className="admin-upload__hint">
+            OFF이면 메인 페이지에서 제목, 배경, 후원금 카드, 성과 지표까지 나눔의 결실 전체가 숨겨집니다. 저장해야
+            반영됩니다.
+          </p>
+        </div>
+      </section>
+
       <div className="admin-impact-tabs" role="tablist" aria-label="나눔의 결실 항목">
         {IMPACT_SECTIONS.map((row) => (
           <button

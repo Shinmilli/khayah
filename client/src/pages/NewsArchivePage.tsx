@@ -6,7 +6,7 @@ import { fetchPostsByKind } from '../services/api'
 import type { Post } from '../types/post'
 import { PdfFirstPagePreview } from '../components/PdfFirstPagePreview'
 import { Pagination } from '../components/Pagination'
-import { coverIsBlank, pdfOpenHref } from '../utils/pdfAttachments'
+import { pdfOpenHref } from '../utils/pdfAttachments'
 import { paginate } from '../utils/paginate'
 import {
   newsletterArchiveYearFromPost,
@@ -356,7 +356,7 @@ export function NewsArchivePage() {
                           <div className="yearly-nl-card__cover-wrap">
                             {cover ? (
                               <img className="yearly-nl-card__cover" src={toCloudinaryWebpUrl(cover)} alt="" loading="lazy" />
-                            ) : !coverIsBlank(post.meta) && pdf ? (
+                            ) : pdf ? (
                               <PdfFirstPagePreview url={pdf} className="yearly-nl-card__cover yearly-nl-card__cover--pdf" />
                             ) : (
                               <div className="yearly-nl-card__cover yearly-nl-card__cover--placeholder" aria-hidden />
