@@ -1,0 +1,206 @@
+/* 메인·재정보고·사업 페이지를 제외한 본문. 헤더·푸터는 #Content 밖이라 영향 없음. */
+
+#Content.type-readable .page-crumbs__inner {
+  min-height: 88px;
+  gap: 16px;
+  font-size: 19px;
+}
+
+#Content.type-readable .page-crumbs__home {
+  width: 46px;
+  height: 46px;
+}
+
+#Content.type-readable .page-crumbs__home svg {
+  width: 24px;
+  height: 24px;
+}
+
+#Content.type-readable .page-content-wrapper .page-body {
+  font-size: clamp(1.22rem, 0.3vw + 1.12rem, 1.38rem);
+}
+
+#Content.type-readable .page-content-wrapper .page-body h2 {
+  font-size: clamp(1.55rem, 1.5vw + 1.05rem, 1.95rem);
+}
+
+#Content.type-readable .page-content-wrapper .page-body h3 {
+  font-size: clamp(1.28rem, 0.7vw + 1.08rem, 1.5rem);
+}
+
+#Content.type-readable .page-content-wrapper .kh-history__month {
+  font-size: 15.5px;
+}
+
+#Content.type-readable .page-content-wrapper .kh-history__desc {
+  font-size: clamp(17.5px, 1.6vw, 19px);
+}
+
+#Content.type-readable .khayah-about-def-vmv .def-body,
+#Content.type-readable .khayah-about-def-vmv .vmv-hero-desc,
+#Content.type-readable .khayah-about-def-vmv .vmv-row-body,
+#Content.type-readable .khayah-about-def-vmv .values-orbit__center-sub,
+#Content.type-readable .khayah-about-def-vmv .values-orbit__key,
+#Content.type-readable .khayah-about-def-vmv .values-orbit__desc {
+  font-size: 17.5px;
+}
+
+@media (max-width: 980px) {
+  #Content.type-readable .khayah-about-def-vmv .values-orbit__desc {
+    font-size: 16px;
+  }
+}
+
+#Content.type-readable .khayah-location-list li {
+  font-size: 1.1rem;
+}
+
+#Content.type-readable .page-content-wrapper .page-body .khayah-location-block__title {
+  font-size: 1.28rem;
+}
+
+#Content.type-readable .khayah-location-accounts__holder {
+  font-size: 1.02rem;
+}
+
+#Content.type-readable .khayah-location-swift {
+  font-size: 0.95rem;
+}
+
+#Content.type-readable .greeting-modern .article-body {
+  font-size: 1.25rem;
+}
+
+#Content.type-readable .greeting-modern .article-lead {
+  font-size: clamp(1.5rem, 2.6vw, 1.85rem);
+}
+
+#Content.type-readable .greeting-modern .sidebar-meta {
+  font-size: 0.9rem;
+}
+
+#Content.type-readable .greeting-modern .intro-strip-label,
+#Content.type-readable .greeting-modern .sidebar-tag,
+#Content.type-readable .greeting-modern .pull-quote cite {
+  font-size: 0.84rem;
+}
+
+#Content.type-readable .notice-archive-page .notice-archive__title,
+#Content.type-readable .activity-archive-page .activity-archive__title,
+#Content.type-readable .press-archive-page .press-archive__headline {
+  font-size: 1.34rem;
+}
+
+#Content.type-readable .notice-archive-page .notice-archive__date,
+#Content.type-readable .activity-archive-page .activity-archive__date,
+#Content.type-readable .press-archive-page .press-archive__ymd,
+#Content.type-readable .archive-board__head {
+  font-size: 1.15rem;
+}
+
+#Content.type-readable .post-board__files a {
+  font-size: 1rem;
+}
+
+#Content.type-readable .post-board__nav-label,
+#Content.type-readable .post-board__nav-empty,
+#Content.type-readable .story-post-nav__label {
+  font-size: 1.05rem;
+}
+
+#Content.type-readable .post-board__nav-title,
+#Content.type-readable .story-post-nav__title {
+  font-size: 1.1rem;
+}
+
+#Content.type-readable .post-board__nav-date {
+  font-size: 1rem;
+}
+
+#Content.type-readable .story-archive__sub,
+#Content.type-readable .story-filter__btn,
+#Content.type-readable .story-list-card__title {
+  font-size: 1.12rem;
+}
+
+#Content.type-readable .story-list-card__excerpt,
+#Content.type-readable .story-list-card__meta {
+  font-size: 1.02rem;
+}
+
+#Content.type-readable .pager__btn {
+  min-width: 44px;
+  height: 44px;
+  font-size: 1.05rem;
+}
+
+#Content.type-readable .khayah-org-chart__lead {
+  font-size: 1.12rem;
+}
+
+#Content.type-readable .khayah-board-name {
+  font-size: 1.16rem;
+}
+
+#Content.type-readable .khayah-board-role {
+  font-size: 1.04rem;
+}
+
+#Content.type-readable .khayah-ci-page__sub,
+#Content.type-readable .khayah-ci-legend__title {
+  font-size: 1.12rem;
+}
+
+#Content.type-readable .khayah-ci-legend__desc {
+  font-size: 1.02rem;
+}
+
+#Content.type-readable .khayah-ci-story p {
+  font-size: 1.16rem;
+}
+
+#Content.type-readable .page-content-wrapper .page-body .sg-page {
+  font-size: 1.2rem;
+}
+
+#Content.type-readable .page-content-wrapper .page-body .sg-card__title,
+#Content.type-readable .page-content-wrapper .page-body .sg-step__lead,
+#Content.type-readable .page-content-wrapper .page-body .sg-note {
+  font-size: 1.18rem;
+}
+
+#Content.type-readable .page-content-wrapper .page-body .sg-card__p,
+#Content.type-readable .page-content-wrapper .page-body .sg-ul {
+  font-size: 1.1rem;
+}
+
+#Content.type-readable .page-content-wrapper .page-body .sg-card__p--tight {
+  font-size: 1.02rem;
+}
+
+#Content.type-readable .newsletter-title {
+  font-size: 1.4rem;
+}
+
+#Content.type-readable .newsletter-excerpt {
+  font-size: 1.05rem;
+}
+
+#Content.type-readable .newsletter-hint {
+  font-size: 0.95rem;
+}
+
+#Content.type-readable .inquiry-section-title {
+  font-size: clamp(1.5rem, 2.5vw, 1.85rem);
+}
+
+#Content.type-readable .inquiry-shell p,
+#Content.type-readable .inquiry-shell li,
+#Content.type-readable .inquiry-shell label,
+#Content.type-readable .inquiry-shell dt,
+#Content.type-readable .inquiry-shell dd,
+#Content.type-readable .inquiry-shell input,
+#Content.type-readable .inquiry-shell textarea,
+#Content.type-readable .inquiry-shell select {
+  font-size: 1.08rem;
+}

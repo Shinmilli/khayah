@@ -78,6 +78,14 @@ export function pdfOpenHref(url: string, filename?: string): string {
   return `${API_BASE}/uploads/pdf?${qs.toString()}`
 }
 
+/** 목록 표지용. PDF 프록시 대신 1페이지 JPEG만 받는다. */
+export function pdfCoverHref(url: string): string {
+  const u = url.trim()
+  if (!u) return ''
+  const qs = new URLSearchParams({ url: u })
+  return `${API_BASE}/uploads/pdf-cover?${qs.toString()}`
+}
+
 export function coverIsBlank(meta?: Record<string, string>): boolean {
   return (meta?.khayah_cover_blank ?? '').trim() === 'true'
 }

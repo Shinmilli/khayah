@@ -54,9 +54,9 @@
 }
 
 .financial-report__year-label {
-  font-size: 1rem;
+  font-size: 1.125rem;
   color: #555;
-  margin-right: 0.35rem;
+  margin-right: 0.45rem;
 }
 
 .financial-report__year-strip {
@@ -71,11 +71,11 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2.25rem;
-  min-height: 2.25rem;
+  width: 2.85rem;
+  min-height: 2.85rem;
   padding: 0;
   border: 1px solid #cfd6dc;
-  border-radius: 10px;
+  border-radius: 12px;
   background: #fff;
   color: var(--fr-burgundy);
   cursor: pointer;
@@ -95,6 +95,11 @@
   color: #888;
 }
 
+.financial-report__year-nav svg {
+  width: 1.4rem;
+  height: 1.4rem;
+}
+
 .financial-report__year-toggle {
   display: inline-flex;
   flex-wrap: nowrap;
@@ -111,13 +116,13 @@
   border: none;
   border-right: 1px solid #e8ecf0;
   background: #fff;
-  padding: 0.42rem 0.65rem;
-  font-size: 0.9375rem;
+  padding: 0.62rem 1rem;
+  font-size: 1.0625rem;
   font-weight: 600;
   color: #333;
   cursor: pointer;
   transition: background 0.15s, color 0.15s;
-  min-width: 3rem;
+  min-width: 3.75rem;
 }
 
 .financial-report__year-toggle-btn:last-child {
@@ -310,7 +315,7 @@
 
 .financial-donut__svg {
   width: 100%;
-  max-width: 400px;
+  max-width: 500px;
   height: auto;
   overflow: visible;
 }
@@ -367,6 +372,11 @@
   font-size: 26px;
   font-weight: 800;
   letter-spacing: -0.05em;
+}
+
+.financial-donut__label-pct-num--long {
+  font-size: 18px;
+  letter-spacing: -0.03em;
 }
 
 .financial-donut__label-pct-sign {

@@ -7,6 +7,18 @@ import { SitePopup } from './SitePopup'
 import { LegacyPathRedirect } from '../i18n/LegacyPathRedirect'
 import { PageHeroBannerProvider, usePageHeroBannerImages } from '../features/page-hero/PageHeroBannerProvider'
 import { useScrollReveal } from '../hooks/useScrollReveal'
+import { splitLocalePath } from '../i18n/locale'
+import '../styles/type-readable.css'
+
+/** 메인·재정보고·사업 페이지는 기존 타이포를 유지한다. */
+function keepsCompactType(pathname: string): boolean {
+  const { pathnameWithoutLocale } = splitLocalePath(pathname)
+  const path = pathnameWithoutLocale.replace(/\/+$/, '') || '/'
+  if (path === '/') return true
+  if (path === '/about/financial-report') return true
+  if (path === '/business' || path.startsWith('/business/')) return true
+  return false
+}
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -27,6 +39,8 @@ export function Layout() {
 function LayoutInner() {
   usePageHeroBannerImages()
   useScrollReveal()
+  const { pathname } = useLocation()
+  const readable = !keepsCompactType(pathname)
   return (
     <div id="Wrapper" className="site">
       <ScrollToTop />
@@ -37,7 +51,7 @@ function LayoutInner() {
           <Header />
         </header>
       </div>
-      <div id="Content">
+      <div id="Content" className={readable ? 'type-readable' : undefined}>
         <Outlet />
       </div>
       <SitePopup />

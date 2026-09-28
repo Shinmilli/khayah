@@ -22,18 +22,35 @@ export function KhayahSectionNav() {
       <div className="khayah-about-tabs__rail">
         {items.map((item) => {
           const isActive = active === item.id
+          const label = messages.nav.links[item.labelKey]
+          const stacked = item.id === 'org' ? splitOrgLabel(label) : null
           return (
             <Link
               key={item.id}
               to={localize(item.to)}
-              className={`khayah-about-tabs__tab${isActive ? ' is-active' : ''}`}
+              className={`khayah-about-tabs__tab${isActive ? ' is-active' : ''}${stacked ? ' khayah-about-tabs__tab--stack' : ''}`}
               aria-current={isActive ? 'page' : undefined}
             >
-              {messages.nav.links[item.labelKey]}
+              {stacked ? (
+                <>
+                  <span>{stacked[0]}</span>
+                  <span>{stacked[1]}</span>
+                </>
+              ) : (
+                label
+              )}
             </Link>
           )
         })}
       </div>
     </nav>
   )
+}
+
+/** "조직도 · 이사회 · 전문위원" → 조직도 / 이사회 · 전문위원 */
+function splitOrgLabel(label: string): [string, string] | null {
+  const sep = ' · '
+  const i = label.indexOf(sep)
+  if (i <= 0) return null
+  return [label.slice(0, i), label.slice(i + sep.length)]
 }

@@ -21,6 +21,7 @@ import { popupRouter } from './routes/popup'
 import { authRouter } from './routes/auth'
 import { adminUsersRouter } from './routes/adminUsers'
 import { adminAuthGuard } from './middlewares/requireAdmin'
+import { warmPdfCoverRenderer } from './utils/pdfCover'
 import { prisma, prismaInitStatus } from './utils/prisma'
 import { parseClientOrigins } from './utils/adminSession'
 
@@ -96,6 +97,8 @@ async function healthDb(_req: express.Request, res: express.Response) {
 
 app.get('/health/db', healthDb)
 app.get('/api/health/db', healthDb)
+
+warmPdfCoverRenderer()
 
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`)

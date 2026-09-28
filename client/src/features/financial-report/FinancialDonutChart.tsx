@@ -13,6 +13,19 @@ const ELBOW_BASE = 34
 /** 기타수입·모금비용 등 아주 작은 조각은 라벨·안내선을 왼쪽으로 꺾음 */
 const FORCE_LEFT_PERCENT = 1.2
 
+/** 0.001·0.002·0.0002처럼 작은 값은 0.00으로 줄이지 않고 유효 자릿수를 유지 */
+function formatChartPercent(percent: number): string {
+  if (!Number.isFinite(percent) || percent === 0) return '0'
+  const abs = Math.abs(percent)
+  const decimals = abs >= 0.01 ? 2 : abs >= 0.001 ? 3 : abs >= 0.0001 ? 4 : 5
+  const trimmed = percent
+    .toFixed(decimals)
+    .replace(/(\.\d*?)0+$/, '$1')
+    .replace(/\.$/, '')
+  if (trimmed !== '0' && trimmed !== '-0') return trimmed
+  return percent.toPrecision(2).replace(/(\.\d*?)0+$/, '$1').replace(/\.$/, '')
+}
+
 const GUIDE_TEMPLATE_IDS = new Set([
   'misc',
   'brought_forward',
@@ -305,8 +318,7 @@ export function FinancialDonutChart({ year, kind, segments, totalFormatted, inco
       const elbowExtra = seg.percent < 2 ? 20 : seg.percent < 6 ? 10 : 0
       const elbow = ELBOW_BASE + elbowExtra
       const elbowX = p1.x + (right ? elbow : -elbow)
-      const pct =
-        seg.percent < 1 ? seg.percent.toFixed(2) : Number.isInteger(seg.percent) ? String(seg.percent) : seg.percent.toFixed(2)
+      const pct = formatChartPercent(seg.percent)
 
       drafts.push({
         key: seg.id,
@@ -340,7 +352,7 @@ export function FinancialDonutChart({ year, kind, segments, totalFormatted, inco
       <svg
         key={String(playKey)}
         className="financial-donut__svg"
-        viewBox="0 -16 320 372"
+        viewBox="-48 -16 416 372"
         role="img"
         aria-labelledby={`${gid}-t`}
       >
@@ -392,7 +404,13 @@ export function FinancialDonutChart({ year, kind, segments, totalFormatted, inco
               fill={g.guideColor}
               className={`financial-donut__label-pct${pctOnShelf ? ' financial-donut__label-pct--onShelf' : ''}`}
             >
-              <tspan className="financial-donut__label-pct-num">{g.pctNum}</tspan>
+              <tspan
+                className={`financial-donut__label-pct-num${
+                  (g.pctNum.split('.')[1]?.length ?? 0) >= 3 ? ' financial-donut__label-pct-num--long' : ''
+                }`}
+              >
+                {g.pctNum}
+              </tspan>
               <tspan className="financial-donut__label-pct-sign" dy="-0.55em" dx="0.08em">
                 %
               </tspan>

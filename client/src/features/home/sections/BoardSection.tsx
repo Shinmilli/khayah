@@ -17,6 +17,22 @@ function formatPublished(iso: string): string {
   return `${y}.${m}.${day}`
 }
 
+function NaverBlogLockup() {
+  return (
+    <span className="naver-blog-lockup" aria-hidden="true">
+      <svg className="naver-blog-lockup__mark" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <rect width="24" height="24" rx="5" fill="#03C75A" />
+        <path
+          fill="#fff"
+          transform="translate(-1 0)"
+          d="M7.15 5.4h3.55l4.55 7.15V5.4h3.6v13.2h-3.55l-4.55-7.15v7.15H7.15V5.4z"
+        />
+      </svg>
+      <span className="naver-blog-lockup__word">blog</span>
+    </span>
+  )
+}
+
 function ChannelCard({
   href,
   variant,
@@ -30,15 +46,21 @@ function ChannelCard({
   title: string
   desc: string
 }) {
+  const showBlogMark = variant === 'blog'
   return (
     <a
-      className={`board-channel__card board-channel__card--${variant} has-photo`}
+      className={`board-channel__card board-channel__card--${variant} has-photo${showBlogMark ? ' has-brand-mark' : ''}`}
       href={href}
       target="_blank"
       rel="noopener noreferrer"
     >
       <span className="board-channel__media">
         <img className="board-channel__photo" src={image} alt="" />
+        {showBlogMark ? (
+          <span className="board-channel__brand-mark" aria-hidden="true">
+            <NaverBlogLockup />
+          </span>
+        ) : null}
       </span>
       <span className="board-channel__copy">
         <span className="board-channel__brand">{title}</span>
