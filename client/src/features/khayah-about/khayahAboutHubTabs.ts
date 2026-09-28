@@ -6,7 +6,7 @@ export const KHAYAH_ABOUT_TAB_IDS = ['intro', 'ci', 'org'] as const
 export type KhayahAboutTabId = (typeof KHAYAH_ABOUT_TAB_IDS)[number]
 
 export const KHAYAH_ABOUT_TABS: Array<{ id: KhayahAboutTabId; label: string }> = [
-  { id: 'intro', label: '카야 소개' },
+  { id: 'intro', label: '카야 소개 · CI' },
   { id: 'ci', label: 'CI' },
   { id: 'org', label: '조직도 · 이사회 · 전문위원' },
 ]

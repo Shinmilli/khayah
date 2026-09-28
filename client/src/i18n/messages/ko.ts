@@ -313,7 +313,7 @@ export const koMessages: Messages = {
       history: '연혁',
       location: '오시는 길',
       financialReport: '재정보고',
-      aboutKhayah: '카야 소개',
+      aboutKhayah: '카야 소개 · CI',
       ci: 'CI',
       org: '조직도 · 이사회 · 전문위원',
       domestic: '국내사업',
@@ -612,10 +612,10 @@ export const koMessages: Messages = {
       },
     },
     aboutHub: {
-      title: '카야 소개',
+      title: '카야 소개 · CI',
       tabsAria: '카야 메뉴',
       tabs: {
-        intro: '카야 소개',
+        intro: '카야 소개 · CI',
         ci: 'CI',
         org: '조직도 · 이사회 · 전문위원',
       },

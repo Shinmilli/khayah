@@ -1851,7 +1851,7 @@ body.has-overlay-header .home-page {
   display: flex;
   width: max-content;
   gap: clamp(16px, 2vw, 28px);
-  animation: partners-marquee 42s linear infinite;
+  animation: partners-marquee 176s linear infinite;
 }
 
 .partners-marquee:hover .partners-track {

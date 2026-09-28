@@ -22,7 +22,7 @@ export const enMessages: Messages = {
       history: 'History',
       location: 'Visit us',
       financialReport: 'Financial reports',
-      aboutKhayah: 'About Khayah',
+      aboutKhayah: 'About Khayah · CI',
       ci: 'CI',
       org: 'Organization & board',
       domestic: 'Domestic programs',
@@ -321,10 +321,10 @@ export const enMessages: Messages = {
       },
     },
     aboutHub: {
-      title: 'About Khayah',
+      title: 'About Khayah · CI',
       tabsAria: 'Khayah menu',
       tabs: {
-        intro: 'About Khayah',
+        intro: 'About Khayah · CI',
         ci: 'CI',
         org: 'Organization & board',
       },
