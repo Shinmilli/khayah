@@ -6,8 +6,10 @@ import type { Messages } from '../i18n/messages/ko'
 import { PROJECT_REGION_TO_SLUG } from '../i18n/routes'
 import type { Post } from '../types/post'
 import { parsePdfAttachments, pdfOpenHref, type PdfAttachment } from '../utils/pdfAttachments'
+import { PdfFirstPagePreview } from './PdfFirstPagePreview'
 import { PostBody } from './PostBody'
 import { PostCoverThumb } from './PostCoverThumb'
+import '../styles/newsletter.css'
 
 function PaperclipIcon() {
   return (
@@ -151,6 +153,53 @@ function heroTitleForKind(kind: string, messages: Messages): string {
   return kind || pages.postDetail.fallbackTitle
 }
 
+function newsletterIsPdfMode(post: Post): boolean {
+  const m = post.meta?.khayah_newsletter_mode ?? ''
+  return m === 'PDF 업로드 모드' || m === 'PDF소식지'
+}
+
+function newsletterPdfFileName(post: Post): string {
+  const original = post.meta?.khayah_pdf_name?.trim()
+  if (original) return original.toLowerCase().endsWith('.pdf') ? original : `${original}.pdf`
+  const t = post.title.trim() || 'newsletter'
+  return t.toLowerCase().endsWith('.pdf') ? t : `${t}.pdf`
+}
+
+function NewsletterPdfPreview({ post }: { post: Post }) {
+  const { messages } = useLocale()
+  const pdf = post.meta?.khayah_pdf_url?.trim() || ''
+  const content = (post.content || '').trim()
+  const looksHtml = /<\/?[a-z][\s\S]*>/i.test(content)
+
+  return (
+    <article className="newsletter-preview">
+      <h1 className="newsletter-preview__title">{post.title}</h1>
+      {content ? (
+        looksHtml ? (
+          <PostBody html={content} />
+        ) : (
+          <p className="newsletter-preview__content">{content}</p>
+        )
+      ) : null}
+      {pdf ? (
+        <div className="newsletter-preview__sheet">
+          <PdfFirstPagePreview url={pdf} className="newsletter-preview__sheet-img" />
+        </div>
+      ) : null}
+      {pdf ? (
+        <a
+          className="newsletter-preview__open"
+          href={pdfOpenHref(pdf, newsletterPdfFileName(post))}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {messages.pages.archive.viewDetail}
+        </a>
+      ) : null}
+    </article>
+  )
+}
+
 function storyScopeChip(scope: string | undefined, messages: Messages): string | null {
   switch (scope) {
     case '국내':
@@ -209,6 +258,10 @@ export function PostDetail({ post }: { post: Post }) {
 
   const isFeature = kind === '활동소식' || kind === '연간소식지' || kind === '스토리'
   const isStory = kind === '스토리'
+
+  if (kind === '연간소식지' && newsletterIsPdfMode(post)) {
+    return <NewsletterPdfPreview post={post} />
+  }
 
   const storyNavCard = (side: 'prev' | 'next', target: Post | null) => {
     const isPrev = side === 'prev'

@@ -799,7 +799,7 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
   },
   'business/projects': {
     title: 'Active Projects',
-    content: '<p>Explore Khayah’s ongoing work in Korea and overseas, and the stories behind each program.</p><p><a href="/business/projects/nepal">Nepal</a> · <a href="/business/projects/myanmar">Myanmar</a> · <a href="/business/projects/kyrgyzstan">Kyrgyzstan</a> · <a href="/business/projects/domestic">Domestic</a></p>',
+    content: '<p>Explore Khayah’s ongoing work in Korea and overseas, and the stories behind each program.</p><p><a href="/khayah/en/business/projects/nepal">Nepal</a> · <a href="/khayah/en/business/projects/myanmar">Myanmar</a> · <a href="/khayah/en/business/projects/kyrgyzstan">Kyrgyzstan</a> · <a href="/khayah/en/business/projects/domestic">Domestic</a></p>',
   },
   'business/projects/nepal': {
     title: 'Nepal',
@@ -827,7 +827,7 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
   },
   'news': {
     title: 'News',
-    content: '<p>Find Khayah\'s latest updates, announcements, activity news, and annual newsletter.</p><p><a href="/news/announcements">Announcements</a> · <a href="/news/activities">Activities</a> · <a href="/news/newsletter">Newsletter</a> · <a href="/news/press">Press</a></p>',
+    content: '<p>Find Khayah\'s latest updates, announcements, activity news, and annual newsletter.</p><p><a href="/khayah/en/news/announcements">Announcements</a> · <a href="/khayah/en/news/activities">Activities</a> · <a href="/khayah/en/news/newsletter">Newsletter</a> · <a href="/khayah/en/news/press">Press</a></p>',
   },
   'news/activities': {
     title: 'Activities',
@@ -847,7 +847,7 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
   },
   'together': {
     title: 'Join Khayah',
-    content: '<p>Ways to join Khayah. <a href="/news/announcements">Announcements</a> · <a href="/news/activities">Activities</a></p>',
+    content: '<p>Ways to join Khayah. <a href="/khayah/en/news/announcements">Announcements</a> · <a href="/khayah/en/news/activities">Activities</a></p>',
   },
   'together/announcements': {
     title: 'Announcements',

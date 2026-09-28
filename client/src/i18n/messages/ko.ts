@@ -217,6 +217,7 @@ export type Messages = {
       detailSub: string
       emailLabel: string
       phoneLabel: string
+      phone: string
       types: Record<string, string>
       statuses: Record<string, string>
     }
@@ -539,6 +540,7 @@ export const koMessages: Messages = {
       detailSub: 'FAQ·문의하기로 해결되지 않으면 아래 연락처로 문의해 주세요.',
       emailLabel: '이메일',
       phoneLabel: '전화',
+      phone: '070-5121-2198',
       types: {
         '후원 문의': '후원 문의',
         '봉사 참여': '봉사 참여',

@@ -806,7 +806,7 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
   },
   'business/projects': {
     title: '진행사업',
-    content: '<p>국내외 현장에서 이어지는 카야의 활동과 사업별 이야기를 만나보세요.</p><p><a href="/business/projects/nepal">네팔</a> · <a href="/business/projects/myanmar">미얀마</a> · <a href="/business/projects/kyrgyzstan">키르기즈스탄</a> · <a href="/business/projects/domestic">국내</a></p>',
+    content: '<p>국내외 현장에서 이어지는 카야의 활동과 사업별 이야기를 만나보세요.</p><p><a href="/khayah/business/projects/nepal">네팔</a> · <a href="/khayah/business/projects/myanmar">미얀마</a> · <a href="/khayah/business/projects/kyrgyzstan">키르기즈스탄</a> · <a href="/khayah/business/projects/domestic">국내</a></p>',
   },
   'business/projects/nepal': {
     title: '네팔',
@@ -834,7 +834,7 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
   },
   'news': {
     title: '소식',
-    content: '<p>카야의 최신 소식, 공지사항, 활동소식, 연간소식지를 확인하실 수 있습니다.</p><p><a href="/news/announcements">공지사항</a> · <a href="/news/activities">활동소식</a> · <a href="/news/newsletter">연간소식지</a> · <a href="/news/press">언론보도</a></p>',
+    content: '<p>카야의 최신 소식, 공지사항, 활동소식, 연간소식지를 확인하실 수 있습니다.</p><p><a href="/khayah/news/announcements">공지사항</a> · <a href="/khayah/news/activities">활동소식</a> · <a href="/khayah/news/newsletter">연간소식지</a> · <a href="/khayah/news/press">언론보도</a></p>',
   },
   'news/activities': {
     title: '활동소식',
@@ -854,7 +854,7 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
   },
   'together': {
     title: '카야와 함께',
-    content: '<p>카야와 함께할 수 있는 방법을 안내합니다. <a href="/news/announcements">공지사항</a> · <a href="/news/activities">활동소식</a></p>',
+    content: '<p>카야와 함께할 수 있는 방법을 안내합니다. <a href="/khayah/news/announcements">공지사항</a> · <a href="/khayah/news/activities">활동소식</a></p>',
   },
   'together/announcements': {
     title: '공지사항',

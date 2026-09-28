@@ -69,11 +69,8 @@ export function KhayahAboutHubPage() {
   const crumbs = useMemo(() => {
     const about = { label: messages.nav.top.khayah, to: '/about/khayah' }
     const intro = { label: messages.nav.links.aboutKhayah, to: '/about/khayah' }
-    if (activeTab === 'ci') {
-      return [about, intro, { label: messages.nav.links.ci, to: '/about/khayah?tab=ci' }]
-    }
     if (activeTab === 'org') {
-      return [about, intro, { label: messages.nav.links.org, to: '/about/khayah?tab=org' }]
+      return [about, { label: messages.nav.links.org, to: '/about/khayah?tab=org' }]
     }
     return [about, intro]
   }, [activeTab, messages.nav])

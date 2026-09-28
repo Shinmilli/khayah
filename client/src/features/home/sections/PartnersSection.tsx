@@ -40,12 +40,12 @@ export function PartnersSection() {
           <div className="partners-track">
             {PARTNER_LOGOS.map((logo) => (
               <div key={logo.src} className="partner-card">
-                <img className="partner-logo" src={logo.src} alt={logo.alt} loading="lazy" />
+                <img className="partner-logo" src={logo.src} alt={logo.alt} />
               </div>
             ))}
             {PARTNER_LOGOS.map((logo) => (
               <div key={`${logo.src}-dup`} className="partner-card" aria-hidden="true">
-                <img className="partner-logo" src={logo.src} alt="" loading="lazy" />
+                <img className="partner-logo" src={logo.src} alt="" />
               </div>
             ))}
           </div>

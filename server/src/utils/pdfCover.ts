@@ -88,10 +88,19 @@ async function loadPdfjs(): Promise<PdfjsApi> {
   return dynamicImport('pdfjs-dist/legacy/build/pdf.mjs')
 }
 
-async function renderPdfFirstPageJpeg(pdf: Buffer): Promise<Buffer> {
+async function renderPdfFirstPageJpeg(source: Buffer | string): Promise<Buffer> {
   const pdfjs = await loadPdfjs()
+  const src =
+    typeof source === 'string'
+      ? {
+          url: source,
+          disableAutoFetch: true,
+          disableStream: true,
+          rangeChunkSize: 65536,
+        }
+      : { data: new Uint8Array(source) }
   const task = pdfjs.getDocument({
-    data: new Uint8Array(pdf),
+    ...src,
     cMapUrl,
     cMapPacked: true,
     standardFontDataUrl,
@@ -193,7 +202,13 @@ export async function getCachedPdfCover(pdfUrl: string, loadPdf: () => Promise<B
       remember(key, again)
       return again
     }
-    const jpeg = await withRenderSlot(async () => renderPdfFirstPageJpeg(await loadPdf()))
+    let jpeg: Buffer
+    try {
+      jpeg = await withRenderSlot(() => renderPdfFirstPageJpeg(pdfUrl))
+    } catch (err) {
+      console.warn('[uploads] pdf cover url render failed, downloading full file', err)
+      jpeg = await withRenderSlot(async () => renderPdfFirstPageJpeg(await loadPdf()))
+    }
     remember(key, jpeg)
     await writeCache(key, jpeg).catch((e) => {
       console.warn('[uploads] pdf cover cache write failed', e)

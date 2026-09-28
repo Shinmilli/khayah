@@ -6,14 +6,8 @@ import { fetchPostsByKind } from '../services/api'
 import type { Post } from '../types/post'
 import { PdfFirstPagePreview } from '../components/PdfFirstPagePreview'
 import { Pagination } from '../components/Pagination'
-import { pdfOpenHref } from '../utils/pdfAttachments'
 import { paginate } from '../utils/paginate'
-import {
-  newsletterArchiveYearFromPost,
-  newsletterIssueKeyFromPost,
-  newsletterYearLabel,
-  parseNewsletterYearSpec,
-} from '../utils/newsletterYear'
+import { newsletterYearLabel, parseNewsletterYearSpec } from '../utils/newsletterYear'
 import '../styles/page.css'
 import '../styles/newsletter.css'
 import { PATH } from '../i18n/routes'
@@ -56,24 +50,10 @@ function pressSortKey(post: Post): string {
   return pressDisplayYmd(post)
 }
 
-/** 목록·필터용 연도: 범위면 종료 연도에만 표시. 없으면 제목 연도, 마지막으로 게시일 연도 */
-function newsletterArchiveYear(post: Post): number {
-  return newsletterArchiveYearFromPost(
-    post.meta?.khayah_newsletter_year,
-    post.title,
-    post.publishedAt,
-  )
-}
-
 function newsletterCoverageLabel(post: Post): string {
   const spec = parseNewsletterYearSpec(post.meta?.khayah_newsletter_year?.trim() ?? '')
   if (!spec) return ''
   return newsletterYearLabel(spec)
-}
-
-function newsletterIsPdfMode(post: Post): boolean {
-  const m = post.meta?.khayah_newsletter_mode ?? ''
-  return m === 'PDF 업로드 모드' || m === 'PDF소식지'
 }
 
 /** 호수 표시용 (숫자만 있으면 ○○호 / No. ○○) */
@@ -151,78 +131,17 @@ export function NewsArchivePage() {
     return [...posts].sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
   }, [posts, kind])
 
-  const [filterYear, setFilterYear] = useState<number | null>(null)
-  const [filterIssue, setFilterIssue] = useState<string>('')
-
-  const newsletterYears = useMemo(() => {
-    const ys = new Set<number>()
-    for (const p of newsletterSorted) ys.add(newsletterArchiveYear(p))
-    return Array.from(ys).sort((a, b) => b - a)
-  }, [newsletterSorted])
-
-  useEffect(() => {
-    if (kind !== '연간소식지') return
-    if (newsletterYears.length === 0) {
-      setFilterYear(null)
-      return
-    }
-    setFilterYear((prev) => (prev != null && newsletterYears.includes(prev) ? prev : newsletterYears[0]))
-  }, [kind, newsletterYears])
-
-  const newsletterIssueValues = useMemo(() => {
-    if (filterYear == null) return [] as string[]
-    const pool = newsletterSorted.filter((p) => newsletterArchiveYear(p) === filterYear)
-    const keys = new Set<string>()
-    for (const p of pool) {
-      const key = newsletterIssueKeyFromPost(p.meta?.khayah_newsletter_issue, p.title)
-      if (key) keys.add(key)
-    }
-    return Array.from(keys).sort((a, b) => {
-      const na = parseInt(a, 10)
-      const nb = parseInt(b, 10)
-      if (Number.isFinite(na) && Number.isFinite(nb)) return nb - na
-      return b.localeCompare(a, 'ko')
-    })
-  }, [newsletterSorted, filterYear])
-
-  const newsletterDefaultIssue = useMemo(() => {
-    if (filterYear == null) return ''
-    const pool = newsletterSorted.filter((p) => newsletterArchiveYear(p) === filterYear)
-    for (const p of pool) {
-      const key = newsletterIssueKeyFromPost(p.meta?.khayah_newsletter_issue, p.title)
-      if (key) return key
-    }
-    return newsletterIssueValues[0] ?? ''
-  }, [newsletterSorted, filterYear, newsletterIssueValues])
-
-  useEffect(() => {
-    setFilterIssue((prev) =>
-      prev && newsletterIssueValues.includes(prev) ? prev : newsletterDefaultIssue,
-    )
-  }, [filterYear, newsletterIssueValues, newsletterDefaultIssue])
-
   const isPress = kind === '언론보도'
   const isNewsletter = kind === '연간소식지'
   const isActivity = kind === '활동소식'
 
-  const newsletterVisible = useMemo(() => {
-    return newsletterSorted.filter((p) => {
-      if (filterYear == null || newsletterArchiveYear(p) !== filterYear) return false
-      if (filterIssue) {
-        const issueKey = newsletterIssueKeyFromPost(p.meta?.khayah_newsletter_issue, p.title)
-        if (issueKey !== filterIssue) return false
-      }
-      return true
-    })
-  }, [newsletterSorted, filterYear, filterIssue])
-
-  const perPage = isNewsletter ? 4 : isActivity ? 8 : isPress ? 8 : 10
-  const archiveAll = isNewsletter ? newsletterVisible : sortedPosts
+  const perPage = isNewsletter ? Math.max(newsletterSorted.length, 1) : isActivity ? 8 : isPress ? 8 : 10
+  const archiveAll = isNewsletter ? newsletterSorted : sortedPosts
   const [listPage, setListPage] = useState(1)
 
   useEffect(() => {
     setListPage(1)
-  }, [kind, filterYear, filterIssue])
+  }, [kind])
 
   const paged = paginate(archiveAll, listPage, perPage)
 
@@ -259,46 +178,12 @@ export function NewsArchivePage() {
 
             {!loading && !error && isNewsletter && newsletterSorted.length > 0 && (
               <div className="yearly-nl-archive">
-                <div className="yearly-nl-toolbar" role="search" aria-label={ar.newsletterFilterAria}>
-                  <label className="yearly-nl-filter">
-                    <select
-                      className="yearly-nl-select"
-                      aria-label={ar.yearLabel}
-                      value={String(filterYear)}
-                      onChange={(e) => setFilterYear(Number(e.currentTarget.value))}
-                    >
-                      {newsletterYears.map((y) => (
-                        <option key={y} value={String(y)}>
-                          {ar.yearOption(y)}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                  {newsletterIssueValues.length > 0 ? (
-                    <label className="yearly-nl-filter">
-                      <select
-                        className="yearly-nl-select"
-                        aria-label={ar.issueLabel}
-                        value={filterIssue}
-                        onChange={(e) => setFilterIssue(e.currentTarget.value)}
-                      >
-                        {newsletterIssueValues.map((issueKey) => (
-                          <option key={issueKey} value={issueKey}>
-                            {newsletterIssueLabel(issueKey, ar.issueUnit)}
-                          </option>
-                        ))}
-                      </select>
-                    </label>
-                  ) : null}
-                </div>
-
                 <div className="yearly-nl-cards" aria-label={ar.listAria(title)}>
                   {paged.items.length === 0 ? (
                     <ListStatus variant="empty" message={ar.emptyFiltered} />
                   ) : (
                     paged.items.map((post) => {
                       const pdf = newsletterPdfUrl(post)
-                      const isPdf = newsletterIsPdfMode(post)
                       const cover = coverMetaUrl(post)
                       const issueRaw = post.meta?.khayah_newsletter_issue?.trim() ?? ''
                       const issueHo = newsletterIssueLabel(issueRaw, ar.issueUnit)
@@ -316,14 +201,6 @@ export function NewsArchivePage() {
                         (!yearLabel || norm(excerpt) !== norm(yearLabel))
                       const detailPath = localize(`/posts/${encodeURIComponent(post.slug)}`)
                       const detailState = { postKind: kind }
-                      const ctaPdf = isPdf && pdf
-                      const pdfFileName = (() => {
-                        const original = post.meta?.khayah_pdf_name?.trim()
-                        if (original) return original.toLowerCase().endsWith('.pdf') ? original : `${original}.pdf`
-                        const t = post.title.trim() || title
-                        return t.toLowerCase().endsWith('.pdf') ? t : `${t}.pdf`
-                      })()
-                      const pdfHref = pdfOpenHref(pdf, pdfFileName)
                       return (
                         <article key={post.id} className="yearly-nl-card">
                           <div className="yearly-nl-card__text">
@@ -331,26 +208,12 @@ export function NewsArchivePage() {
                             <h2 className="yearly-nl-card__title">{post.title}</h2>
                             {showYears ? <p className="yearly-nl-card__years">{yearLabel}</p> : null}
                             {showExcerpt ? <p className="yearly-nl-card__desc">{excerpt}</p> : null}
-                            {ctaPdf ? (
-                              <a
-                                className="yearly-nl-cta"
-                                href={pdfHref}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                              >
-                                {ar.viewDetail}
-                                <span className="yearly-nl-cta__icon" aria-hidden>
-                                  →
-                                </span>
-                              </a>
-                            ) : (
-                              <Link className="yearly-nl-cta" to={detailPath} state={detailState}>
-                                {ar.viewDetail}
-                                <span className="yearly-nl-cta__icon" aria-hidden>
-                                  →
-                                </span>
-                              </Link>
-                            )}
+                            <Link className="yearly-nl-cta" to={detailPath} state={detailState}>
+                              {ar.viewDetail}
+                              <span className="yearly-nl-cta__icon" aria-hidden>
+                                →
+                              </span>
+                            </Link>
                             </div>
                           </div>
                           <div className="yearly-nl-card__cover-wrap">

@@ -78,10 +78,19 @@ export function pdfOpenHref(url: string, filename?: string): string {
   return `${API_BASE}/uploads/pdf?${qs.toString()}`
 }
 
-/** 목록 표지용. PDF 프록시 대신 1페이지 JPEG만 받는다. */
+/** 이미 만들어 둔 표지. API에서 PDF를 다시 그리지 않는다. */
+const BUNDLED_PDF_COVERS: Record<string, string> = {
+  '1790564151279-b5hpha.pdf': '/images/newsletters/2021-vol2.jpg',
+  '1790564120779-c3jaln.pdf': '/images/newsletters/2017-vol1.jpg',
+}
+
+/** 목록 표지용. 준비된 JPEG가 있으면 그걸 쓰고, 없으면 서버가 1페이지만 만든다. */
 export function pdfCoverHref(url: string): string {
   const u = url.trim()
   if (!u) return ''
+  const file = u.split('?')[0]?.split('/').pop() ?? ''
+  const bundled = BUNDLED_PDF_COVERS[file]
+  if (bundled) return bundled
   const qs = new URLSearchParams({ url: u })
   return `${API_BASE}/uploads/pdf-cover?${qs.toString()}`
 }

@@ -18,7 +18,7 @@ export function PdfFirstPagePreview({
       src={src}
       alt=""
       decoding="async"
-      loading="lazy"
+      fetchPriority="high"
       onError={() => setFailedUrl(url)}
     />
   )

@@ -509,9 +509,9 @@ export function InquiryPage() {
                 <span className="inquiry-detail-card__label">{iq.emailLabel}</span>
                 <span className="inquiry-detail-card__value">khayahinternational@gmail.com</span>
               </a>
-              <a className="inquiry-detail-card" href="tel:07051212198">
+              <a className="inquiry-detail-card" href={locale === 'en' ? 'tel:+827051212198' : 'tel:07051212198'}>
                 <span className="inquiry-detail-card__label">{iq.phoneLabel}</span>
-                <span className="inquiry-detail-card__value">070-5121-2198</span>
+                <span className="inquiry-detail-card__value">{iq.phone}</span>
               </a>
             </div>
           </section>

@@ -453,6 +453,8 @@ a:hover {
   letter-spacing: -0.02em;
   line-height: 1.45;
   text-align: right;
+  /* 오른쪽 플로팅 버튼(후원하기)과 겹치지 않게 링크 묶음을 왼쪽으로 */
+  padding-right: 96px;
 }
 
 .footer-links-bar__sep {
@@ -796,6 +798,10 @@ a:hover {
 }
 
 @media (min-width: 1025px) {
+  .footer-links-bar__row {
+    padding-right: 120px;
+  }
+
   .site-floating-fab {
     --fab-donate-size: 96px;
     --fab-social-size: 60px;

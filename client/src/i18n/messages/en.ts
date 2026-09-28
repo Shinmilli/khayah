@@ -248,6 +248,7 @@ export const enMessages: Messages = {
       detailSub: 'If FAQ or Ask us does not resolve it, reach us below.',
       emailLabel: 'Email',
       phoneLabel: 'Phone',
+      phone: '+82-70-5121-2198',
       types: {
         '후원 문의': 'Donation',
         '봉사 참여': 'Volunteering',
