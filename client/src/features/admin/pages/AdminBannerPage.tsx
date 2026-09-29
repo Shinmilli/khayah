@@ -162,7 +162,7 @@ export function AdminBannerPage() {
           <h1 className="admin-page__title">메인 배너 관리</h1>
           <p className="admin-page__desc">
             홈 상단 히어로 슬라이드의 배경 이미지·문구·alt를 한·영으로 관리합니다. 이미지는 공통, 문구는
-            언어별입니다. 저장 후 공개 홈(`/`, `/en`)에 반영됩니다.
+            언어별입니다. 문구가 이미지에 들어가 있으면 텍스트는 비워도 저장됩니다. 저장 후 공개 홈(`/`, `/en`)에 반영됩니다.
           </p>
         </div>
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
@@ -298,7 +298,7 @@ export function AdminBannerPage() {
                   ) : null}
                   <label className="admin-field admin-field--full">
                     <span className="admin-field__label">
-                      배너 문구 ({editLocale === 'ko' ? '한국어' : 'English'}, 줄마다 Enter)
+                      배너 문구 ({editLocale === 'ko' ? '한국어' : 'English'}, 줄마다 Enter, 비워도 됨)
                     </span>
                     <textarea
                       className="admin-input admin-input--area"
@@ -306,7 +306,7 @@ export function AdminBannerPage() {
                       value={selectedCopy.lines.join('\n')}
                       onChange={(e) =>
                         updateSelectedCopy({
-                          lines: e.target.value.split('\n').map((l) => l.trimEnd()),
+                          lines: e.target.value.split('\n'),
                         })
                       }
                     />

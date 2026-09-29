@@ -172,8 +172,13 @@ function NewsletterPdfPreview({ post }: { post: Post }) {
   const looksHtml = /<\/?[a-z][\s\S]*>/i.test(content)
 
   return (
-    <article className="newsletter-preview">
-      <h1 className="newsletter-preview__title">{post.title}</h1>
+    <article className="newsletter-preview post-board post-board--feature">
+      <header className="post-board__head">
+        <h1 className="post-board__title">{post.title}</h1>
+        <p className="post-board__meta">
+          <time dateTime={post.publishedAt}>{formatDotDate(post.publishedAt)}</time>
+        </p>
+      </header>
       {content ? (
         looksHtml ? (
           <PostBody html={content} />

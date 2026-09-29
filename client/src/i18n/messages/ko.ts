@@ -14,6 +14,8 @@ export type NavLinkKey =
   | 'overseasEducation'
   | 'overseasHealth'
   | 'overseasVolunteer'
+  | 'researchEducation'
+  | 'researchSocial'
   | 'advocacy'
   | 'projects'
   | 'supportGuide'
@@ -31,6 +33,7 @@ export type FooterTopLinkKey =
   | 'instagram'
   | 'blog'
   | 'kakao'
+  | 'acrc'
 
 export type Messages = {
   nav: {
@@ -323,6 +326,8 @@ export const koMessages: Messages = {
       overseasEducation: '교육',
       overseasHealth: '보건의료',
       overseasVolunteer: '해외봉사단',
+      researchEducation: '교육연구',
+      researchSocial: '소셜비즈니스',
       advocacy: '연구사업',
       projects: '진행사업',
       supportGuide: '후원 안내',
@@ -343,6 +348,7 @@ export const koMessages: Messages = {
       instagram: '인스타그램',
       blog: '블로그',
       kakao: '카카오채널',
+      acrc: '국민권익위원회',
     },
     contactText:
       '사단법인 카야인터내셔널\n경기도 성남시 분당구 이매동 81-3 (방아로 38) 3층\nT 070.5121.2198 | F 070.8650.3639\nE khayahinternational@gmail.com',
@@ -387,7 +393,7 @@ export const koMessages: Messages = {
       chip: {
         domestic: '국내사업',
         overseas: '해외사업',
-        advocacy: '옹호사업',
+        advocacy: '연구사업',
         support: '진행사업',
         default: '스토리',
       },
@@ -584,11 +590,11 @@ export const koMessages: Messages = {
       filterAria: '스토리 범위 선택',
       listAria: '스토리 목록',
       all: '전체',
-      scopes: { domestic: '국내', overseas: '해외', advocacy: '옹호', support: '지원' },
+      scopes: { domestic: '국내', overseas: '해외', advocacy: '연구', support: '지원' },
       chips: {
         domestic: '국내사업',
         overseas: '해외사업',
-        advocacy: '옹호사업',
+        advocacy: '연구사업',
         support: '진행사업',
         default: '스토리',
       },

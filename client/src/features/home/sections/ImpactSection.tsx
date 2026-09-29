@@ -16,6 +16,8 @@ import { useLocale } from '../../../i18n/LocaleContext'
 import { ImpactStack } from './ImpactStack'
 import { toCloudinaryWebpUrl } from '../../../utils/cloudinaryWebp'
 
+const impactCache = new Map<string, ImpactStatsPublicView>()
+
 function isExternalHref(href: string): boolean {
   return /^https?:\/\//i.test(href) || href.startsWith('mailto:')
 }
@@ -41,33 +43,36 @@ export function ImpactSection() {
   const { locale, messages, localize } = useLocale()
   const m = messages.home.impact
   const [idx, setIdx] = useState(0)
-  const [content, setContent] = useState<ImpactStatsPublicView>(() => impactStatsForLocale(DEFAULT_IMPACT_STATS, 'ko'))
+  const [content, setContent] = useState<ImpactStatsPublicView | null>(() => impactCache.get(locale) ?? null)
 
   useEffect(() => {
+    setContent(impactCache.get(locale) ?? null)
     let cancelled = false
     fetchImpactStats(locale)
       .then((doc) => {
-        if (!cancelled) {
-          setContent({
-            ...doc,
-            visible: doc.visible !== false,
-            primaryCards: (doc.primaryCards ?? []).map((card: ImpactPrimaryCardView) => ({
-              ...card,
-              showDonut: card.showDonut !== false,
-              donut: normalizeImpactDonut(card.donut),
-            })),
-          })
+        if (cancelled) return
+        const next: ImpactStatsPublicView = {
+          ...doc,
+          visible: doc.visible !== false,
+          primaryCards: (doc.primaryCards ?? []).map((card: ImpactPrimaryCardView) => ({
+            ...card,
+            showDonut: card.showDonut !== false,
+            donut: normalizeImpactDonut(card.donut),
+          })),
         }
+        impactCache.set(locale, next)
+        setContent(next)
       })
       .catch(() => {
-        if (!cancelled) setContent(impactStatsForLocale(DEFAULT_IMPACT_STATS, locale))
+        if (cancelled || impactCache.has(locale)) return
+        setContent(impactStatsForLocale(DEFAULT_IMPACT_STATS, locale))
       })
     return () => {
       cancelled = true
     }
   }, [locale])
 
-  const rotator = content.intro.rotator.map((t) => t.trim()).filter(Boolean)
+  const rotator = (content?.intro.rotator ?? []).map((t) => t.trim()).filter(Boolean)
   const rotatorLen = rotator.length
 
   useEffect(() => {
@@ -78,14 +83,14 @@ export function ImpactSection() {
     return () => window.clearInterval(timer)
   }, [rotatorLen])
 
+  if (!content || !content.visible) return null
+
   const primaryCards = visiblePrimaryCards(content.primaryCards)
   const statsVisible = visibleImpactStats(content.stats)
   const compactPrimary = primaryCards.length > 1
   const statsSlot = 3
   const statsVisibleCount = statsVisible.length <= 1 ? 1 : statsSlot
   const intro = content.intro
-
-  if (!content.visible) return null
 
   return (
     <section className="impact-banner" id="support" aria-label={m.aria}>
@@ -99,7 +104,11 @@ export function ImpactSection() {
         <div
           className="impact-banner__bg"
           aria-hidden="true"
-          style={{ backgroundImage: `url(${toCloudinaryWebpUrl(content.backgroundImageUrl)})` }}
+          style={
+            content.backgroundImageUrl.trim()
+              ? { backgroundImage: `url(${toCloudinaryWebpUrl(content.backgroundImageUrl)})` }
+              : undefined
+          }
         />
 
         {rotatorLen > 0 ? (

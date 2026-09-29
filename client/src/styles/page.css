@@ -18,6 +18,12 @@
   padding-bottom: 0;
 }
 
+/* 인사말 본문이 시안 비율로 더 커져도 칸 안에 들어가게 */
+.page-content-wrapper > .section:has(.greeting-modern) > .section_wrapper {
+  width: min(1520px, 100%);
+  max-width: 1520px;
+}
+
 .page-content-wrapper > .section:has(.greeting-modern) .column.one {
   margin-bottom: 0;
 }
@@ -152,20 +158,20 @@
   width: var(--site-content-width, 92%);
   max-width: var(--site-content-max, 1400px);
   margin: 0 auto;
-  min-height: 80px;
+  min-height: 88px;
   padding: 10px 0;
   box-sizing: border-box;
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
   color: rgba(0, 0, 0, 0.55);
-  font-size: 16px;
+  font-size: 19px;
   letter-spacing: -0.01em;
 }
 
 .page-crumbs__home {
-  width: 40px;
-  height: 40px;
+  width: 46px;
+  height: 46px;
   border-radius: 999px;
   display: inline-flex;
   align-items: center;
@@ -178,8 +184,8 @@
 
 .page-crumbs__home svg {
   display: block;
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
 }
 
 .page-crumbs__item {
@@ -720,7 +726,7 @@
 
 /* 핵심가치 — 이미지 시안(원형) 레이아웃 */
 .khayah-about-def-vmv .values-orbit-section {
-  padding: clamp(36px, 5vw, 52px) clamp(20px, 5vw, 64px) clamp(48px, 6vw, 72px);
+  padding: clamp(36px, 5vw, 52px) clamp(20px, 5vw, 64px) clamp(108px, 12vw, 148px);
   border-bottom: none;
 }
 

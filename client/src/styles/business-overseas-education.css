@@ -188,6 +188,13 @@
   line-height: 1.75;
 }
 
+.ov-edu-cell__steps {
+  margin: 12px 0 0;
+  font-weight: 700;
+  line-height: 1.65;
+  color: rgba(17, 17, 17, 0.82);
+}
+
 /* Image strip (uses placeholders) */
 .ov-edu-strip {
   margin-top: 18px;

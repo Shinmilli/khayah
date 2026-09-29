@@ -87,7 +87,7 @@
   margin: 0 auto;
   max-width: 28em;
   text-align: center;
-  font-size: clamp(1.12rem, 2.2vw, 1.38rem);
+  font-size: clamp(1.32rem, 2.6vw, 1.62rem);
   font-weight: 400;
   letter-spacing: -0.02em;
   line-height: 1.55;

@@ -10,6 +10,7 @@ export const API_BASE = import.meta.env.VITE_API_BASE ?? '/api'
 /** 푸터 상단 바로가기 (한 줄, | 구분) — 라벨은 i18n messages.footer.topLinks */
 export const BLOG_URL = 'https://blog.naver.com/khayah'
 export const INSTAGRAM_URL = 'https://www.instagram.com/khayah_international'
+export const ACRC_URL = 'https://www.acrc.go.kr/'
 
 export const FOOTER_TOP_LINKS = [
   { key: 'donate', href: NANUM_DONATE_URL },
@@ -18,6 +19,7 @@ export const FOOTER_TOP_LINKS = [
   { key: 'instagram', href: INSTAGRAM_URL },
   { key: 'blog', href: BLOG_URL },
   { key: 'kakao', href: 'https://pf.kakao.com/_TnWKK' },
+  { key: 'acrc', href: ACRC_URL },
 ] as const
 
 /** 푸터 브랜드 로고(다크그레이). 없으면 `FOOTER_LOGO_FALLBACK` + CSS 보정 */

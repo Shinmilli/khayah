@@ -75,6 +75,10 @@ function labelForSlug(seg: string, messages: Messages): string {
     case 'volunteer':
     case 'health-care':
       return nav.links.overseasVolunteer
+    case 'education-research':
+      return nav.links.researchEducation
+    case 'social-business':
+      return nav.links.researchSocial
     case 'support':
       return nav.top.support
     case 'guide':

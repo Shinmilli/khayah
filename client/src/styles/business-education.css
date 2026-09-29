@@ -137,6 +137,11 @@
   margin: 0 0 14px;
 }
 
+/* page.css 본문 p/h2 여백보다 교육 시안 간격을 우선 */
+.page-content-wrapper .page-body p.edu-ref-label {
+  margin: 0 0 14px;
+}
+
 .edu-ref-label__badge {
   width: 18px;
   height: 18px;
@@ -161,11 +166,15 @@
   color: var(--edu-text);
 }
 
+.page-content-wrapper .page-body h2.edu-ref-h2 {
+  margin: 0;
+}
+
 .edu-ref-h2::after {
   content: '';
   position: absolute;
   left: 0;
-  bottom: 0.12em;
+  top: 0.58em;
   width: 100%;
   height: 0.62em;
   background: rgba(178, 8, 56, 0.14);
@@ -352,6 +361,11 @@
   .edu-ref-grid,
   .edu-ref-section.is-flipped .edu-ref-grid {
     grid-template-columns: 1fr;
+  }
+
+  /* 좌우가 바뀐 섹션도 좁은 화면에서는 글이 사진보다 먼저 */
+  .edu-ref-section.is-flipped .edu-ref-media {
+    order: 2;
   }
 
   .edu-section__grid {

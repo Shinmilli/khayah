@@ -39,6 +39,12 @@ type YearlyNewsletterMode = '글쓰기' | 'PDF소식지'
 
 /** 스토리 선택 시 필수 구분 (홈 스토리 칩과 대응) */
 const storyPostScopes = ['국내', '해외', '옹호', '진행'] as const
+const storyScopeLabel: Record<(typeof storyPostScopes)[number], string> = {
+  국내: '국내',
+  해외: '해외',
+  옹호: '연구',
+  진행: '진행',
+}
 type StoryPostScope = (typeof storyPostScopes)[number]
 
 const projectRegions = ['네팔', '키르기즈스탄', '미얀마', '국내'] as const
@@ -482,7 +488,7 @@ function PostEditorForm({
       return
     }
     if (postType === '스토리' && !storyScope) {
-      setSaveError('스토리 게시 유형(국내/해외/옹호/진행)을 선택해 주세요.')
+      setSaveError('스토리 게시 유형(국내/해외/연구/진행)을 선택해 주세요.')
       return
     }
     if (postType === '진행사업' && !projectRegion) {
@@ -824,7 +830,7 @@ function PostEditorForm({
             <div className="admin-field admin-field--full">
               <span className="admin-field__label">게시 유형</span>
               <p className="admin-fieldset__hint admin-fieldset__hint--flush">
-                스토리 글은 국내·해외·옹호·진행 네 가지 중 하나를 반드시 선택합니다.
+                스토리 글은 국내·해외·연구·진행 네 가지 중 하나를 반드시 선택합니다.
               </p>
               <div className="admin-segmented admin-segmented--tight" role="group" aria-label="스토리 게시 유형">
                 {storyPostScopes.map((s) => (
@@ -838,7 +844,7 @@ function PostEditorForm({
                     }}
                     disabled={isEditLocked}
                   >
-                    {s}
+                    {storyScopeLabel[s]}
                   </button>
                 ))}
               </div>

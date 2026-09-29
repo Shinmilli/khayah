@@ -31,12 +31,12 @@
       "locales": {
         "ko": {
           "title": "해외봉사단 파견",
-          "description": "카야는 국내 청년과 다양한 분야 경험과 열정을 가진 참여자들이 현지 지역사회 과제를 직접 이해하고, 함께 해결방안을 찾는 국제협력활동 기회를 제공합니다. 현지에 필요한 실천 모델을 제안하고 실행하며 지역사회의 지속가능한 변화와 참여자의 동반 성장이 함께 이뤄지도록 합니다.",
+          "description": "카야는 국내 청(소)년 및 기업 등 다양한 분야 경험과 열정을 가진 참여자들이 현지 지역사회 과제를 직접 이해하고, 함께 해결방안을 찾는 국제협력활동 기회를 제공합니다. 현지에 필요한 실천 모델을 제안하고 실행하며 지역사회의 지속가능한 변화와 참여자의 동반 성장이 함께 이뤄지도록 합니다.",
           "buttonLabel": "자세히 보기"
         },
         "en": {
-          "title": "Overseas Volunteer Dispatch",
-          "description": "Khayah offers Korean youth and participants with diverse experience and passion the chance to understand local community challenges firsthand and seek solutions together through international cooperation. We propose and implement practical models the field needs, so that sustainable community change and participants' growth happen together.",
+          "title": "Overseas volunteers",
+          "description": "Khayah gives young people in Korea, companies, and participants with experience and passion across many fields the chance to understand local community challenges firsthand and seek solutions together. We propose and carry out practical models the field needs, so that sustainable community change and participants’ growth happen together.",
           "buttonLabel": "Learn more"
         }
       }

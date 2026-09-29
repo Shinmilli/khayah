@@ -115,9 +115,8 @@ export async function readHeroBannerForLocale(locale: HeroLocale): Promise<HeroB
       order: s.order,
       image: s.image,
       alt: s.locales[locale].alt,
-      lines: s.locales[locale].lines.filter((line) => line.trim().length > 0),
+      lines: s.locales[locale].lines.map((line) => line.trimEnd()).filter((line) => line.length > 0),
     }))
-    .filter((s) => s.lines.length > 0)
 }
 
 export async function writeHeroBannerDocument(body: unknown): Promise<void> {

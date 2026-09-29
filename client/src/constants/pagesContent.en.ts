@@ -138,53 +138,46 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
     title: 'Greeting',
     content: `
 <div class="greeting-modern">
-  <div class="intro-strip">
-    <span class="intro-strip-label">KHAYAH Foundation</span>
-    <div class="intro-strip-divider"></div>
-    <span class="intro-strip-label">Sharing · Service · Love</span>
-  </div>
-  <div class="content">
-    <div class="main-grid">
-      <aside class="sidebar">
-        <h2 class="sidebar-title">
-          With a heart<br>
-          <em>that walks together</em>
-        </h2>
-        <p class="sidebar-meta">
-          Khayah (KHAYAH)<br>
-          CEO Choi Soon-tae<br><br>
-          For the practice of<br>
-          sharing and service
-        </p>
-        <span class="sidebar-tag">Representative's Message</span>
-      </aside>
-      <article class="article">
-        <p class="article-lead">
-          Helping others is never as easy as it may seem when we hear or read about it somewhere. We must give up part of what we worked hard to earn, or carve out precious time from our lives. Yet the reward for that difficult work is unlike any other.
-        </p>
-        <p class="article-body">
-          Since making sharing and service my life's work, one of the questions I am asked most often is, &lsquo;How did you end up doing this kind of work?&rsquo; People usually look as though they cannot quite understand. My answer is always simple: &lsquo;If you have the same experience I did, you will know the answer.&rsquo; It may sound matter-of-fact, but I have always been able to answer sincerely and with gratitude.
-        </p>
-        <p class="article-body">
-          Most of us have helped an elderly person carrying a heavy load on the street at least once. It is not a difficult or extraordinary thing. How did it make you feel? In making sharing my vocation, I live every moment with that same feeling. Saving a life, watching a student grow up smiling because of my help — nothing in this world compares to that joy.
-        </p>
-        <p class="article-body">
-          I ask you to look around you right now. Within just a few minutes, or a few hours, there are so many neighbors who could brighten with a smile through your attention and a small act of kindness. Do not hesitate to reach out to them. This is never something to put off until &lsquo;later,&rsquo; &lsquo;when I have more money,&rsquo; or &lsquo;when I have more time.&rsquo; Sharing is something you can do right now — even without money, even without much time, at any moment.
-        </p>
-        <p class="article-body">
-          Every life in this world is a precious creation of God, and caring for those who suffer and helping them is a calling every person on this earth should carry in their heart. Like the name Khayah, which means to live again, I pray that true revival — Khayah — may sweep through your life as well.
-        </p>
-      </article>
-    </div>
+  <div class="main-grid">
+    <aside class="sidebar">
+      <img class="sidebar-photo" src="/images/about/greeting-representative.png" alt="Choi Soon-tae, Representative of Khayah (KHAYAH)" width="512" height="630" />
+      <p class="sidebar-kicker">Representative's Message</p>
+      <h2 class="sidebar-title">With a shared heart</h2>
+      <p class="sidebar-sub">For the practice of sharing and service</p>
+      <div class="sidebar-rule"></div>
+      <p class="sidebar-role">Representative, Khayah (KHAYAH)</p>
+      <p class="sidebar-name">Choi Soon-tae</p>
+    </aside>
+    <article class="article">
+      <div class="article-lead">
+        <span class="article-quote-mark" aria-hidden="true">&ldquo;</span>
+        <p class="article-lead-text">Helping others is never as easy as it may seem when we hear or read about it somewhere. We must give up part of what we worked hard to earn, or carve out precious time from our lives. Yet the reward for that difficult work is unlike any other.</p>
+      </div>
+      <p class="article-body">
+        Since making sharing and service my life's work, one of the questions I am asked most often is, &lsquo;How did you end up doing this kind of work?&rsquo; People usually look as though they cannot quite understand. My answer is always simple: &lsquo;If you have the same experience I did, you will know the answer.&rsquo; It may sound matter-of-fact, but I have always been able to answer sincerely and with gratitude.
+      </p>
+      <p class="article-body">
+        Most of us have helped an elderly person carrying a heavy load on the street at least once. It is not a difficult or extraordinary thing. How did it make you feel? In making sharing my vocation, I live every moment with that same feeling. <strong>Saving a life, watching a student grow up smiling because of my help — nothing in this world compares to that joy.</strong>
+      </p>
+      <p class="article-body">
+        I ask you to look around you right now. Within just a few minutes, or a few hours, there are so many neighbors who could brighten with a smile through your attention and a small act of kindness. Do not hesitate to reach out to them. This is never something to put off until &lsquo;later,&rsquo; &lsquo;when I have more money,&rsquo; or &lsquo;when I have more time.&rsquo; Sharing is something you can do right now — even without money, even without much time, at any moment.
+      </p>
+      <p class="article-body">
+        Every life in this world is a precious creation of God, and caring for those who suffer and helping them is a calling every person on this earth should carry in their heart. Like the name Khayah, which means to live again, I pray that true revival — Khayah — may sweep through your life as well.
+      </p>
+      <p class="article-sign"><span class="article-sign-role">Representative, Khayah (KHAYAH)</span> <strong>Choi Soon-tae</strong></p>
+    </article>
   </div>
   <section class="sig-section">
     <div class="sig-inner">
-      <p class="sig-quote">&ldquo;Together with Khayah, I pray that<br>true sharing and true change<br>will come to your life as well.&rdquo;</p>
+      <div class="sig-quote">
+        <span class="sig-quote-mark" aria-hidden="true">&ldquo;</span>
+        <p class="sig-quote-text">Together with Khayah, I pray that true sharing and true change will come to your life as well.<span class="sig-quote-mark sig-quote-mark--close">&rdquo;</span></p>
+      </div>
       <div class="sig-info">
-        <p class="sig-role">Representative</p>
+        <p class="sig-role">Representative, KHAYAH International</p>
         <p class="sig-name">Choi Soon-tae</p>
         <p class="sig-name-ko">최 순 태</p>
-        <div class="sig-line"></div>
       </div>
     </div>
   </section>
@@ -208,7 +201,7 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
     content: KHAYAH_ORG_BOARD_MERGED_HTML,
   },
   'about/directors': {
-    title: 'Board of Directors / Expert Advisors',
+    title: 'Board of Directors / Professional Advisors',
     content: KHAYAH_ORG_BOARD_MERGED_HTML,
   },
   'business/overseas': {
@@ -218,7 +211,7 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
   <section class="overseas-hero">
     <div class="ov-wrap">
       <p class="overseas-kicker">Overseas Programs</p>
-      <h1 class="overseas-title">Together with local communities, we expand educational opportunities<br />and help build the foundations for communities to grow on their own.</h1>
+      <h1 class="overseas-title">Together with local residents, Khayah widens access to education and supports self-directed growth,<br />building a foundation for communities to lead their own change.</h1>
       <p class="overseas-lead">
         We learn and act together with local residents, pursuing development cooperation in which communities themselves grow the power to change.
       </p>
@@ -302,8 +295,7 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
         <div>
           <p class="ov-edu-head__en">Power to accept change</p>
           <p class="ov-edu-head__p">
-            For a person or community to change, they must first have the capacity to accept that change.
-            Khayah supports well-rounded growth by combining foundational knowledge — such as mathematics, science, English, and Korean — with inner-growth programs based on self-understanding and community understanding, so that people can live as agents of their own lives.
+            The ability to keep learning and meet life’s challenges is the foundation of lasting growth. Khayah builds foundational learning — reading, writing, and numeracy — together with life skills such as self-understanding, communication, and problem-solving. We support participants to continue learning, understand themselves and their community, and live as agents of their own lives.
           </p>
         </div>
       </div>
@@ -313,13 +305,13 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
           <div class="ov-edu-cell" role="row">
             <p class="ov-edu-cell__head" role="columnheader">Foundational Learning</p>
             <p class="ov-edu-cell__p" role="cell">
-              Essential knowledge for advancing to deeper study: Korean (reading/speaking/writing), English, mathematics, science, and more
+              Essential knowledge and learning ability — Korean (reading, writing, speaking), numeracy, English, science, and more — that leads into continued study and deeper learning
             </p>
           </div>
           <div class="ov-edu-cell" role="row">
             <p class="ov-edu-cell__head" role="columnheader">Life Skills</p>
             <p class="ov-edu-cell__p" role="cell">
-              Communication, interpersonal relations, financial management, health care, logical/critical/creative thinking, problem-solving, and more
+              Core capacities for meeting daily life and its challenges with agency and cooperation: self-understanding, communication, relationships, health and financial management, critical and creative thinking, and problem-solving
             </p>
           </div>
         </div>
@@ -468,128 +460,83 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
 `,
   },
   'business/overseas/volunteer': {
-    title: 'Overseas Volunteer Dispatch',
+    title: 'Overseas volunteers',
     content: `
 <div class="ov-health-page">
   <section class="ov-health-hero">
     <div class="ov-health-wrap">
-      <p class="ov-health-kicker">Overseas Programs · Volunteers</p>
-      <h1 class="ov-health-title">We build residents’ health capacity<br />for better nutrition, hygiene, and living environments.</h1>
+      <p class="ov-health-kicker">Overseas Programs · Overseas volunteers</p>
+      <h1 class="ov-health-title">Overseas volunteers</h1>
       <p class="ov-health-desc">
-        The communities Khayah supports are among the most underserved villages in developing countries, with very poor health conditions.
-        Rather than one-off medical services, we focus on participatory community health-care projects that help residents create a cleaner health environment themselves — a more fundamental solution.
+        Khayah gives young people in Korea, companies, and participants with experience and passion across many fields the chance to understand local community challenges firsthand and seek solutions together. We propose and carry out practical models the field needs, so that sustainable community change and participants’ growth happen together.
       </p>
       <div class="ov-health-divider" aria-hidden="true"></div>
     </div>
   </section>
 
-  <section class="ovh-block ovh-block--ltr">
+  <section class="ov-health-section">
     <div class="ov-health-wrap">
-      <div class="ovh-block__head ovh-block__head--cols-4">
-        <div class="ovh-block__title-wrap">
-          <p class="ovh-block__en">Community-Based Health Care</p>
-          <h2 class="ovh-block__title">Community-Based\nParticipatory\nHealth Care</h2>
-        </div>
-        <p class="ovh-block__desc">
-          Building local residents' capacity for self-care through health promotion activities by community organizations linked to primary health care facilities
-        </p>
-      </div>
-
-      <div class="ovh-cards ovh-cards--scroll" aria-label="Key activities">
-        <div class="ovh-card">
-          <div class="ovh-card__icon" aria-hidden="true">
-            <svg viewBox="0 0 64 64" fill="currentColor"><path d="M32 16c-2-4-7-5-12-3-3 1-5 4-5 8 0 1 0 2 1 3-2 1-4 4-5 7-2 4-2 9-1 14 1 7 6 13 11 13 2 0 3-1 5-1s2 1 5 1c5 0 10-6 11-13 1-5 1-10-1-14-1-3-3-6-5-7 1-1 1-2 1-3 0-4-2-7-5-8-5-2-10-1-12 3z"/><path d="M30 14c-1-3-1-5 0-7 2-1 4-1 5 1 1 2 0 4-1 6-1 1-3 1-4 0z"/></svg>
-          </div>
-          <p class="ovh-card__label">Nutrition improvement activities</p>
-        </div>
-        <div class="ovh-card">
-          <div class="ovh-card__icon" aria-hidden="true">
-            <svg viewBox="0 0 64 64" fill="currentColor"><path d="M32 8 8 28v28h18V40h12v16h18V28z"/></svg>
-          </div>
-          <p class="ovh-card__label">Public hygiene &amp; housing environment improvement</p>
-        </div>
-        <div class="ovh-card">
-          <div class="ovh-card__icon" aria-hidden="true">
-            <svg viewBox="0 0 64 64" fill="currentColor"><path d="M32 6 4 18l4 2v12l-4 2v6l28 12 28-12v-6l-4-2V20zM12 24l20 8 20-8v8L32 40 12 32z"/></svg>
-          </div>
-          <p class="ovh-card__label">Basic health education &amp; awareness activities</p>
-        </div>
-        <div class="ovh-card">
-          <div class="ovh-card__icon" aria-hidden="true">
-            <svg viewBox="0 0 64 64" fill="currentColor"><path d="M32 4 8 14v18c0 14 10 24 24 28 14-4 24-14 24-28V14zm-3 16h6v8h8v6h-8v8h-6v-8h-8v-6h8z"/></svg>
-          </div>
-          <p class="ovh-card__label">Prevention and management of major local diseases</p>
-        </div>
+      <h2 class="ovh-block__title">Volunteer design shaped by development cooperation</h2>
+      <p class="ov-health-desc ov-health-desc--left">
+        With more than ten years in international development and education, Khayah identifies what a host community needs and designs activities that can last. Volunteers grow as whole persons — as global citizens, in the use of their expertise, and in problem-solving and adaptability — while the program stays fitted to local needs.
+      </p>
+      <div class="ovh-panels">
+        <article class="ovh-panel">
+          <h3 class="ovh-panel__title">Development cooperation</h3>
+          <ol class="ovh-rail">
+            <li>Finding themes through local analysis</li>
+            <li>Field study of relevance and feasibility</li>
+            <li>Action plans based on that study</li>
+            <li>Local preparation with government and specialist partners</li>
+            <li>A system so the work continues after the team leaves</li>
+            <li>Monitoring, evaluation, and results analysis</li>
+            <li>Follow-up plans that reflect the evaluation</li>
+          </ol>
+        </article>
+        <article class="ovh-panel">
+          <h3 class="ovh-panel__title">Education expertise</h3>
+          <ol class="ovh-rail">
+            <li>Awareness and education activities fitted to the theme</li>
+            <li>Pre-departure training (identity as a volunteer, global citizenship, subject expertise, health and safety, teamwork, and activity planning)</li>
+            <li>Detailed plans led by the volunteers themselves (using expertise, problem-solving, adaptability, communication, language, research and analysis, and administration)</li>
+          </ol>
+        </article>
       </div>
     </div>
   </section>
 
-  <section class="ovh-block ovh-block--rtl ovh-block--alt">
+  <section class="ov-health-section ov-health-section--alt">
     <div class="ov-health-wrap">
-      <div class="ovh-block__head ovh-block__head--cols-5">
-        <p class="ovh-block__desc">We run programs to reduce maternal and infant mortality.</p>
-        <div class="ovh-block__title-wrap">
-          <p class="ovh-block__en">Maternal and Child Health</p>
-          <h2 class="ovh-block__title">Maternal and Child Health</h2>
-        </div>
-      </div>
-
-      <div class="ovh-cards ovh-cards--cols-5 ovh-cards--white" aria-label="Key activities">
-        <div class="ovh-card">
-          <div class="ovh-card__icon" aria-hidden="true">
-            <svg viewBox="0 0 64 64" fill="currentColor"><circle cx="32" cy="12" r="6"/><path d="M40 26c0-3-3-6-8-6s-8 3-8 6v6c-3 2-6 6-6 12 0 5 3 8 6 8v8h16v-8c3 0 6-3 6-8 0-6-3-10-6-12z"/></svg>
-          </div>
-          <p class="ovh-card__label">Antenatal and postnatal care</p>
-        </div>
-        <div class="ovh-card">
-          <div class="ovh-card__icon" aria-hidden="true">
-            <svg viewBox="0 0 64 64" fill="currentColor"><path d="M32 56C18 46 6 36 6 22c0-7 5-12 12-12 6 0 10 4 14 10 4-6 8-10 14-10 7 0 12 5 12 12 0 14-12 24-26 34z"/><circle cx="22" cy="22" r="3" fill="#fff"/><circle cx="42" cy="22" r="3" fill="#fff"/></svg>
-          </div>
-          <p class="ovh-card__label">Family planning and reproductive health</p>
-        </div>
-        <div class="ovh-card">
-          <div class="ovh-card__icon" aria-hidden="true">
-            <svg viewBox="0 0 64 64" fill="currentColor"><path d="M32 8 8 28v28h18V40h12v16h18V28z"/></svg>
-          </div>
-          <p class="ovh-card__label">Support for facility-based delivery</p>
-        </div>
-        <div class="ovh-card">
-          <div class="ovh-card__icon" aria-hidden="true">
-            <svg viewBox="0 0 64 64" fill="currentColor"><path d="M22 4h20v8h-2v6c4 2 6 6 6 12v24c0 4-2 6-6 6H24c-4 0-6-2-6-6V30c0-6 2-10 6-12v-6h-2zm6 8v8h8v-8zm-4 18v6h16v-6zm0 12v6h16v-6z"/></svg>
-          </div>
-          <p class="ovh-card__label">Nutrition for mothers, infants, and young children</p>
-        </div>
-        <div class="ovh-card">
-          <div class="ovh-card__icon" aria-hidden="true">
-            <svg viewBox="0 0 64 64" fill="currentColor"><path d="M48 4 44 8l-4-4-4 4 4 4-20 20-4-2-4 4 14 14 4-4-2-4 20-20 4 4 4-4-4-4 4-4zM12 46l-6 6 4 4 6-6z"/></svg>
-          </div>
-          <p class="ovh-card__label">Infant immunization and health management education</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="ovh-block ovh-block--center">
-    <div class="ov-health-wrap">
-      <div class="ovh-block__head">
-        <div class="ovh-block__title-wrap">
-          <p class="ovh-block__en">School Health</p>
-          <h2 class="ovh-block__title">School Health</h2>
-        </div>
-        <p class="ovh-block__desc">
-          We run school-based health activities for healthy physical development and proper eating habits<br />among school-age children and adolescents.
-        </p>
-      </div>
-
-      <ol class="ovh-numlist" aria-label="School health key activities">
-        <li class="ovh-numlist__item"><span class="ovh-numlist__label">Physical examinations</span></li>
-        <li class="ovh-numlist__item"><span class="ovh-numlist__label">Hygiene and basic health education</span></li>
-        <li class="ovh-numlist__item"><span class="ovh-numlist__label">Adolescent sexual health education</span></li>
-        <li class="ovh-numlist__item"><span class="ovh-numlist__label">Health seminars for parents and teachers</span></li>
-        <li class="ovh-numlist__item"><span class="ovh-numlist__label">Health booklet development and distribution</span></li>
-        <li class="ovh-numlist__item"><span class="ovh-numlist__label">Physical activity support</span></li>
-        <li class="ovh-numlist__item"><span class="ovh-numlist__label">Health promotion through Health Scout organizations</span></li>
+      <h2 class="ovh-block__title">Running the full life cycle of a volunteer program</h2>
+      <p class="ov-health-desc ov-health-desc--left">
+        Khayah runs the full volunteer cycle with manuals and systems, from recruitment through the field and back to sharing what was learned.
+      </p>
+      <ol class="ovh-life">
+        <li><span class="ovh-life__no">1</span><span class="ovh-life__name">Outreach and recruitment</span></li>
+        <li><span class="ovh-life__no">2</span><span class="ovh-life__name">Screening</span></li>
+        <li><span class="ovh-life__no">3</span><span class="ovh-life__name">Selection</span></li>
+        <li><span class="ovh-life__no">4</span><span class="ovh-life__name">Training in Korea, activity planning, and preparation at home and abroad</span></li>
+        <li><span class="ovh-life__no">5</span><span class="ovh-life__name">Launch ceremony and dispatch</span></li>
+        <li><span class="ovh-life__no">6</span><span class="ovh-life__name">Field leadership, support, and safety</span></li>
+        <li><span class="ovh-life__no">7</span><span class="ovh-life__name">Results analysis</span></li>
+        <li><span class="ovh-life__no">8</span><span class="ovh-life__name">Sharing and spread</span></li>
       </ol>
+    </div>
+  </section>
+
+  <section class="ovh-gallery" aria-label="Volunteer fieldwork">
+    <div class="ov-health-wrap">
+      <div class="ovh-shot-row">
+        <figure class="ovh-shot">
+          <img src="/images/business/volunteer-group.jpg" alt="2026 Gyeonggi Youth Climate Envoys group photo in Mongolia" />
+        </figure>
+        <figure class="ovh-shot">
+          <img src="/images/business/volunteer-field.jpg?v=2" alt="Volunteers planting a tree with a local partner" />
+        </figure>
+        <figure class="ovh-shot">
+          <img src="/images/business/volunteer-launch.jpg" alt="2025 Gyeonggi Youth Climate Envoy launch ceremony" />
+        </figure>
+      </div>
     </div>
   </section>
 </div>
@@ -656,8 +603,9 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
   <section class="edu-ref-hero">
     <div class="edu-wrap">
       <p class="edu-ref-hero__kicker">Domestic Programs · Education</p>
-      <h1 class="edu-ref-hero__title">Through education, Khayah helps create both<br />individual growth and community transformation.</h1>
+      <h1 class="edu-ref-hero__title">Together with local residents, we widen access to education<br />and build a foundation for communities to grow on their own.</h1>
       <p class="edu-ref-hero__desc">
+        Through education, Khayah helps create both individual growth and community transformation.
         For migrant workers, North Korean defector youth, adolescents, and many other neighbors,
         we offer education and experiential opportunities rooted in social value so they can build their capacity and share what they learn.
       </p>
@@ -670,7 +618,7 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
       <div class="edu-ref-grid">
         <div>
           <p class="edu-ref-label"><span class="edu-ref-label__badge">1</span> Education Program</p>
-          <h2 class="edu-ref-h2">Career Exploration &amp; Capacity Building</h2>
+          <h2 class="edu-ref-h2">Career Exploration and Future-Skills Support</h2>
           <p class="edu-ref-sub">Self-understanding / Life Design / Foundational job skills / Career experience &amp; mentoring / Social &amp; cultural experience</p>
           <p class="edu-ref-p">
             We provide step-by-step career education so adolescents and young adults can understand themselves and shape their futures.
@@ -680,7 +628,7 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
         </div>
         <div class="edu-ref-media" aria-hidden="true">
           <img class="edu-ref-media__img" src="/images/business/domestic-edu-2.jpg" alt="" loading="lazy" />
-          <div class="edu-ref-media__caption">Career exploration &amp; capacity building</div>
+          <div class="edu-ref-media__caption">Career exploration and future-skills support</div>
         </div>
       </div>
     </div>
@@ -691,11 +639,11 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
       <div class="edu-ref-grid">
         <div class="edu-ref-media" aria-hidden="true">
           <img class="edu-ref-media__img" src="/images/business/domestic-edu-1.jpg" alt="" loading="lazy" />
-          <div class="edu-ref-media__caption">Social entrepreneurship &amp; self-reliance</div>
+          <div class="edu-ref-media__caption">Social-value entrepreneurship and self-reliance</div>
         </div>
         <div>
           <p class="edu-ref-label"><span class="edu-ref-label__badge">2</span> Education Program</p>
-          <h2 class="edu-ref-h2">Social-Value Social Entrepreneurship &amp; Self-Reliance</h2>
+          <h2 class="edu-ref-h2">Social-Value Entrepreneurship and Self-Reliance</h2>
           <p class="edu-ref-sub">Social business education / Domestic &amp; international entrepreneurship / International development cooperation education</p>
           <p class="edu-ref-p">
             Grounded in social value and entrepreneurial spirit, we support entrepreneurship and self-reliance for migrant workers, North Korean defector youth, and young people who have had fewer education and career opportunities.
@@ -711,7 +659,7 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
       <div class="edu-ref-grid">
         <div>
           <p class="edu-ref-label"><span class="edu-ref-label__badge">3</span> Education Program</p>
-          <h2 class="edu-ref-h2">Climate &amp; Environment Awareness Education</h2>
+          <h2 class="edu-ref-h2">Climate and Environment Awareness and Action</h2>
           <p class="edu-ref-sub">Climate &amp; environment education / Thematic book clubs / Awareness content production &amp; distribution / Climate-response volunteer training and action</p>
           <p class="edu-ref-p">
             We support the growth of global citizens who understand the climate crisis and practice change in daily life and local communities.
@@ -721,7 +669,7 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
         </div>
         <div class="edu-ref-media" aria-hidden="true">
           <img class="edu-ref-media__img" src="/images/business/domestic-edu-3.jpg" alt="" loading="lazy" />
-          <div class="edu-ref-media__caption">Climate &amp; environment awareness education</div>
+          <div class="edu-ref-media__caption">Climate and environment awareness and action</div>
         </div>
       </div>
     </div>
@@ -736,60 +684,129 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
   <section class="adv-hero">
     <div class="adv-wrap">
       <p class="adv-kicker">Research</p>
-      <h1 class="adv-title">We nurture global citizens who understand<br />the values of respect, cooperation, and sharing.</h1>
+      <h1 class="adv-title">We study field experience and develop methods<br />of education and development cooperation,<br />connecting them to practice that creates lasting change.</h1>
       <p class="adv-lead">
-        Khayah’s advocacy helps the public and youth understand international development cooperation,
-        learn the values of respect, cooperation, and sharing for neighbors around the world,
-        and grow into responsible global citizens.
+        Khayah studies methods of education and development cooperation so that people’s growth and community change stay connected.
+        Questions found in the field shape education models and how programs are run, and that experience is shared back with the field.
+        We link practice at home and overseas with research, and build a foundation for change that lasts.
       </p>
       <div class="adv-divider" aria-hidden="true"></div>
     </div>
   </section>
 
-  <section class="adv-block adv-block--ltr">
+  <section class="adv-methods" aria-label="Research program subpages">
     <div class="adv-wrap">
-      <div class="adv-block__head">
-        <div class="adv-block__title-wrap">
-          <p class="adv-block__en">International Development &amp; ODA</p>
-          <h2 class="adv-block__title">International Development\nCooperation &amp; ODA</h2>
-        </div>
-        <p class="adv-block__desc">
-          For elementary, middle, and high school students and the general public interested in overseas service and civic engagement,
-          we introduce international development cooperation and Korea's ODA, examine their current state and challenges,
-          and teach the mindset and methods for right cooperation — with the goal that all citizens embrace their responsibility as global citizens.
-        </p>
+      <div class="adv-hub-cards">
+        <article class="adv-hub-card">
+          <div class="adv-hub-card__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 3.4 2 8.4l10 5 10-5-10-5Zm-7.2 7.3v4.8c0 1.5 3.6 4 7.2 4s7.2-2.5 7.2-4v-4.8l-7.2 3.6-7.2-3.6Z" />
+            </svg>
+          </div>
+          <h2 class="adv-hub-card__title">Education research</h2>
+          <p class="adv-hub-card__desc">Education models and learning methods, participatory development cooperation, and knowledge sharing through the academy.</p>
+          <a class="adv-hub-card__btn" href="/khayah/en/business/advocacy/education-research">Learn more</a>
+        </article>
+        <article class="adv-hub-card">
+          <div class="adv-hub-card__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" xmlns="http://www.w3.org/2000/svg">
+              <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" />
+            </svg>
+          </div>
+          <h2 class="adv-hub-card__title">Social business</h2>
+          <p class="adv-hub-card__desc">We explore structures of operation and enterprise through which social value can continue as practice.</p>
+          <a class="adv-hub-card__btn" href="/khayah/en/business/advocacy/social-business">Learn more</a>
+        </article>
       </div>
     </div>
   </section>
-
-  <section class="adv-block adv-block--rtl adv-block--alt">
+</div>
+`,
+  },
+  'business/advocacy/social-business': {
+    title: 'Social business',
+    content: `
+<div class="adv-page">
+  <section class="adv-hero">
     <div class="adv-wrap">
-      <div class="adv-block__head">
-        <p class="adv-block__desc">
-          Khayah believes that international development cooperation and NGO work can be practical tools for overseas missionaries.
-          Through our M&amp;N program, we study professional mission approaches through development cooperation and NGO activity,
-          and work with missionaries preparing for overseas assignment through lectures, seminars, and other methods
-          to research right development and practical mission.
-        </p>
-        <div class="adv-block__title-wrap">
-          <p class="adv-block__en">Mission &amp; NGOs</p>
-          <h2 class="adv-block__title">M&amp;N Program</h2>
-        </div>
-      </div>
+      <p class="adv-kicker">Research · Social business</p>
+      <h1 class="adv-title">Social business</h1>
+      <div class="adv-divider" aria-hidden="true"></div>
+    </div>
+  </section>
 
-      <ol class="adv-numlist" aria-label="Mission & NGOs research topics">
-        <li class="adv-numlist__item"><span class="adv-numlist__label">What is right development?</span></li>
-        <li class="adv-numlist__item"><span class="adv-numlist__label">Help from outside vs. help from within</span></li>
-        <li class="adv-numlist__item"><span class="adv-numlist__label">Relief vs. community development</span></li>
-        <li class="adv-numlist__item"><span class="adv-numlist__label">Aid effectiveness vs. development effectiveness</span></li>
-        <li class="adv-numlist__item"><span class="adv-numlist__label">Kingdom values and transformative development</span></li>
-        <li class="adv-numlist__item"><span class="adv-numlist__label">Development cooperation and holistic approach</span></li>
-        <li class="adv-numlist__item"><span class="adv-numlist__label">Self-reliance and sustainability</span></li>
-        <li class="adv-numlist__item adv-numlist__item--wide">
-          <span class="adv-numlist__label">
-            Building professionalism in development cooperation
-            <span class="adv-numlist__sub">(feasibility studies, project proposal planning and writing, budget management, results management, etc.)</span>
-          </span>
+  <section class="adv-study" aria-label="Social business">
+    <div class="adv-wrap">
+      <article class="adv-study__card adv-study__card--solo">
+        <div class="adv-study__body">
+          <h2 class="adv-study__title">Social value and sustainability</h2>
+          <ul class="adv-tags">
+            <li>Social business</li>
+            <li>Color &amp; Comfort (social enterprise)</li>
+            <li>Social impact</li>
+          </ul>
+          <p class="adv-study__desc">We explore how programs can be run so that social value continues as practice. Drawing on social business experience, we look at how self-reliance and social results can stay connected.</p>
+        </div>
+      </article>
+    </div>
+  </section>
+</div>
+`,
+  },
+  'business/advocacy/education-research': {
+    title: 'Education research',
+    content: `
+<div class="adv-page">
+  <section class="adv-hero">
+    <div class="adv-wrap">
+      <p class="adv-kicker">Research · Education research</p>
+      <h1 class="adv-title">Education research</h1>
+      <p class="adv-lead">We study education models and learning methods, participatory development cooperation, and knowledge sharing through the academy.</p>
+      <div class="adv-divider" aria-hidden="true"></div>
+    </div>
+  </section>
+
+  <section class="adv-study" aria-label="Education research">
+    <div class="adv-wrap">
+      <ol class="adv-study__list">
+        <li class="adv-study__card">
+          <p class="adv-study__no">01</p>
+          <div class="adv-study__body">
+            <h2 class="adv-study__title">Education models and learning methods</h2>
+            <ul class="adv-tags">
+              <li>Dream Seekers</li>
+              <li>Life Design</li>
+              <li>E-learning (SEEM)</li>
+              <li>Peer learning</li>
+            </ul>
+            <p class="adv-study__desc">We study education models that help participants understand themselves and apply what they learn to life. Field experience is shaped into curricula and content, then revised.</p>
+          </div>
+        </li>
+        <li class="adv-study__card">
+          <p class="adv-study__no">02</p>
+          <div class="adv-study__body">
+            <h2 class="adv-study__title">Participatory development cooperation</h2>
+            <ul class="adv-tags">
+              <li>International development cooperation</li>
+              <li>Expert groups</li>
+              <li>Perspectives and methods of development</li>
+            </ul>
+            <p class="adv-study__desc">We study how to research, plan, carry out, and evaluate programs on the basis of residents’ participation and leadership. The approach seeks to understand local context and strengthen local capacity.</p>
+          </div>
+        </li>
+        <li class="adv-study__card">
+          <p class="adv-study__no">03</p>
+          <div class="adv-study__body">
+            <h2 class="adv-study__title">Knowledge sharing and the academy</h2>
+            <ul class="adv-tags">
+              <li>Khayah Academy</li>
+              <li>Education on development cooperation and ODA</li>
+              <li>Lectures and seminars</li>
+            </ul>
+            <p class="adv-study__desc">Field experience and research are shared through lectures, seminars, and learning materials. Practitioners and participants learn together and build expertise in development cooperation.</p>
+          </div>
         </li>
       </ol>
     </div>

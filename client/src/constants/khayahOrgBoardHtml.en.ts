@@ -1,15 +1,15 @@
-/** Org chart · Board of Directors · Expert Advisors (static content, CMS-ready) */
+/** Org chart · Board of Directors · Professional Advisors (static content, CMS-ready) */
 
 export const KHAYAH_ORG_CHART_HTML = `
 <div class="khayah-org-chart">
-  <p class="khayah-org-chart__lead">A diagram of Khayah's operational structure.<br />Three central areas work together organically, supported by the Board of Directors and Expert Advisors.</p>
+  <p class="khayah-org-chart__lead">A diagram of Khayah's operational structure.<br />Three central areas work together organically, supported by the Board of Directors and Professional Advisors.</p>
   <figure class="khayah-org-chart__figure">
     <img
       class="khayah-org-chart__img"
       src="/images/Khayah/org-chart-diagram.png"
       width="640"
       height="640"
-      alt="KHAYAH org chart: Domestic Civic Programs, International Development Cooperation, Management Support, Board of Directors, and Expert Advisors"
+      alt="KHAYAH org chart: Domestic Civic Programs, International Development Cooperation, Management Support, Board of Directors, and Professional Advisors"
       decoding="async"
       loading="lazy"
     />
@@ -21,7 +21,7 @@ const KHAYAH_DIRECTORS_GRID_HTML = `
 <div class="khayah-board-grid" role="list">
   <div class="khayah-board-cell" role="listitem">
     <div class="khayah-board-name">Soontae Choi Director</div>
-    <div class="khayah-board-role">CEO, Khayah</div>
+    <div class="khayah-board-role">Representative, Khayah</div>
   </div>
   <div class="khayah-board-cell" role="listitem">
     <div class="khayah-board-name">Sun Woo Kim Director</div>
@@ -54,58 +54,69 @@ const KHAYAH_DIRECTORS_GRID_HTML = `
 const KHAYAH_EXPERTS_GRID_HTML = `
 <div class="khayah-board-grid" role="list">
   <div class="khayah-board-cell" role="listitem">
-    <div class="khayah-board-name">Youn Seok Choi Expert Advisor</div>
+    <div class="khayah-board-name">Jaehun Jung Professional Advisor</div>
+    <div class="khayah-board-role">Senior Researcher, Candle Consulting Co., Ltd.</div>
+  </div>
+  <div class="khayah-board-cell" role="listitem">
+    <div class="khayah-board-name">Jinho Lim Professional Advisor</div>
+    <div class="khayah-board-role">Former Professor, Research Institute for Technology Transfer to Developing Countries, Korea University of Technology and Education (KOREATECH)</div>
+  </div>
+  <div class="khayah-board-cell" role="listitem">
+    <div class="khayah-board-name">Youn Seok Choi Professional Advisor</div>
     <div class="khayah-board-role">CEO, Maepyo Chemical</div>
   </div>
   <div class="khayah-board-cell" role="listitem">
-    <div class="khayah-board-name">Hwang Nam Gi Expert Advisor</div>
+    <div class="khayah-board-name">Hwang Nam Gi Professional Advisor</div>
     <div class="khayah-board-role">CEO, Hapgyeok Camp Co., Ltd.</div>
   </div>
   <div class="khayah-board-cell" role="listitem">
-    <div class="khayah-board-name">Jae Woon Lee Expert Advisor</div>
+    <div class="khayah-board-name">Jae Woon Lee Professional Advisor</div>
     <div class="khayah-board-role">Professor, Department of Law, CUHK (Hong Kong)</div>
   </div>
   <div class="khayah-board-cell" role="listitem">
-    <div class="khayah-board-name">Nayoung Oh Expert Advisor</div>
+    <div class="khayah-board-name">Nayoung Oh Professional Advisor</div>
     <div class="khayah-board-role">CEO, ONA Creation</div>
   </div>
   <div class="khayah-board-cell" role="listitem">
-    <div class="khayah-board-name">Chan Min Kim Expert Advisor</div>
+    <div class="khayah-board-name">Chan Min Kim Professional Advisor</div>
     <div class="khayah-board-role">Professor, Department of Statistics, Sungkyunkwan University</div>
   </div>
   <div class="khayah-board-cell" role="listitem">
-    <div class="khayah-board-name">Hyeong Woo Noh Expert Advisor</div>
+    <div class="khayah-board-name">Hyeong Woo Noh Professional Advisor</div>
     <div class="khayah-board-role">President, Coas Co., Ltd.</div>
   </div>
   <div class="khayah-board-cell" role="listitem">
-    <div class="khayah-board-name">Lee Jin Young Expert Advisor</div>
+    <div class="khayah-board-name">Lee Jin Young Professional Advisor</div>
     <div class="khayah-board-role">CEO, The Organic Dio Co., Ltd.</div>
   </div>
   <div class="khayah-board-cell" role="listitem">
-    <div class="khayah-board-name">Ray Park Expert Advisor</div>
+    <div class="khayah-board-name">Ko Hyun Hak Professional Advisor</div>
     <div class="khayah-board-role">Branch Manager, Shinhan Life Sin Gangnam Branch</div>
   </div>
   <div class="khayah-board-cell" role="listitem">
-    <div class="khayah-board-name">Jung Young Mi Expert Advisor</div>
+    <div class="khayah-board-name">Jung Young Mi Professional Advisor</div>
     <div class="khayah-board-role">Director, Juno Hair Migeum Branch</div>
   </div>
   <div class="khayah-board-cell" role="listitem">
-    <div class="khayah-board-name">Ray Park Expert Advisor</div>
+    <div class="khayah-board-name">Ray Park Professional Advisor</div>
     <div class="khayah-board-role">Head of Consulting, Nomura Research Institute New York Office</div>
   </div>
   <div class="khayah-board-cell" role="listitem">
-    <div class="khayah-board-name">Yong Beom Na Expert Advisor</div>
+    <div class="khayah-board-name">Yong Beom Na Professional Advisor</div>
     <div class="khayah-board-role">CEO, Korea C&amp;S Co., Ltd.</div>
   </div>
   <div class="khayah-board-cell" role="listitem">
-    <div class="khayah-board-name">Chang Hyun Kim Expert Advisor</div>
+    <div class="khayah-board-name">Chang Hyun Kim Professional Advisor</div>
     <div class="khayah-board-role">CEO, AA Studio</div>
   </div>
   <div class="khayah-board-cell" role="listitem">
-    <div class="khayah-board-name">Timothy Kim Expert Advisor</div>
+    <div class="khayah-board-name">Sunjoo Byun Professional Advisor</div>
+    <div class="khayah-board-role">CEO, CINCO PANES</div>
+  </div>
+  <div class="khayah-board-cell" role="listitem">
+    <div class="khayah-board-name">Timothy Kim Professional Advisor</div>
     <div class="khayah-board-role">Senior Advisor, Child Fund International Research &amp; Learning</div>
   </div>
-  <div class="khayah-board-cell khayah-board-cell--empty" aria-hidden="true"></div>
 </div>
 `.trim()
 
@@ -125,7 +136,7 @@ export const KHAYAH_ORG_BOARD_MERGED_HTML = `
     </div>
   </article>
   <article class="khayah-split-row" id="experts" aria-labelledby="khayah-split-experts">
-    <h2 id="khayah-split-experts" class="khayah-split-row__title">Expert Advisors</h2>
+    <h2 id="khayah-split-experts" class="khayah-split-row__title">Professional Advisors</h2>
     <div class="khayah-split-row__body">
       ${KHAYAH_EXPERTS_GRID_HTML}
     </div>

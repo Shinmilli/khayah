@@ -42,7 +42,7 @@ export const STORY_ITEMS: StoryItem[] = [
   {
     image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&h=500&fit=crop',
     alt: '모두가 존중받는 세상',
-    chip: '옹호사업',
+    chip: '연구사업',
     title: '모두가 존중받는 세상을 위한 목소리',
     text: '현장의 이야기가 정책으로 연결되도록, 우리가 할 수 있는 변화의 시작을 기록합니다.',
   },
@@ -63,7 +63,7 @@ export const STORY_ITEMS: StoryItem[] = [
   {
     image: 'https://images.unsplash.com/photo-1520975958225-0f015b1d7a88?w=800&h=500&fit=crop',
     alt: '연대와 협력',
-    chip: '옹호사업',
+    chip: '연구사업',
     title: '연대가 만드는 더 큰 변화',
     text: '사람들의 목소리가 모이면 제도와 인식이 바뀝니다. 함께 나아갈 길을 이야기합니다.',
   },

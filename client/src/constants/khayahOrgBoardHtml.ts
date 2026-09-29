@@ -54,6 +54,14 @@ const KHAYAH_DIRECTORS_GRID_HTML = `
 const KHAYAH_EXPERTS_GRID_HTML = `
 <div class="khayah-board-grid" role="list">
   <div class="khayah-board-cell" role="listitem">
+    <div class="khayah-board-name">정재훈 전문위원</div>
+    <div class="khayah-board-role">(주)캔들컨설팅, 수석 연구원</div>
+  </div>
+  <div class="khayah-board-cell" role="listitem">
+    <div class="khayah-board-name">임진호 전문위원</div>
+    <div class="khayah-board-role">(전)한국기술교육대학교 개도국기술이전연구소 교수</div>
+  </div>
+  <div class="khayah-board-cell" role="listitem">
     <div class="khayah-board-name">최윤석 전문위원</div>
     <div class="khayah-board-role">매표화학 대표</div>
   </div>
@@ -102,10 +110,13 @@ const KHAYAH_EXPERTS_GRID_HTML = `
     <div class="khayah-board-role">AA Studio 대표</div>
   </div>
   <div class="khayah-board-cell" role="listitem">
+    <div class="khayah-board-name">변선주 전문위원</div>
+    <div class="khayah-board-role">CINCO PANES 대표</div>
+  </div>
+  <div class="khayah-board-cell" role="listitem">
     <div class="khayah-board-name">김은수 전문위원</div>
     <div class="khayah-board-role">Child Fund International Research &amp; Learning Senior Advisor</div>
   </div>
-  <div class="khayah-board-cell khayah-board-cell--empty" aria-hidden="true"></div>
 </div>
 `.trim()
 

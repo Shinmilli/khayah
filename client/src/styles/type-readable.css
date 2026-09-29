@@ -1,21 +1,5 @@
 /* 메인·재정보고·사업 페이지를 제외한 본문. 헤더·푸터는 #Content 밖이라 영향 없음. */
 
-#Content.type-readable .page-crumbs__inner {
-  min-height: 88px;
-  gap: 16px;
-  font-size: 19px;
-}
-
-#Content.type-readable .page-crumbs__home {
-  width: 46px;
-  height: 46px;
-}
-
-#Content.type-readable .page-crumbs__home svg {
-  width: 24px;
-  height: 24px;
-}
-
 #Content.type-readable .page-content-wrapper .page-body {
   font-size: clamp(1.22rem, 0.3vw + 1.12rem, 1.38rem);
 }
@@ -67,22 +51,28 @@
   font-size: 0.95rem;
 }
 
-#Content.type-readable .greeting-modern .article-body {
+#Content.type-readable .page-content-wrapper .page-body .greeting-modern .article-body {
+  font-size: 1.38rem;
+}
+
+#Content.type-readable .page-content-wrapper .page-body .greeting-modern .article-lead-text {
+  font-size: 1.72rem;
+}
+
+#Content.type-readable .page-content-wrapper .page-body .greeting-modern .sidebar-sub {
+  font-size: 1.35rem;
+}
+
+#Content.type-readable .page-content-wrapper .page-body .greeting-modern .sidebar-role {
   font-size: 1.25rem;
 }
 
-#Content.type-readable .greeting-modern .article-lead {
-  font-size: clamp(1.5rem, 2.6vw, 1.85rem);
+#Content.type-readable .page-content-wrapper .page-body .greeting-modern .sidebar-kicker {
+  font-size: 1.05rem;
 }
 
-#Content.type-readable .greeting-modern .sidebar-meta {
-  font-size: 0.9rem;
-}
-
-#Content.type-readable .greeting-modern .intro-strip-label,
-#Content.type-readable .greeting-modern .sidebar-tag,
-#Content.type-readable .greeting-modern .pull-quote cite {
-  font-size: 0.84rem;
+#Content.type-readable .page-content-wrapper .page-body .greeting-modern h2.sidebar-title {
+  font-size: 2.35rem;
 }
 
 #Content.type-readable .notice-archive-page .notice-archive__title,

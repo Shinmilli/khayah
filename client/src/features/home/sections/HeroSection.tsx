@@ -9,6 +9,19 @@ import { toCloudinaryWebpUrl } from '../../../utils/cloudinaryWebp'
 
 const BIZ_ICONS = ['home', 'public', 'menu_book', 'groups'] as const
 
+const heroSlideCache = new Map<string, HeroBannerPublicSlide[]>()
+
+function sameSlides(a: HeroBannerPublicSlide[], b: HeroBannerPublicSlide[]): boolean {
+  if (a.length !== b.length) return false
+  return a.every(
+    (slide, i) =>
+      slide.id === b[i]?.id &&
+      slide.image === b[i]?.image &&
+      slide.alt === b[i]?.alt &&
+      slide.lines.join('\n') === b[i]?.lines.join('\n'),
+  )
+}
+
 export function HeroSection() {
   const { locale, messages, localize } = useLocale()
   const m = messages.home.hero
@@ -23,19 +36,22 @@ export function HeroSection() {
       })),
     [m.slides],
   )
-  const [slides, setSlides] = useState<HeroBannerPublicSlide[]>(fallbackSlides)
+  const [slides, setSlides] = useState<HeroBannerPublicSlide[] | null>(() => heroSlideCache.get(locale) ?? null)
   const [index, setIndex] = useState(0)
 
   useEffect(() => {
+    setSlides(heroSlideCache.get(locale) ?? null)
     let cancelled = false
     fetchHeroBanner(locale)
       .then((doc) => {
         if (cancelled) return
-        if (doc.slides.length) setSlides(doc.slides)
-        else setSlides(fallbackSlides)
+        const next = doc.slides.length ? doc.slides : fallbackSlides
+        heroSlideCache.set(locale, next)
+        setSlides((prev) => (prev && sameSlides(prev, next) ? prev : next))
       })
       .catch(() => {
-        if (!cancelled) setSlides(fallbackSlides)
+        if (cancelled || heroSlideCache.has(locale)) return
+        setSlides(fallbackSlides)
       })
     return () => {
       cancelled = true
@@ -46,33 +62,35 @@ export function HeroSection() {
     setIndex(0)
   }, [slides])
 
+  const list = slides ?? []
+
   useEffect(() => {
-    if (!slides.length) return
+    if (!list.length) return
     const timer = window.setInterval(() => {
-      setIndex((prev) => (prev + 1) % slides.length)
+      setIndex((prev) => (prev + 1) % list.length)
     }, 5000)
     return () => window.clearInterval(timer)
-  }, [slides.length])
-
-  if (!slides.length) return null
+  }, [list.length])
 
   return (
     <section className="hero-section" id="home-hero-banner">
       <div className="hero-slider">
-        {slides.map((slide, i) => (
+        {list.map((slide, i) => (
           <div key={slide.id || slide.image} className={`hero-slide${i === index ? ' active' : ''}`}>
             <img src={toCloudinaryWebpUrl(slide.image)} alt={slide.alt} />
             <div className="hero-content">
               <div className="hero-content-inner">
                 <div className="hero-text">
-                  <div className="hero-copy">
-                    {slide.lines.map((line, li) => (
-                      <div key={`${slide.id}-${li}-${line}`} className="hero-text-kr">
-                        {line}
-                      </div>
-                    ))}
-                    <div className="hero-text-en" aria-hidden="true" />
-                  </div>
+                  {slide.lines.some((line) => line.trim()) ? (
+                    <div className="hero-copy">
+                      {slide.lines.map((line, li) => (
+                        <div key={`${slide.id}-${li}-${line}`} className="hero-text-kr">
+                          {line}
+                        </div>
+                      ))}
+                      <div className="hero-text-en" aria-hidden="true" />
+                    </div>
+                  ) : null}
 
                   <a
                     className="hero-cta-btn"
@@ -90,7 +108,7 @@ export function HeroSection() {
       </div>
 
       <div className="hero-pagination" aria-label={m.slidesNavAria}>
-        {slides.map((slide, i) => (
+        {list.map((slide, i) => (
           <button
             key={slide.id || slide.image}
             type="button"

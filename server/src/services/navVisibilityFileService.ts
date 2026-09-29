@@ -18,6 +18,8 @@ export const NAV_VISIBILITY_LINK_KEYS = [
   'overseas',
   'overseasEducation',
   'overseasVolunteer',
+  'researchEducation',
+  'researchSocial',
   'advocacy',
   'projects',
   'supportGuide',
@@ -79,7 +81,7 @@ export function validateNavVisibilityDocument(body: unknown): body is NavVisibil
 
 export async function readNavVisibilityDocument(): Promise<NavVisibilityDocument> {
   const parsed = await readJsonDocument(DOCUMENT_KEY)
-  if (!validateNavVisibilityDocument(parsed)) throw new Error('Invalid nav visibility document')
+  if (!isPlainObject(parsed)) throw new Error('Invalid nav visibility document')
   return normalizeNavVisibilityDocument(parsed)
 }
 

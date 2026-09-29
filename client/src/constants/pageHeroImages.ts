@@ -41,6 +41,8 @@ const BY_PATH: Record<string, string> = {
 
 /** 관리자에서 올린 페이지별 배너. 비어 있으면 BY_PATH 기본값을 씀 */
 let customByPath: Record<string, string> = {}
+/** 첫 응답 전에는 기본 이미지를 그리지 않는다. 페이지 전환 때 예전 배너가 깜빡이지 않게 */
+let bannersResolved = false
 
 export function setPageHeroImageOverrides(images: Record<string, string> | null | undefined): void {
   const next: Record<string, string> = {}
@@ -51,6 +53,7 @@ export function setPageHeroImageOverrides(images: Record<string, string> | null 
     }
   }
   customByPath = next
+  bannersResolved = true
 }
 
 function custom(pathKey: string): string | undefined {
@@ -91,13 +94,14 @@ function defaultHeroImageForPath(pathKey: string): string | null {
   if (pathKey.startsWith(`${PATH.businessProjects}/`)) return BY_PATH[PATH.businessProjects]
   if (pathKey.startsWith(`${PATH.businessDomestic}/`)) return BY_PATH[PATH.businessDomestic]
   if (pathKey.startsWith(`${PATH.businessOverseas}/`)) return BY_PATH[PATH.businessOverseas]
+  if (pathKey.startsWith(`${PATH.businessAdvocacy}/`)) return BY_PATH[PATH.businessAdvocacy]
   if (pathKey.startsWith('news/')) return NEWS
   if (pathKey.startsWith('stories')) return NEWS
   return null
 }
 
 export function pageHeroImageForPath(pathKey: string | null | undefined): string | null {
-  if (!pathKey) return null
+  if (!pathKey || !bannersResolved) return null
   const section = sectionKeyForPath(pathKey)
   if (section) {
     const override = custom(section)
@@ -108,6 +112,7 @@ export function pageHeroImageForPath(pathKey: string | null | undefined): string
 
 /** 스토리 아카이브 — 범위 구분 없이 소식 공통 배너 */
 export function pageHeroImageForStoryScope(_scope?: string | null): string {
+  if (!bannersResolved) return ''
   return pageHeroImageForPath(PATH.stories) ?? NEWS
 }
 
@@ -116,6 +121,7 @@ export function pageHeroImageForPostKind(
   kind: string | null | undefined,
   storyScope?: string | null,
 ): string {
+  if (!bannersResolved) return ''
   switch (kind) {
     case '공지사항':
       return pageHeroImageForPath(PATH.newsAnnouncements) ?? NEWS
