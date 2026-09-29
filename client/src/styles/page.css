@@ -726,7 +726,7 @@
 
 /* 핵심가치 — 이미지 시안(원형) 레이아웃 */
 .khayah-about-def-vmv .values-orbit-section {
-  padding: clamp(36px, 5vw, 52px) clamp(20px, 5vw, 64px) clamp(108px, 12vw, 148px);
+  padding: clamp(36px, 5vw, 52px) clamp(20px, 5vw, 64px) clamp(168px, 18vw, 210px);
   border-bottom: none;
 }
 
@@ -953,10 +953,11 @@
   max-width: min(240px, 36vw);
 }
 
-/* 하단 노드: 설명은 버블 아래 가운데 */
+/* 하단 노드: 설명은 버블 아래 가운데. 글 줄 수와 상관없이 버블은 궤도 아래에 둔다. */
 .khayah-about-def-vmv .values-orbit__node--v5 {
   left: 50%;
-  bottom: -22%;
+  top: 80%;
+  bottom: auto;
   transform: translateX(-50%);
   width: min(320px, 88%);
   grid-template-columns: 1fr;
