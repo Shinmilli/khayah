@@ -76,14 +76,8 @@
   display: block;
 }
 
-.projects-thumb--placeholder::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(920px 420px at 30% 35%, rgba(178, 8, 56, 0.26), transparent 58%),
-    radial-gradient(900px 420px at 78% 70%, rgba(178, 8, 56, 0.14), transparent 60%),
-    linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.02));
+.projects-thumb--placeholder {
+  background: #e5e5e5;
 }
 
 .projects-meta__top {

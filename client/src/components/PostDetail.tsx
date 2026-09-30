@@ -123,7 +123,12 @@ function crumbsForKind(kind: string, messages: Messages): Array<{ label: string;
 function crumbsForPost(post: Post, messages: Messages): Array<{ label: string; to: string }> {
   const kind = post.meta?.khayah_kind ?? ''
   const crumbs = crumbsForKind(kind, messages)
-  if (kind === '진행사업') {
+  if (kind === '연간소식지') {
+    crumbs.push({
+      label: post.title.trim() || messages.nav.links.newsletter,
+      to: `/posts/${encodeURIComponent(post.slug)}`,
+    })
+  } else if (kind === '진행사업') {
     const region = post.meta?.khayah_project_region?.trim()
     if (region) {
       const slug = PROJECT_REGION_TO_SLUG[region] ?? encodeURIComponent(region)
@@ -166,7 +171,8 @@ function newsletterPdfFileName(post: Post): string {
 }
 
 function NewsletterPdfPreview({ post }: { post: Post }) {
-  const { messages } = useLocale()
+  const { localize, messages } = useLocale()
+  const listTo = localize('/news/newsletter')
   const pdf = post.meta?.khayah_pdf_url?.trim() || ''
   const content = (post.content || '').trim()
   const looksHtml = /<\/?[a-z][\s\S]*>/i.test(content)
@@ -201,6 +207,11 @@ function NewsletterPdfPreview({ post }: { post: Post }) {
           {messages.pages.archive.viewDetail}
         </a>
       ) : null}
+      <div className="post-board__toolbar">
+        <Link className="post-board__list-btn" to={listTo}>
+          {messages.pages.postDetail.list}
+        </Link>
+      </div>
     </article>
   )
 }

@@ -55,6 +55,13 @@ export function parsePdfAttachments(meta?: Record<string, string>): PdfAttachmen
   return out
 }
 
+function pdfDisplayName(filename: string): string {
+  const base = filename.trim().split(/[/\\]/).pop() ?? ''
+  const cleaned = base.replace(/[\r\n"]/g, '').trim()
+  if (!cleaned) return ''
+  return cleaned.toLowerCase().endsWith('.pdf') ? cleaned : `${cleaned}.pdf`
+}
+
 /** Cloudinary raw PDF는 URL에 .pdf가 없으면 브라우저가 확장자 없는 파일로 저장함 */
 export function pdfOpenHref(url: string, filename?: string): string {
   const u = url.trim()
@@ -73,9 +80,9 @@ export function pdfOpenHref(url: string, filename?: string): string {
   if (!isCloudinaryRaw && !isSupabase) return u
 
   const qs = new URLSearchParams({ url: u })
-  const name = filename?.trim()
-  if (name) qs.set('name', name)
-  return `${API_BASE}/uploads/pdf?${qs.toString()}`
+  const name = filename ? pdfDisplayName(filename) : ''
+  if (!name) return `${API_BASE}/uploads/pdf?${qs.toString()}`
+  return `${API_BASE}/uploads/pdf/${encodeURIComponent(name)}?${qs.toString()}`
 }
 
 /** 이미 만들어 둔 표지. API에서 PDF를 다시 그리지 않는다. */

@@ -139,21 +139,26 @@ body.has-overlay-header .home-page {
 .hero-content {
   position: absolute;
   inset: 0;
-  padding: calc(var(--header-height) + clamp(16px, 2.4vh, 36px)) 0 clamp(108px, 15vh, 148px);
+  padding: calc(var(--header-height) + clamp(16px, 2.4vh, 36px)) 0 clamp(128px, 16vh, 160px);
   color: #fff;
   z-index: 2;
   display: flex;
-  align-items: center;
+  align-items: stretch;
   justify-content: center;
   text-align: left;
 }
 
 .hero-content-inner {
+  --hero-copy-inset: clamp(72px, 8.5vw, 160px);
+  position: relative;
+  display: flex;
+  align-items: center;
+  align-self: stretch;
   width: var(--main-width);
   max-width: var(--main-max-width);
   margin: 0 auto;
   padding: 0 var(--impact-inline-pad);
-  padding-left: clamp(72px, 8.5vw, 160px);
+  padding-left: var(--hero-copy-inset);
   box-sizing: border-box;
 }
 
@@ -161,10 +166,10 @@ body.has-overlay-header .home-page {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: clamp(22px, 3.2vh, 36px);
+  gap: 0;
   max-width: min(100%, 52rem);
   margin: 0;
-  position: relative;
+  position: static;
 }
 
 .hero-copy {
@@ -191,7 +196,9 @@ body.has-overlay-header .home-page {
 }
 
 .hero-cta-btn {
-  position: static;
+  position: absolute;
+  left: var(--hero-copy-inset, clamp(72px, 8.5vw, 160px));
+  bottom: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -382,7 +389,8 @@ body.has-overlay-header .home-page {
 
 @media (max-width: 1439px) and (min-width: 481px) {
   .hero-content-inner {
-    padding-left: clamp(72px, 11vw, 148px);
+    --hero-copy-inset: clamp(72px, 11vw, 148px);
+    padding-left: var(--hero-copy-inset);
     padding-right: clamp(40px, 5vw, 72px);
   }
 }
@@ -393,7 +401,7 @@ body.has-overlay-header .home-page {
   }
 
   .hero-content {
-    padding: calc(var(--header-height) + 10px) 0 clamp(82px, 16vh, 168px);
+    padding: calc(var(--header-height) + 10px) 0 clamp(128px, 16vh, 168px);
   }
 
   :root {
@@ -2347,7 +2355,7 @@ body.has-overlay-header .home-page {
   }
 
   .hero-content {
-    padding: calc(var(--header-height) + clamp(28px, 5vh, 52px)) 0 clamp(100px, 16vh, 140px);
+    padding: calc(var(--header-height) + clamp(28px, 5vh, 52px)) 0 clamp(128px, 16vh, 156px);
     justify-content: flex-end;
   }
 
@@ -2777,6 +2785,10 @@ body.has-overlay-header .home-page {
   }
 
   .hero-content-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-self: center;
     width: 100%;
     max-width: 100%;
     padding: 0 clamp(14px, 4vw, 22px);

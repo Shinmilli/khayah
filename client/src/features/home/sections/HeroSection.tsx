@@ -91,16 +91,16 @@ export function HeroSection() {
                       <div className="hero-text-en" aria-hidden="true" />
                     </div>
                   ) : null}
-
-                  <a
-                    className="hero-cta-btn"
-                    href={NANUM_DONATE_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {m.donate}
-                  </a>
                 </div>
+
+                <a
+                  className="hero-cta-btn"
+                  href={NANUM_DONATE_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {m.donate}
+                </a>
               </div>
             </div>
           </div>

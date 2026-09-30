@@ -1,4 +1,5 @@
 import type { Request, Response } from 'express'
+import { appendPdfTitle } from '../utils/pdfTitle'
 import { loadAllowedPdf, readQuery } from '../utils/pdfSource'
 
 function ensurePdfExt(name: string): string {
@@ -11,16 +12,19 @@ function utf8PdfName(raw: string | undefined): string {
   return ensurePdfExt(cleaned)
 }
 
-function asciiPdfName(raw: string | undefined): string {
-  const base = utf8PdfName(raw)
-  const cleaned = base.replace(/[^\w.\-]+/g, '_').replace(/^_+|_+$/g, '') || 'document'
-  return ensurePdfExt(cleaned)
+function requestedPdfName(req: Request): string {
+  const fromPath = typeof req.params.filename === 'string' ? req.params.filename : ''
+  return utf8PdfName(fromPath || readQuery(req, 'name') || undefined)
 }
 
-function contentDispositionInline(raw: string | undefined): string {
+/** 한글 파일명을 ASCII로 줄이면 탭에 Vol.2_2021.pdf 처럼 잘린 이름이 나온다. */
+function contentDispositionInline(raw: string): string {
   const utf8 = utf8PdfName(raw)
-  const ascii = asciiPdfName(raw)
-  return `inline; filename="${ascii}"; filename*=UTF-8''${encodeURIComponent(utf8)}`
+  const star = `filename*=UTF-8''${encodeURIComponent(utf8)}`
+  if (/^[\x20-\x7E]+$/.test(utf8) && !utf8.includes('"') && !utf8.includes('\\')) {
+    return `inline; filename="${utf8}"; ${star}`
+  }
+  return `inline; ${star}`
 }
 
 /** 브라우저에서 PDF를 새 탭으로 열기 (Cloudinary raw URL에 확장자가 없으면 그냥 다운로드됨) */
@@ -42,11 +46,11 @@ export async function getPdfInline(req: Request, res: Response): Promise<void> {
       return
     }
 
-    const name = readQuery(req, 'name')
+    const name = requestedPdfName(req)
     res.setHeader('Content-Type', 'application/pdf')
-    res.setHeader('Content-Disposition', contentDispositionInline(name || 'document.pdf'))
+    res.setHeader('Content-Disposition', contentDispositionInline(name))
     res.setHeader('Cache-Control', 'public, max-age=86400')
-    res.send(loaded.buf)
+    res.send(appendPdfTitle(loaded.buf, name))
   } catch (e) {
     const message = e instanceof Error ? e.message : String(e)
     console.error('[uploads] pdf view error', message)
