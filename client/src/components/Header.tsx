@@ -3,7 +3,6 @@ import { Link, useLocation } from 'react-router-dom'
 import { SITE_NAME } from '../constants'
 import { NANUM_DONATE_URL } from '../constants/nanumDonate'
 import { pageHeroImageForPath, prefetchPageHeroImage } from '../constants/pageHeroImages'
-import { splitLocalePath } from '../i18n/locale'
 import { PATH } from '../i18n/routes'
 import { useLocale } from '../i18n/LocaleContext'
 import type { NavLinkKey, NavTopKey } from '../i18n/messages/ko'
@@ -20,7 +19,6 @@ import { toCloudinaryWebpUrl } from '../utils/cloudinaryWebp'
 import '../styles/site-header.css'
 
 const LOGO_SRC = '/images/logo/khayah_logo.png'
-const LOGO_WHITE_SRC = '/images/logo/khayahLogoWhite.png'
 const FALLBACK_LOGO = '/images/logo/khayah_logo.png'
 
 function columnAllLinks(col: NavMenuColumn): NavMenuLinkDef[] {
@@ -81,8 +79,6 @@ export function Header() {
   const loc = (to: string) => localize(to)
   const topLabel = (key: NavTopKey) => nav.top[key]
   const linkLabel = (key: NavLinkKey) => nav.links[key]
-  const { pathnameWithoutLocale } = splitLocalePath(location.pathname)
-  const isHome = pathnameWithoutLocale === '/'
 
   const navColumns = useMemo(
     () => filterNavColumns(NAV_MENU_COLUMNS, navVisibility),
@@ -176,18 +172,6 @@ export function Header() {
 
   useEffect(() => () => cancelDesktopMenuTimer(), [])
 
-  useEffect(() => {
-    document.body.classList.toggle('has-overlay-header', isHome)
-    document.body.classList.toggle(
-      'has-transparent-header',
-      isHome && atTop && !mobileOpen && desktopMenuKey === null,
-    )
-    return () => {
-      document.body.classList.remove('has-overlay-header')
-      document.body.classList.remove('has-transparent-header')
-    }
-  }, [isHome, atTop, mobileOpen, desktopMenuKey])
-
   const closeMobile = () => setMobileOpen(false)
 
   const renderStackedList = (links: NavMenuLinkDef[]) => (
@@ -275,8 +259,8 @@ export function Header() {
   return (
     <header
       className={`site-header${!atTop ? ' is-scrolled' : ''}${mobileOpen ? ' is-mobile-open' : ''}${
-        isHome ? ' is-home' : ''
-      }${atTop ? ' is-at-top' : ''}${desktopMenuKey ? ' is-desktop-menu-open' : ''}`}
+        atTop ? ' is-at-top' : ''
+      }${desktopMenuKey ? ' is-desktop-menu-open' : ''}`}
     >
       <div className="site-header__bar">
         <div className="site-header__left">
@@ -291,12 +275,6 @@ export function Header() {
                 el.dataset.fallback = '1'
                 el.src = FALLBACK_LOGO
               }}
-            />
-            <img
-              className="site-header__logo-img site-header__logo-img--white"
-              src={LOGO_WHITE_SRC}
-              alt=""
-              aria-hidden="true"
             />
           </Link>
 
