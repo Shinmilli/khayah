@@ -7,7 +7,7 @@ import { PageHero } from '../components/PageHero'
 import { Pagination } from '../components/Pagination'
 import { paginate } from '../utils/paginate'
 import { useLocale } from '../i18n/LocaleContext'
-import { pageHeroImageForStoryScope } from '../constants/pageHeroImages'
+import { PATH } from '../i18n/routes'
 import { ListStatus } from '../components/ListStatus'
 import { PostCoverThumb } from '../components/PostCoverThumb'
 import '../styles/story.css'
@@ -134,7 +134,7 @@ export function StoryArchivePage() {
 
   return (
     <div className="page-content-wrapper">
-      <PageHero title={st.title} backgroundImageUrl={pageHeroImageForStoryScope(scope)} />
+      <PageHero title={st.title} imagePathKey={PATH.stories} />
       <div className="section">
         <div className="section_wrapper clearfix">
           <div className="column one">

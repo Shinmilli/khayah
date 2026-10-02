@@ -24,7 +24,6 @@ import '../styles/donor-guide.css'
 import { NANUM_DONATE_URL } from '../constants/nanumDonate'
 import { PATH } from '../i18n/routes'
 import { isKhayahSectionPathKey } from '../features/khayah-about/khayahAboutHubTabs'
-import { pageHeroImageForPath, pageHeroImageForPostKind } from '../constants/pageHeroImages'
 import { ListStatus } from '../components/ListStatus'
 import { BusinessHubCards } from '../features/business/BusinessHubCards'
 
@@ -198,9 +197,8 @@ function PageByPathInner({ kindHint }: { kindHint: string }) {
         <PageHero
           title={kindHint ? heroTitleForKind(kindHint, messages) : messages.pages.loading}
           crumbs={kindHint ? crumbsForKind(kindHint, messages) : undefined}
-          backgroundImageUrl={
-            kindHint ? pageHeroImageForPostKind(kindHint) : pageHeroImageForPath(PATH.newsAnnouncements)
-          }
+          imagePostKind={kindHint || null}
+          imagePathKey={kindHint ? null : PATH.newsAnnouncements}
         />
         <div className="section">
           <div className="section_wrapper clearfix">
@@ -220,7 +218,8 @@ function PageByPathInner({ kindHint }: { kindHint: string }) {
         <PageHero
           title={heroTitleForKind(kind, messages)}
           crumbs={crumbsForPost(post, messages)}
-          backgroundImageUrl={pageHeroImageForPostKind(kind, post.meta?.khayah_story_scope)}
+          imagePostKind={kind}
+          imageStoryScope={post.meta?.khayah_story_scope}
         />
         <div className="section">
           <div className="section_wrapper clearfix">
@@ -239,7 +238,7 @@ function PageByPathInner({ kindHint }: { kindHint: string }) {
       <div className="page-content-wrapper">
         <PageHero
           title={staticPage.title}
-          backgroundImageUrl={pageHeroImageForPath(pathKey)}
+          imagePathKey={pathKey}
           showScrollHint={pathKey !== PATH.aboutLocation}
         />
         {isKhayahSectionPathKey(pathKey) ? <KhayahSectionNav /> : null}
@@ -270,7 +269,7 @@ function PageByPathInner({ kindHint }: { kindHint: string }) {
     const storyCta = storyCtaForPathKey(pathKey, messages)
     return (
       <div className="page-content-wrapper">
-        <PageHero title={apiPage.title} backgroundImageUrl={pageHeroImageForPath(pathKey)} />
+        <PageHero title={apiPage.title} imagePathKey={pathKey} />
         {isKhayahSectionPathKey(pathKey) ? <KhayahSectionNav /> : null}
         <div className="section">
           <div className="section_wrapper clearfix">
@@ -317,7 +316,7 @@ function PageByPathInner({ kindHint }: { kindHint: string }) {
 
   return (
     <div className="page-content-wrapper">
-      <PageHero title={title ?? messages.pages.loading} backgroundImageUrl={pageHeroImageForPath(pathKey)} />
+      <PageHero title={title ?? messages.pages.loading} imagePathKey={pathKey} />
       {isKhayahSectionPathKey(pathKey) ? <KhayahSectionNav /> : null}
       <div className="section">
         <div className="section_wrapper clearfix">

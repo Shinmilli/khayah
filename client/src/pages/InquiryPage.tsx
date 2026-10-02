@@ -1,7 +1,6 @@
 import { type FormEvent, useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { PageHero } from '../components/PageHero'
-import { pageHeroImageForPath } from '../constants/pageHeroImages'
 import { PATH } from '../i18n/routes'
 import { ListStatus } from '../components/ListStatus'
 import {
@@ -173,7 +172,7 @@ export function InquiryPage() {
 
   return (
     <div className="khayah-about-hub inquiry-page">
-      <PageHero title={iq.title} backgroundImageUrl={pageHeroImageForPath(PATH.newsInquiry)} showScrollHint={false} />
+      <PageHero title={iq.title} imagePathKey={PATH.newsInquiry} showScrollHint={false} />
 
       <nav className="khayah-about-tabs" aria-label={iq.tabsAria}>
         <div className="khayah-about-tabs__rail" role="tablist">

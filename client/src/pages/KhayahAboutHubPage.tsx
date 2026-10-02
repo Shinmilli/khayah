@@ -2,7 +2,6 @@ import { useEffect, useMemo } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { PageHero } from '../components/PageHero'
 import { KhayahSectionNav } from '../components/KhayahSectionNav'
-import { pageHeroImageForPath } from '../constants/pageHeroImages'
 import { PATH } from '../i18n/routes'
 import { getStaticPage } from '../constants/pagesContent'
 import { useLocale } from '../i18n/LocaleContext'
@@ -80,7 +79,7 @@ export function KhayahAboutHubPage() {
       <PageHero
         title={activeTab === 'org' ? messages.nav.links.org : hub.title}
         crumbs={crumbs}
-        backgroundImageUrl={pageHeroImageForPath(PATH.aboutKhayah)}
+        imagePathKey={PATH.aboutKhayah}
         showScrollHint={false}
       />
 

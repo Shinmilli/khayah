@@ -1,3 +1,4 @@
+import { useSyncExternalStore } from 'react'
 import { PATH } from '../i18n/routes'
 
 const ABOUT = '/images/banners/about.jpg'
@@ -54,6 +55,23 @@ export function setPageHeroImageOverrides(images: Record<string, string> | null 
   }
   customByPath = next
   bannersResolved = true
+  heroVersion += 1
+  heroListeners.forEach((listener) => listener())
+}
+
+let heroVersion = 0
+const heroListeners = new Set<() => void>()
+
+function subscribePageHeroImages(onStoreChange: () => void) {
+  heroListeners.add(onStoreChange)
+  return () => {
+    heroListeners.delete(onStoreChange)
+  }
+}
+
+/** 배너 API 응답 후 히어로를 다시 그리기 위한 구독 */
+export function usePageHeroImages(): number {
+  return useSyncExternalStore(subscribePageHeroImages, () => heroVersion, () => heroVersion)
 }
 
 function custom(pathKey: string): string | undefined {

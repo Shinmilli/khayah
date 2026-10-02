@@ -13,7 +13,6 @@ import '../styles/newsletter.css'
 import { PATH } from '../i18n/routes'
 import { useLocale } from '../i18n/LocaleContext'
 import { toCloudinaryWebpUrl } from '../utils/cloudinaryWebp'
-import { pageHeroImageForPath } from '../constants/pageHeroImages'
 import { ListStatus } from '../components/ListStatus'
 import { PostCoverThumb } from '../components/PostCoverThumb'
 import { postCoverMedia } from '../utils/postMedia'
@@ -158,7 +157,7 @@ export function NewsArchivePage() {
         isNewsletter ? ' yearly-nl-page' : ''
       }${isActivity ? ' activity-archive-page' : ''}`}
     >
-      <PageHero title={title} backgroundImageUrl={pageHeroImageForPath(pathKey)} />
+      <PageHero title={title} imagePathKey={pathKey} />
       <div className="section">
         <div className="section_wrapper clearfix">
           <div className="column one">

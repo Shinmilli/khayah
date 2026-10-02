@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { PageHero } from '../components/PageHero'
 import { KhayahSectionNav } from '../components/KhayahSectionNav'
-import { pageHeroImageForPath } from '../constants/pageHeroImages'
 import { getStaticPage } from '../constants/pagesContent'
 import { historyContentToHtml } from '../features/history/historyTypes'
 import { useLocale } from '../i18n/LocaleContext'
@@ -36,7 +35,7 @@ export function HistoryPage() {
 
   return (
     <div className="page-content-wrapper">
-      <PageHero title={title} backgroundImageUrl={pageHeroImageForPath(PATH.aboutHistory)} />
+      <PageHero title={title} imagePathKey={PATH.aboutHistory} />
       <KhayahSectionNav />
       <div className="section">
         <div className="section_wrapper clearfix">

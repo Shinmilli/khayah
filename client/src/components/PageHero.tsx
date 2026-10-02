@@ -1,6 +1,11 @@
 import { useLayoutEffect, useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { pageHeroBlurForUrl } from '../constants/pageHeroImages'
+import {
+  pageHeroBlurForUrl,
+  pageHeroImageForPath,
+  pageHeroImageForPostKind,
+  usePageHeroImages,
+} from '../constants/pageHeroImages'
 import { splitLocalePath } from '../i18n/locale'
 import { useLocale } from '../i18n/LocaleContext'
 import type { Messages } from '../i18n/messages/ko'
@@ -9,8 +14,13 @@ import { toCloudinaryWebpUrl } from '../utils/cloudinaryWebp'
 
 interface PageHeroProps {
   title: string
-  /** 배경 이미지 URL. 미지정 시 플레이스홀더 배경을 사용합니다. */
+  /** 배경 이미지 URL. imagePathKey·imagePostKind가 있으면 그쪽이 우선합니다. */
   backgroundImageUrl?: string | null
+  /** 경로 키로 배너를 고른다. 새로고침 후에도 배너 응답에 맞춰 다시 그린다. */
+  imagePathKey?: string | null
+  /** 게시글 종류로 배너를 고른다. */
+  imagePostKind?: string | null
+  imageStoryScope?: string | null
   /** 배너 아래 현재 위치(Breadcrumb) 표시 */
   showBreadcrumbs?: boolean
   /** 하단 스크롤 유도 라인 애니메이션 */
@@ -351,12 +361,25 @@ function HeroBackdrop({ src }: { src: string | null }) {
   const [ready, setReady] = useState(false)
 
   useLayoutEffect(() => {
+    const node = photoRef.current
     if (!photo) {
       setReady(true)
       return
     }
-    // 캐시된 이미지는 load가 effect보다 먼저 끝나 ready를 다시 끄면 검은 배너로 남는다.
-    setReady(imageElementReady(photoRef.current))
+    if (imageElementReady(node)) {
+      setReady(true)
+      return
+    }
+    setReady(false)
+    if (!node) return
+    const markReady = () => setReady(true)
+    node.addEventListener('load', markReady)
+    node.addEventListener('error', markReady)
+    if (imageElementReady(node)) setReady(true)
+    return () => {
+      node.removeEventListener('load', markReady)
+      node.removeEventListener('error', markReady)
+    }
   }, [photo])
 
   return (
@@ -386,12 +409,22 @@ function HeroBackdrop({ src }: { src: string | null }) {
 export function PageHero({
   title,
   backgroundImageUrl = null,
+  imagePathKey,
+  imagePostKind,
+  imageStoryScope,
   showBreadcrumbs = true,
   showScrollHint = true,
   crumbs: crumbsProp,
 }: PageHeroProps) {
+  usePageHeroImages()
   const location = useLocation()
   const { localize, messages } = useLocale()
+  const resolvedBackground =
+    imagePostKind != null
+      ? pageHeroImageForPostKind(imagePostKind, imageStoryScope) || null
+      : imagePathKey != null
+        ? pageHeroImageForPath(imagePathKey)
+        : backgroundImageUrl
   const crumbs =
     crumbsProp && crumbsProp.length > 0
       ? crumbsProp.map((c) => ({
@@ -409,7 +442,7 @@ export function PageHero({
   return (
     <>
       <section className="page-hero" aria-label={displayTitle}>
-        <HeroBackdrop src={backgroundImageUrl} />
+        <HeroBackdrop src={resolvedBackground} />
         <div className="page-hero__inner">
           <h1 className="page-hero__title">{displayTitle}</h1>
         </div>

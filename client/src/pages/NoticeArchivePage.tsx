@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { PageHero } from '../components/PageHero'
-import { pageHeroImageForPath } from '../constants/pageHeroImages'
 import { PATH } from '../i18n/routes'
 import { fetchPostsByKind } from '../services/api'
 import type { Post } from '../types/post'
@@ -69,7 +68,7 @@ export function NoticeArchivePage() {
 
   return (
     <div className="page-content-wrapper notice-archive-page">
-      <PageHero title="공지사항" backgroundImageUrl={pageHeroImageForPath(PATH.newsAnnouncements)} />
+      <PageHero title="공지사항" imagePathKey={PATH.newsAnnouncements} />
       <div className="section">
         <div className="section_wrapper clearfix">
           <div className="column one">
