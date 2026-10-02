@@ -367,7 +367,11 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
         </div>
       </div>
 
-      <div class="ov-edu-strip ov-edu-strip--2" aria-label="Program photos">
+      <div class="ov-edu-strip" aria-label="Program photos">
+        <div class="ov-edu-img">
+          <img class="ov-edu-img__photo" src="/images/business/overseas-edu-future-1.jpg" alt="Life Design career exploration" loading="lazy" />
+          <div class="ov-edu-img__cap">Life Design career exploration</div>
+        </div>
         <div class="ov-edu-img">
           <img class="ov-edu-img__photo" src="/images/business/overseas-edu-future-2.jpg" alt="Vocational skills practice" loading="lazy" />
           <div class="ov-edu-img__cap">Vocational skills practice</div>
@@ -756,24 +760,78 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
   <section class="adv-hero">
     <div class="adv-wrap">
       <p class="adv-kicker">Research · Social business</p>
-      <h1 class="adv-title">Social business</h1>
+      <h1 class="adv-title">We turn field experience into models of learning, and build better ways to do education and development cooperation.</h1>
+      <p class="adv-lead">Khayah grows a sustainable social-business model from development cooperation and education in the field. Education services and social-value ventures circulate both revenue and public benefit, and that value is connected again to education and community growth.</p>
       <div class="adv-divider" aria-hidden="true"></div>
     </div>
   </section>
 
   <section class="adv-study" aria-label="Social business">
     <div class="adv-wrap">
-      <article class="adv-study__card adv-study__card--solo">
-        <div class="adv-study__body">
-          <h2 class="adv-study__title">Social value and sustainability</h2>
+      <div class="ov-edu-head">
+        <div class="ov-edu-head__titles">
+          <p class="ov-edu-head__kicker">Social Business</p>
+          <h2 class="ov-edu-head__ko">Social business</h2>
+        </div>
+        <div>
           <ul class="adv-tags">
-            <li>Social business</li>
+            <li>Khayah Academy</li>
             <li>Color &amp; Comfort (social enterprise)</li>
             <li>Social impact</li>
           </ul>
-          <p class="adv-study__desc">We explore how programs can be run so that social value continues as practice. Drawing on social business experience, we look at how self-reliance and social results can stay connected.</p>
+          <p class="ov-edu-head__p">We explore operating and business structures that let social value continue as practice. Revenue from social business supports Khayah’s ongoing work and public-benefit programs, and we look at how self-reliance and social results can stay connected.</p>
         </div>
-      </article>
+      </div>
+
+      <div class="adv-split" role="table" aria-label="Social business components">
+        <div class="adv-split__col">
+          <h3 class="adv-split__title">Khayah Academy</h3>
+          <p class="adv-split__lead">An education brand that turns programs and content from Khayah’s development cooperation into a business model.</p>
+          <ul class="adv-split__list">
+            <li>
+              <img class="adv-split__flag" src="/images/business/flag-mm.png" alt="" />
+              <div><strong>Myanmar</strong> | Running education centers<span>Basic education, in-person and online learning, Pre-School</span></div>
+            </li>
+            <li>
+              <img class="adv-split__flag" src="/images/business/flag-kg.png" alt="" />
+              <div><strong>Kyrgyzstan</strong> | STEM e-learning<span>Online math and science STEM courses</span></div>
+            </li>
+            <li>
+              <img class="adv-split__flag" src="/images/business/flag-kr.png" alt="" />
+              <div><strong>Korea</strong> | Career camp for invited youth<span>Career-design workshops, campus visits, work and culture experiences</span></div>
+            </li>
+          </ul>
+        </div>
+        <div class="adv-split__col">
+          <h3 class="adv-split__title">Color &amp; Comfort</h3>
+          <p class="adv-split__lead">Lifestyle-product sales that support the education and growth of children who are left out.</p>
+          <ul class="adv-split__list">
+            <li>
+              <img class="adv-split__logo" src="/images/business/color-comfort-logo.png" alt="Color &amp; Comfort" />
+              <div><strong>Products</strong> | Fake socks, designed socks<span>Corporate and event orders, staff and client gifts, sales and distribution partnerships</span></div>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="ov-edu-strip ov-edu-strip--4" aria-label="Social business photos">
+        <div class="ov-edu-img">
+          <img class="ov-edu-img__photo" src="/images/business/research-social-1.jpg" alt="Myanmar Pre-School" loading="lazy" />
+          <div class="ov-edu-img__cap">Myanmar Pre-School</div>
+        </div>
+        <div class="ov-edu-img">
+          <img class="ov-edu-img__photo" src="/images/business/research-social-2.jpg" alt="Kyrgyzstan STEM e-learning" loading="lazy" />
+          <div class="ov-edu-img__cap">Kyrgyzstan STEM e-learning</div>
+        </div>
+        <div class="ov-edu-img">
+          <img class="ov-edu-img__photo" src="/images/business/research-social-3.jpg" alt="Korea invitation career camp" loading="lazy" />
+          <div class="ov-edu-img__cap">Korea career camp</div>
+        </div>
+        <div class="ov-edu-img">
+          <img class="ov-edu-img__photo" src="/images/business/research-social-4.jpg" alt="Color and Comfort" loading="lazy" />
+          <div class="ov-edu-img__cap">Color &amp; Comfort</div>
+        </div>
+      </div>
     </div>
   </section>
 </div>
@@ -786,53 +844,108 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
   <section class="adv-hero">
     <div class="adv-wrap">
       <p class="adv-kicker">Research · Education research</p>
-      <h1 class="adv-title">Education research</h1>
-      <p class="adv-lead">We study education models and learning methods, knowledge sharing through the academy, and participatory development cooperation.</p>
+      <h1 class="adv-title">We turn field experience into models of learning, and build better ways to do education and development cooperation.</h1>
+      <p class="adv-lead">Drawing on experience from programs in Korea, Khayah studies education models, learning methods, and participatory development cooperation. Tested field experience is organized into curricula and content, then shared again with practitioners and participants through lectures, seminars, and the academy.</p>
       <div class="adv-divider" aria-hidden="true"></div>
     </div>
   </section>
 
   <section class="adv-study" aria-label="Education research">
     <div class="adv-wrap">
-      <ol class="adv-study__list">
-        <li class="adv-study__card">
-          <p class="adv-study__no">01</p>
-          <div class="adv-study__body">
-            <h2 class="adv-study__title">Education models and learning methods</h2>
+      <article class="adv-copy">
+        <div class="ov-edu-head">
+          <div class="ov-edu-head__titles">
+            <p class="ov-edu-head__kicker">Education Models and Learning Methods</p>
+            <h2 class="ov-edu-head__ko">Education models and learning methods</h2>
+          </div>
+          <div>
             <ul class="adv-tags">
               <li>Dream Seekers</li>
               <li>Life Design</li>
-              <li>E-learning (SEEM)</li>
+              <li>STEM e-learning (SEEM)</li>
               <li>Peer learning</li>
+              <li>Four-stage career education</li>
             </ul>
-            <p class="adv-study__desc">We study education models that help participants understand themselves and apply what they learn to life. Field experience is shaped into curricula and content, then revised.</p>
+            <p class="ov-edu-head__p">We study education models that help participants understand themselves and apply what they learn to life. Field experience is shaped into curricula and content, then revised.</p>
           </div>
-        </li>
-        <li class="adv-study__card">
-          <p class="adv-study__no">02</p>
-          <div class="adv-study__body">
-            <h2 class="adv-study__title">Knowledge sharing and the academy</h2>
+        </div>
+        <div class="ov-edu-strip" aria-label="Education model photos">
+          <div class="ov-edu-img">
+            <img class="ov-edu-img__photo" src="/images/business/research-edu-model-1.jpg" alt="Life Design" loading="lazy" />
+            <div class="ov-edu-img__cap">Life Design</div>
+          </div>
+          <div class="ov-edu-img">
+            <img class="ov-edu-img__photo" src="/images/business/research-edu-model-2.jpg" alt="STEM e-learning" loading="lazy" />
+            <div class="ov-edu-img__cap">STEM e-learning (SEEM)</div>
+          </div>
+          <div class="ov-edu-img">
+            <img class="ov-edu-img__photo" src="/images/business/research-edu-model-3.jpg" alt="Career awareness" loading="lazy" />
+            <div class="ov-edu-img__cap">Career awareness (stage 1)</div>
+          </div>
+        </div>
+      </article>
+
+      <article class="adv-copy">
+        <div class="ov-edu-head">
+          <div class="ov-edu-head__titles">
+            <p class="ov-edu-head__kicker">Knowledge Sharing and the Academy</p>
+            <h2 class="ov-edu-head__ko">Knowledge sharing and the academy</h2>
+          </div>
+          <div>
             <ul class="adv-tags">
               <li>Khayah Academy</li>
-              <li>Education on development cooperation and ODA</li>
+              <li>ODA and development-cooperation education</li>
               <li>Lectures and seminars</li>
             </ul>
-            <p class="adv-study__desc">Field experience and research are shared through lectures, seminars, and learning materials. Practitioners and participants learn together and build expertise in development cooperation.</p>
+            <p class="ov-edu-head__p">Field experience and research are shared through lectures, seminars, and learning materials. Practitioners and participants learn together and build expertise in development cooperation.</p>
           </div>
-        </li>
-        <li class="adv-study__card">
-          <p class="adv-study__no">03</p>
-          <div class="adv-study__body">
-            <h2 class="adv-study__title">Participatory development cooperation</h2>
+        </div>
+        <div class="ov-edu-strip" aria-label="Academy photos">
+          <div class="ov-edu-img">
+            <img class="ov-edu-img__photo" src="/images/business/research-academy-1.jpg" alt="Training for leaders" loading="lazy" />
+            <div class="ov-edu-img__cap">Leader training</div>
+          </div>
+          <div class="ov-edu-img">
+            <img class="ov-edu-img__photo" src="/images/business/research-academy-2.jpg" alt="Volunteer education" loading="lazy" />
+            <div class="ov-edu-img__cap">Overseas volunteer education</div>
+          </div>
+          <div class="ov-edu-img">
+            <img class="ov-edu-img__photo" src="/images/business/research-academy-3.jpg" alt="Education for migrant workers" loading="lazy" />
+            <div class="ov-edu-img__cap">Migrant-worker education</div>
+          </div>
+        </div>
+      </article>
+
+      <article class="adv-copy">
+        <div class="ov-edu-head">
+          <div class="ov-edu-head__titles">
+            <p class="ov-edu-head__kicker">Participatory Development Cooperation</p>
+            <h2 class="ov-edu-head__ko">Participatory development cooperation</h2>
+          </div>
+          <div>
             <ul class="adv-tags">
               <li>International development cooperation</li>
               <li>Expert groups</li>
               <li>Perspectives and methods of development</li>
             </ul>
-            <p class="adv-study__desc">We study how to research, plan, carry out, and evaluate programs on the basis of residents’ participation and leadership. The approach seeks to understand local context and strengthen local capacity.</p>
+            <p class="ov-edu-head__p">We study how to research, plan, carry out, and evaluate programs on the basis of residents’ participation and leadership. The approach seeks to understand local context and strengthen local capacity.</p>
           </div>
-        </li>
-      </ol>
+        </div>
+        <div class="ov-edu-strip" aria-label="Participation photos">
+          <div class="ov-edu-img">
+            <img class="ov-edu-img__photo" src="/images/business/research-participation-1.jpg" alt="Resident participation" loading="lazy" />
+            <div class="ov-edu-img__cap">Resident participation</div>
+          </div>
+          <div class="ov-edu-img">
+            <img class="ov-edu-img__photo" src="/images/business/research-participation-2.jpg" alt="Parent participation" loading="lazy" />
+            <div class="ov-edu-img__cap">Parent participation</div>
+          </div>
+          <div class="ov-edu-img">
+            <img class="ov-edu-img__photo" src="/images/business/research-participation-3.jpg" alt="Local expert participation" loading="lazy" />
+            <div class="ov-edu-img__cap">Local expert participation</div>
+          </div>
+        </div>
+      </article>
     </div>
   </section>
 </div>

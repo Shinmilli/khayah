@@ -346,14 +346,14 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
       <div class="ov-edu-table" role="table" aria-label="미래지향 교육 구성">
         <div class="ov-edu-table__row ov-edu-table__row--2" role="rowgroup">
           <div class="ov-edu-cell" role="row">
-            <p class="ov-edu-cell__head" role="columnheader">맞춤형 진로·직업훈련</p>
+            <p class="ov-edu-cell__head" role="columnheader"><span class="ov-edu-cell__kicker">Life-Design</span>맞춤형 진로·직업훈련</p>
             <p class="ov-edu-cell__p" role="cell">
               자신의 흥미와 강점, 직업 및 공동체의 가치를 이해하고 다양한 직업과 삶의 경로 탐색을 기술교육, 멘토링, 진로체험 등 필요에 맞는 지원으로 구체화합니다.
             </p>
             <p class="ov-edu-cell__steps">인식개선 → 탐색 → 설계 → 실행<br />4단계 맞춤형 지원</p>
           </div>
           <div class="ov-edu-cell" role="row">
-            <p class="ov-edu-cell__head" role="columnheader">STEM 융합·탐구 교육</p>
+            <p class="ov-edu-cell__head" role="columnheader"><span class="ov-edu-cell__kicker">STEM Education</span>융합 탐구 교육</p>
             <p class="ov-edu-cell__p" role="cell">
               과학·기술·공학·수학을 연결하여 질문하고, 실험과 프로젝트 활동을 통해 탐구하며 문제해결 역량을 키웁니다.
             </p>
@@ -362,7 +362,11 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
         </div>
       </div>
 
-      <div class="ov-edu-strip ov-edu-strip--2" aria-label="활동 이미지">
+      <div class="ov-edu-strip" aria-label="활동 이미지">
+        <div class="ov-edu-img">
+          <img class="ov-edu-img__photo" src="/images/business/overseas-edu-future-1.jpg" alt="Life Design 진로탐색" loading="lazy" />
+          <div class="ov-edu-img__cap">Life Design 진로탐색</div>
+        </div>
         <div class="ov-edu-img">
           <img class="ov-edu-img__photo" src="/images/business/overseas-edu-future-2.jpg" alt="직업기술 체험 현장" loading="lazy" />
           <div class="ov-edu-img__cap">직업기술 체험</div>
@@ -738,24 +742,78 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
   <section class="adv-hero">
     <div class="adv-wrap">
       <p class="adv-kicker">연구사업 · 소셜비즈니스</p>
-      <h1 class="adv-title">소셜비즈니스</h1>
+      <h1 class="adv-title">현장의 경험을 배움의 모델로 발전시키고,<br />더 나은 교육과 개발협력의 방법을 만들어갑니다.</h1>
+      <p class="adv-lead">카야는 개발협력과 교육 현장의 경험을 바탕으로 지속가능한 소셜비즈니스 모델로 발전시킵니다. 교육서비스와 사회적 가치 기반 사업을 통해 수익과 공익이 함께 순환하는 구조를 만들고, 창출된 가치를 다시 교육과 지역사회의 성장에 연결합니다.</p>
       <div class="adv-divider" aria-hidden="true"></div>
     </div>
   </section>
 
   <section class="adv-study" aria-label="소셜비즈니스">
     <div class="adv-wrap">
-      <article class="adv-study__card adv-study__card--solo">
-        <div class="adv-study__body">
-          <h2 class="adv-study__title">사회적 가치와 지속가능성</h2>
+      <div class="ov-edu-head">
+        <div class="ov-edu-head__titles">
+          <p class="ov-edu-head__kicker">Social Business</p>
+          <h2 class="ov-edu-head__ko">소셜 비즈니스</h2>
+        </div>
+        <div>
           <ul class="adv-tags">
-            <li>소셜 비즈니스</li>
+            <li>카야 아카데미</li>
             <li>컬러앤컴포트(사회적기업)</li>
             <li>소셜임팩트</li>
           </ul>
-          <p class="adv-study__desc">사회적 가치가 지속적인 실천으로 이어질 수 있는 운영과 사업의 구조를 탐색합니다. 소셜 비즈니스의 경험을 바탕으로 자립과 사회적 성과의 연결 가능성을 살펴봅니다.</p>
+          <p class="ov-edu-head__p">사회적 가치가 지속적인 실천으로 이어질 수 있는 운영과 사업의 구조를 탐색합니다. 소셜 비즈니스의 창출 수익으로 카야인터내셔널의 지속가능한 운영과 공익사업을 지원하며, 소셜 비즈니스 경험을 바탕으로 자립과 사회적 성과의 연결 가능성을 살펴봅니다.</p>
         </div>
-      </article>
+      </div>
+
+      <div class="adv-split" role="table" aria-label="소셜 비즈니스 구성">
+        <div class="adv-split__col">
+          <h3 class="adv-split__title">카야 아카데미</h3>
+          <p class="adv-split__lead">카야인터내셔널 개발협력사업 기반 개발된 교육 프로그램과 콘텐츠를 비즈니스 모델로 발전시킨 교육사업 브랜드</p>
+          <ul class="adv-split__list">
+            <li>
+              <img class="adv-split__flag" src="/images/business/flag-mm.png" alt="" />
+              <div><strong>미얀마</strong> | 교육기관 운영<span>(서비스) 기초교육 방문-온라인 학습, Pre-School</span></div>
+            </li>
+            <li>
+              <img class="adv-split__flag" src="/images/business/flag-kg.png" alt="" />
+              <div><strong>키르기스스탄</strong> | STEM 이러닝<span>(서비스) 수학·과학 STEM 과목 온라인 학습</span></div>
+            </li>
+            <li>
+              <img class="adv-split__flag" src="/images/business/flag-kr.png" alt="" />
+              <div><strong>한국</strong> | 해외 청소년·청년 초청 진로캠프<span>(서비스) 진로설계 워크숍, 대학탐방, 직업·문화체험</span></div>
+            </li>
+          </ul>
+        </div>
+        <div class="adv-split__col">
+          <h3 class="adv-split__title">컬러앤컴포트</h3>
+          <p class="adv-split__lead">라이프스타일 제품 판매 수익금으로 소외된 아이들의 교육과 성장 지원</p>
+          <ul class="adv-split__list">
+            <li>
+              <img class="adv-split__logo" src="/images/business/color-comfort-logo.png" alt="Color &amp; Comfort" />
+              <div><strong>판매 제품</strong> | 페이크삭스, 디자인 양말<span>(서비스) 기업·행사 단체 구매, 임직원·고객 선물, 판매·유통 협력</span></div>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="ov-edu-strip ov-edu-strip--4" aria-label="소셜 비즈니스 사진">
+        <div class="ov-edu-img">
+          <img class="ov-edu-img__photo" src="/images/business/research-social-1.jpg" alt="미얀마 Pre-School" loading="lazy" />
+          <div class="ov-edu-img__cap">미얀마 Pre-School</div>
+        </div>
+        <div class="ov-edu-img">
+          <img class="ov-edu-img__photo" src="/images/business/research-social-2.jpg" alt="키르기스스탄 STEM 이러닝" loading="lazy" />
+          <div class="ov-edu-img__cap">키르기스스탄 STEM 이러닝</div>
+        </div>
+        <div class="ov-edu-img">
+          <img class="ov-edu-img__photo" src="/images/business/research-social-3.jpg" alt="한국 초청 진로캠프" loading="lazy" />
+          <div class="ov-edu-img__cap">한국 초청 진로캠프</div>
+        </div>
+        <div class="ov-edu-img">
+          <img class="ov-edu-img__photo" src="/images/business/research-social-4.jpg" alt="컬러앤컴포트" loading="lazy" />
+          <div class="ov-edu-img__cap">컬러앤컴포트</div>
+        </div>
+      </div>
     </div>
   </section>
 </div>
@@ -768,53 +826,108 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
   <section class="adv-hero">
     <div class="adv-wrap">
       <p class="adv-kicker">연구사업 · 교육연구</p>
-      <h1 class="adv-title">교육연구</h1>
-      <p class="adv-lead">교육모델과 학습방법, 지식공유와 아카데미, 참여적 개발협력 방법론을 연구합니다.</p>
+      <h1 class="adv-title">현장의 경험을 배움의 모델로 발전시키고,<br />더 나은 교육과 개발협력의 방법을 만들어갑니다.</h1>
+      <p class="adv-lead">카야는 국내의 사업 현장에서 축적한 경험을 바탕으로 교육모델과 학습방법, 참여적 개발협력 방법론을 연구합니다. 현장에서 검증된 경험을 교육과정과 콘텐츠로 체계화하고, 강의·세미나·아카데미를 통해 실천가와 참여자에게 다시 나누며 배움과 실천의 선순환을 만들어갑니다.</p>
       <div class="adv-divider" aria-hidden="true"></div>
     </div>
   </section>
 
   <section class="adv-study" aria-label="교육연구 내용">
     <div class="adv-wrap">
-      <ol class="adv-study__list">
-        <li class="adv-study__card">
-          <p class="adv-study__no">01</p>
-          <div class="adv-study__body">
-            <h2 class="adv-study__title">교육모델과 학습방법</h2>
+      <article class="adv-copy">
+        <div class="ov-edu-head">
+          <div class="ov-edu-head__titles">
+            <p class="ov-edu-head__kicker">Education Models and Learning Methods</p>
+            <h2 class="ov-edu-head__ko">교육모델과 학습방법</h2>
+          </div>
+          <div>
             <ul class="adv-tags">
               <li>Dream Seekers</li>
               <li>Life Design</li>
-              <li>이러닝(SEEM)</li>
+              <li>STEM 이러닝(SEEM)</li>
               <li>동료학습</li>
+              <li>4단계 진로교육</li>
             </ul>
-            <p class="adv-study__desc">참여자가 자신을 이해하고 배움을 삶에 적용할 수 있는 교육모델을 연구합니다. 현장의 경험을 교육과정과 콘텐츠로 정리하고 개선합니다.</p>
+            <p class="ov-edu-head__p">참여자가 자신을 이해하고 배움을 삶에 적용할 수 있는 교육모델을 연구합니다. 현장의 경험을 교육과정과 콘텐츠로 정리하고 개선합니다.</p>
           </div>
-        </li>
-        <li class="adv-study__card">
-          <p class="adv-study__no">02</p>
-          <div class="adv-study__body">
-            <h2 class="adv-study__title">지식공유와 아카데미</h2>
+        </div>
+        <div class="ov-edu-strip" aria-label="교육모델과 학습방법 사진">
+          <div class="ov-edu-img">
+            <img class="ov-edu-img__photo" src="/images/business/research-edu-model-1.jpg" alt="Life Design" loading="lazy" />
+            <div class="ov-edu-img__cap">Life Design</div>
+          </div>
+          <div class="ov-edu-img">
+            <img class="ov-edu-img__photo" src="/images/business/research-edu-model-2.jpg" alt="STEM 이러닝(SEEM)" loading="lazy" />
+            <div class="ov-edu-img__cap">STEM 이러닝(SEEM)</div>
+          </div>
+          <div class="ov-edu-img">
+            <img class="ov-edu-img__photo" src="/images/business/research-edu-model-3.jpg" alt="진로 인식확산" loading="lazy" />
+            <div class="ov-edu-img__cap">진로 인식확산(1단계)</div>
+          </div>
+        </div>
+      </article>
+
+      <article class="adv-copy">
+        <div class="ov-edu-head">
+          <div class="ov-edu-head__titles">
+            <p class="ov-edu-head__kicker">Knowledge Sharing and the Academy</p>
+            <h2 class="ov-edu-head__ko">지식공유와 아카데미</h2>
+          </div>
+          <div>
             <ul class="adv-tags">
               <li>카야아카데미</li>
-              <li>국제개발협력·ODA 교육</li>
+              <li>국제개발협력 ODA 교육</li>
               <li>강의·세미나</li>
             </ul>
-            <p class="adv-study__desc">현장의 경험과 연구 내용을 강의와 세미나, 교육자료로 나눕니다. 실천가와 참여자가 함께 배우고 개발협력의 전문성을 키우는 장을 마련합니다.</p>
+            <p class="ov-edu-head__p">현장의 경험과 연구 내용을 강의와 세미나, 교육자료로 나눕니다. 실천가와 참여자가 함께 배우고 개발협력의 전문성을 키우는 장을 마련합니다.</p>
           </div>
-        </li>
-        <li class="adv-study__card">
-          <p class="adv-study__no">03</p>
-          <div class="adv-study__body">
-            <h2 class="adv-study__title">참여적 개발협력 방법론</h2>
+        </div>
+        <div class="ov-edu-strip" aria-label="지식공유와 아카데미 사진">
+          <div class="ov-edu-img">
+            <img class="ov-edu-img__photo" src="/images/business/research-academy-1.jpg" alt="인솔자 교육" loading="lazy" />
+            <div class="ov-edu-img__cap">인솔자 교육</div>
+          </div>
+          <div class="ov-edu-img">
+            <img class="ov-edu-img__photo" src="/images/business/research-academy-2.jpg" alt="해외봉사단 교육" loading="lazy" />
+            <div class="ov-edu-img__cap">해외봉사단 교육</div>
+          </div>
+          <div class="ov-edu-img">
+            <img class="ov-edu-img__photo" src="/images/business/research-academy-3.jpg" alt="외국인 노동자 교육" loading="lazy" />
+            <div class="ov-edu-img__cap">외국인 노동자 교육</div>
+          </div>
+        </div>
+      </article>
+
+      <article class="adv-copy">
+        <div class="ov-edu-head">
+          <div class="ov-edu-head__titles">
+            <p class="ov-edu-head__kicker">Participatory Development Cooperation</p>
+            <h2 class="ov-edu-head__ko">참여적 개발협력 방법론</h2>
+          </div>
+          <div>
             <ul class="adv-tags">
               <li>국제개발협력</li>
               <li>전문가 그룹</li>
               <li>개발의 관점과 방법</li>
             </ul>
-            <p class="adv-study__desc">주민의 참여와 주도성을 바탕으로 사업을 조사·기획·실행·평가하는 방법을 연구합니다. 지역의 맥락을 이해하고 현지의 역량을 키우는 접근을 모색합니다.</p>
+            <p class="ov-edu-head__p">주민의 참여와 주도성을 바탕으로 사업을 조사·기획·실행·평가하는 방법을 연구합니다. 지역의 맥락을 이해하고 현지의 역량을 키우는 접근을 모색합니다.</p>
           </div>
-        </li>
-      </ol>
+        </div>
+        <div class="ov-edu-strip" aria-label="참여적 개발협력 사진">
+          <div class="ov-edu-img">
+            <img class="ov-edu-img__photo" src="/images/business/research-participation-1.jpg" alt="주민 참여" loading="lazy" />
+            <div class="ov-edu-img__cap">주민 참여</div>
+          </div>
+          <div class="ov-edu-img">
+            <img class="ov-edu-img__photo" src="/images/business/research-participation-2.jpg" alt="학부모 참여" loading="lazy" />
+            <div class="ov-edu-img__cap">학부모 참여</div>
+          </div>
+          <div class="ov-edu-img">
+            <img class="ov-edu-img__photo" src="/images/business/research-participation-3.jpg" alt="현지 전문가 참여" loading="lazy" />
+            <div class="ov-edu-img__cap">현지 전문가 참여</div>
+          </div>
+        </div>
+      </article>
     </div>
   </section>
 </div>
