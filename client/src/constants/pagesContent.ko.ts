@@ -700,7 +700,7 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
           </div>
           <h2 class="adv-hub-card__title">교육연구 사업</h2>
           <p class="adv-hub-card__desc">현장의 경험을 바탕으로 사람의 성장과 지역사회의 변화를 이끄는 교육·개발협력 모델과 방법을 연구하고 나눕니다.</p>
-          <a class="adv-hub-card__btn" href="/khayah/business/advocacy/education-research">자세히 보기</a>
+          <a class="adv-hub-card__btn" href="/business/advocacy/education-research">자세히 보기</a>
         </article>
         <article class="adv-hub-card">
           <div class="adv-hub-card__icon" aria-hidden="true">
@@ -712,17 +712,18 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
           </div>
           <h2 class="adv-hub-card__title">소셜비즈니스</h2>
           <p class="adv-hub-card__desc">사회적 가치가 지속가능한 변화와 자립으로 이어질 수 있는 소셜비즈니스 모델과 사업 구조를 연구합니다.</p>
-          <a class="adv-hub-card__btn" href="/khayah/business/advocacy/social-business">자세히 보기</a>
+          <a class="adv-hub-card__btn" href="/business/advocacy/social-business">자세히 보기</a>
         </article>
         <article class="adv-hub-card">
           <div class="adv-hub-card__icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-              <path d="M4 4h7.2L14 7.2H20v13H4Zm2 4v10h12V9.2h-5.2L10.6 6H6Z" />
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" xmlns="http://www.w3.org/2000/svg">
+              <path d="M4 7.2h6.2L12 9.4H20v9.4H4z" />
+              <path d="M4 7.2V6.2A1.2 1.2 0 0 1 5.2 5h4.2l1.6 2.2" />
             </svg>
           </div>
           <h2 class="adv-hub-card__title">진행사업</h2>
           <p class="adv-hub-card__desc">연구를 통해 발전시킨 모델과 방법을 국내외 현장에 적용하고, 그 경험과 성과를 다시 연구와 실천으로 이어갑니다.</p>
-          <a class="adv-hub-card__btn" href="/khayah/business/projects">자세히 보기</a>
+          <a class="adv-hub-card__btn" href="/business/projects">자세히 보기</a>
         </article>
       </div>
     </div>
@@ -821,7 +822,7 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
   },
   'business/projects': {
     title: '진행사업',
-    content: '<p>국내외 현장에서 이어지는 카야의 활동과 사업별 이야기를 만나보세요.</p><p><a href="/khayah/business/projects/nepal">네팔</a> · <a href="/khayah/business/projects/myanmar">미얀마</a> · <a href="/khayah/business/projects/kyrgyzstan">키르기즈스탄</a> · <a href="/khayah/business/projects/domestic">국내</a></p>',
+    content: '<p>국내외 현장에서 이어지는 카야의 활동과 사업별 이야기를 만나보세요.</p><p><a href="/business/projects/nepal">네팔</a> · <a href="/business/projects/myanmar">미얀마</a> · <a href="/business/projects/kyrgyzstan">키르기즈스탄</a> · <a href="/business/projects/domestic">국내</a></p>',
   },
   'business/projects/nepal': {
     title: '네팔',
@@ -849,7 +850,7 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
   },
   'news': {
     title: '소식',
-    content: '<p>카야의 최신 소식, 공지사항, 활동소식, 연간소식지를 확인하실 수 있습니다.</p><p><a href="/khayah/news/announcements">공지사항</a> · <a href="/khayah/news/activities">활동소식</a> · <a href="/khayah/news/newsletter">연간소식지</a> · <a href="/khayah/news/press">언론보도</a></p>',
+    content: '<p>카야의 최신 소식, 공지사항, 활동소식, 연간소식지를 확인하실 수 있습니다.</p><p><a href="/news/announcements">공지사항</a> · <a href="/news/activities">활동소식</a> · <a href="/news/newsletter">연간소식지</a> · <a href="/news/press">언론보도</a></p>',
   },
   'news/activities': {
     title: '활동소식',
@@ -869,7 +870,7 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
   },
   'together': {
     title: '카야와 함께',
-    content: '<p>카야와 함께할 수 있는 방법을 안내합니다. <a href="/khayah/news/announcements">공지사항</a> · <a href="/khayah/news/activities">활동소식</a></p>',
+    content: '<p>카야와 함께할 수 있는 방법을 안내합니다. <a href="/news/announcements">공지사항</a> · <a href="/news/activities">활동소식</a></p>',
   },
   'together/announcements': {
     title: '공지사항',

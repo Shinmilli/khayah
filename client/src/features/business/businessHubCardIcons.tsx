@@ -19,8 +19,18 @@ function VolunteerIcon() {
 
 function ProjectsIcon() {
   return (
-    <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <path d="M4 4h7.2L14 7.2H20v13H4Zm2 4v10h12V9.2h-5.2L10.6 6H6Z" />
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinejoin="round"
+      strokeLinecap="round"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <path d="M4 7.2h6.2L12 9.4H20v9.4H4z" />
+      <path d="M4 7.2V6.2A1.2 1.2 0 0 1 5.2 5h4.2l1.6 2.2" />
     </svg>
   )
 }

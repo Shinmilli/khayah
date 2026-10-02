@@ -1,5 +1,5 @@
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
-import { SITE_PREFIX } from './i18n/locale'
+import { stripSitePrefix } from './i18n/locale'
 import { Layout } from './components/Layout'
 import { AdminModule } from './features/admin/AdminModule'
 import { FinancialReportPage } from './pages/FinancialReportPage'
@@ -33,11 +33,10 @@ function publicChildRoutes() {
   )
 }
 
-/** 예전 주소(`/`, `/news/...`, `/en/...`)를 `/khayah` 아래로 보낸다. */
-function SitePrefixRedirect() {
+/** 예전 공개 주소 `/khayah/...`를 같은 페이지의 짧은 주소로 보낸다. */
+function LegacySitePrefixRedirect() {
   const { pathname, search, hash } = useLocation()
-  const normalized = pathname.replace(/\/+$/, '') || '/'
-  const target = normalized === '/' ? SITE_PREFIX : `${SITE_PREFIX}${normalized}`
+  const target = stripSitePrefix(pathname)
   return <Navigate to={`${target}${search}${hash}`} replace />
 }
 
@@ -45,13 +44,14 @@ function App() {
   return (
     <Routes>
       <Route path="/admin/*" element={<AdminModule />} />
-      <Route path="/khayah/en" element={<LocalizedSite locale="en" />}>
+      <Route path="/khayah/*" element={<LegacySitePrefixRedirect />} />
+      <Route path="/khayah" element={<LegacySitePrefixRedirect />} />
+      <Route path="/en" element={<LocalizedSite locale="en" />}>
         {publicChildRoutes()}
       </Route>
-      <Route path="/khayah" element={<LocalizedSite locale="ko" />}>
+      <Route path="/" element={<LocalizedSite locale="ko" />}>
         {publicChildRoutes()}
       </Route>
-      <Route path="*" element={<SitePrefixRedirect />} />
     </Routes>
   )
 }

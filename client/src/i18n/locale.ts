@@ -34,7 +34,7 @@ export function splitLocalePath(pathname: string): { locale: Locale; pathnameWit
   return { locale: 'ko', pathnameWithoutLocale: normalized }
 }
 
-/** 내부 경로에 `/khayah`와 locale prefix 적용 (외부 URL은 그대로) */
+/** 내부 경로에 locale prefix만 적용한다. 예전 `/khayah`가 붙어 있으면 떼고 맞춘다. */
 export function localizePath(path: string, locale: Locale): string {
   if (!path || path.startsWith('http://') || path.startsWith('https://') || path.startsWith('mailto:')) {
     return path
@@ -55,8 +55,7 @@ export function localizePath(path: string, locale: Locale): string {
       : withoutLocale.startsWith('/')
         ? withoutLocale
         : `/${withoutLocale}`
-  const prefixed = withLocale === '/' ? SITE_PREFIX : `${SITE_PREFIX}${withLocale}`
-  return `${prefixed}${search ? `?${search}` : ''}${hash ? `#${hash}` : ''}`
+  return `${withLocale}${search ? `?${search}` : ''}${hash ? `#${hash}` : ''}`
 }
 
 /** 같은 페이지의 다른 locale URL */

@@ -12,6 +12,25 @@
   to = "/images/logo/khayah_logo.png"
   status = 200
 
+# 예전 공개 주소. 검색에 남은 /khayah 경로를 짧은 주소로 넘긴다.
+[[redirects]]
+  from = "/khayah"
+  to = "/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/khayah/"
+  to = "/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/khayah/*"
+  to = "/:splat"
+  status = 301
+  force = true
+
 [[redirects]]
   from = "/*"
   to = "/index.html"

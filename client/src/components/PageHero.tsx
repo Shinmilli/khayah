@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { pageHeroBlurForUrl } from '../constants/pageHeroImages'
 import { splitLocalePath } from '../i18n/locale'
@@ -340,28 +340,23 @@ function buildCrumbs(
   return crumbs
 }
 
-function imageAlreadyReady(url: string): boolean {
-  if (typeof Image === 'undefined') return false
-  const probe = new Image()
-  probe.src = url
-  return probe.complete && probe.naturalWidth > 0
+function imageElementReady(node: HTMLImageElement | null): boolean {
+  return Boolean(node && node.complete && node.naturalWidth > 0)
 }
 
 function HeroBackdrop({ src }: { src: string | null }) {
   const photo = src ? toCloudinaryWebpUrl(src) : null
   const blur = pageHeroBlurForUrl(src)
-  const [ready, setReady] = useState(() => (photo ? imageAlreadyReady(photo) : true))
+  const photoRef = useRef<HTMLImageElement | null>(null)
+  const [ready, setReady] = useState(false)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!photo) {
       setReady(true)
       return
     }
-    if (imageAlreadyReady(photo)) {
-      setReady(true)
-      return
-    }
-    setReady(false)
+    // 캐시된 이미지는 load가 effect보다 먼저 끝나 ready를 다시 끄면 검은 배너로 남는다.
+    setReady(imageElementReady(photoRef.current))
   }, [photo])
 
   return (
@@ -374,12 +369,14 @@ function HeroBackdrop({ src }: { src: string | null }) {
       ) : null}
       {photo ? (
         <img
+          ref={photoRef}
           className="page-hero__photo"
           src={photo}
           alt=""
           fetchPriority="high"
           decoding="async"
           onLoad={() => setReady(true)}
+          onError={() => setReady(true)}
         />
       ) : null}
     </div>

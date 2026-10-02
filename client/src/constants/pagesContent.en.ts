@@ -718,7 +718,7 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
           </div>
           <h2 class="adv-hub-card__title">Education research</h2>
           <p class="adv-hub-card__desc">Grounded in field experience, we study and share education and development-cooperation models and methods that lead people’s growth and community change.</p>
-          <a class="adv-hub-card__btn" href="/khayah/en/business/advocacy/education-research">Learn more</a>
+          <a class="adv-hub-card__btn" href="/en/business/advocacy/education-research">Learn more</a>
         </article>
         <article class="adv-hub-card">
           <div class="adv-hub-card__icon" aria-hidden="true">
@@ -730,17 +730,18 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
           </div>
           <h2 class="adv-hub-card__title">Social business</h2>
           <p class="adv-hub-card__desc">We study social business models and program structures through which social value can lead to lasting change and self-reliance.</p>
-          <a class="adv-hub-card__btn" href="/khayah/en/business/advocacy/social-business">Learn more</a>
+          <a class="adv-hub-card__btn" href="/en/business/advocacy/social-business">Learn more</a>
         </article>
         <article class="adv-hub-card">
           <div class="adv-hub-card__icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-              <path d="M4 4h7.2L14 7.2H20v13H4Zm2 4v10h12V9.2h-5.2L10.6 6H6Z" />
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" xmlns="http://www.w3.org/2000/svg">
+              <path d="M4 7.2h6.2L12 9.4H20v9.4H4z" />
+              <path d="M4 7.2V6.2A1.2 1.2 0 0 1 5.2 5h4.2l1.6 2.2" />
             </svg>
           </div>
           <h2 class="adv-hub-card__title">Ongoing programs</h2>
           <p class="adv-hub-card__desc">We apply models and methods developed through research to sites at home and overseas, and carry that experience and its results back into research and practice.</p>
-          <a class="adv-hub-card__btn" href="/khayah/en/business/projects">Learn more</a>
+          <a class="adv-hub-card__btn" href="/en/business/projects">Learn more</a>
         </article>
       </div>
     </div>
@@ -839,7 +840,7 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
   },
   'business/projects': {
     title: 'Active Projects',
-    content: '<p>Explore Khayah’s ongoing work in Korea and overseas, and the stories behind each program.</p><p><a href="/khayah/en/business/projects/nepal">Nepal</a> · <a href="/khayah/en/business/projects/myanmar">Myanmar</a> · <a href="/khayah/en/business/projects/kyrgyzstan">Kyrgyzstan</a> · <a href="/khayah/en/business/projects/domestic">Domestic</a></p>',
+    content: '<p>Explore Khayah’s ongoing work in Korea and overseas, and the stories behind each program.</p><p><a href="/en/business/projects/nepal">Nepal</a> · <a href="/en/business/projects/myanmar">Myanmar</a> · <a href="/en/business/projects/kyrgyzstan">Kyrgyzstan</a> · <a href="/en/business/projects/domestic">Domestic</a></p>',
   },
   'business/projects/nepal': {
     title: 'Nepal',
@@ -867,7 +868,7 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
   },
   'news': {
     title: 'News',
-    content: '<p>Find Khayah\'s latest updates, announcements, activity news, and annual newsletter.</p><p><a href="/khayah/en/news/announcements">Announcements</a> · <a href="/khayah/en/news/activities">Activities</a> · <a href="/khayah/en/news/newsletter">Newsletter</a> · <a href="/khayah/en/news/press">Press</a></p>',
+    content: '<p>Find Khayah\'s latest updates, announcements, activity news, and annual newsletter.</p><p><a href="/en/news/announcements">Announcements</a> · <a href="/en/news/activities">Activities</a> · <a href="/en/news/newsletter">Newsletter</a> · <a href="/en/news/press">Press</a></p>',
   },
   'news/activities': {
     title: 'Activities',
@@ -887,7 +888,7 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
   },
   'together': {
     title: 'Join Khayah',
-    content: '<p>Ways to join Khayah. <a href="/khayah/en/news/announcements">Announcements</a> · <a href="/khayah/en/news/activities">Activities</a></p>',
+    content: '<p>Ways to join Khayah. <a href="/en/news/announcements">Announcements</a> · <a href="/en/news/activities">Activities</a></p>',
   },
   'together/announcements': {
     title: 'Announcements',

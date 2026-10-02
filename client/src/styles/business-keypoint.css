@@ -213,8 +213,10 @@
 
   .biz-kp__photo {
     width: min(300px, 72vw);
-    order: -1;
-    margin-bottom: 8px;
+    order: 1;
+    justify-self: center;
+    margin-top: 28px;
+    margin-bottom: 0;
   }
 
   .biz-kp__photo::before {

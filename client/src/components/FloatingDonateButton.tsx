@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { NANUM_DONATE_URL } from '../constants/nanumDonate'
+import { useLocale } from '../i18n/LocaleContext'
 import { splitLocalePath } from '../i18n/locale'
 
 const HERO_ID = 'home-hero-banner'
@@ -13,7 +14,7 @@ const SOCIAL_LINKS = [
   {
     key: 'kakao',
     href: 'https://pf.kakao.com/_TnWKK',
-    label: '카카오톡 채널',
+    labelKey: 'kakao',
     className: 'site-floating-fab__social site-floating-fab__social--kakao',
     icon: (
       <svg viewBox="0 0 24 24" width={20} height={20} aria-hidden focusable="false">
@@ -27,7 +28,7 @@ const SOCIAL_LINKS = [
   {
     key: 'instagram',
     href: 'https://www.instagram.com/khayah_international',
-    label: '인스타그램',
+    labelKey: 'instagram',
     className: 'site-floating-fab__social site-floating-fab__social--instagram',
     icon: (
       <svg viewBox="0 0 24 24" width={20} height={20} aria-hidden focusable="false">
@@ -41,7 +42,7 @@ const SOCIAL_LINKS = [
   {
     key: 'blog',
     href: 'https://blog.naver.com/khayah',
-    label: '네이버 블로그',
+    labelKey: 'blog',
     className: 'site-floating-fab__social site-floating-fab__social--blog',
     icon: (
       <svg viewBox="0 0 24 24" width={22} height={22} aria-hidden focusable="false">
@@ -63,7 +64,14 @@ const SOCIAL_LINKS = [
 ] as const
 
 export function FloatingDonateButton() {
+  const { messages } = useLocale()
   const location = useLocation()
+  const donateLabel = messages.home.hero.donate
+  const socialLabels = {
+    kakao: messages.footer.topLinks.kakao,
+    instagram: messages.footer.topLinks.instagram,
+    blog: messages.footer.topLinks.blog,
+  } as const
   const { pathnameWithoutLocale } = splitLocalePath(location.pathname)
   const isHome = pathnameWithoutLocale === '/'
   const [showFab, setShowFab] = useState(!isHome)
@@ -103,7 +111,7 @@ export function FloatingDonateButton() {
             className={s.className}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label={s.label}
+            aria-label={socialLabels[s.labelKey]}
             tabIndex={showFab ? 0 : -1}
           >
             {s.icon}
@@ -113,7 +121,7 @@ export function FloatingDonateButton() {
       <a
         href={NANUM_DONATE_URL}
         className="site-floating-fab__donate"
-        aria-label="후원하기"
+        aria-label={donateLabel}
         tabIndex={showFab ? 0 : -1}
         target="_blank"
         rel="noopener noreferrer"
@@ -126,7 +134,7 @@ export function FloatingDonateButton() {
             />
           </svg>
         </span>
-        <span className="site-floating-fab__label">후원하기</span>
+        <span className="site-floating-fab__label">{donateLabel}</span>
       </a>
     </div>
   )

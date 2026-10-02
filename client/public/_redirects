@@ -1,2 +1,5 @@
 /favicon.ico   /images/logo/khayah_logo.png   200
+/khayah          /          301!
+/khayah/         /          301!
+/khayah/*        /:splat    301!
 /*   /index.html   200

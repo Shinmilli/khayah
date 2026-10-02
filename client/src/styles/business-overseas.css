@@ -166,7 +166,8 @@
   width: 56px;
   height: 56px;
   flex: none;
-  border-radius: 999px;
+  border-radius: 50%;
+  overflow: hidden;
   display: inline-flex;
   align-items: center;
   justify-content: center;
