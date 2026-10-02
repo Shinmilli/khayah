@@ -55,7 +55,7 @@ const KHAYAH_EXPERTS_GRID_HTML = `
 <div class="khayah-board-grid" role="list">
   <div class="khayah-board-cell" role="listitem">
     <div class="khayah-board-name">정재훈 전문위원</div>
-    <div class="khayah-board-role">(주)캔들컨설팅, 수석 연구원</div>
+    <div class="khayah-board-role">인류학박사(교육 인류학), 국제개발협력 컨설턴트</div>
   </div>
   <div class="khayah-board-cell" role="listitem">
     <div class="khayah-board-name">임진호 전문위원</div>

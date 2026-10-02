@@ -162,13 +162,15 @@ export const postRepository = {
         }
       : {}
 
+    const regionValues =
+      region === '해외' ? ['해외', '네팔', '미얀마', '키르기즈스탄'] : region ? [region] : []
     const regionFilter =
-      kind === '진행사업' && region
+      kind === '진행사업' && regionValues.length
         ? {
             postMeta: {
               some: {
                 metaKey: 'khayah_project_region',
-                metaValue: region,
+                metaValue: { in: regionValues },
               },
             },
           }

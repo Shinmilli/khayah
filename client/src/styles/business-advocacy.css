@@ -74,7 +74,7 @@
   padding: 0;
   list-style: none;
   display: grid;
-  gap: clamp(24px, 3vw, 34px);
+  gap: clamp(36px, 4.6vw, 56px);
 }
 
 .adv-item {
@@ -85,12 +85,13 @@
 }
 
 .adv-num {
-  font-weight: 900;
-  letter-spacing: -0.03em;
+  margin: 0;
+  font-weight: 700;
+  letter-spacing: -0.02em;
   color: rgba(17, 17, 17, 0.22);
-  font-size: 1.35rem;
+  font-size: 1.2rem;
   line-height: 1;
-  padding-top: 6px;
+  padding-top: 4px;
 }
 
 .adv-body {
@@ -98,21 +99,33 @@
 }
 
 .adv-h2 {
-  margin: 0;
-  display: inline-block;
-  font-size: clamp(28px, 3vw, 38px);
-  letter-spacing: -0.04em;
-  line-height: 1.22;
-  color: var(--adv-primary);
-  font-weight: 900;
+  margin: 32px 0 0;
+  display: block;
+  font-size: clamp(1.35rem, 1.4vw + 0.9rem, 1.7rem);
+  letter-spacing: -0.03em;
+  line-height: 1.35;
+  color: #404954;
+  font-weight: 800;
   word-break: keep-all;
 }
 
+.adv-h2__en {
+  display: inline;
+  margin-left: 0.35em;
+  font-size: 0.48em;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: rgba(178, 8, 56, 0.72);
+  white-space: nowrap;
+}
+
 .adv-item-desc {
-  margin: 12px 0 0;
-  color: var(--adv-muted);
-  line-height: 1.8;
-  max-width: 86ch;
+  margin: 16px 0 0;
+  color: #717171;
+  font-size: 1.05rem;
+  font-weight: 400;
+  line-height: 1.85;
+  max-width: none;
   word-break: keep-all;
 }
 
@@ -135,7 +148,7 @@
 
 .adv-hub-cards {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: clamp(16px, 2.2vw, 24px);
   align-items: stretch;
   width: 100%;
@@ -312,6 +325,13 @@
   .adv-study__card {
     grid-template-columns: 1fr;
     gap: 8px;
+  }
+
+  .adv-h2__en {
+    display: block;
+    margin-left: 0;
+    margin-top: 4px;
+    white-space: normal;
   }
 }
 
@@ -610,14 +630,23 @@ a.adv-method:focus-visible {
 .page-content-wrapper .page-body .adv-page li.adv-method {
   margin: 0;
 }
-.page-content-wrapper .page-body .adv-page h2.adv-h2 {
+.page-content-wrapper .page-body .adv-page p.adv-num {
   margin: 0;
-  font-size: clamp(28px, 3vw, 38px);
-  color: var(--adv-primary);
+  color: rgba(17, 17, 17, 0.22);
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1;
+}
+.page-content-wrapper .page-body .adv-page h2.adv-h2 {
+  margin: 32px 0 0;
+  font-size: clamp(1.35rem, 1.4vw + 0.9rem, 1.7rem);
+  font-weight: 800;
+  color: #404954;
 }
 .page-content-wrapper .page-body .adv-page p.adv-item-desc {
-  margin: 12px 0 0;
-  color: var(--adv-muted);
+  margin: 16px 0 0;
+  color: #717171;
+  font-size: 1.05rem;
 }
 .page-content-wrapper .page-body .adv-page p.adv-methods__en,
 .page-content-wrapper .page-body .adv-page p.adv-method__en {

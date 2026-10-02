@@ -31,6 +31,23 @@ function encodePathSegments(segments: string[]): string {
   return '/' + segments.map((s) => encodeURIComponent(s)).join('/')
 }
 
+function labelForProjectFilter(seg: string, messages: Messages): string | null {
+  const labels = messages.pages.projects.regions
+  switch (seg) {
+    case 'overseas':
+    case 'nepal':
+    case 'myanmar':
+    case 'kyrgyzstan':
+      return labels.overseas
+    case 'domestic':
+      return labels.domestic
+    case 'research':
+      return labels.research
+    default:
+      return null
+  }
+}
+
 function labelForSlug(seg: string, messages: Messages): string {
   const { nav } = messages
   switch (seg) {
@@ -91,11 +108,11 @@ function labelForSlug(seg: string, messages: Messages): string {
     case 'directors':
       return nav.links.org
     case 'nepal':
-      return messages.pages.projects.regions.nepal
     case 'myanmar':
-      return messages.pages.projects.regions.myanmar
     case 'kyrgyzstan':
-      return messages.pages.projects.regions.kyrgyzstan
+      return messages.pages.projects.regions.overseas
+    case 'research':
+      return messages.pages.projects.regions.research
     default:
       return seg
   }
@@ -290,8 +307,11 @@ function buildCrumbs(
       { label: messages.nav.top.business, to: L(`/${PATH.businessDomestic}`) },
     ]
     for (let i = 1; i < parts.length; i++) {
+      const seg = parts[i]
+      const projectRegionLabel =
+        parts[1] === 'projects' && i === 2 ? labelForProjectFilter(seg, messages) : null
       crumbs.push({
-        label: labelForSlug(parts[i], messages),
+        label: projectRegionLabel ?? labelForSlug(seg, messages),
         to: L(encodePathSegments(parts.slice(0, i + 1))),
       })
     }

@@ -1,6 +1,6 @@
 /* Base & Betheme-child inspired (Khayah) */
 :root {
-  --site-header-height: 104px;
+  --site-header-height: 96px;
   --khayah-red: #b20838;
   --khayah-red-hover: #c78598;
   --khayah-wash-warm: 240, 106, 66;
@@ -38,7 +38,7 @@ body {
 
 @media (min-width: 1280px) {
   :root {
-    --site-header-height: 116px;
+    --site-header-height: 108px;
     --site-content-max: 1320px;
   }
 }
@@ -51,13 +51,13 @@ body {
 
 @media (max-width: 768px) {
   :root {
-    --site-header-height: 84px;
+    --site-header-height: 78px;
   }
 }
 
 @media (max-width: 480px) {
   :root {
-    --site-header-height: 72px;
+    --site-header-height: 68px;
   }
 }
 

@@ -57,11 +57,11 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  padding: 13px 28px;
+  padding: 12px 26px;
   border-radius: 999px;
   background: var(--header-primary);
   color: #fff;
-  font-size: 19px;
+  font-size: 18px;
   font-weight: 700;
   line-height: 1.2;
   letter-spacing: -0.02em;
@@ -86,7 +86,7 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 600;
   color: var(--header-text);
   transition: color 0.3s ease;
@@ -134,7 +134,7 @@
 .site-header__logo img,
 .site-header__logo-img {
   grid-area: 1 / 1;
-  height: 64px;
+  height: 58px;
   width: auto;
   object-fit: contain;
   display: block;
@@ -196,7 +196,7 @@
   font-family: inherit;
   text-decoration: none;
   color: var(--header-text);
-  font-size: clamp(1.22rem, 0.28vw + 1.12rem, 1.4rem);
+  font-size: clamp(1.24rem, 0.24vw + 1.14rem, 1.42rem);
   font-weight: 600;
   padding: 0;
   display: flex;
@@ -247,7 +247,7 @@
 
 .site-header__submenu-title {
   margin: 0;
-  font-size: clamp(2rem, 1.2vw + 1.7rem, 2.35rem);
+  font-size: clamp(2.15rem, 1.2vw + 1.85rem, 2.55rem);
   font-weight: 800;
   letter-spacing: -0.02em;
   color: #1a1a1a;
@@ -306,7 +306,7 @@
 .site-header__submenu-group-title {
   display: inline-flex;
   align-items: center;
-  font-size: 1.24rem;
+  font-size: 1.42rem;
   font-weight: 700;
   color: #1a1a1a;
   text-decoration: none;
@@ -332,7 +332,7 @@
 .site-header__submenu-sublink {
   display: block;
   padding: 7px 0;
-  font-size: 1.22rem;
+  font-size: 1.4rem;
   font-weight: 500;
   color: #222;
   text-decoration: none;
@@ -482,7 +482,7 @@
 
 .site-header__mobile-group summary {
   font-weight: 800;
-  font-size: 1.22rem;
+  font-size: 1.34rem;
   cursor: pointer;
   list-style: none;
   padding: 8px 0;
@@ -500,7 +500,7 @@
 }
 
 .site-header__mobile-links a {
-  font-size: 1.14rem;
+  font-size: 1.26rem;
   font-weight: 650;
   color: #444;
   padding: 6px 0;
@@ -535,7 +535,7 @@
 /* 3단(국내·해외 하위: 교육, 해외봉사단 등) — 상위 구분보다 얇게 */
 .site-header__mobile-sublinks a {
   font-weight: 400;
-  font-size: 1.08rem;
+  font-size: 1.18rem;
   color: #5a5a5a;
 }
 
@@ -554,11 +554,11 @@
 @media (min-width: 1280px) {
   .site-header__logo img,
   .site-header__logo-img {
-    height: 72px;
+    height: 64px;
   }
 
   .site-header__nav-link {
-    font-size: clamp(1.28rem, 0.22vw + 1.18rem, 1.48rem);
+    font-size: clamp(1.3rem, 0.22vw + 1.18rem, 1.48rem);
   }
 }
 
@@ -575,7 +575,7 @@
 
   .site-header__logo img,
   .site-header__logo-img {
-    height: 52px;
+    height: 48px;
   }
 
   .site-header__nav {
@@ -620,7 +620,7 @@
 
   .site-header__logo img,
   .site-header__logo-img {
-    height: 48px;
+    height: 44px;
   }
 }
 
@@ -631,7 +631,7 @@
 
   .site-header__logo img,
   .site-header__logo-img {
-    height: 44px;
+    height: 40px;
   }
 
   .site-header__donate,

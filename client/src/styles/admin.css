@@ -1065,6 +1065,7 @@ body.admin-route {
   font-weight: 500;
   cursor: pointer;
   color: #374151;
+  white-space: nowrap;
 }
 
 .admin-btn:disabled {
@@ -1750,9 +1751,14 @@ body.admin-route {
 }
 
 .admin-hero-preview {
+  display: block;
+  max-width: 36ch;
   font-size: 15px;
   color: #4b5563;
   line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .admin-upload__preview--wide {

@@ -41,19 +41,29 @@ export function pathKeyToHref(pathKey: string): string {
   return `/${pathKey}`
 }
 
-/** 진행사업 지역: 표시명 ↔ URL slug */
+/** 진행사업 분류: 표시명 ↔ URL slug. 예전 국가 값은 해외로 묶는다. */
 export const PROJECT_REGION_TO_SLUG: Record<string, string> = {
-  네팔: 'nepal',
-  미얀마: 'myanmar',
-  키르기즈스탄: 'kyrgyzstan',
+  해외: 'overseas',
   국내: 'domestic',
+  연구사업: 'research',
+  네팔: 'overseas',
+  미얀마: 'overseas',
+  키르기즈스탄: 'overseas',
 }
 
 export const PROJECT_SLUG_TO_REGION: Record<string, string> = {
-  nepal: '네팔',
-  myanmar: '미얀마',
-  kyrgyzstan: '키르기즈스탄',
+  overseas: '해외',
   domestic: '국내',
+  research: '연구사업',
+  nepal: '해외',
+  myanmar: '해외',
+  kyrgyzstan: '해외',
+}
+
+const LEGACY_OVERSEAS_REGIONS = new Set(['네팔', '미얀마', '키르기즈스탄'])
+
+export function canonicalProjectRegion(region: string): string {
+  return LEGACY_OVERSEAS_REGIONS.has(region) ? '해외' : region
 }
 
 export function projectRegionHref(region: string, locale: Locale = 'ko'): string {

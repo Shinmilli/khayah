@@ -218,9 +218,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background:
-    linear-gradient(180deg, transparent 45%, rgba(0, 0, 0, 0.45) 100%),
-    radial-gradient(860px 360px at 30% 35%, rgba(178, 8, 56, 0.18), transparent 58%);
+  background: linear-gradient(180deg, transparent 45%, rgba(0, 0, 0, 0.45) 100%);
   pointer-events: none;
 }
 

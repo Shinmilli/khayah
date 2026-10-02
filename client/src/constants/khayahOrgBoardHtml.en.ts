@@ -55,7 +55,7 @@ const KHAYAH_EXPERTS_GRID_HTML = `
 <div class="khayah-board-grid" role="list">
   <div class="khayah-board-cell" role="listitem">
     <div class="khayah-board-name">Jaehun Jung Professional Advisor</div>
-    <div class="khayah-board-role">Senior Researcher, Candle Consulting Co., Ltd.</div>
+    <div class="khayah-board-role">Ph.D. in Anthropology (Educational Anthropology), International Development Cooperation Consultant</div>
   </div>
   <div class="khayah-board-cell" role="listitem">
     <div class="khayah-board-name">Jinho Lim Professional Advisor</div>

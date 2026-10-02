@@ -323,17 +323,17 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
       </div>
 
       <div class="ov-edu-strip" aria-label="활동 이미지">
-        <div class="ov-edu-img" aria-hidden="true">
-          <img class="ov-edu-img__photo" src="/images/business/overseas-edu-learn.jpg" alt="" loading="lazy" />
-          <div class="ov-edu-img__cap">학습 활동</div>
+        <div class="ov-edu-img">
+          <img class="ov-edu-img__photo" src="/images/business/overseas-edu-foundation-1.jpg" alt="학습지를 들고 있는 아이들" loading="lazy" />
+          <div class="ov-edu-img__cap">기초학업 학습지</div>
         </div>
-        <div class="ov-edu-img" aria-hidden="true">
-          <img class="ov-edu-img__photo" src="/images/business/overseas-edu-reading.jpg" alt="" loading="lazy" />
-          <div class="ov-edu-img__cap">독서클럽</div>
+        <div class="ov-edu-img">
+          <img class="ov-edu-img__photo" src="/images/business/overseas-edu-foundation-2.jpg" alt="수학 수업을 듣는 학생들" loading="lazy" />
+          <div class="ov-edu-img__cap">수학·과학 기초역량</div>
         </div>
-        <div class="ov-edu-img" aria-hidden="true">
-          <img class="ov-edu-img__photo" src="/images/business/overseas-edu-env.jpg" alt="" loading="lazy" />
-          <div class="ov-edu-img__cap">교육 환경</div>
+        <div class="ov-edu-img">
+          <img class="ov-edu-img__photo" src="/images/business/overseas-edu-foundation-3.jpg" alt="Life Skills 교육 현장" loading="lazy" />
+          <div class="ov-edu-img__cap">Life Skills</div>
         </div>
       </div>
     </div>
@@ -364,7 +364,7 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
             <p class="ov-edu-cell__steps">인식개선 → 탐색 → 설계 → 실행<br />4단계 맞춤형 지원</p>
           </div>
           <div class="ov-edu-cell" role="row">
-            <p class="ov-edu-cell__head" role="columnheader">STEM Education<br />융합·탐구 교육</p>
+            <p class="ov-edu-cell__head" role="columnheader">STEM 융합·탐구 교육</p>
             <p class="ov-edu-cell__p" role="cell">
               과학·기술·공학·수학을 연결하여 질문하고, 실험과 프로젝트 활동을 통해 탐구하며 문제해결 역량을 키웁니다.
             </p>
@@ -373,18 +373,14 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
         </div>
       </div>
 
-      <div class="ov-edu-strip" aria-label="활동 이미지">
-        <div class="ov-edu-img" aria-hidden="true">
-          <img class="ov-edu-img__photo" src="/images/business/overseas-edu-skill.jpg" alt="" loading="lazy" />
-          <div class="ov-edu-img__cap">기술 훈련</div>
+      <div class="ov-edu-strip ov-edu-strip--2" aria-label="활동 이미지">
+        <div class="ov-edu-img">
+          <img class="ov-edu-img__photo" src="/images/business/overseas-edu-future-2.jpg" alt="직업기술 체험 현장" loading="lazy" />
+          <div class="ov-edu-img__cap">직업기술 체험</div>
         </div>
-        <div class="ov-edu-img" aria-hidden="true">
-          <img class="ov-edu-img__photo" src="/images/business/overseas-edu-field.jpg" alt="" loading="lazy" />
-          <div class="ov-edu-img__cap">현장 실습</div>
-        </div>
-        <div class="ov-edu-img" aria-hidden="true">
-          <img class="ov-edu-img__photo" src="/images/business/overseas-edu-job.jpg" alt="" loading="lazy" />
-          <div class="ov-edu-img__cap">일자리 연계</div>
+        <div class="ov-edu-img">
+          <img class="ov-edu-img__photo" src="/images/business/overseas-edu-future-3.jpg" alt="STEM 융합 탐구 수업" loading="lazy" />
+          <div class="ov-edu-img__cap">STEM 융합 탐구 교육</div>
         </div>
       </div>
     </div>
@@ -423,17 +419,17 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
       </div>
 
       <div class="ov-edu-strip" aria-label="활동 이미지">
-        <div class="ov-edu-img" aria-hidden="true">
-          <img class="ov-edu-img__photo" src="/images/business/overseas-edu-quality-1.jpg" alt="" loading="lazy" />
-          <div class="ov-edu-img__cap">교사 교육</div>
+        <div class="ov-edu-img">
+          <img class="ov-edu-img__photo" src="/images/business/overseas-edu-quality-1.jpg" alt="교사 역량강화 연수" loading="lazy" />
+          <div class="ov-edu-img__cap">교사역량강화</div>
         </div>
-        <div class="ov-edu-img" aria-hidden="true">
-          <img class="ov-edu-img__photo" src="/images/business/overseas-edu-quality-2.jpg" alt="" loading="lazy" />
-          <div class="ov-edu-img__cap">수업 자료</div>
+        <div class="ov-edu-img">
+          <img class="ov-edu-img__photo" src="/images/business/overseas-edu-quality-2.jpg" alt="이러닝 교육 플랫폼으로 공부하는 학생" loading="lazy" />
+          <div class="ov-edu-img__cap">이러닝 교육 플랫폼</div>
         </div>
-        <div class="ov-edu-img" aria-hidden="true">
-          <img class="ov-edu-img__photo" src="/images/business/overseas-edu-quality-3.jpg" alt="" loading="lazy" />
-          <div class="ov-edu-img__cap">교실 학습</div>
+        <div class="ov-edu-img">
+          <img class="ov-edu-img__photo" src="/images/business/overseas-edu-quality-3.jpg" alt="학부모 인식개선 행사" loading="lazy" />
+          <div class="ov-edu-img__cap">학부모 인식개선</div>
         </div>
       </div>
     </div>
@@ -676,6 +672,41 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
     </div>
   </section>
 
+  <section class="adv-section" aria-label="연구사업 가치">
+    <div class="adv-wrap">
+      <ol class="adv-list">
+        <li class="adv-item">
+          <p class="adv-num">01</p>
+          <div class="adv-body">
+            <h2 class="adv-h2">현장 기반의 연구</h2>
+            <p class="adv-item-desc">카야의 연구는 현장에서 출발합니다. 국내외 현장에서 발견한 실제적인 문제와 참여자들의 목소리를 바탕으로, 이론에 그치지 않고 현장에 즉시 적용할 수 있는 유의미한 시사점을 도출합니다.</p>
+          </div>
+        </li>
+        <li class="adv-item">
+          <p class="adv-num">02</p>
+          <div class="adv-body">
+            <h2 class="adv-h2">참여와 주도성의 방법론</h2>
+            <p class="adv-item-desc">개발협력과 교육이 일방적인 전달이 되지 않도록, 주민과 참여자가 스스로 문제를 정의하고 해결하는 ‘참여적 개발협력 방법론’을 연구합니다. 지역사회의 맥락을 존중하며 자립의 기반을 다지는 구조를 만듭니다.</p>
+          </div>
+        </li>
+        <li class="adv-item">
+          <p class="adv-num">03</p>
+          <div class="adv-body">
+            <h2 class="adv-h2">배움의 연결과 확산</h2>
+            <p class="adv-item-desc">현장의 경험과 연구 결과를 교육 모델 및 콘텐츠로 체계화합니다. 카야 아카데미, 세미나, 지식공유 플랫폼을 통해 실천가 및 시민사회와 배움을 나누며 더 나은 교육과 개발협력의 표준을 함께 만들어갑니다.</p>
+          </div>
+        </li>
+        <li class="adv-item">
+          <p class="adv-num">04</p>
+          <div class="adv-body">
+            <h2 class="adv-h2">지속가능한 소셜 임팩트</h2>
+            <p class="adv-item-desc">사회적 가치가 단발성 지원에 그치지 않고 자립적인 생태계로 자리 잡을 수 있도록 소셜 비즈니스 모델과 지속가능한 사업 구조를 탐색합니다. 사람의 성장과 사회적 가치 창출이 선순환하는 구조를 연구합니다.</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
   <section class="adv-methods" aria-label="연구사업 하위 메뉴">
     <div class="adv-wrap">
       <div class="adv-hub-cards">
@@ -685,8 +716,8 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
               <path d="M12 3.4 2 8.4l10 5 10-5-10-5Zm-7.2 7.3v4.8c0 1.5 3.6 4 7.2 4s7.2-2.5 7.2-4v-4.8l-7.2 3.6-7.2-3.6Z" />
             </svg>
           </div>
-          <h2 class="adv-hub-card__title">교육연구</h2>
-          <p class="adv-hub-card__desc">교육모델과 학습방법, 참여적 개발협력 방법론, 지식공유와 아카데미를 연구합니다.</p>
+          <h2 class="adv-hub-card__title">교육연구 사업</h2>
+          <p class="adv-hub-card__desc">현장의 경험을 바탕으로 사람의 성장과 지역사회의 변화를 이끄는 교육·개발협력 모델과 방법을 연구하고 나눕니다.</p>
           <a class="adv-hub-card__btn" href="/khayah/business/advocacy/education-research">자세히 보기</a>
         </article>
         <article class="adv-hub-card">
@@ -698,8 +729,18 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
             </svg>
           </div>
           <h2 class="adv-hub-card__title">소셜비즈니스</h2>
-          <p class="adv-hub-card__desc">사회적 가치가 지속적인 실천으로 이어질 수 있는 운영과 사업의 구조를 탐색합니다.</p>
+          <p class="adv-hub-card__desc">사회적 가치가 지속가능한 변화와 자립으로 이어질 수 있는 소셜비즈니스 모델과 사업 구조를 연구합니다.</p>
           <a class="adv-hub-card__btn" href="/khayah/business/advocacy/social-business">자세히 보기</a>
+        </article>
+        <article class="adv-hub-card">
+          <div class="adv-hub-card__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <path d="M4 4h7.2L14 7.2H20v13H4Zm2 4v10h12V9.2h-5.2L10.6 6H6Z" />
+            </svg>
+          </div>
+          <h2 class="adv-hub-card__title">진행사업</h2>
+          <p class="adv-hub-card__desc">연구를 통해 발전시킨 모델과 방법을 국내외 현장에 적용하고, 그 경험과 성과를 다시 연구와 실천으로 이어갑니다.</p>
+          <a class="adv-hub-card__btn" href="/khayah/business/projects">자세히 보기</a>
         </article>
       </div>
     </div>
@@ -745,7 +786,7 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
     <div class="adv-wrap">
       <p class="adv-kicker">연구사업 · 교육연구</p>
       <h1 class="adv-title">교육연구</h1>
-      <p class="adv-lead">교육모델과 학습방법, 참여적 개발협력 방법론, 지식공유와 아카데미를 연구합니다.</p>
+      <p class="adv-lead">교육모델과 학습방법, 지식공유와 아카데미, 참여적 개발협력 방법론을 연구합니다.</p>
       <div class="adv-divider" aria-hidden="true"></div>
     </div>
   </section>
@@ -769,18 +810,6 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
         <li class="adv-study__card">
           <p class="adv-study__no">02</p>
           <div class="adv-study__body">
-            <h2 class="adv-study__title">참여적 개발협력 방법론</h2>
-            <ul class="adv-tags">
-              <li>국제개발협력</li>
-              <li>전문가 그룹</li>
-              <li>개발의 관점과 방법</li>
-            </ul>
-            <p class="adv-study__desc">주민의 참여와 주도성을 바탕으로 사업을 조사·기획·실행·평가하는 방법을 연구합니다. 지역의 맥락을 이해하고 현지의 역량을 키우는 접근을 모색합니다.</p>
-          </div>
-        </li>
-        <li class="adv-study__card">
-          <p class="adv-study__no">03</p>
-          <div class="adv-study__body">
             <h2 class="adv-study__title">지식공유와 아카데미</h2>
             <ul class="adv-tags">
               <li>카야아카데미</li>
@@ -788,6 +817,18 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
               <li>강의·세미나</li>
             </ul>
             <p class="adv-study__desc">현장의 경험과 연구 내용을 강의와 세미나, 교육자료로 나눕니다. 실천가와 참여자가 함께 배우고 개발협력의 전문성을 키우는 장을 마련합니다.</p>
+          </div>
+        </li>
+        <li class="adv-study__card">
+          <p class="adv-study__no">03</p>
+          <div class="adv-study__body">
+            <h2 class="adv-study__title">참여적 개발협력 방법론</h2>
+            <ul class="adv-tags">
+              <li>국제개발협력</li>
+              <li>전문가 그룹</li>
+              <li>개발의 관점과 방법</li>
+            </ul>
+            <p class="adv-study__desc">주민의 참여와 주도성을 바탕으로 사업을 조사·기획·실행·평가하는 방법을 연구합니다. 지역의 맥락을 이해하고 현지의 역량을 키우는 접근을 모색합니다.</p>
           </div>
         </li>
       </ol>

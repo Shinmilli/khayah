@@ -317,18 +317,18 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
         </div>
       </div>
 
-      <div class="ov-edu-strip" aria-label="Activity images">
-        <div class="ov-edu-img" aria-hidden="true">
-          <img class="ov-edu-img__photo" src="/images/business/overseas-edu-learn.jpg" alt="" loading="lazy" />
-          <div class="ov-edu-img__cap">Learning activities</div>
+      <div class="ov-edu-strip" aria-label="Program photos">
+        <div class="ov-edu-img">
+          <img class="ov-edu-img__photo" src="/images/business/overseas-edu-foundation-1.jpg" alt="Children holding learning worksheets" loading="lazy" />
+          <div class="ov-edu-img__cap">Foundational worksheets</div>
         </div>
-        <div class="ov-edu-img" aria-hidden="true">
-          <img class="ov-edu-img__photo" src="/images/business/overseas-edu-reading.jpg" alt="" loading="lazy" />
-          <div class="ov-edu-img__cap">Reading club</div>
+        <div class="ov-edu-img">
+          <img class="ov-edu-img__photo" src="/images/business/overseas-edu-foundation-2.jpg" alt="Students in a math class" loading="lazy" />
+          <div class="ov-edu-img__cap">Math and science</div>
         </div>
-        <div class="ov-edu-img" aria-hidden="true">
-          <img class="ov-edu-img__photo" src="/images/business/overseas-edu-env.jpg" alt="" loading="lazy" />
-          <div class="ov-edu-img__cap">Learning environment</div>
+        <div class="ov-edu-img">
+          <img class="ov-edu-img__photo" src="/images/business/overseas-edu-foundation-3.jpg" alt="Life skills session" loading="lazy" />
+          <div class="ov-edu-img__cap">Life Skills</div>
         </div>
       </div>
     </div>
@@ -378,18 +378,14 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
         </div>
       </div>
 
-      <div class="ov-edu-strip" aria-label="Activity images">
-        <div class="ov-edu-img" aria-hidden="true">
-          <img class="ov-edu-img__photo" src="/images/business/overseas-edu-skill.jpg" alt="" loading="lazy" />
-          <div class="ov-edu-img__cap">Skills training</div>
+      <div class="ov-edu-strip ov-edu-strip--2" aria-label="Program photos">
+        <div class="ov-edu-img">
+          <img class="ov-edu-img__photo" src="/images/business/overseas-edu-future-2.jpg" alt="Vocational skills practice" loading="lazy" />
+          <div class="ov-edu-img__cap">Vocational skills practice</div>
         </div>
-        <div class="ov-edu-img" aria-hidden="true">
-          <img class="ov-edu-img__photo" src="/images/business/overseas-edu-field.jpg" alt="" loading="lazy" />
-          <div class="ov-edu-img__cap">Field practice</div>
-        </div>
-        <div class="ov-edu-img" aria-hidden="true">
-          <img class="ov-edu-img__photo" src="/images/business/overseas-edu-job.jpg" alt="" loading="lazy" />
-          <div class="ov-edu-img__cap">Job placement</div>
+        <div class="ov-edu-img">
+          <img class="ov-edu-img__photo" src="/images/business/overseas-edu-future-3.jpg" alt="STEM inquiry class" loading="lazy" />
+          <div class="ov-edu-img__cap">STEM inquiry</div>
         </div>
       </div>
     </div>
@@ -440,18 +436,18 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
         </div>
       </div>
 
-      <div class="ov-edu-strip" aria-label="Activity images">
-        <div class="ov-edu-img" aria-hidden="true">
-          <img class="ov-edu-img__photo" src="/images/business/overseas-edu-quality-1.jpg" alt="" loading="lazy" />
-          <div class="ov-edu-img__cap">Teacher training</div>
+      <div class="ov-edu-strip" aria-label="Program photos">
+        <div class="ov-edu-img">
+          <img class="ov-edu-img__photo" src="/images/business/overseas-edu-quality-1.jpg" alt="Teacher capacity-building workshop" loading="lazy" />
+          <div class="ov-edu-img__cap">Teacher capacity</div>
         </div>
-        <div class="ov-edu-img" aria-hidden="true">
-          <img class="ov-edu-img__photo" src="/images/business/overseas-edu-quality-2.jpg" alt="" loading="lazy" />
-          <div class="ov-edu-img__cap">Teaching materials</div>
+        <div class="ov-edu-img">
+          <img class="ov-edu-img__photo" src="/images/business/overseas-edu-quality-2.jpg" alt="Student using an e-learning platform" loading="lazy" />
+          <div class="ov-edu-img__cap">E-learning platform</div>
         </div>
-        <div class="ov-edu-img" aria-hidden="true">
-          <img class="ov-edu-img__photo" src="/images/business/overseas-edu-quality-3.jpg" alt="" loading="lazy" />
-          <div class="ov-edu-img__cap">Classroom learning</div>
+        <div class="ov-edu-img">
+          <img class="ov-edu-img__photo" src="/images/business/overseas-edu-quality-3.jpg" alt="Parent awareness event" loading="lazy" />
+          <div class="ov-edu-img__cap">Parent awareness</div>
         </div>
       </div>
     </div>
@@ -694,6 +690,41 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
     </div>
   </section>
 
+  <section class="adv-section" aria-label="Research values">
+    <div class="adv-wrap">
+      <ol class="adv-list">
+        <li class="adv-item">
+          <p class="adv-num">01</p>
+          <div class="adv-body">
+            <h2 class="adv-h2">Field-centered Research</h2>
+            <p class="adv-item-desc">Khayah’s research starts in the field. From practical problems and participants’ voices found at home and overseas, we draw implications that can be applied on site, not only in theory.</p>
+          </div>
+        </li>
+        <li class="adv-item">
+          <p class="adv-num">02</p>
+          <div class="adv-body">
+            <h2 class="adv-h2">Participatory Approach</h2>
+            <p class="adv-item-desc">So that development cooperation and education are not one-way delivery, we study participatory methods in which residents and participants define and solve problems themselves. We respect local context and build structures that support self-reliance.</p>
+          </div>
+        </li>
+        <li class="adv-item">
+          <p class="adv-num">03</p>
+          <div class="adv-body">
+            <h2 class="adv-h2">Knowledge Sharing &amp; Innovation</h2>
+            <p class="adv-item-desc">We turn field experience and research results into education models and content. Through the Khayah Academy, seminars, and knowledge-sharing platforms, we share learning with practitioners and civil society and shape better standards for education and development cooperation.</p>
+          </div>
+        </li>
+        <li class="adv-item">
+          <p class="adv-num">04</p>
+          <div class="adv-body">
+            <h2 class="adv-h2">Sustainable Impact</h2>
+            <p class="adv-item-desc">We explore social business models and program structures so social value becomes a self-reliant ecosystem rather than one-off support. We study a cycle in which people’s growth and the creation of social value reinforce each other.</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
   <section class="adv-methods" aria-label="Research program subpages">
     <div class="adv-wrap">
       <div class="adv-hub-cards">
@@ -704,7 +735,7 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
             </svg>
           </div>
           <h2 class="adv-hub-card__title">Education research</h2>
-          <p class="adv-hub-card__desc">Education models and learning methods, participatory development cooperation, and knowledge sharing through the academy.</p>
+          <p class="adv-hub-card__desc">Grounded in field experience, we study and share education and development-cooperation models and methods that lead people’s growth and community change.</p>
           <a class="adv-hub-card__btn" href="/khayah/en/business/advocacy/education-research">Learn more</a>
         </article>
         <article class="adv-hub-card">
@@ -716,8 +747,18 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
             </svg>
           </div>
           <h2 class="adv-hub-card__title">Social business</h2>
-          <p class="adv-hub-card__desc">We explore structures of operation and enterprise through which social value can continue as practice.</p>
+          <p class="adv-hub-card__desc">We study social business models and program structures through which social value can lead to lasting change and self-reliance.</p>
           <a class="adv-hub-card__btn" href="/khayah/en/business/advocacy/social-business">Learn more</a>
+        </article>
+        <article class="adv-hub-card">
+          <div class="adv-hub-card__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <path d="M4 4h7.2L14 7.2H20v13H4Zm2 4v10h12V9.2h-5.2L10.6 6H6Z" />
+            </svg>
+          </div>
+          <h2 class="adv-hub-card__title">Ongoing programs</h2>
+          <p class="adv-hub-card__desc">We apply models and methods developed through research to sites at home and overseas, and carry that experience and its results back into research and practice.</p>
+          <a class="adv-hub-card__btn" href="/khayah/en/business/projects">Learn more</a>
         </article>
       </div>
     </div>
@@ -763,7 +804,7 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
     <div class="adv-wrap">
       <p class="adv-kicker">Research · Education research</p>
       <h1 class="adv-title">Education research</h1>
-      <p class="adv-lead">We study education models and learning methods, participatory development cooperation, and knowledge sharing through the academy.</p>
+      <p class="adv-lead">We study education models and learning methods, knowledge sharing through the academy, and participatory development cooperation.</p>
       <div class="adv-divider" aria-hidden="true"></div>
     </div>
   </section>
@@ -787,18 +828,6 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
         <li class="adv-study__card">
           <p class="adv-study__no">02</p>
           <div class="adv-study__body">
-            <h2 class="adv-study__title">Participatory development cooperation</h2>
-            <ul class="adv-tags">
-              <li>International development cooperation</li>
-              <li>Expert groups</li>
-              <li>Perspectives and methods of development</li>
-            </ul>
-            <p class="adv-study__desc">We study how to research, plan, carry out, and evaluate programs on the basis of residents’ participation and leadership. The approach seeks to understand local context and strengthen local capacity.</p>
-          </div>
-        </li>
-        <li class="adv-study__card">
-          <p class="adv-study__no">03</p>
-          <div class="adv-study__body">
             <h2 class="adv-study__title">Knowledge sharing and the academy</h2>
             <ul class="adv-tags">
               <li>Khayah Academy</li>
@@ -806,6 +835,18 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
               <li>Lectures and seminars</li>
             </ul>
             <p class="adv-study__desc">Field experience and research are shared through lectures, seminars, and learning materials. Practitioners and participants learn together and build expertise in development cooperation.</p>
+          </div>
+        </li>
+        <li class="adv-study__card">
+          <p class="adv-study__no">03</p>
+          <div class="adv-study__body">
+            <h2 class="adv-study__title">Participatory development cooperation</h2>
+            <ul class="adv-tags">
+              <li>International development cooperation</li>
+              <li>Expert groups</li>
+              <li>Perspectives and methods of development</li>
+            </ul>
+            <p class="adv-study__desc">We study how to research, plan, carry out, and evaluate programs on the basis of residents’ participation and leadership. The approach seeks to understand local context and strengthen local capacity.</p>
           </div>
         </li>
       </ol>

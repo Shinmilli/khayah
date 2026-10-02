@@ -6,14 +6,14 @@ import { fetchPostsByKindAndRegion } from '../services/api'
 import type { Post } from '../types/post'
 import { paginate } from '../utils/paginate'
 import { useLocale } from '../i18n/LocaleContext'
-import { PATH, PROJECT_SLUG_TO_REGION, projectRegionHref } from '../i18n/routes'
+import { PATH, PROJECT_SLUG_TO_REGION, canonicalProjectRegion, projectRegionHref } from '../i18n/routes'
 import { pageHeroImageForPath } from '../constants/pageHeroImages'
 import { ListStatus } from '../components/ListStatus'
 import { PostCoverThumb } from '../components/PostCoverThumb'
 import { postCoverMedia } from '../utils/postMedia'
 import '../styles/projects.css'
 
-const REGIONS = ['전체', '네팔', '키르기즈스탄', '미얀마', '국내'] as const
+const REGIONS = ['전체', '해외', '국내', '연구사업'] as const
 type Region = (typeof REGIONS)[number]
 
 function normalizeRegion(param: string | undefined): Region {
@@ -38,10 +38,9 @@ export function ProjectsPage() {
   const pj = messages.pages.projects
   const regionLabels: Record<Region, string> = {
     전체: pj.regions.all,
-    네팔: pj.regions.nepal,
-    키르기즈스탄: pj.regions.kyrgyzstan,
-    미얀마: pj.regions.myanmar,
+    해외: pj.regions.overseas,
     국내: pj.regions.domestic,
+    연구사업: pj.regions.research,
   }
   const region = useMemo(() => normalizeRegion(params.region), [params.region])
   const [rows, setRows] = useState<Post[]>([])
@@ -120,8 +119,8 @@ export function ProjectsPage() {
                     </time>
                     {p.meta?.khayah_project_region ? (
                       <span className="projects-badge">
-                        {regionLabels[p.meta.khayah_project_region as Region] ??
-                          p.meta.khayah_project_region}
+                        {regionLabels[canonicalProjectRegion(p.meta.khayah_project_region) as Region] ??
+                          canonicalProjectRegion(p.meta.khayah_project_region)}
                       </span>
                     ) : null}
                   </div>

@@ -270,7 +270,7 @@ export type Messages = {
       empty: string
       loadError: string
       pagination: string
-      regions: { all: string; nepal: string; kyrgyzstan: string; myanmar: string; domestic: string }
+      regions: { all: string; overseas: string; domestic: string; research: string }
     }
     aboutHub: {
       title: string
@@ -605,7 +605,7 @@ export const koMessages: Messages = {
     projects: {
       title: '진행사업',
       lead: '국내외 현장에서 이어지는 카야의 활동과 사업별 이야기를 만나보세요.',
-      filterAria: '진행사업 지역 필터',
+      filterAria: '진행사업 분류',
       listAria: '진행사업 목록',
       loading: '불러오는 중…',
       empty: '등록된 진행사업 콘텐츠가 없습니다.',
@@ -613,10 +613,9 @@ export const koMessages: Messages = {
       pagination: '진행사업 페이지',
       regions: {
         all: '전체',
-        nepal: '네팔',
-        kyrgyzstan: '키르기즈스탄',
-        myanmar: '미얀마',
+        overseas: '해외',
         domestic: '국내',
+        research: '연구사업',
       },
     },
     aboutHub: {

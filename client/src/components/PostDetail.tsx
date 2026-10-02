@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { fetchPostsByKind } from '../services/api'
 import { useLocale } from '../i18n/LocaleContext'
 import type { Messages } from '../i18n/messages/ko'
-import { PROJECT_REGION_TO_SLUG } from '../i18n/routes'
+import { PROJECT_REGION_TO_SLUG, canonicalProjectRegion } from '../i18n/routes'
 import type { Post } from '../types/post'
 import { parsePdfAttachments, pdfOpenHref, type PdfAttachment } from '../utils/pdfAttachments'
 import { PdfFirstPagePreview } from './PdfFirstPagePreview'
@@ -74,12 +74,12 @@ function listPathForPost(post: Post): string {
 }
 
 function regionLabel(region: string, messages: Messages): string {
-  const slug = PROJECT_REGION_TO_SLUG[region]
-  if (slug === 'nepal') return messages.pages.projects.regions.nepal
-  if (slug === 'myanmar') return messages.pages.projects.regions.myanmar
-  if (slug === 'kyrgyzstan') return messages.pages.projects.regions.kyrgyzstan
-  if (slug === 'domestic') return messages.pages.projects.regions.domestic
-  return region
+  const canonical = canonicalProjectRegion(region)
+  const labels = messages.pages.projects.regions
+  if (canonical === '해외') return labels.overseas
+  if (canonical === '국내') return labels.domestic
+  if (canonical === '연구사업') return labels.research
+  return canonical
 }
 
 function crumbsForKind(kind: string, messages: Messages): Array<{ label: string; to: string }> {
@@ -131,8 +131,9 @@ function crumbsForPost(post: Post, messages: Messages): Array<{ label: string; t
   } else if (kind === '진행사업') {
     const region = post.meta?.khayah_project_region?.trim()
     if (region) {
-      const slug = PROJECT_REGION_TO_SLUG[region] ?? encodeURIComponent(region)
-      crumbs.push({ label: regionLabel(region, messages), to: `/business/projects/${slug}` })
+      const canonical = canonicalProjectRegion(region)
+      const slug = PROJECT_REGION_TO_SLUG[canonical] ?? encodeURIComponent(canonical)
+      crumbs.push({ label: regionLabel(canonical, messages), to: `/business/projects/${slug}` })
     }
   } else if (kind === '스토리') {
     const scope = post.meta?.khayah_story_scope

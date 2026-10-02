@@ -47,7 +47,7 @@ const storyScopeLabel: Record<(typeof storyPostScopes)[number], string> = {
 }
 type StoryPostScope = (typeof storyPostScopes)[number]
 
-const projectRegions = ['네팔', '키르기즈스탄', '미얀마', '국내'] as const
+const projectRegions = ['해외', '국내', '연구사업'] as const
 type ProjectRegion = (typeof projectRegions)[number]
 
 type View = 'list' | 'editor'
@@ -308,7 +308,10 @@ function PostEditorForm({
       if (s && storyPostScopes.includes(s)) setStoryScope(s)
     }
     if (initialPostType === '진행사업') {
-      const r = initialMeta.khayah_project_region as ProjectRegion | undefined
+      const stored = initialMeta.khayah_project_region
+      const r = (
+        stored === '네팔' || stored === '미얀마' || stored === '키르기즈스탄' ? '해외' : stored
+      ) as ProjectRegion | undefined
       if (r && projectRegions.includes(r)) setProjectRegion(r)
     }
     setShortBody(initialContentHtml ?? '')
@@ -492,7 +495,7 @@ function PostEditorForm({
       return
     }
     if (postType === '진행사업' && !projectRegion) {
-      setSaveError('진행사업 지역(네팔/키르기즈스탄/미얀마/국내)을 선택해 주세요.')
+      setSaveError('진행사업 분류(해외/국내/연구사업)를 선택해 주세요.')
       return
     }
     if (postType === '연간소식지' && yearlyMode === 'PDF소식지' && pdfFiles.length === 0) {
@@ -856,11 +859,11 @@ function PostEditorForm({
             </div>
           ) : postType === '진행사업' ? (
             <div className="admin-field admin-field--full">
-              <span className="admin-field__label">지역 분류</span>
+              <span className="admin-field__label">분류</span>
               <p className="admin-fieldset__hint admin-fieldset__hint--flush">
-                진행사업 목록의 탭(전체/네팔/키르기즈스탄/미얀마/국내)에 사용됩니다.
+                진행사업 목록의 탭(전체/해외/국내/연구사업)에 사용됩니다.
               </p>
-              <div className="admin-segmented admin-segmented--tight" role="group" aria-label="진행사업 지역">
+              <div className="admin-segmented admin-segmented--tight" role="group" aria-label="진행사업 분류">
                 {projectRegions.map((r) => (
                   <button
                     key={r}
@@ -878,7 +881,7 @@ function PostEditorForm({
               </div>
               {projectRegion === null ? (
                 <p className="admin-upload__hint" role="status">
-                  지역을 선택해 주세요.
+                  분류를 선택해 주세요.
                 </p>
               ) : null}
             </div>

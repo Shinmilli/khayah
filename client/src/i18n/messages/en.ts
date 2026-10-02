@@ -310,7 +310,7 @@ export const enMessages: Messages = {
     projects: {
       title: 'Active projects',
       lead: 'Explore Khayah’s ongoing work in Korea and overseas, and the stories behind each program.',
-      filterAria: 'Filter by region',
+      filterAria: 'Filter projects',
       listAria: 'Project list',
       loading: 'Loading…',
       empty: 'No project content yet.',
@@ -318,10 +318,9 @@ export const enMessages: Messages = {
       pagination: 'Projects pages',
       regions: {
         all: 'All',
-        nepal: 'Nepal',
-        kyrgyzstan: 'Kyrgyzstan',
-        myanmar: 'Myanmar',
+        overseas: 'Overseas',
         domestic: 'Korea',
+        research: 'Research',
       },
     },
     aboutHub: {
