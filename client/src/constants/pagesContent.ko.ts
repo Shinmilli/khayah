@@ -213,63 +213,52 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
     title: '해외사업',
     content: `
 <div class="overseas-page">
-  <section class="overseas-hero">
-    <div class="ov-wrap">
-      <p class="overseas-kicker">해외 사업</p>
-      <h1 class="overseas-title">카야는 현지 주민과 함께 교육의 기회를 넓힘으로 주도적 성장을 지원하고,<br />지역사회의 변화를 이끄는 주체가 될 수 있는 기반을 마련합니다.</h1>
-      <p class="overseas-lead">
-        현지 주민과 함께 배우고 함께 실행하며, 지역사회가 스스로 변화의 힘을 키우는 개발협력을 지향합니다.
-      </p>
-      <div class="overseas-divider" aria-hidden="true"></div>
+  <section class="biz-kp" aria-label="해외사업">
+    <div class="biz-kp__intro">
+      <div class="biz-kp__copy">
+        <div class="biz-kp__statement">
+          <p class="biz-kp__kicker">해외사업</p>
+          <span class="biz-kp__quote" aria-hidden="true">&ldquo;</span>
+          <div class="biz-kp__statement-body">
+            <h1 class="biz-kp__title">카야는 현지 주민과 함께 교육의 기회를 넓힘으로 주도적 성장을 지원하고, 지역사회의 변화를 이끄는 주체가 될 수 있는 기반을 마련합니다.</h1>
+            <p class="biz-kp__lead">현지 주민과 함께 배우고 함께 실행하며, 지역사회가 스스로 변화의 힘을 키우는 개발협력을 지향합니다.</p>
+          </div>
+        </div>
+      </div>
+      <figure class="biz-kp__photo biz-kp__photo--overseas">
+        <img src="/images/business/overseas-intro.jpg" alt="학습지를 들고 있는 현지 아이들" />
+      </figure>
     </div>
-  </section>
-
-  <section class="overseas-section">
-    <div class="ov-wrap">
-      <ol class="overseas-list" aria-label="해외사업 핵심 원칙">
-        <li class="overseas-item">
-          <div class="overseas-num" aria-hidden="true">01</div>
-          <div>
-            <h2 class="overseas-h2">참여와 협력</h2>
-            <p class="overseas-desc">
-              카야는 현지 주민을 단순 후원과 수혜의 관계가 아닌, 참여와 협력의 관계로 존중합니다.
-              서로의 경험과 지식을 나누며, 지역사회가 필요로 하는 변화를 함께 만들어갑니다.
-            </p>
-          </div>
-        </li>
-
-        <li class="overseas-item">
-          <div class="overseas-num" aria-hidden="true">02</div>
-          <div>
-            <h2 class="overseas-h2">현지와의 동화</h2>
-            <p class="overseas-desc">
-              진정한 변화는 현지 주민의 참여 의지와 그 변화에 대한 올바른 인식이 뒷받침 될 때만 가능합니다.
-              이를 위해 카야는 모든 프로젝트에 지역과 주민의 삶을 이해하고 충분한 대화와 신뢰를 형성하는 현지와의 동화 단계를 필수 요소로 삼아 사업 방향을 정하고 공유하며, 그들의 자발적 참여를 이끌어냅니다.
-            </p>
-          </div>
-        </li>
-
-        <li class="overseas-item">
-          <div class="overseas-num" aria-hidden="true">03</div>
-          <div>
-            <h2 class="overseas-h2">참여적 방법론</h2>
-            <p class="overseas-desc">
-              프로젝트의 전 과정(조사, 분석, 기획, 실행, 모니터링&amp;평가) 속에 주민이 참여하도록 하며, 주민의 경험과 의견을 사업에 반영하고, 사업과 개선 성과도 함께 확인합니다.
-            </p>
-          </div>
-        </li>
-
-        <li class="overseas-item">
-          <div class="overseas-num" aria-hidden="true">04</div>
-          <div>
-            <h2 class="overseas-h2">지속가능성</h2>
-            <p class="overseas-desc">
-              프로젝트 지역의 자원활용과 협력체계를 바탕으로 지역사회 안에서 지속가능한 운영을 이어가는 개발협력사업이 될 수 있도록 프로젝트의 전 과정을 연구하고 해답을 찾아 나갑니다.
-            </p>
-          </div>
-        </li>
-      </ol>
-    </div>
+    <ol class="biz-kp__list">
+      <li class="biz-kp__item">
+        <p class="biz-kp__no">01</p>
+        <div class="biz-kp__body">
+          <h2 class="biz-kp__h">참여와 협력</h2>
+          <p class="biz-kp__desc">카야는 현지 주민을 단순 후원과 수혜의 관계가 아닌, <strong>참여와 협력의 관계</strong>로 존중합니다. 서로의 경험과 지식을 나누며, 지역사회가 <strong>필요로 하는 변화</strong>를 함께 만들어갑니다.</p>
+        </div>
+      </li>
+      <li class="biz-kp__item">
+        <p class="biz-kp__no">02</p>
+        <div class="biz-kp__body">
+          <h2 class="biz-kp__h">현지와의 동화</h2>
+          <p class="biz-kp__desc">진정한 변화는 현지 주민의 <strong>참여 의지</strong>와 그 변화에 대한 올바른 인식이 뒷받침 될 때만 가능합니다. 이를 위해 카야는 모든 프로젝트에 지역과 주민의 삶을 이해하고 충분한 대화와 신뢰를 형성하는 <strong>현지와의 동화</strong> 단계를 필수 요소로 삼아 사업 방향을 정하고 공유하며, 그들의 <strong>자발적 참여</strong>를 이끌어냅니다.</p>
+        </div>
+      </li>
+      <li class="biz-kp__item">
+        <p class="biz-kp__no">03</p>
+        <div class="biz-kp__body">
+          <h2 class="biz-kp__h">참여적 방법론</h2>
+          <p class="biz-kp__desc">프로젝트의 <strong>전 과정</strong>(조사, 분석, 기획, 실행, 모니터링&amp;평가) 속에 <strong>주민이 참여</strong>하도록 하며, 주민의 경험과 의견을 사업에 반영하고, 사업과 개선 성과도 함께 확인합니다.</p>
+        </div>
+      </li>
+      <li class="biz-kp__item">
+        <p class="biz-kp__no">04</p>
+        <div class="biz-kp__body">
+          <h2 class="biz-kp__h">지속가능성</h2>
+          <p class="biz-kp__desc">프로젝트 지역의 <strong>자원활용과 협력체계</strong>를 바탕으로 지역사회 안에서 <strong>지속가능한 운영</strong>을 이어가는 개발협력사업이 될 수 있도록 프로젝트의 전 과정을 연구하고 해답을 찾아 나갑니다.</p>
+        </div>
+      </li>
+    </ol>
   </section>
 </div>
 `,
@@ -524,52 +513,45 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
     title: '국내사업',
     content: `
 <div class="domestic-page">
-  <section class="domestic-hero">
-    <div class="dom-wrap">
-      <p class="domestic-kicker">국내사업</p>
-      <h1 class="domestic-title">카야는 배움과 실천의 기회를 연결하여,<br />우리 이웃이 자신의 삶과 지역사회의 변화를 이끌도록 함께합니다.</h1>
-      <p class="domestic-lead">
-        국내 현장에서 필요한 교육과 지원을 연결하고, 당사자의 목소리가 지역의 변화로 이어지도록 함께합니다.
-      </p>
-      <div class="domestic-divider" aria-hidden="true"></div>
+  <section class="biz-kp" aria-label="국내사업">
+    <div class="biz-kp__intro">
+      <div class="biz-kp__copy">
+        <div class="biz-kp__statement">
+          <p class="biz-kp__kicker">국내사업</p>
+          <span class="biz-kp__quote" aria-hidden="true">&ldquo;</span>
+          <div class="biz-kp__statement-body">
+            <h1 class="biz-kp__title">카야는 배움과 실천의 기회를 연결하여, 우리 이웃이 자신의 삶과 지역사회의 변화를 이끌도록 함께합니다.</h1>
+            <p class="biz-kp__lead">국내 현장에서 필요한 교육과 지원을 연결하고, 당사자의 목소리가 지역의 변화로 이어지도록 함께합니다.</p>
+          </div>
+        </div>
+      </div>
+      <figure class="biz-kp__photo biz-kp__photo--domestic">
+        <img src="/images/business/domestic-edu-2.jpg" alt="진로 교육 워크숍에 참여한 청년들" />
+      </figure>
     </div>
-  </section>
-
-  <section class="domestic-section">
-    <div class="dom-wrap">
-      <ol class="domestic-list" aria-label="국내사업 핵심 내용">
-        <li class="domestic-item">
-          <div class="domestic-num" aria-hidden="true">01</div>
-          <div class="domestic-body">
-            <h2 class="domestic-h2">가치지향적 &amp; 미래지향적 교육</h2>
-            <p class="domestic-desc">
-              현재 한국 사회 구조와 교육 시스템 하에서 드러나지 않고 있는 문제와 이슈들을 발견하고, 이를 개선할 수 있는 방안을 마련하여 새로운 ‘가치 창출’과 ‘미래’를 준비하는 교육개발 프로젝트를 진행합니다.
-            </p>
-          </div>
-        </li>
-
-        <li class="domestic-item">
-          <div class="domestic-num" aria-hidden="true">02</div>
-          <div class="domestic-body">
-            <h2 class="domestic-h2">인간 중심 &amp; 자연친화적 교육</h2>
-            <p class="domestic-desc">
-              카야는 사람을 개발의 수단이 아닌 존엄한 주체로 존중합니다. 모든 사업에서 지역사회와 자연환경의 현재와 미래를 함께 고려하며, 생태계와 상생하지 않는 무분별한 개발을 지양합니다. 사람의 성장과 자연의 지속가능성이 함께하는 교육을 실천합니다.
-            </p>
-          </div>
-        </li>
-
-        <li class="domestic-item">
-          <div class="domestic-num" aria-hidden="true">03</div>
-          <div class="domestic-body">
-            <h2 class="domestic-h2">국내에서 세계로 이어지는 개발협력</h2>
-            <p class="domestic-desc">
-              카야는 진로 탐색과 역량개발, 소셜 창업과 자립, 기후·환경 교육을 통해 국내에서 쌓은 경험과 전문성을 해외 개발협력 현장으로 연결합니다. 청소년과 청년, 외국인 노동자, 탈북 청년 등 참여자의 배움이 각 지역의 사회·문화적 환경과 필요에 맞게 활용되고, 지역사회에 기여할 수 있도록 함께합니다.
-            </p>
-          </div>
-        </li>
-      </ol>
-
-    </div>
+    <ol class="biz-kp__list">
+      <li class="biz-kp__item">
+        <p class="biz-kp__no">01</p>
+        <div class="biz-kp__body">
+          <h2 class="biz-kp__h">가치지향적 &amp; 미래지향적 교육</h2>
+          <p class="biz-kp__desc">현재 한국 사회 구조와 교육 시스템 하에서 드러나지 않고 있는 문제와 이슈들을 발견하고, 이를 개선할 수 있는 방안을 마련하여 새로운 <strong>‘가치 창출’</strong>과 <strong>‘미래’</strong>를 준비하는 교육개발 프로젝트를 진행합니다.</p>
+        </div>
+      </li>
+      <li class="biz-kp__item">
+        <p class="biz-kp__no">02</p>
+        <div class="biz-kp__body">
+          <h2 class="biz-kp__h">인간 중심 &amp; 자연친화적 교육</h2>
+          <p class="biz-kp__desc">카야는 사람을 개발의 수단이 아닌 <strong>존엄한 주체</strong>로 존중합니다. 모든 사업에서 지역사회와 자연환경의 현재와 미래를 함께 고려하며, 생태계와 상생하지 않는 무분별한 개발을 지양합니다. <strong>사람의 성장과 자연의 지속가능성</strong>이 함께하는 교육을 실천합니다.</p>
+        </div>
+      </li>
+      <li class="biz-kp__item">
+        <p class="biz-kp__no">03</p>
+        <div class="biz-kp__body">
+          <h2 class="biz-kp__h">국내에서 세계로 이어지는 개발협력</h2>
+          <p class="biz-kp__desc">카야는 <strong>진로 탐색과 역량개발</strong>, <strong>소셜 창업과 자립</strong>, <strong>기후·환경 교육</strong>을 통해 국내에서 쌓은 경험과 전문성을 <strong>해외 개발협력 현장</strong>으로 연결합니다. 청소년과 청년, 외국인 노동자, 탈북 청년 등 참여자의 배움이 각 지역의 사회·문화적 환경과 필요에 맞게 활용되고, 지역사회에 기여할 수 있도록 함께합니다.</p>
+        </div>
+      </li>
+    </ol>
   </section>
 </div>
 `,
@@ -659,52 +641,52 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
     title: '연구사업',
     content: `
 <div class="adv-page">
-  <section class="adv-hero">
-    <div class="adv-wrap">
-      <p class="adv-kicker">연구사업</p>
-      <h1 class="adv-title">현장의 경험을 연구하고<br />교육과 개발협력의 방법을 발전시켜,<br />지속가능한 변화를 만드는 실천에 연결합니다.</h1>
-      <p class="adv-lead">
-        카야는 사람의 성장과 지역사회의 변화가 이어질 수 있도록 교육과 개발협력의 방법을 연구합니다.
-        현장에서 발견한 질문을 바탕으로 교육모델과 사업 운영방식을 발전시키고, 그 경험을 다시 현장과 나눕니다.
-        국내외 실천과 연구를 연결하여 지속가능한 변화의 기반을 마련합니다.
-      </p>
-      <div class="adv-divider" aria-hidden="true"></div>
+  <section class="biz-kp" aria-label="연구사업">
+    <div class="biz-kp__intro">
+      <div class="biz-kp__copy">
+        <div class="biz-kp__statement">
+          <p class="biz-kp__kicker">연구사업</p>
+          <span class="biz-kp__quote" aria-hidden="true">&ldquo;</span>
+          <div class="biz-kp__statement-body">
+            <h1 class="biz-kp__title">현장의 경험을 연구하고 교육과 개발협력의 방법을 발전시켜, 지속가능한 변화를 만드는 실천에 연결합니다.</h1>
+            <p class="biz-kp__lead">카야는 사람의 성장과 지역사회의 변화가 이어질 수 있도록 교육과 개발협력의 방법을 연구합니다. 현장에서 발견한 질문을 바탕으로 교육모델과 사업 운영방식을 발전시키고, 그 경험을 다시 현장과 나눕니다.</p>
+          </div>
+        </div>
+      </div>
+      <figure class="biz-kp__photo biz-kp__photo--research">
+        <img src="/images/business/overseas-edu-quality-1.jpg" alt="교사 역량 강화 연수 현장" />
+      </figure>
     </div>
-  </section>
-
-  <section class="adv-section" aria-label="연구사업 가치">
-    <div class="adv-wrap">
-      <ol class="adv-list">
-        <li class="adv-item">
-          <p class="adv-num">01</p>
-          <div class="adv-body">
-            <h2 class="adv-h2">현장 기반의 연구</h2>
-            <p class="adv-item-desc">카야의 연구는 현장에서 출발합니다. 국내외 현장에서 발견한 실제적인 문제와 참여자들의 목소리를 바탕으로, 이론에 그치지 않고 현장에 즉시 적용할 수 있는 유의미한 시사점을 도출합니다.</p>
-          </div>
-        </li>
-        <li class="adv-item">
-          <p class="adv-num">02</p>
-          <div class="adv-body">
-            <h2 class="adv-h2">참여와 주도성의 방법론</h2>
-            <p class="adv-item-desc">개발협력과 교육이 일방적인 전달이 되지 않도록, 주민과 참여자가 스스로 문제를 정의하고 해결하는 ‘참여적 개발협력 방법론’을 연구합니다. 지역사회의 맥락을 존중하며 자립의 기반을 다지는 구조를 만듭니다.</p>
-          </div>
-        </li>
-        <li class="adv-item">
-          <p class="adv-num">03</p>
-          <div class="adv-body">
-            <h2 class="adv-h2">배움의 연결과 확산</h2>
-            <p class="adv-item-desc">현장의 경험과 연구 결과를 교육 모델 및 콘텐츠로 체계화합니다. 카야 아카데미, 세미나, 지식공유 플랫폼을 통해 실천가 및 시민사회와 배움을 나누며 더 나은 교육과 개발협력의 표준을 함께 만들어갑니다.</p>
-          </div>
-        </li>
-        <li class="adv-item">
-          <p class="adv-num">04</p>
-          <div class="adv-body">
-            <h2 class="adv-h2">지속가능한 소셜 임팩트</h2>
-            <p class="adv-item-desc">사회적 가치가 단발성 지원에 그치지 않고 자립적인 생태계로 자리 잡을 수 있도록 소셜 비즈니스 모델과 지속가능한 사업 구조를 탐색합니다. 사람의 성장과 사회적 가치 창출이 선순환하는 구조를 연구합니다.</p>
-          </div>
-        </li>
-      </ol>
-    </div>
+    <ol class="biz-kp__list">
+      <li class="biz-kp__item">
+        <p class="biz-kp__no">01</p>
+        <div class="biz-kp__body">
+          <h2 class="biz-kp__h">현장 기반의 연구</h2>
+          <p class="biz-kp__desc">카야의 연구는 <strong>현장에서 출발</strong>합니다. 국내외 현장에서 발견한 실제적인 문제와 <strong>참여자들의 목소리</strong>를 바탕으로, 이론에 그치지 않고 <strong>현장에 즉시 적용</strong>할 수 있는 유의미한 시사점을 도출합니다.</p>
+        </div>
+      </li>
+      <li class="biz-kp__item">
+        <p class="biz-kp__no">02</p>
+        <div class="biz-kp__body">
+          <h2 class="biz-kp__h">참여와 주도성의 방법론</h2>
+          <p class="biz-kp__desc">개발협력과 교육이 일방적인 전달이 되지 않도록, 주민과 참여자가 스스로 문제를 정의하고 해결하는 <strong>‘참여적 개발협력 방법론’</strong>을 연구합니다. 지역사회의 맥락을 존중하며 <strong>자립의 기반</strong>을 다지는 구조를 만듭니다.</p>
+        </div>
+      </li>
+      <li class="biz-kp__item">
+        <p class="biz-kp__no">03</p>
+        <div class="biz-kp__body">
+          <h2 class="biz-kp__h">배움의 연결과 확산</h2>
+          <p class="biz-kp__desc">현장의 경험과 연구 결과를 <strong>교육 모델 및 콘텐츠</strong>로 체계화합니다. <strong>카야 아카데미</strong>, <strong>세미나</strong>, <strong>지식공유 플랫폼</strong>을 통해 실천가 및 시민사회와 배움을 나누며 더 나은 교육과 개발협력의 표준을 함께 만들어갑니다.</p>
+        </div>
+      </li>
+      <li class="biz-kp__item">
+        <p class="biz-kp__no">04</p>
+        <div class="biz-kp__body">
+          <h2 class="biz-kp__h">지속가능한 소셜 임팩트</h2>
+          <p class="biz-kp__desc">사회적 가치가 단발성 지원에 그치지 않고 <strong>자립적인 생태계</strong>로 자리 잡을 수 있도록 <strong>소셜 비즈니스 모델</strong>과 지속가능한 사업 구조를 탐색합니다. <strong>사람의 성장</strong>과 <strong>사회적 가치 창출</strong>이 선순환하는 구조를 연구합니다.</p>
+        </div>
+      </li>
+    </ol>
   </section>
 
   <section class="adv-methods" aria-label="연구사업 하위 메뉴">

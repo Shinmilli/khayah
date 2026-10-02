@@ -208,63 +208,52 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
     title: 'Overseas Programs',
     content: `
 <div class="overseas-page">
-  <section class="overseas-hero">
-    <div class="ov-wrap">
-      <p class="overseas-kicker">Overseas Programs</p>
-      <h1 class="overseas-title">Together with local residents, Khayah widens access to education and supports self-directed growth,<br />building a foundation for communities to lead their own change.</h1>
-      <p class="overseas-lead">
-        We learn and act together with local residents, pursuing development cooperation in which communities themselves grow the power to change.
-      </p>
-      <div class="overseas-divider" aria-hidden="true"></div>
+  <section class="biz-kp" aria-label="Overseas programs">
+    <div class="biz-kp__intro">
+      <div class="biz-kp__copy">
+        <div class="biz-kp__statement">
+          <p class="biz-kp__kicker">Overseas Programs</p>
+          <span class="biz-kp__quote" aria-hidden="true">&ldquo;</span>
+          <div class="biz-kp__statement-body">
+            <h1 class="biz-kp__title">Together with local residents, Khayah widens access to education and supports self-directed growth, building a foundation for communities to lead their own change.</h1>
+            <p class="biz-kp__lead">We learn and act together with local residents, pursuing development cooperation in which communities themselves grow the power to change.</p>
+          </div>
+        </div>
+      </div>
+      <figure class="biz-kp__photo biz-kp__photo--overseas">
+        <img src="/images/business/overseas-intro.jpg" alt="Local children holding their worksheets" />
+      </figure>
     </div>
-  </section>
-
-  <section class="overseas-section">
-    <div class="ov-wrap">
-      <ol class="overseas-list" aria-label="Core principles of overseas programs">
-        <li class="overseas-item">
-          <div class="overseas-num" aria-hidden="true">01</div>
-          <div>
-            <h2 class="overseas-h2">Participation &amp; Cooperation</h2>
-            <p class="overseas-desc">
-              Khayah respects local residents not as aid recipients, but as partners in participation and cooperation.
-              We share experience and knowledge, and together create the change communities need.
-            </p>
-          </div>
-        </li>
-
-        <li class="overseas-item">
-          <div class="overseas-num" aria-hidden="true">02</div>
-          <div>
-            <h2 class="overseas-h2">Integration with Local Communities</h2>
-            <p class="overseas-desc">
-              True change is possible only when local residents' will to participate and their right understanding of that change are supported.
-              For this reason, Khayah makes integration with local communities — understanding the lives of the region and its people, and building dialogue and trust — an essential step in every project. We set and share the direction of our work together, and foster their voluntary participation.
-            </p>
-          </div>
-        </li>
-
-        <li class="overseas-item">
-          <div class="overseas-num" aria-hidden="true">03</div>
-          <div>
-            <h2 class="overseas-h2">Participatory Methodology</h2>
-            <p class="overseas-desc">
-              We involve residents throughout the entire project cycle (research, analysis, planning, implementation, and monitoring &amp; evaluation), reflect their experience and opinions in the work, and review results and improvements together.
-            </p>
-          </div>
-        </li>
-
-        <li class="overseas-item">
-          <div class="overseas-num" aria-hidden="true">04</div>
-          <div>
-            <h2 class="overseas-h2">Sustainability</h2>
-            <p class="overseas-desc">
-              We study the full project cycle and seek answers so that development cooperation can continue as sustainable operations within the community, based on local resources and partnership systems.
-            </p>
-          </div>
-        </li>
-      </ol>
-    </div>
+    <ol class="biz-kp__list">
+      <li class="biz-kp__item">
+        <p class="biz-kp__no">01</p>
+        <div class="biz-kp__body">
+          <h2 class="biz-kp__h">Participation &amp; Cooperation</h2>
+          <p class="biz-kp__desc">Khayah respects local residents not as aid recipients, but as partners in <strong>participation and cooperation</strong>. We share experience and knowledge, and together create <strong>the change communities need</strong>.</p>
+        </div>
+      </li>
+      <li class="biz-kp__item">
+        <p class="biz-kp__no">02</p>
+        <div class="biz-kp__body">
+          <h2 class="biz-kp__h">Integration with Local Communities</h2>
+          <p class="biz-kp__desc">True change is possible only when local residents' <strong>will to participate</strong> and their right understanding of that change are supported. For this reason, Khayah makes <strong>integration with local communities</strong> — understanding the lives of the region and its people, and building dialogue and trust — an essential step in every project. We set and share the direction of our work together, and foster their <strong>voluntary participation</strong>.</p>
+        </div>
+      </li>
+      <li class="biz-kp__item">
+        <p class="biz-kp__no">03</p>
+        <div class="biz-kp__body">
+          <h2 class="biz-kp__h">Participatory Methodology</h2>
+          <p class="biz-kp__desc">We involve residents throughout the <strong>entire project cycle</strong> (research, analysis, planning, implementation, and monitoring &amp; evaluation), reflect their experience and opinions in the work, and review results and improvements together.</p>
+        </div>
+      </li>
+      <li class="biz-kp__item">
+        <p class="biz-kp__no">04</p>
+        <div class="biz-kp__body">
+          <h2 class="biz-kp__h">Sustainability</h2>
+          <p class="biz-kp__desc">We study the full project cycle and seek answers so that development cooperation can continue as <strong>sustainable operations</strong> within the community, based on <strong>local resources and partnership systems</strong>.</p>
+        </div>
+      </li>
+    </ol>
   </section>
 </div>
 `,
@@ -542,52 +531,45 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
     title: 'Domestic Programs',
     content: `
 <div class="domestic-page">
-  <section class="domestic-hero">
-    <div class="dom-wrap">
-      <p class="domestic-kicker">Domestic Programs</p>
-      <h1 class="domestic-title">Khayah connects opportunities for learning and practice,<br />walking with our neighbors as they lead change in their own lives and communities.</h1>
-      <p class="domestic-lead">
-        We connect education and support needed in domestic communities, working together so that participants' voices lead to local change.
-      </p>
-      <div class="domestic-divider" aria-hidden="true"></div>
+  <section class="biz-kp" aria-label="Domestic programs">
+    <div class="biz-kp__intro">
+      <div class="biz-kp__copy">
+        <div class="biz-kp__statement">
+          <p class="biz-kp__kicker">Domestic Programs</p>
+          <span class="biz-kp__quote" aria-hidden="true">&ldquo;</span>
+          <div class="biz-kp__statement-body">
+            <h1 class="biz-kp__title">Khayah connects opportunities for learning and practice, walking with our neighbors as they lead change in their own lives and communities.</h1>
+            <p class="biz-kp__lead">We connect the education and support needed in domestic communities, working together so that participants' voices lead to local change.</p>
+          </div>
+        </div>
+      </div>
+      <figure class="biz-kp__photo biz-kp__photo--domestic">
+        <img src="/images/business/domestic-edu-2.jpg" alt="Young people in a career education workshop" />
+      </figure>
     </div>
-  </section>
-
-  <section class="domestic-section">
-    <div class="dom-wrap">
-      <ol class="domestic-list" aria-label="Core domestic program areas">
-        <li class="domestic-item">
-          <div class="domestic-num" aria-hidden="true">01</div>
-          <div class="domestic-body">
-            <h2 class="domestic-h2">Values-Oriented &amp; Future-Oriented Education</h2>
-            <p class="domestic-desc">
-              We identify problems and issues hidden within Korea's current social structure and education system, develop ways to address them, and run education development projects that prepare new value creation and the future.
-            </p>
-          </div>
-        </li>
-
-        <li class="domestic-item">
-          <div class="domestic-num" aria-hidden="true">02</div>
-          <div class="domestic-body">
-            <h2 class="domestic-h2">Human-Centered &amp; Eco-Friendly Education</h2>
-            <p class="domestic-desc">
-              Khayah respects people as dignified agents, not as instruments of development. In every program we consider the present and future of local communities and the natural environment, and we reject indiscriminate development that does not coexist with ecosystems. We practice education in which human growth and nature’s sustainability go together.
-            </p>
-          </div>
-        </li>
-
-        <li class="domestic-item">
-          <div class="domestic-num" aria-hidden="true">03</div>
-          <div class="domestic-body">
-            <h2 class="domestic-h2">Development Cooperation from Korea to the World</h2>
-            <p class="domestic-desc">
-              Through career exploration and capacity building, social entrepreneurship and self-reliance, and climate and environment education, we connect experience and expertise built in Korea to overseas development cooperation. We work so that what participants learn — adolescents and youth, migrant workers, North Korean defector youth, and others — can be applied to each region’s social and cultural context and needs, and can contribute to local communities.
-            </p>
-          </div>
-        </li>
-      </ol>
-
-    </div>
+    <ol class="biz-kp__list">
+      <li class="biz-kp__item">
+        <p class="biz-kp__no">01</p>
+        <div class="biz-kp__body">
+          <h2 class="biz-kp__h">Values-Oriented &amp; Future-Oriented Education</h2>
+          <p class="biz-kp__desc">We identify problems and issues hidden within Korea's current social structure and education system, develop ways to address them, and run education development projects that prepare new <strong>value creation</strong> and <strong>the future</strong>.</p>
+        </div>
+      </li>
+      <li class="biz-kp__item">
+        <p class="biz-kp__no">02</p>
+        <div class="biz-kp__body">
+          <h2 class="biz-kp__h">Human-Centered &amp; Eco-Friendly Education</h2>
+          <p class="biz-kp__desc">Khayah respects people as <strong>dignified agents</strong>, not as instruments of development. In every program we consider the present and future of local communities and the natural environment, and we reject indiscriminate development that does not coexist with ecosystems. We practice education in which <strong>human growth and nature’s sustainability</strong> go together.</p>
+        </div>
+      </li>
+      <li class="biz-kp__item">
+        <p class="biz-kp__no">03</p>
+        <div class="biz-kp__body">
+          <h2 class="biz-kp__h">Development Cooperation from Korea to the World</h2>
+          <p class="biz-kp__desc">Through <strong>career exploration and capacity building</strong>, <strong>social entrepreneurship and self-reliance</strong>, and <strong>climate and environment education</strong>, we connect experience and expertise built in Korea to <strong>overseas development cooperation</strong>. We work so that what participants learn — adolescents and youth, migrant workers, North Korean defector youth, and others — can be applied to each region’s social and cultural context and needs, and can contribute to local communities.</p>
+        </div>
+      </li>
+    </ol>
   </section>
 </div>
 `,
@@ -677,52 +659,52 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
     title: 'Research',
     content: `
 <div class="adv-page">
-  <section class="adv-hero">
-    <div class="adv-wrap">
-      <p class="adv-kicker">Research</p>
-      <h1 class="adv-title">We study field experience and develop methods<br />of education and development cooperation,<br />connecting them to practice that creates lasting change.</h1>
-      <p class="adv-lead">
-        Khayah studies methods of education and development cooperation so that people’s growth and community change stay connected.
-        Questions found in the field shape education models and how programs are run, and that experience is shared back with the field.
-        We link practice at home and overseas with research, and build a foundation for change that lasts.
-      </p>
-      <div class="adv-divider" aria-hidden="true"></div>
+  <section class="biz-kp" aria-label="Research">
+    <div class="biz-kp__intro">
+      <div class="biz-kp__copy">
+        <div class="biz-kp__statement">
+          <p class="biz-kp__kicker">Research</p>
+          <span class="biz-kp__quote" aria-hidden="true">&ldquo;</span>
+          <div class="biz-kp__statement-body">
+            <h1 class="biz-kp__title">We study field experience and develop methods of education and development cooperation, connecting them to practice that creates lasting change.</h1>
+            <p class="biz-kp__lead">Khayah studies methods of education and development cooperation so that people’s growth and community change stay connected. Questions found in the field shape education models and how programs are run, and that experience is shared back with the field.</p>
+          </div>
+        </div>
+      </div>
+      <figure class="biz-kp__photo biz-kp__photo--research">
+        <img src="/images/business/overseas-edu-quality-1.jpg" alt="Teacher training seminar" />
+      </figure>
     </div>
-  </section>
-
-  <section class="adv-section" aria-label="Research values">
-    <div class="adv-wrap">
-      <ol class="adv-list">
-        <li class="adv-item">
-          <p class="adv-num">01</p>
-          <div class="adv-body">
-            <h2 class="adv-h2">Field-centered Research</h2>
-            <p class="adv-item-desc">Khayah’s research starts in the field. From practical problems and participants’ voices found at home and overseas, we draw implications that can be applied on site, not only in theory.</p>
-          </div>
-        </li>
-        <li class="adv-item">
-          <p class="adv-num">02</p>
-          <div class="adv-body">
-            <h2 class="adv-h2">Participatory Approach</h2>
-            <p class="adv-item-desc">So that development cooperation and education are not one-way delivery, we study participatory methods in which residents and participants define and solve problems themselves. We respect local context and build structures that support self-reliance.</p>
-          </div>
-        </li>
-        <li class="adv-item">
-          <p class="adv-num">03</p>
-          <div class="adv-body">
-            <h2 class="adv-h2">Knowledge Sharing &amp; Innovation</h2>
-            <p class="adv-item-desc">We turn field experience and research results into education models and content. Through the Khayah Academy, seminars, and knowledge-sharing platforms, we share learning with practitioners and civil society and shape better standards for education and development cooperation.</p>
-          </div>
-        </li>
-        <li class="adv-item">
-          <p class="adv-num">04</p>
-          <div class="adv-body">
-            <h2 class="adv-h2">Sustainable Impact</h2>
-            <p class="adv-item-desc">We explore social business models and program structures so social value becomes a self-reliant ecosystem rather than one-off support. We study a cycle in which people’s growth and the creation of social value reinforce each other.</p>
-          </div>
-        </li>
-      </ol>
-    </div>
+    <ol class="biz-kp__list">
+      <li class="biz-kp__item">
+        <p class="biz-kp__no">01</p>
+        <div class="biz-kp__body">
+          <h2 class="biz-kp__h">Field-centered Research</h2>
+          <p class="biz-kp__desc">Khayah’s research <strong>starts in the field</strong>. From practical problems and <strong>participants’ voices</strong> found at home and overseas, we draw implications that can be <strong>applied on site</strong>, not only in theory.</p>
+        </div>
+      </li>
+      <li class="biz-kp__item">
+        <p class="biz-kp__no">02</p>
+        <div class="biz-kp__body">
+          <h2 class="biz-kp__h">Participatory Approach</h2>
+          <p class="biz-kp__desc">So that development cooperation and education are not one-way delivery, we study <strong>participatory methods</strong> in which residents and participants define and solve problems themselves. We respect local context and build structures that support <strong>self-reliance</strong>.</p>
+        </div>
+      </li>
+      <li class="biz-kp__item">
+        <p class="biz-kp__no">03</p>
+        <div class="biz-kp__body">
+          <h2 class="biz-kp__h">Knowledge Sharing &amp; Innovation</h2>
+          <p class="biz-kp__desc">We turn field experience and research results into <strong>education models and content</strong>. Through the <strong>Khayah Academy</strong>, <strong>seminars</strong>, and <strong>knowledge-sharing platforms</strong>, we share learning with practitioners and civil society and shape better standards for education and development cooperation.</p>
+        </div>
+      </li>
+      <li class="biz-kp__item">
+        <p class="biz-kp__no">04</p>
+        <div class="biz-kp__body">
+          <h2 class="biz-kp__h">Sustainable Impact</h2>
+          <p class="biz-kp__desc">We explore <strong>social business models</strong> and program structures so social value becomes a <strong>self-reliant ecosystem</strong> rather than one-off support. We study a cycle in which <strong>people’s growth</strong> and the <strong>creation of social value</strong> reinforce each other.</p>
+        </div>
+      </li>
+    </ol>
   </section>
 
   <section class="adv-methods" aria-label="Research program subpages">
