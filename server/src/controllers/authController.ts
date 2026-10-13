@@ -10,10 +10,10 @@ import {
 import { loadAdminUser } from '../middlewares/requireAdmin'
 import {
   AdminHttpError,
-  countAdminUsers,
-  createBootstrapSuper,
+  ensureBootstrapSuper,
   ensureDemoSuper,
   findAdminUserByEmail,
+  isHiddenBootstrapUser,
   normalizeEmail,
   toPublicUser,
   touchAdminLogin,
@@ -58,16 +58,14 @@ export async function postGoogleLogin(req: Request, res: Response) {
   const displayName = google.name || email.split('@')[0] || ''
 
   try {
+    if (isHiddenBootstrapUser(email)) {
+      const user = await ensureBootstrapSuper(email, displayName)
+      const token = setAdminSessionCookie(res, user.id)
+      res.json({ user: toPublicUser(user), token })
+      return
+    }
     const existing = await findAdminUserByEmail(email)
     if (!existing) {
-      const total = await countAdminUsers()
-      const bootstrap = normalizeEmail(process.env.ADMIN_BOOTSTRAP_EMAIL ?? '')
-      if (total === 0 && bootstrap && bootstrap === email) {
-        const created = await createBootstrapSuper(email, displayName)
-        const token = setAdminSessionCookie(res, created.id)
-        res.json({ user: toPublicUser(created), token })
-        return
-      }
       res.status(403).json({
         error: '등록되지 않은 계정입니다. 슈퍼 관리자에게 초대를 요청하세요.',
       })

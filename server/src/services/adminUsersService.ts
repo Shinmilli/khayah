@@ -32,6 +32,13 @@ export function isHiddenBootstrapUser(email: string): boolean {
   return Boolean(hidden) && normalizeEmail(email) === hidden
 }
 
+const DEMO_ADMIN_EMAIL = 'demo@khayah.local'
+
+/** 계정 관리 화면에 나오지 않는 계정. 부트스트랩 슈퍼 관리자와 목업 로그인 계정. */
+export function isHiddenAdminUser(email: string): boolean {
+  return isHiddenBootstrapUser(email) || normalizeEmail(email) === DEMO_ADMIN_EMAIL
+}
+
 export function toPublicUser(row: AdminUserRow): AdminUserPublic {
   return {
     id: row.id,
@@ -78,7 +85,23 @@ export async function createBootstrapSuper(email: string, name: string): Promise
   })
 }
 
-const DEMO_ADMIN_EMAIL = 'demo@khayah.local'
+/** 다른 관리자가 있어도 부트스트랩 이메일은 숨은 슈퍼 관리자로 맞춘다. */
+export async function ensureBootstrapSuper(email: string, name: string): Promise<AdminUserRow> {
+  const existing = await findAdminUserByEmail(email)
+  const nextName = (name || existing?.name || '').slice(0, 120)
+  if (existing) {
+    return requirePrisma().adminUser.update({
+      where: { id: existing.id },
+      data: {
+        role: 'super',
+        active: true,
+        name: nextName,
+        lastLoginAt: new Date(),
+      },
+    })
+  }
+  return createBootstrapSuper(email, nextName)
+}
 
 export async function ensureDemoSuper(): Promise<AdminUserRow> {
   const existing = await findAdminUserByEmail(DEMO_ADMIN_EMAIL)
@@ -118,7 +141,7 @@ export async function listAdminUsers(): Promise<AdminUserRow[]> {
   const rows = (await requirePrisma().adminUser.findMany({
     orderBy: [{ createdAt: 'asc' }, { email: 'asc' }],
   })) as AdminUserRow[]
-  return rows.filter((row) => !isHiddenBootstrapUser(row.email))
+  return rows.filter((row) => !isHiddenAdminUser(row.email))
 }
 
 export async function inviteAdminUser(email: string, role: AdminRole): Promise<AdminUserRow> {
@@ -126,7 +149,7 @@ export async function inviteAdminUser(email: string, role: AdminRole): Promise<A
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalized)) {
     throw new AdminHttpError(400, '올바른 이메일을 입력하세요.')
   }
-  if (isHiddenBootstrapUser(normalized)) {
+  if (isHiddenAdminUser(normalized)) {
     throw new AdminHttpError(409, '이미 등록된 이메일입니다.')
   }
   const existing = await findAdminUserByEmail(normalized)
@@ -148,7 +171,7 @@ export async function updateAdminUser(
   patch: { role?: AdminRole; active?: boolean },
 ): Promise<AdminUserRow> {
   const user = await findAdminUserById(id)
-  if (!user || isHiddenBootstrapUser(user.email)) {
+  if (!user || isHiddenAdminUser(user.email)) {
     throw new AdminHttpError(404, '계정을 찾을 수 없습니다.')
   }
   const nextRole = patch.role ?? (isAdminRole(user.role) ? user.role : 'content')
@@ -168,7 +191,7 @@ export async function updateAdminUser(
 
 export async function deleteAdminUser(id: number): Promise<void> {
   const user = await findAdminUserById(id)
-  if (!user || isHiddenBootstrapUser(user.email)) {
+  if (!user || isHiddenAdminUser(user.email)) {
     throw new AdminHttpError(404, '계정을 찾을 수 없습니다.')
   }
   if (user.role === 'super' && user.active) {
