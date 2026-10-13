@@ -18,6 +18,7 @@ import { navVisibilityRouter } from './routes/navVisibility'
 import { pageHeroBannersRouter } from './routes/pageHeroBanners'
 import { businessHubCardsRouter } from './routes/businessHubCards'
 import { popupRouter } from './routes/popup'
+import { maintenanceRouter } from './routes/maintenance'
 import { authRouter } from './routes/auth'
 import { adminUsersRouter } from './routes/adminUsers'
 import { adminAuthGuard } from './middlewares/requireAdmin'
@@ -64,6 +65,7 @@ app.use('/api', navVisibilityRouter)
 app.use('/api', pageHeroBannersRouter)
 app.use('/api', businessHubCardsRouter)
 app.use('/api', popupRouter)
+app.use('/api', maintenanceRouter)
 
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok' })

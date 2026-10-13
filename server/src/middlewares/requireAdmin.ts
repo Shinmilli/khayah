@@ -86,6 +86,10 @@ export async function adminAuthGuard(req: Request, res: Response, next: NextFunc
     await requireRoles(FAQ)(req, res, next)
     return
   }
+  if (p.startsWith('/admin/maintenance')) {
+    await requireRoles(SUPER)(req, res, next)
+    return
+  }
   if (p.startsWith('/admin/')) {
     await requireRoles(CONTENT)(req, res, next)
     return

@@ -2,6 +2,7 @@ import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { stripSitePrefix } from './i18n/locale'
 import { Layout } from './components/Layout'
 import { AdminModule } from './features/admin/AdminModule'
+import { MaintenanceGate } from './features/maintenance/MaintenanceGate'
 import { FinancialReportPage } from './pages/FinancialReportPage'
 import { HomePage } from './pages/HomePage'
 import { KhayahAboutHubPage } from './pages/KhayahAboutHubPage'
@@ -12,9 +13,11 @@ import { LocaleProvider } from './i18n/LocaleContext'
 
 function LocalizedSite({ locale }: { locale: 'ko' | 'en' }) {
   return (
-    <LocaleProvider locale={locale}>
-      <Layout />
-    </LocaleProvider>
+    <MaintenanceGate>
+      <LocaleProvider locale={locale}>
+        <Layout />
+      </LocaleProvider>
+    </MaintenanceGate>
   )
 }
 

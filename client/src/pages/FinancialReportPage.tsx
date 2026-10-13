@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { PageHero } from '../components/PageHero'
 import { KhayahSectionNav } from '../components/KhayahSectionNav'
+import { pageHeroImageForPath } from '../constants/pageHeroImages'
 import { PATH } from '../i18n/routes'
 import { FinancialDonutChart } from '../features/financial-report/FinancialDonutChart'
 import { formatWon } from '../features/financial-report/financialReportDefaults'
@@ -161,7 +162,7 @@ export function FinancialReportPage() {
       <div className="financial-report-page">
         <PageHero
           title={nav.links.financialReport}
-          imagePathKey={PATH.aboutFinancialReport}
+          backgroundImageUrl={pageHeroImageForPath(PATH.aboutFinancialReport)}
           showScrollHint={false}
         />
         <KhayahSectionNav />
@@ -177,7 +178,7 @@ export function FinancialReportPage() {
       <div className="financial-report-page">
         <PageHero
           title={nav.links.financialReport}
-          imagePathKey={PATH.aboutFinancialReport}
+          backgroundImageUrl={pageHeroImageForPath(PATH.aboutFinancialReport)}
           showScrollHint={false}
         />
         <KhayahSectionNav />
@@ -199,7 +200,7 @@ export function FinancialReportPage() {
       <div className="financial-report-page">
         <PageHero
           title={nav.links.financialReport}
-          imagePathKey={PATH.aboutFinancialReport}
+          backgroundImageUrl={pageHeroImageForPath(PATH.aboutFinancialReport)}
           showScrollHint={false}
         />
         <KhayahSectionNav />
@@ -218,7 +219,7 @@ export function FinancialReportPage() {
     <div className="financial-report-page">
       <PageHero
         title={fr.pageTitle(report.year)}
-        imagePathKey={PATH.aboutFinancialReport}
+        backgroundImageUrl={pageHeroImageForPath(PATH.aboutFinancialReport)}
         showScrollHint={false}
       />
       <KhayahSectionNav />

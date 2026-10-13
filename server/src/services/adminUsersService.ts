@@ -22,6 +22,16 @@ export function normalizeEmail(email: string): string {
   return email.trim().toLowerCase()
 }
 
+/** 계정 관리 화면에 나오지 않는 부트스트랩 슈퍼 관리자. 로그인과 권한은 유지된다. */
+export function bootstrapEmail(): string {
+  return normalizeEmail(process.env.ADMIN_BOOTSTRAP_EMAIL ?? '')
+}
+
+export function isHiddenBootstrapUser(email: string): boolean {
+  const hidden = bootstrapEmail()
+  return Boolean(hidden) && normalizeEmail(email) === hidden
+}
+
 export function toPublicUser(row: AdminUserRow): AdminUserPublic {
   return {
     id: row.id,
@@ -105,15 +115,19 @@ export async function touchAdminLogin(id: number, name: string): Promise<AdminUs
 }
 
 export async function listAdminUsers(): Promise<AdminUserRow[]> {
-  return requirePrisma().adminUser.findMany({
+  const rows = await requirePrisma().adminUser.findMany({
     orderBy: [{ createdAt: 'asc' }, { email: 'asc' }],
   })
+  return rows.filter((row) => !isHiddenBootstrapUser(row.email))
 }
 
 export async function inviteAdminUser(email: string, role: AdminRole): Promise<AdminUserRow> {
   const normalized = normalizeEmail(email)
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalized)) {
     throw new AdminHttpError(400, '올바른 이메일을 입력하세요.')
+  }
+  if (isHiddenBootstrapUser(normalized)) {
+    throw new AdminHttpError(409, '이미 등록된 이메일입니다.')
   }
   const existing = await findAdminUserByEmail(normalized)
   if (existing) {
@@ -134,7 +148,7 @@ export async function updateAdminUser(
   patch: { role?: AdminRole; active?: boolean },
 ): Promise<AdminUserRow> {
   const user = await findAdminUserById(id)
-  if (!user) {
+  if (!user || isHiddenBootstrapUser(user.email)) {
     throw new AdminHttpError(404, '계정을 찾을 수 없습니다.')
   }
   const nextRole = patch.role ?? (isAdminRole(user.role) ? user.role : 'content')
@@ -154,7 +168,7 @@ export async function updateAdminUser(
 
 export async function deleteAdminUser(id: number): Promise<void> {
   const user = await findAdminUserById(id)
-  if (!user) {
+  if (!user || isHiddenBootstrapUser(user.email)) {
     throw new AdminHttpError(404, '계정을 찾을 수 없습니다.')
   }
   if (user.role === 'super' && user.active) {

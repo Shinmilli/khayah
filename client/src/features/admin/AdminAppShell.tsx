@@ -2,6 +2,7 @@ import { useEffect, useId, useMemo, useState } from 'react'
 import { NavLink, Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useAdminAuth } from './AdminAuthContext'
 import { ADMIN_ROLE_LABEL } from './adminRoles'
+import { useMaintenanceEnabled } from '../maintenance/useMaintenanceEnabled'
 
 function isContentAdminPath(pathname: string): boolean {
   return (
@@ -59,6 +60,7 @@ export function AdminAppShell() {
   const navigate = useNavigate()
   const location = useLocation()
   const { me, loading, logout } = useAdminAuth()
+  const maintenanceOn = useMaintenanceEnabled()
   const contentSubId = useId()
   const [contentOpen, setContentOpen] = useState(() => isContentAdminPath(location.pathname))
 
@@ -101,6 +103,16 @@ export function AdminAppShell() {
         </div>
         <p className="admin-app__user">{me.email}</p>
         <nav className="admin-app__nav">
+          {me.role === 'super' ? (
+            <NavLink
+              to="/admin/app/maintenance"
+              className={({ isActive }) =>
+                `admin-app__nav-link${isActive ? ' admin-app__nav-link--active' : ''}`
+              }
+            >
+              점검 모드
+            </NavLink>
+          ) : null}
           {visibleContent.length > 0 ? (
             <div className="admin-app__nav-group">
               <button
@@ -171,6 +183,12 @@ export function AdminAppShell() {
             {me.name ? `${me.name} · ` : ''}
             {ADMIN_ROLE_LABEL[me.role]}
           </p>
+          {maintenanceOn ? (
+            <p className="admin-app__maintenance-note">
+              점검 모드가 켜져 있습니다. 로그인하지 않은 방문자는 사이트 대신 점검 화면을 봅니다.
+              {me.role === 'super' ? <NavLink to="/admin/app/maintenance">설정</NavLink> : null}
+            </p>
+          ) : null}
         </header>
         <main className="admin-app__content">
           <Outlet />

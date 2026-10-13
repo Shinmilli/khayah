@@ -20,6 +20,7 @@ WordPress(BeTheme)에서 **React + Express** 스택으로 현대화한 프로젝
 
 [![Deploy Guide](https://img.shields.io/badge/Deploy-docs%2FDEPLOY.md-b20838?style=flat-square&labelColor=b20838)](docs/DEPLOY.md)
 [![Local Dev](https://img.shields.io/badge/Local_Dev-Setup-2563EB?style=flat-square&labelColor=2563EB)](#local-development)
+[![Notion](https://img.shields.io/badge/Project-Notion-000000?style=flat-square&logo=notion&logoColor=white)](https://indecisive-tick-a70.notion.site/9e0b257cc0498266b9018182be2213da?pvs=74)
 
 </div>
 
@@ -51,6 +52,8 @@ WordPress(BeTheme)에서 **React + Express** 스택으로 현대화한 프로젝
 | **배포** | Render Static Site + Render Web Service |
 
 공개 사이트(소식, 스토리, 후원, 소개)와 `/admin` 관리자 영역으로 구성됩니다.
+
+프로젝트 개요, 담당 작업, 기술적 성과는 [카야 웹사이트 리뉴얼](https://indecisive-tick-a70.notion.site/9e0b257cc0498266b9018182be2213da?pvs=74) 노션 문서에 정리되어 있습니다.
 
 ---
 

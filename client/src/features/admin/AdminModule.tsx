@@ -18,6 +18,7 @@ import { AdminNavMenuImagesPage } from './pages/AdminNavMenuImagesPage'
 import { AdminNavVisibilityPage } from './pages/AdminNavVisibilityPage'
 import { AdminPageBannersPage } from './pages/AdminPageBannersPage'
 import { AdminBusinessHubCardsPage } from './pages/AdminBusinessHubCardsPage'
+import { AdminMaintenancePage } from './pages/AdminMaintenancePage'
 
 export function AdminModule() {
   return (
@@ -49,6 +50,7 @@ export function AdminModule() {
               <Route path="inquiry-faq" element={<AdminInquiryFaqPage />} />
             </Route>
             <Route element={<AdminRequireRole roles={['super']} />}>
+              <Route path="maintenance" element={<AdminMaintenancePage />} />
               <Route path="operations" element={<AdminOperationsPage />} />
             </Route>
           </Route>

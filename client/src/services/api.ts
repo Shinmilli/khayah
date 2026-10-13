@@ -19,6 +19,7 @@ import type {
   BusinessHubCardsPublicDocument,
 } from '../features/business/businessHubCardsTypes'
 import type { PopupConfig } from '../utils/popup'
+import type { MaintenanceDocument } from '../features/maintenance/maintenanceTypes'
 import type { Locale } from '../i18n/locale'
 import type { AdminRole, AdminUserPublic } from '../features/admin/adminRoles'
 
@@ -418,6 +419,28 @@ export async function fetchNavVisibility(): Promise<NavVisibilityDocument> {
 export async function adminFetchNavVisibility(): Promise<NavVisibilityDocument> {
   const res = await apiFetch(`${API_BASE}/admin/nav-visibility`)
   if (!res.ok) throw new Error('Failed to fetch nav visibility')
+  return res.json()
+}
+
+export async function fetchMaintenance(): Promise<MaintenanceDocument> {
+  const res = await fetch(`${API_BASE}/maintenance`)
+  if (!res.ok) throw new Error(await readApiError(res, '점검 상태를 불러오지 못했습니다.'))
+  return res.json()
+}
+
+export async function adminFetchMaintenance(): Promise<MaintenanceDocument> {
+  const res = await apiFetch(`${API_BASE}/admin/maintenance`)
+  if (!res.ok) throw new Error(await readApiError(res, '점검 설정을 불러오지 못했습니다.'))
+  return res.json()
+}
+
+export async function adminPutMaintenance(doc: MaintenanceDocument): Promise<MaintenanceDocument> {
+  const res = await apiFetch(`${API_BASE}/admin/maintenance`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(doc),
+  })
+  if (!res.ok) throw new Error(await readApiError(res, '점검 설정을 저장하지 못했습니다.'))
   return res.json()
 }
 

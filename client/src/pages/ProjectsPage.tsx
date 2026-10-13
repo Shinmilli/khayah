@@ -7,6 +7,7 @@ import type { Post } from '../types/post'
 import { paginate } from '../utils/paginate'
 import { useLocale } from '../i18n/LocaleContext'
 import { PATH, PROJECT_SLUG_TO_REGION, canonicalProjectRegion, projectRegionHref } from '../i18n/routes'
+import { pageHeroImageForPath } from '../constants/pageHeroImages'
 import { ListStatus } from '../components/ListStatus'
 import { PostCoverThumb } from '../components/PostCoverThumb'
 import { postCoverMedia } from '../utils/postMedia'
@@ -72,7 +73,7 @@ export function ProjectsPage() {
 
   return (
     <div className="projects-page">
-      <PageHero title={pj.title} imagePathKey={PATH.businessProjects} />
+      <PageHero title={pj.title} backgroundImageUrl={pageHeroImageForPath(PATH.businessProjects)} />
 
       <div className="projects-wrap">
         <p className="projects-lead">{pj.lead}</p>
