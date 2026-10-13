@@ -115,9 +115,9 @@ export async function touchAdminLogin(id: number, name: string): Promise<AdminUs
 }
 
 export async function listAdminUsers(): Promise<AdminUserRow[]> {
-  const rows = await requirePrisma().adminUser.findMany({
+  const rows = (await requirePrisma().adminUser.findMany({
     orderBy: [{ createdAt: 'asc' }, { email: 'asc' }],
-  })
+  })) as AdminUserRow[]
   return rows.filter((row) => !isHiddenBootstrapUser(row.email))
 }
 
