@@ -655,6 +655,13 @@ export async function authLogout(): Promise<void> {
   }
 }
 
+export async function fetchAuthConfig(): Promise<{ demoLogin: boolean }> {
+  const res = await fetch(`${API_BASE}/auth/config`)
+  if (!res.ok) return { demoLogin: false }
+  const data = (await res.json()) as { demoLogin?: boolean }
+  return { demoLogin: data.demoLogin === true }
+}
+
 export async function authDemo(): Promise<AdminUserPublic> {
   const res = await apiFetch(`${API_BASE}/auth/demo`, { method: 'POST' })
   if (!res.ok) throw new Error(await readApiError(res, '목업 로그인에 실패했습니다.'))

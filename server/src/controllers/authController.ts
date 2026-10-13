@@ -103,6 +103,11 @@ export async function postLogout(_req: Request, res: Response) {
   res.json({ ok: true })
 }
 
+export function getAuthConfig(_req: Request, res: Response) {
+  res.setHeader('Cache-Control', 'no-store')
+  res.json({ demoLogin: isDemoLoginAllowed() })
+}
+
 export async function postDemoLogin(_req: Request, res: Response) {
   if (!isDemoLoginAllowed()) {
     res.status(403).json({ error: '임시 목업 로그인이 비활성화되어 있습니다.' })

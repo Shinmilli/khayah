@@ -1,8 +1,9 @@
 import { Router } from 'express'
-import { getMe, postDemoLogin, postGoogleLogin, postLogout } from '../controllers/authController'
+import { getAuthConfig, getMe, postDemoLogin, postGoogleLogin, postLogout } from '../controllers/authController'
 
 export const authRouter = Router()
 
+authRouter.get('/auth/config', getAuthConfig)
 authRouter.post('/auth/google', postGoogleLogin)
 authRouter.post('/auth/demo', postDemoLogin)
 authRouter.get('/auth/me', getMe)

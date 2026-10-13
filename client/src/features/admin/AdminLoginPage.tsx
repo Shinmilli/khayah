@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Navigate } from 'react-router-dom'
+import { fetchAuthConfig } from '../../services/api'
 import { useAdminAuth } from './AdminAuthContext'
 import { homePathForRole } from './adminRoles'
 
@@ -33,6 +34,21 @@ export function AdminLoginPage() {
   const [error, setError] = useState('')
   const [ready, setReady] = useState(false)
   const [demoBusy, setDemoBusy] = useState(false)
+  const [demoLogin, setDemoLogin] = useState(false)
+
+  useEffect(() => {
+    let cancelled = false
+    void fetchAuthConfig()
+      .then((config) => {
+        if (!cancelled) setDemoLogin(config.demoLogin)
+      })
+      .catch(() => {
+        if (!cancelled) setDemoLogin(false)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   useEffect(() => {
     if (loading || me || !GOOGLE_CLIENT_ID) return
@@ -119,29 +135,27 @@ export function AdminLoginPage() {
           </p>
         ) : null}
 
-        <div className="admin-login__divider" role="presentation" />
-
-        <button
-          type="button"
-          className="admin-login__demo"
-          disabled={demoBusy}
-          onClick={() => {
-            setError('')
-            setDemoBusy(true)
-            void loginWithDemo()
-              .catch((e: unknown) => {
-                setError(e instanceof Error ? e.message : '목업 로그인에 실패했습니다.')
-              })
-              .finally(() => setDemoBusy(false))
-          }}
-        >
-          {demoBusy ? '입장 중…' : '담당자 확인용 · 목업으로 관리 화면 보기'}
-        </button>
-
-        <p className="admin-login__note">
-          처음 설정 시 서버의 <code>ADMIN_BOOTSTRAP_EMAIL</code>과 같은 Google 계정으로 로그인하면 슈퍼
-          관리자가 만들어집니다.
-        </p>
+        {demoLogin ? (
+          <>
+            <div className="admin-login__divider" role="presentation" />
+            <button
+              type="button"
+              className="admin-login__demo"
+              disabled={demoBusy}
+              onClick={() => {
+                setError('')
+                setDemoBusy(true)
+                void loginWithDemo()
+                  .catch((e: unknown) => {
+                    setError(e instanceof Error ? e.message : '목업 로그인에 실패했습니다.')
+                  })
+                  .finally(() => setDemoBusy(false))
+              }}
+            >
+              {demoBusy ? '입장 중…' : '담당자 확인용 · 목업으로 관리 화면 보기'}
+            </button>
+          </>
+        ) : null}
       </div>
     </div>
   )
