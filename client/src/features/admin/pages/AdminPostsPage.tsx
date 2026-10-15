@@ -1338,40 +1338,7 @@ export function AdminPostsPage() {
         <h2 id="posts-list-heading" className="admin-panel__title">
           목록
         </h2>
-        {filterType === '공지사항' ? (
-          <ul className="admin-notice-list" aria-label="공지사항 목록">
-            {loading ? (
-              <li className="admin-table__empty">불러오는 중…</li>
-            ) : error ? (
-              <li className="admin-table__empty">{error}</li>
-            ) : sortedRows.length === 0 ? (
-              <li className="admin-table__empty">등록된 공지가 없습니다.</li>
-            ) : (
-              listItems.map((row) => (
-                <li key={row.id} className="admin-notice-item">
-                  <div className="admin-notice-item__title">{row.title}</div>
-                  <div className="admin-notice-item__date">{new Date(row.publishedAt).toISOString().slice(0, 10)}</div>
-                  <div className="admin-row-actions">
-                    <button
-                      type="button"
-                      className="admin-btn admin-btn--sm admin-btn--ghost"
-                      onClick={() => openEdit(row.id)}
-                    >
-                      수정
-                    </button>
-                    <button
-                      type="button"
-                      className="admin-btn admin-btn--sm admin-btn--danger-ghost"
-                      onClick={() => onDelete(row.id)}
-                    >
-                      삭제
-                    </button>
-                  </div>
-                </li>
-              ))
-            )}
-          </ul>
-        ) : filterType === '언론보도' ? (
+        {filterType === '언론보도' ? (
           <ul className="admin-press-list" aria-label="언론보도 목록">
             {loading ? (
               <li className="admin-table__empty">불러오는 중…</li>
@@ -1433,10 +1400,11 @@ export function AdminPostsPage() {
             <table className="admin-table">
               <thead>
                 <tr>
-                  <th scope="col">유형</th>
+                  <th scope="col" className="admin-table__type">
+                    유형
+                  </th>
                   <th scope="col">제목</th>
                   <th scope="col">요약</th>
-                  <th scope="col">대표 이미지</th>
                   <th scope="col">수정일</th>
                   <th scope="col">관리</th>
                 </tr>
@@ -1444,33 +1412,28 @@ export function AdminPostsPage() {
               <tbody>
                 {loading ? (
                   <tr>
-                    <td colSpan={6} className="admin-table__empty">
+                    <td colSpan={5} className="admin-table__empty">
                       불러오는 중…
                     </td>
                   </tr>
                 ) : error ? (
                   <tr>
-                    <td colSpan={6} className="admin-table__empty">
+                    <td colSpan={5} className="admin-table__empty">
                       {error}
                     </td>
                   </tr>
                 ) : sortedRows.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="admin-table__empty">
-                      이 유형에 해당하는 샘플 글이 없습니다.
+                    <td colSpan={5} className="admin-table__empty">
+                      등록된 글이 없습니다.
                     </td>
                   </tr>
                 ) : (
                   listItems.map((row) => (
                     <tr key={row.id}>
-                      <td>{filterType}</td>
+                      <td className="admin-table__type">{filterType}</td>
                       <td>{row.title}</td>
                       <td>{row.excerpt}</td>
-                      <td>
-                        <span className="admin-thumb" aria-label="대표 이미지 자리">
-                          IMG
-                        </span>
-                      </td>
                       <td>{new Date(row.publishedAt).toISOString().slice(0, 10)}</td>
                       <td>
                         <div className="admin-row-actions">

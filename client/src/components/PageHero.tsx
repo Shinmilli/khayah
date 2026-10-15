@@ -351,12 +351,25 @@ function HeroBackdrop({ src }: { src: string | null }) {
   const [ready, setReady] = useState(false)
 
   useLayoutEffect(() => {
+    const node = photoRef.current
     if (!photo) {
       setReady(true)
       return
     }
-    // 캐시된 이미지는 load가 effect보다 먼저 끝나 ready를 다시 끄면 검은 배너로 남는다.
-    setReady(imageElementReady(photoRef.current))
+    if (imageElementReady(node)) {
+      setReady(true)
+      return
+    }
+    setReady(false)
+    if (!node) return
+    const markReady = () => setReady(true)
+    node.addEventListener('load', markReady)
+    node.addEventListener('error', markReady)
+    if (imageElementReady(node)) setReady(true)
+    return () => {
+      node.removeEventListener('load', markReady)
+      node.removeEventListener('error', markReady)
+    }
   }, [photo])
 
   return (

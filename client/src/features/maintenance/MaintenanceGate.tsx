@@ -12,6 +12,7 @@ import {
 } from './maintenanceTypes'
 
 const POLL_MS = 20_000
+const FIRST_CHECK_MS = 2500
 
 export function MaintenanceGate({ children }: { children: ReactNode }) {
   const location = useLocation()
@@ -20,6 +21,12 @@ export function MaintenanceGate({ children }: { children: ReactNode }) {
   const [doc, setDoc] = useState<MaintenanceDocument | null>(null)
   const [isAdmin, setIsAdmin] = useState(false)
   const [checked, setChecked] = useState(false)
+  const [holdExpired, setHoldExpired] = useState(false)
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setHoldExpired(true), FIRST_CHECK_MS)
+    return () => window.clearTimeout(timer)
+  }, [])
 
   useEffect(() => {
     let cancelled = false
@@ -27,16 +34,20 @@ export function MaintenanceGate({ children }: { children: ReactNode }) {
 
     async function load() {
       const ticket = ++requestId
-      const [nextDoc, me] = await Promise.all([
-        fetchMaintenance().catch(() => null),
-        authMe().catch(() => null),
+      const [maintenanceResult, authResult] = await Promise.all([
+        fetchMaintenance()
+          .then((nextDoc) => ({ ok: true as const, doc: nextDoc }))
+          .catch(() => ({ ok: false as const, doc: null })),
+        authMe()
+          .then((user) => ({ ok: true as const, user }))
+          .catch(() => ({ ok: false as const, user: null })),
       ])
       if (cancelled || ticket !== requestId) return
-      if (nextDoc) {
-        setDoc(nextDoc)
-        writeCachedMaintenanceEnabled(nextDoc.enabled)
+      if (maintenanceResult.ok) {
+        setDoc(maintenanceResult.doc)
+        writeCachedMaintenanceEnabled(maintenanceResult.doc.enabled)
       }
-      setIsAdmin(Boolean(me))
+      if (authResult.ok) setIsAdmin(Boolean(authResult.user))
       setChecked(true)
     }
 
@@ -56,12 +67,11 @@ export function MaintenanceGate({ children }: { children: ReactNode }) {
   const previewRequested = isMaintenancePreview(location.search)
   const enabled = doc ? doc.enabled : cachedOn
 
-  if (!checked && previewRequested && !cachedOn) {
+  if (!checked && (cachedOn || previewRequested || !holdExpired)) {
+    if (cachedOn) {
+      return <MaintenanceScreen doc={doc ?? { ...DEFAULT_MAINTENANCE, enabled: true }} />
+    }
     return <div className="maintenance-boot" aria-hidden />
-  }
-
-  if (!checked && cachedOn && !previewRequested) {
-    return <MaintenanceScreen doc={doc ?? { ...DEFAULT_MAINTENANCE, enabled: true }} />
   }
 
   const showMaintenance = (enabled && (!isAdmin || previewRequested)) || (!enabled && isAdmin && previewRequested)

@@ -39,10 +39,29 @@ const BY_PATH: Record<string, string> = {
   [PATH.stories]: NEWS,
 }
 
+const BANNER_CACHE_KEY = 'khayah-page-hero-banners'
+
+function readCachedCustomByPath(): Record<string, string> {
+  if (typeof sessionStorage === 'undefined') return {}
+  try {
+    const raw = sessionStorage.getItem(BANNER_CACHE_KEY)
+    if (!raw) return {}
+    const parsed = JSON.parse(raw) as unknown
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return {}
+    const next: Record<string, string> = {}
+    for (const [key, value] of Object.entries(parsed)) {
+      if (typeof value === 'string' && value.trim()) next[key] = value.trim()
+    }
+    return next
+  } catch {
+    return {}
+  }
+}
+
 /** 관리자에서 올린 페이지별 배너. 비어 있으면 BY_PATH 기본값을 씀 */
-let customByPath: Record<string, string> = {}
-/** 첫 응답 전에는 기본 이미지를 그리지 않는다. 페이지 전환 때 예전 배너가 깜빡이지 않게 */
-let bannersResolved = false
+let customByPath: Record<string, string> = readCachedCustomByPath()
+/** 첫 응답 전에는 기본 이미지를 그리지 않는다. 새로고침은 직전 배너를 바로 쓴다. */
+let bannersResolved = Object.keys(customByPath).length > 0
 
 export function setPageHeroImageOverrides(images: Record<string, string> | null | undefined): void {
   const next: Record<string, string> = {}
@@ -54,6 +73,11 @@ export function setPageHeroImageOverrides(images: Record<string, string> | null 
   }
   customByPath = next
   bannersResolved = true
+  try {
+    sessionStorage.setItem(BANNER_CACHE_KEY, JSON.stringify(next))
+  } catch {
+    /* private mode */
+  }
 }
 
 function custom(pathKey: string): string | undefined {
