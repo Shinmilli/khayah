@@ -1,7 +1,6 @@
 import { useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { splitLocalePath, type Locale } from '../../i18n/locale'
-import { SITE_NAME } from '../../constants'
 import '../../styles/maintenance.css'
 import {
   searchWithoutMaintenancePreview,
@@ -13,8 +12,8 @@ const LOGO_SRC = '/images/logo/khayah_logo.png'
 const COPY = {
   ko: {
     eyebrow: '점검 안내',
-    org: '사단법인 카야 인터내셔널',
-    logoAlt: '카야 인터내셔널',
+    org: '사단법인 카야인터내셔널',
+    logoAlt: '카야인터내셔널',
   },
   en: {
     eyebrow: 'MAINTENANCE',
@@ -44,11 +43,11 @@ export function MaintenanceScreen({
   useEffect(() => {
     if (embedded) return
     const previous = document.title
-    document.title = `${title} | ${SITE_NAME}`
+    document.title = `${title} | ${copy.org}`
     return () => {
       document.title = previous
     }
-  }, [embedded, title])
+  }, [copy.org, embedded, title])
 
   return (
     <div

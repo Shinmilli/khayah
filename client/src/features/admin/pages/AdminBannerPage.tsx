@@ -285,7 +285,7 @@ export function AdminBannerPage() {
                   </label>
                   <AdminMediaUpload
                     label="배너 배경 이미지 (한·영 공통)"
-                    hint="16:9 권장 · 업로드 후 「저장」을 누르면 홈에 반영됩니다."
+                    hint="가로 2640 × 세로 1200(2.2:1) 권장. 글자는 넣지 않습니다. 업로드 후 「저장」을 누르면 홈에 반영됩니다."
                     variant="image"
                     layout="wide"
                     value={selected.image?.trim() ? selected.image : null}
