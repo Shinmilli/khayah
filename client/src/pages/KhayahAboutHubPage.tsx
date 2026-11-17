@@ -94,7 +94,7 @@ export function KhayahAboutHubPage() {
 
       <div className={`khayah-about-hub__inner${locale === 'ko' ? ' khayah-about-hub__inner--flush' : ''}`}>
         <div className="khayah-about-hub__panel">
-          {(activeTab === 'intro' || activeTab === 'ci') &&
+          {introView &&
             (locale === 'ko' ? (
               <>
                 <KayaBoundHtml className="the_content_wrapper page-body khayah-about-hub__html" html={introHtml} />
