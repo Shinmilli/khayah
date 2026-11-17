@@ -7,13 +7,20 @@ const DOCUMENT_KEY = 'hero-banner'
 export type HeroBannerLocaleCopy = {
   alt: string
   lines: string[]
+  smallLine?: string
 }
+
+export type HeroBannerButton = { label: string; href: string }
 
 export type HeroBannerSlide = {
   id: string
   order: number
   enabled: boolean
   image: string
+  mobileImage: string
+  align: 'left' | 'center'
+  dim: 'weak' | 'mid' | 'strong'
+  buttons: HeroBannerButton[]
   locales: {
     ko: HeroBannerLocaleCopy
     en: HeroBannerLocaleCopy
@@ -29,8 +36,20 @@ export type HeroBannerPublicSlide = {
   id: string
   order: number
   image: string
+  mobileImage: string
+  align: 'left' | 'center'
+  dim: 'weak' | 'mid' | 'strong'
+  buttons: HeroBannerButton[]
   alt: string
   lines: string[]
+  smallLine: string
+}
+
+const KO_SMALL_LINE = '교육으로 사람을 세우는 국제개발협력 NGO, 카야인터내셔널'
+
+function readSmallLine(v: unknown, whenMissing: string): string {
+  if (typeof v !== 'string') return whenMissing
+  return v.trim().slice(0, 200)
 }
 
 export type HeroLocale = 'ko' | 'en'
@@ -43,6 +62,7 @@ function validateLocaleCopy(v: unknown): v is HeroBannerLocaleCopy {
   if (!isPlainObject(v)) return false
   if (typeof v.alt !== 'string') return false
   if (!Array.isArray(v.lines) || !v.lines.every((line) => typeof line === 'string')) return false
+  if (v.smallLine != null && typeof v.smallLine !== 'string') return false
   return true
 }
 
@@ -79,14 +99,23 @@ function normalizeDocument(doc: HeroBannerDocument): HeroBannerDocument {
         order: slide.order,
         enabled: slide.enabled,
         image: normalizeImage(slide.image),
+        mobileImage: normalizeImage(typeof slide.mobileImage === 'string' ? slide.mobileImage : ''),
+        align: (slide.align === 'center' ? 'center' : 'left') as 'left' | 'center',
+        dim: (slide.dim === 'weak' ? 'weak' : slide.dim === 'strong' ? 'strong' : 'mid') as 'weak' | 'mid' | 'strong',
+        buttons: (Array.isArray(slide.buttons) ? slide.buttons : []).slice(0, 2).map((row) => ({
+          label: typeof row?.label === 'string' ? row.label.trim().slice(0, 40) : '',
+          href: typeof row?.href === 'string' ? row.href.trim().slice(0, 400) : '',
+        })),
         locales: {
           ko: {
             alt: slide.locales.ko.alt.trim().slice(0, 200),
             lines: slide.locales.ko.lines.map((l) => l.trimEnd()).slice(0, 8),
+            smallLine: readSmallLine(slide.locales.ko.smallLine, KO_SMALL_LINE),
           },
           en: {
             alt: slide.locales.en.alt.trim().slice(0, 200),
             lines: slide.locales.en.lines.map((l) => l.trimEnd()).slice(0, 8),
+            smallLine: readSmallLine(slide.locales.en.smallLine, ''),
           },
         },
       }))
@@ -114,8 +143,13 @@ export async function readHeroBannerForLocale(locale: HeroLocale): Promise<HeroB
       id: s.id,
       order: s.order,
       image: s.image,
+      mobileImage: s.mobileImage,
+      align: s.align,
+      dim: s.dim,
+      buttons: s.buttons.filter((button) => button.label && button.href),
       alt: s.locales[locale].alt,
       lines: s.locales[locale].lines.map((line) => line.trimEnd()).filter((line) => line.length > 0),
+      smallLine: s.locales[locale].smallLine ?? (locale === 'ko' ? KO_SMALL_LINE : ''),
     }))
 }
 

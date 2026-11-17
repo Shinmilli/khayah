@@ -103,12 +103,8 @@ export function AdminMaintenancePage() {
 
       {error ? <p className="admin-banner admin-banner--error">{error}</p> : null}
       {savedAt ? <p className="admin-banner admin-banner--ok">{savedAt}에 저장했습니다.</p> : null}
-      {doc.enabled ? (
-        <p className="admin-banner admin-banner--error">
-          {savedEnabled
-            ? '점검 모드가 켜져 있습니다. 로그인하지 않은 방문자는 지금 점검 화면만 봅니다.'
-            : '저장하면 방문자에게 바로 적용됩니다.'}
-        </p>
+      {doc.enabled && !savedEnabled ? (
+        <p className="admin-banner admin-banner--error">저장하면 방문자에게 바로 적용됩니다.</p>
       ) : null}
 
       <section className="admin-panel" aria-labelledby="maintenance-toggle-heading">

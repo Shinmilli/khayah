@@ -17,7 +17,13 @@ export async function adminListPosts(req: Request, res: Response) {
     const page = Math.max(1, parseInt(req.query.page as string) || 1)
     const perPage = Math.min(100, Math.max(1, parseInt(req.query.perPage as string) || 20))
     const kind = typeof req.query.kind === 'string' ? req.query.kind : undefined
-    const result = await adminPostsService.list({ page, perPage, kind })
+    const q = typeof req.query.q === 'string' ? req.query.q : undefined
+    const result = await adminPostsService.list({
+      page,
+      perPage,
+      kind,
+      q,
+    } as Parameters<typeof adminPostsService.list>[0])
     res.json(result)
   } catch (e) {
     console.error(e)

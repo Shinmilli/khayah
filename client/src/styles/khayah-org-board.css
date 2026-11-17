@@ -4,17 +4,17 @@
 }
 
 .khayah-org-chart__lead {
-  margin: 0 auto 1.5rem;
-  max-width: 40rem;
-  line-height: 1.65;
-  color: #444;
-  font-size: 0.98rem;
+  margin: 20px auto 0;
+  max-width: 960px;
+  line-height: 1.75;
+  color: #5c5650;
+  font-size: 17px;
   text-align: center;
 }
 
 .khayah-org-chart__figure {
-  margin: 0 auto;
-  max-width: min(520px, 100%);
+  margin: 48px auto 0;
+  max-width: min(620px, 100%);
 }
 
 .khayah-org-chart__img {
@@ -45,24 +45,58 @@
 
 .khayah-board-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  border-left: 1px solid #cfd6dc;
-  border-right: 1px solid #cfd6dc;
-  border-top: 2px solid #8a96a3;
-  border-bottom: 2px solid #8a96a3;
-  background: #fff;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  border: 0;
+  background: transparent;
+}
+
+.kaya-people .khayah-board-cell {
+  text-align: left;
+}
+
+.kaya-people__group {
+  background: #eaeae6;
+  border-radius: 20px;
+  padding: 56px 40px 64px;
+}
+
+.kaya-people .kaya-people__group + .kaya-people__group {
+  margin-top: 80px;
+}
+
+.kaya-people__group:first-of-type {
+  border-top: 46px solid #b11e3b;
+}
+
+.kaya-people__group#experts {
+  border-top: 46px solid #2f2b28;
+}
+
+.kaya-people__group:first-of-type .khayah-board-name span {
+  color: #d2617d;
+}
+
+.kaya-people__group#experts .khayah-board-name span {
+  color: #9c7c84;
 }
 
 .khayah-board-cell {
-  padding: 1.1rem 1.15rem 1.15rem;
-  border-right: 1px solid #e8ecf0;
-  border-bottom: 1px solid #e8ecf0;
-  min-height: 4.5rem;
+  padding: 22px 18px;
+  border: 0;
+  border-radius: 14px;
+  min-height: 0;
   box-sizing: border-box;
+  background: #fff;
 }
 
-.khayah-board-cell:nth-child(2n) {
-  border-right: none;
+.khayah-board-name span {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #b11e3b;
 }
 
 .khayah-board-cell--empty {
@@ -85,13 +119,15 @@
   line-height: 1.5;
 }
 
+@media (max-width: 980px) {
+  .khayah-board-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
 @media (max-width: 640px) {
   .khayah-board-grid {
     grid-template-columns: 1fr;
-  }
-
-  .khayah-board-cell {
-    border-right: none;
   }
 
   .khayah-board-cell--empty {
@@ -143,6 +179,218 @@
 
 .khayah-org-board-merged .khayah-org-chart {
   padding-top: 0;
+}
+
+.kaya-org-page .kaya-org {
+  width: min(1120px, 100%);
+  margin: 0 auto;
+  padding: 104px 24px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.kaya-org-page .kaya-org .kaya-display {
+  font-size: clamp(26px, 3.4vw, 40px);
+  line-height: 1.32;
+}
+
+.kaya-org-page .kaya-people {
+  width: 100%;
+  margin: 0;
+  padding: 104px 0 120px;
+  text-align: left;
+  background: #fbf8f1;
+}
+
+.kaya-org-page .kaya-people::before {
+  content: none;
+}
+
+.kaya-org-page .kaya-people__frame {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 32px;
+  box-sizing: border-box;
+}
+
+.kaya-org-page .kaya-people__head {
+  max-width: 1120px;
+  margin: 0 auto 64px;
+}
+
+.kaya-org-page .kaya-people__head .kaya-display {
+  font-size: clamp(26px, 3.2vw, 36px);
+}
+
+.kaya-org-page .kaya-people__panel {
+  background: #eaeae6;
+  border-radius: 20px;
+  padding: 56px 40px 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 80px;
+}
+
+.kaya-org-page .kaya-people__group,
+.kaya-org-page .kaya-people .kaya-people__group + .kaya-people__group {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.kaya-org-page .kaya-people__hd {
+  position: relative;
+  background: #fff;
+  padding: 28px 48px;
+  text-align: center;
+  margin: 0 auto;
+  max-width: 420px;
+  box-sizing: border-box;
+}
+
+.kaya-org-page .kaya-people__group--experts .kaya-people__hd {
+  max-width: 460px;
+}
+
+.kaya-org-page .kaya-people__tri {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  width: 0;
+  height: 0;
+  border-right: 46px solid transparent;
+  border-top: 46px solid #b11e3b;
+}
+
+.kaya-org-page .kaya-people__group--experts .kaya-people__tri {
+  border-top-color: #2f2b28;
+}
+
+.page-body .kaya-org-page .kaya-people__hd h3 {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 800;
+  color: #2f2b28;
+}
+
+.kaya-org-page .kaya-people__en {
+  margin: 6px 0 0;
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  color: #7a736b;
+}
+
+.kaya-org-page .kaya-people__vline {
+  width: 2px;
+  height: 36px;
+  background: #2f2b28;
+  margin: 0 auto;
+}
+
+.kaya-org-page .kaya-people__rule {
+  margin: 0 calc((100% - 60px) / 8);
+  border-top: 2px solid #2f2b28;
+}
+
+.kaya-org-page .kaya-people__dots {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.kaya-org-page .kaya-people__dots span {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #2f2b28;
+  margin: -7px auto 14px;
+}
+
+.kaya-org-page .khayah-board-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.kaya-org-page .khayah-board-cell {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  min-height: 150px;
+  padding: 26px 22px;
+  border-radius: 0;
+  background: #fff;
+}
+
+.kaya-org-page .khayah-board-cell::before {
+  content: '';
+  flex: 0 0 5px;
+  width: 5px;
+  align-self: stretch;
+  border-radius: 2px;
+  background: #d2617d;
+}
+
+.kaya-org-page .kaya-people__group--experts .khayah-board-cell::before {
+  background: #9c7c84;
+}
+
+#Content.type-readable .kaya-org-page .khayah-board-name,
+.kaya-org-page .khayah-board-name {
+  font-size: 21px;
+  font-weight: 800;
+  line-height: 1.35;
+  color: #2f2b28;
+}
+
+#Content.type-readable .kaya-org-page .khayah-board-role,
+#Content.type-readable .kaya-org-page .khayah-org-chart__lead {
+  font-size: 14px;
+}
+
+#Content.type-readable .kaya-org-page .khayah-org-chart__lead {
+  font-size: 17px;
+}
+
+.kaya-org-page .kaya-people__group .khayah-board-name span {
+  display: block;
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: #b11e3b;
+}
+
+.kaya-org-page #experts .khayah-board-name span {
+  color: #9c7c84;
+}
+
+.kaya-org-page .khayah-board-role {
+  margin: 10px 0 0;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.6;
+  color: #7a736b;
+}
+
+@media (max-width: 760px) {
+  .kaya-org-page .kaya-people__rule,
+  .kaya-org-page .kaya-people__dots,
+  .kaya-org-page .kaya-people__vline {
+    display: none;
+  }
+
+  .kaya-org-page .khayah-board-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .kaya-org-page .khayah-board-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 @media (max-width: 720px) {

@@ -10,56 +10,56 @@
       "year": 2025,
       "incomeSegments": [
         {
-          "id": "misc",
-          "percent": 25.2,
-          "color": "#2a9d8f",
-          "labels": {
-            "ko": "기타수입",
-            "en": "Other income"
-          }
-        },
-        {
-          "id": "brought_forward",
-          "percent": 14.11,
-          "color": "#e9c46a",
-          "labels": {
-            "ko": "전기이월금",
-            "en": "Brought forward"
-          }
-        },
-        {
           "id": "subsidy",
           "percent": 41.18,
-          "color": "#8b1538",
+          "color": "#2f2b28",
           "labels": {
             "ko": "보조금",
             "en": "Subsidies"
           }
         },
         {
+          "id": "misc",
+          "percent": 25.2,
+          "color": "#9c7c84",
+          "labels": {
+            "ko": "기타수입",
+            "en": "Other income"
+          }
+        },
+        {
           "id": "donation",
           "percent": 19.51,
-          "color": "#457b9d",
+          "color": "#b11e3b",
           "labels": {
             "ko": "기부금",
             "en": "Donations"
+          }
+        },
+        {
+          "id": "brought_forward",
+          "percent": 14.11,
+          "color": "#d9cdb4",
+          "labels": {
+            "ko": "전기이월금",
+            "en": "Brought forward"
           }
         }
       ],
       "expenseSegments": [
         {
-          "id": "fundraising",
-          "percent": 0.04,
-          "color": "#5c1a2e",
+          "id": "programs",
+          "percent": 88.53,
+          "color": "#2f2b28",
           "labels": {
-            "ko": "모금비용",
-            "en": "Fundraising costs"
+            "ko": "사업수행비용",
+            "en": "Program expenses"
           }
         },
         {
           "id": "carried_next",
           "percent": 6.04,
-          "color": "#e9c46a",
+          "color": "#d9cdb4",
           "labels": {
             "ko": "차기이월금",
             "en": "Carried forward"
@@ -68,19 +68,19 @@
         {
           "id": "admin",
           "percent": 5.39,
-          "color": "#8b1538",
+          "color": "#b11e3b",
           "labels": {
             "ko": "일반관리비",
             "en": "General administration"
           }
         },
         {
-          "id": "programs",
-          "percent": 88.53,
-          "color": "#457b9d",
+          "id": "fundraising",
+          "percent": 0.04,
+          "color": "#a39a9c",
           "labels": {
-            "ko": "사업수행비용",
-            "en": "Program expenses"
+            "ko": "모금비용",
+            "en": "Fundraising costs"
           }
         }
       ],

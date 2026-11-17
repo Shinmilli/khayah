@@ -22,8 +22,8 @@ export const FOOTER_TOP_LINKS = [
   { key: 'acrc', href: ACRC_URL },
 ] as const
 
-/** 푸터 브랜드 로고(다크그레이). 없으면 `FOOTER_LOGO_FALLBACK` + CSS 보정 */
-export const FOOTER_LOGO_DARK = '/images/logo/khayahLogoDarkgray.png'
+/** 푸터 브랜드 로고(흰색). 없으면 `FOOTER_LOGO_FALLBACK`을 흰색으로 보정 */
+export const FOOTER_LOGO_DARK = '/images/logo/khayahLogoWhite.png'
 export const FOOTER_LOGO_FALLBACK = '/images/logo/khayah_logo.png'
 
 /** 푸터 본문(주소·연락처) — 줄바꿈 순서 그대로 표시 */

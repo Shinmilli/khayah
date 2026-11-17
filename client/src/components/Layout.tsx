@@ -15,7 +15,7 @@ function keepsCompactType(pathname: string): boolean {
   const { pathnameWithoutLocale } = splitLocalePath(pathname)
   const path = pathnameWithoutLocale.replace(/\/+$/, '') || '/'
   if (path === '/') return true
-  if (path === '/about/financial-report') return true
+  if (path === '/about/transparency' || path === '/about/financial-report') return true
   if (path === '/business' || path.startsWith('/business/')) return true
   return false
 }
@@ -41,8 +41,12 @@ function LayoutInner() {
   useScrollReveal()
   const { pathname } = useLocation()
   const readable = !keepsCompactType(pathname)
+  const { pathnameWithoutLocale } = splitLocalePath(pathname)
+  const path = pathnameWithoutLocale.replace(/\/+$/, '') || '/'
+  const theme =
+    path === '/business' || path.startsWith('/business/') ? 'theme-business' : 'theme-kaya'
   return (
-    <div id="Wrapper" className="site">
+    <div id="Wrapper" className={`site ${theme}`}>
       <ScrollToTop />
       <LegacyPathRedirect />
       <LegacyPathRedirect />

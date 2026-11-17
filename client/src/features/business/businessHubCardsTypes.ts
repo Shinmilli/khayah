@@ -60,7 +60,7 @@ export const DEFAULT_BUSINESS_HUB_CARDS: BusinessHubCardsDocument = {
         ko: {
           title: '교육',
           description:
-            '카야는 기초 학습 역량과 진로 탐색과 미래 역량을 함께 키우는 교육 프로그램을 운영하고, 현지 교육의 질을 개선합니다. 이를 통해 주민 스스로 변화의 필요성과 가능성을 인식하고 지역사회의 성장에 주도적으로 참여할 역량과 기반을 만들어갑니다.',
+            '기초학습, 진로탐색, 미래역량을 함께 키우는 교육을 운영하고 현지 교육의 질을 높입니다. 주민이 지역사회 성장에 주도적으로 참여할 기반을 마련합니다.',
           buttonLabel: '자세히 보기',
         },
         en: {
@@ -80,9 +80,9 @@ export const DEFAULT_BUSINESS_HUB_CARDS: BusinessHubCardsDocument = {
       icon: 'volunteer',
       locales: {
         ko: {
-          title: '해외봉사단 파견',
+          title: '해외봉사단',
           description:
-            '카야는 국내 청(소)년 및 기업 등 다양한 분야 경험과 열정을 가진 참여자들이 현지 지역사회 과제를 직접 이해하고, 함께 해결방안을 찾는 국제협력활동 기회를 제공합니다. 현지에 필요한 실천 모델을 제안하고 실행하며 지역사회의 지속가능한 변화와 참여자의 동반 성장이 함께 이뤄지도록 합니다.',
+            '국내 청소년·청년과 기업 등 다양한 참여자가 현지의 과제를 이해하고 함께 해결방안을 찾는 국제협력의 기회를 제공합니다.',
           buttonLabel: '자세히 보기',
         },
         en: {
@@ -98,13 +98,13 @@ export const DEFAULT_BUSINESS_HUB_CARDS: BusinessHubCardsDocument = {
       hub: 'overseas',
       order: 3,
       enabled: true,
-      href: '/business/projects',
+      href: '/business/overseas/projects',
       icon: 'projects',
       locales: {
         ko: {
-          title: '진행사업',
+          title: '해외 진행사업',
           description:
-            '카야의 모든 해외 프로젝트는 ‘사람’ 곧 참여자와 지역의 필요를 중심으로 지역과 주민의 변화를 이끌어 ‘궁극적 자립’에 이를 때까지를 목표로 연구하며 진행하고 있습니다.',
+            '참여자와 지역의 필요를 중심으로 기획하며, 주민과 지역사회가 스스로 변화를 이어갈 수 있는 자립 기반을 마련합니다.',
           buttonLabel: '자세히 보기',
         },
         en: {
@@ -125,8 +125,7 @@ export const DEFAULT_BUSINESS_HUB_CARDS: BusinessHubCardsDocument = {
       locales: {
         ko: {
           title: '교육',
-          description:
-            '카야는 소외된 이웃이 사회와 자연의 일원으로의 성취 방법과 가치를 지향하며 성장할 수 있도록 혁신적인 교육 사업을 진행합니다.',
+          description: '한 사람이 자신의 가능성과 가치를 발견하고, 주체적으로 성장하도록 돕습니다.',
           buttonLabel: '자세히 보기',
         },
         en: {
@@ -142,13 +141,12 @@ export const DEFAULT_BUSINESS_HUB_CARDS: BusinessHubCardsDocument = {
       hub: 'domestic',
       order: 2,
       enabled: true,
-      href: '/business/projects',
+      href: '/business/domestic/projects',
       icon: 'people',
       locales: {
         ko: {
-          title: '진행사업',
-          description:
-            '카야의 모든 국내 프로젝트는 그 속에 ‘사람’과 ‘자연’ 그리고 ‘미래’가 모두 담기도록 연구하며 진행하고 있습니다.',
+          title: '국내 진행사업',
+          description: "모든 국내사업은 '사람'과 '자연' 그리고 '미래'가 담기도록 기획하고 실행합니다.",
           buttonLabel: '자세히 보기',
         },
         en: {

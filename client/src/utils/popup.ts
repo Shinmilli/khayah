@@ -10,6 +10,8 @@ export type PopupItem = {
   buttonEnabled?: boolean
   buttonLabels?: PopupButtonLabels
   buttonUrl?: string
+  startsOn?: string
+  endsOn?: string
 }
 
 export type PopupConfig = {
@@ -86,11 +88,24 @@ export function getDefaultPopupItem(): PopupItem {
     buttonEnabled: false,
     buttonLabels: { ...DEFAULT_BUTTON_LABELS },
     buttonUrl: '',
+    startsOn: '',
+    endsOn: '',
   }
 }
 
 export function getDefaultPopupConfig(): PopupConfig {
   return { items: [getDefaultPopupItem()] }
+}
+
+function dateField(value: unknown): string {
+  return typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value) ? value : ''
+}
+
+function popupInPeriod(item: PopupItem, today = new Date()): boolean {
+  const stamp = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`
+  if (item.startsOn && stamp < item.startsOn) return false
+  if (item.endsOn && stamp > item.endsOn) return false
+  return true
 }
 
 function coerceButtonLabels(raw: Partial<PopupItem> & { buttonLabel?: string }): PopupButtonLabels {
@@ -121,6 +136,8 @@ function coerceItem(raw: Partial<PopupItem> & { buttonLabel?: string }): PopupIt
     buttonEnabled: Boolean(raw.buttonEnabled),
     buttonLabels: coerceButtonLabels(raw),
     buttonUrl: resolvePopupExternalUrl(buttonUrl),
+    startsOn: dateField(raw.startsOn),
+    endsOn: dateField(raw.endsOn),
   }
 }
 
@@ -180,7 +197,7 @@ export function clearStoredPopupConfig() {
 export function buildVisiblePopupQueue(config: PopupConfig): PopupItem[] {
   const sessionSkip = readSessionDismissedIds()
   return config.items.filter(
-    (p) => p.enabled && p.imageUrl.trim() && !isPopupHiddenToday(p.id) && !sessionSkip.has(p.id),
+    (p) => p.enabled && p.imageUrl.trim() && popupInPeriod(p) && !isPopupHiddenToday(p.id) && !sessionSkip.has(p.id),
   )
 }
 

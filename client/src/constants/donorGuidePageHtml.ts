@@ -1,237 +1,408 @@
 import { NANUM_DONATE_URL } from './nanumDonate'
 
-/** 후원 안내 정적 페이지 본문 (경로: 후원/후원-안내) */
+/**
+ * 후원 안내·후원 방법 (국문).
+ * 후원하기·신청서 버튼은 NANUM_DONATE_URL 하나.
+ * 계좌는 후원 방법에만 둔다.
+ * ‘함께 만든 변화’는 hidden.
+ *
+ * 시안 사진
+ * - 후원 안내 상단 → /images/donor-guide/guide-class.jpg
+ * - 후원이 닿는 곳 → /images/donor-guide/guide-place.jpg
+ * - 함께 만든 변화 → /images/donor-guide/guide-story.jpg (숨김)
+ * - 신청 절차 STEP 1 → /images/donor-guide/step1-member.png
+ * - 신청 절차 STEP 2 → /images/donor-guide/step2-pay.png
+ * - 신청 절차 STEP 3 → /images/donor-guide/step3-sign.png
+ */
 export const DONOR_GUIDE_PAGE_HTML = `
-<div class="sg-page">
+<div class="sup sup--guide">
+  <div class="sup-wrap">
+    <p class="sup-crumb">홈 › 후원 › <b>후원 안내</b></p>
+    <section class="sup-hero" aria-label="후원 소개">
+      <div class="sup-hero__copy">
+        <span class="sup-kicker">후원 안내</span>
+        <h1 class="sup-title" data-k="guide.title" data-k-mode="html">한 번의 도움보다,<br>스스로 서는 힘을 함께 키웁니다.</h1>
+        <p data-k="guide.lead" data-k-mode="html">후원자님의 나눔이 어디에, 어떻게 쓰이는지<br>이 페이지에서 투명하게 알려 드립니다.</p>
+        <div class="sup-actions">
+          <a class="sup-btn" href="${NANUM_DONATE_URL}" target="_blank" rel="noopener"><span data-k="donate.label">지금 바로 후원하기 ♥</span></a>
+          <a class="sup-btn sup-btn--line" href="/support/method">후원 방법 보기</a>
+        </div>
+      </div>
+      <figure class="sup-photo sup-hero__photo">
+        <img data-k="guide.photo" data-k-mode="src" data-k-alt="guide.photoAlt" src="/images/donor-guide/guide-class.jpg" alt="교실에서 공부하는 아이들" />
+      </figure>
+    </section>
+  </div>
+
+  <section class="sup-band" aria-labelledby="sup-where">
+    <div class="sup-wrap">
+      <div class="sup-center">
+        <span class="sup-kicker">WHERE YOUR GIFT GOES</span>
+        <h2 id="sup-where" class="sup-h2" data-k="guide.whereTitle">후원이 닿는 곳</h2>
+        <p data-k="guide.whereLead">후원금은 외부 지원만으로는 채우기 어려운 해외 교육 현장에 쓰입니다.</p>
+      </div>
+      <div class="sup-split">
+        <article class="sup-place">
+          <img data-k="guide.placePhoto" data-k-mode="src" data-k-alt="guide.placeAlt" src="/images/donor-guide/guide-place.jpg" alt="[샘플] 미얀마 교육 현장" />
+          <div>
+            <span class="sup-tag" data-k="guide.placeTag">지금 후원이 가장 필요한 곳 · 미얀마</span>
+            <h3 data-k="guide.placeTitle">미얀마 양곤 · 만달레이</h3>
+            <p data-k="guide.placeBody">현재 카야의 후원금은 대부분 미얀마 지부의 교육 사업에 쓰이고 있습니다. 양곤 Education Center와 만달레이 지역에서 현지 지부가 직접 아이들을 만나고 있습니다.</p>
+          </div>
+        </article>
+        <div class="sup-side">
+          <div class="sup-item">
+            <span class="sup-ico" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B11E3B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"></path><path d="M5 10v10h14V10"></path><path d="M10 20v-5h4v5"></path></svg></span>
+            <div>
+              <h3 data-k="guide.item.0.title">배움의 공간 운영</h3>
+              <p data-k="guide.item.0.body">교육센터와 아동친화공간(CFS)의 운영비, 교재와 학습 환경을 마련합니다.</p>
+            </div>
+          </div>
+          <div class="sup-item">
+            <span class="sup-ico" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B11E3B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h6a2 2 0 012 2v12a2 2 0 00-2-2H4z"></path><path d="M20 5h-6a2 2 0 00-2 2v12a2 2 0 012-2h6z"></path></svg></span>
+            <div>
+              <h3 data-k="guide.item.1.title">수준에 맞춘 학습 지원</h3>
+              <p data-k="guide.item.1.body">Dream Seekers 독서클럽, 수준별 맞춤 학습지, 방과후 학습으로 아이마다 필요한 배움을 채웁니다.</p>
+            </div>
+          </div>
+          <div class="sup-item">
+            <span class="sup-ico" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B11E3B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.4-7-10a4 4 0 017-2.6A4 4 0 0119 11c0 5.6-7 10-7 10z"></path></svg></span>
+            <div>
+              <h3 data-k="guide.item.2.title">재난 이후 회복 지원</h3>
+              <p data-k="guide.item.2.body">지진으로 일상이 흔들린 아이들이 마음의 안정을 되찾고 학업을 이어가도록 돕습니다.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sup-impact" data-sec="guide.impact" hidden aria-labelledby="sup-impact">
+    <div class="sup-wrap">
+      <div class="sup-head">
+        <div>
+          <span class="sup-kicker">TOGETHER WITH YOU</span>
+          <h2 id="sup-impact" class="sup-h2">후원으로 함께 만든 변화</h2>
+        </div>
+        <a class="sup-more" href="#sup-impact">카야의 변화 더 보기 →</a>
+      </div>
+      <div class="sup-cards">
+        <div class="sup-card"><b>— 명</b><span>함께한 사람들</span><span>People Reached</span></div>
+        <div class="sup-card"><b>— 명</b><span>참여 아동·청소년·청년</span><span>Students Reached</span></div>
+        <div class="sup-card"><b>— 곳</b><span>협력기관</span><span>Partners</span></div>
+        <div class="sup-card"><b>— 명</b><span>참여 교사</span><span>Teachers Trained</span></div>
+      </div>
+      <p class="sup-note">집계 기간 [YYYY.MM ~ YYYY.MM] · 누적 기준 · 최종 갱신 [YYYY.MM.DD]</p>
+      <article class="sup-split">
+        <img src="/images/donor-guide/guide-story.jpg" alt="[샘플] 변화 이야기 대표 사진" />
+        <div>
+          <span class="sup-tag">변화의 이야기 · [국가 / 사업명]</span>
+          <h3>[변화 중심 제목 — 예: 배움을 이어가게 된 한 학생의 이야기]</h3>
+          <p>[2~3문장 사례 요약. 참여 전의 상황, 카야와 함께한 활동, 지금 달라진 모습을 짧게 소개합니다.]</p>
+          <a class="sup-more" href="#sup-impact">변화의 이야기 보기 →</a>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="sup-band sup-band--sand" aria-labelledby="sup-open">
+    <div class="sup-wrap">
+      <div class="sup-head">
+        <div>
+          <span class="sup-kicker">TRANSPARENCY</span>
+          <h2 id="sup-open" class="sup-h2">후원금, 투명하게 운영합니다</h2>
+        </div>
+        <a class="sup-more" href="/about/transparency">투명경영 바로가기 →</a>
+      </div>
+      <div class="sup-cards">
+        <div class="sup-card">
+          <svg aria-hidden="true" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#B11E3B" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5M4 19h16M8 15v-4M12 15V8M16 15v-6"></path></svg>
+          <h3>기부금 모금액 및 활용실적 공개</h3>
+          <p>후원자 여러분의 소중한 기부금이 투명하게 사용될 수 있도록 연간 기부금 모금액 및 활용실적을 홈페이지에 공개합니다.</p>
+        </div>
+        <div class="sup-card">
+          <svg aria-hidden="true" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#B11E3B" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l4 4v14H7z"></path><path d="M14 3v4h4M10 12h5M10 16h5"></path></svg>
+          <h3>공익법인 결산서류 공시</h3>
+          <p>관련 법령에 따라 공익법인 결산서류를 국세청 홈택스에 공시하여 기관의 재정 운영과 회계 정보를 투명하게 공개합니다.</p>
+        </div>
+        <div class="sup-card">
+          <svg aria-hidden="true" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#B11E3B" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h14v16l-3-2-2 2-2-2-2 2-2-2-3 2z"></path><path d="M9 9h6M9 13h4"></path></svg>
+          <h3>기부금 영수증 발급</h3>
+          <p>후원자 여러분의 소중한 나눔에 대해 기부금영수증을 발급해 드리며, 국세청 연말정산 간소화를 통해 편리하게 기부 내역을 확인하실 수 있도록 지원합니다.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sup-block" id="give" aria-labelledby="sup-give">
+    <div class="sup-wrap">
+      <div class="sup-center">
+        <span class="sup-kicker">WAYS TO GIVE</span>
+        <h2 id="sup-give" class="sup-h2">나에게 맞는 후원을 선택해 주세요</h2>
+      </div>
+      <div class="sup-cards">
+        <div class="sup-card sup-card--plain">
+          <svg aria-hidden="true" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#B11E3B" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="2"></rect><path d="M3.5 10h17M8 3v4M16 3v4"></path></svg>
+          <h3 data-k="guide.give.0.title">정기후원</h3>
+          <p data-k="guide.give.0.body">매월 일정 금액을 정기적으로 후원합니다. 꾸준한 후원은 현장 활동이 끊기지 않고 이어지게 합니다.</p>
+          <span>CMS 자동이체 · 신용카드 · 휴대폰 결제</span>
+        </div>
+        <div class="sup-card sup-card--plain">
+          <svg aria-hidden="true" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#B11E3B" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg>
+          <h3 data-k="guide.give.1.title">일시후원</h3>
+          <p data-k="guide.give.1.body">지정하신 금액을 1회 후원합니다. 한 번의 나눔도 현장 활동에 소중한 힘이 됩니다.</p>
+          <span>계좌이체 · 신용카드 · 휴대폰 결제</span>
+        </div>
+        <div class="sup-card sup-card--plain">
+          <svg aria-hidden="true" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#B11E3B" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"></path></svg>
+          <h3 data-k="guide.give.2.title">기념일후원</h3>
+          <p data-k="guide.give.2.body">생일, 첫돌, 결혼기념일 등 특별한 날에 지정하신 금액을 후원합니다.</p>
+          <span>계좌이체 · 신용카드 · 휴대폰 결제</span>
+        </div>
+      </div>
+      <div class="sup-cta">
+        <h3>오늘의 나눔이 내일의 배움이 됩니다</h3>
+        <a class="sup-btn" href="${NANUM_DONATE_URL}" target="_blank" rel="noopener"><span data-k="donate.label">지금 바로 후원하기 ♥</span></a>
+        <div class="sup-safe">
+          <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B11E3B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8.3-7 10-4-1.7-7-5.5-7-10V6z"></path><path d="M9 12l2 2 4-4"></path></svg>
+          <p>후원 신청은 후원 관리 서비스 <b>'해피나눔'</b> 페이지로 이동해 안전하게 진행됩니다. CMS 자동이체·신용카드·휴대폰 결제가 모두 가능하며, 기부금 영수증은 카야인터내셔널이 발급합니다.</p>
+        </div>
+        <a class="sup-more" href="/support/method">후원 방법 자세히 보기 →</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="sup-wrap">
+    <section class="sup-contact" aria-label="후원 문의">
+      <div>
+        <h2>후원 문의</h2>
+        <p>온라인 신청이 어려우시면 전화로 문의해 주세요.</p>
+      </div>
+      <div class="sup-actions">
+        <a href="tel:07051212198">T  070-5121-2198</a>
+        <a href="mailto:khayahinternational@gmail.com">E  khayahinternational@gmail.com</a>
+      </div>
+    </section>
+  </div>
+</div>
+`
+
+export const SUPPORT_METHOD_PAGE_HTML = `
+<div class="sup sup--method">
   <div id="sg-toast" class="sg-toast" hidden role="status" aria-live="polite"></div>
-
-  <section class="sg-hero" aria-label="후원 소개">
-    <div class="sg-wrap">
-      <p class="sg-hero__lead">
-        카야는 단순 일회성지원이 아닌<br />
-        <span class="sg-hero__strong">지속적이고 자발적인 변혁</span>이<br />
-        일어날 수 있는 개발을 지원합니다.
-      </p>
+  <div class="sup-wrap">
+    <div class="sup-tabs">
+      <p class="sup-crumb">홈 › 후원 › <b>후원 방법</b></p>
+      <nav aria-label="후원 하위 메뉴">
+        <a href="/support/guide">후원 안내</a>
+        <a href="#top" aria-current="page">후원 방법</a>
+      </nav>
     </div>
-  </section>
+    <section id="top" class="sup-intro">
+      <span class="sup-kicker">SUPPORT GUIDE</span>
+      <h1 class="sup-title" data-k="method.title">후원 방법</h1>
+      <p data-k="method.lead">후원 신청부터 납부, 기부금 영수증까지 한 곳에서 안내해 드립니다.</p>
+      <nav class="sup-pills" aria-label="이 페이지 목차">
+        <a class="sup-pill" href="#happy">해피나눔 안내</a>
+        <a class="sup-pill" href="#steps">신청 절차</a>
+        <a class="sup-pill" href="#pay">납부 방법</a>
+        <a class="sup-pill" href="#receipt">후원회원 혜택·영수증</a>
+        <a class="sup-pill" href="#contact">변경·문의</a>
+      </nav>
+    </section>
+  </div>
 
-  <section class="sg-section sg-section--surface" aria-labelledby="sg-types-heading">
-    <div class="sg-wrap">
-      <h2 id="sg-types-heading" class="sg-h2">후원금 종류</h2>
-      <div class="sg-cards sg-cards--3">
-        <article class="sg-card">
-          <span class="sg-card__icon sg-card__icon--red" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01" stroke-width="2"/></span>
-          <h3 class="sg-card__title">정기후원</h3>
-          <p class="sg-card__p">매월 1회 일정 금액을 정기적으로 후원합니다.</p>
-        </article>
-        <article class="sg-card">
-          <span class="sg-card__icon sg-card__icon--red" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></span>
-          <h3 class="sg-card__title">일시후원</h3>
-          <p class="sg-card__p">지정하신 금액을 1회 후원합니다.</p>
-        </article>
-        <article class="sg-card">
-          <span class="sg-card__icon sg-card__icon--red" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M12 2l2.4 7.4h7.6l-6 4.6 2.3 7-6.3-4.6-6.3 4.6 2.3-7-6-4.6h7.6L12 2z"/></span>
-          <h3 class="sg-card__title">기념일후원</h3>
-          <p class="sg-card__p">생일, 첫돌, 결혼기념일 등의 특별한 날에 지정하신 금액을 후원합니다.</p>
-        </article>
+  <section id="happy" class="sup-band">
+    <div class="sup-wrap sup-two">
+      <div>
+        <span class="sup-kicker">01 · 해피나눔 안내</span>
+        <h2 class="sup-h2" data-k="method.happyTitle" data-k-mode="html">카야의 후원 신청은<br>'해피나눔'에서 진행됩니다</h2>
+        <p>카야는 후원 결제 전문 서비스 ‘해피나눔’의 시스템을 통해 안전하고 편리한 후원 신청 환경을 제공하고 있습니다. 결제 정보는 해당 시스템을 통해 안전하게 처리되며, 카야 홈페이지에는 후원자의 금융 정보가 저장되지 않습니다.</p>
+        <p>보내주신 소중한 후원이 의미 있는 변화로 이어질 수 있도록, 카야는 후원자님과 꾸준히 소통하며 함께하겠습니다.</p>
       </div>
-      <div class="sg-cta-row">
-        <a class="sg-btn sg-btn--primary" href="${NANUM_DONATE_URL}" target="_blank" rel="noopener noreferrer">지금 바로 후원하기♥</a>
-      </div>
-    </div>
-  </section>
-
-  <section class="sg-section" aria-labelledby="sg-accounts-heading">
-    <div class="sg-wrap">
-      <h2 id="sg-accounts-heading" class="sg-h2">카야인터내셔널 후원계좌</h2>
-      <p class="sg-note">예금주: (사)카야인터내셔널</p>
-      <dl class="sg-accounts">
-        <div class="sg-account"><dt>우리</dt><dd><span class="sg-mono">1005-403-029492</span></dd></div>
-        <div class="sg-account"><dt>농협</dt><dd><span class="sg-mono">301-1122-4444-01</span></dd></div>
-        <div class="sg-account"><dt>국민</dt><dd><span class="sg-mono">584101-01-286346</span></dd></div>
-        <div class="sg-account"><dt>신한</dt><dd><span class="sg-mono">100-034-744590</span></dd></div>
-      </dl>
-    </div>
-  </section>
-
-  <section class="sg-section" aria-labelledby="sg-apply-heading">
-    <div class="sg-wrap">
-      <h2 id="sg-apply-heading" class="sg-h2">후원 신청 및 납부 방법</h2>
-      <div class="sg-cards sg-cards--3">
-        <article class="sg-card sg-card--accent">
-          <span class="sg-card__icon sg-card__icon--blue" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></span>
-          <h3 class="sg-card__title">신청 안내</h3>
-          <ul class="sg-ul">
-            <li>후원 신청 홈페이지 또는 모바일웹을 통해서 진행합니다. <a class="sg-btn sg-btn--primary sg-btn--inline" href="${NANUM_DONATE_URL}" target="_blank" rel="noopener noreferrer">후원하기 ♥</a> 를 눌러 주세요.</li>
-            <li>회원가입: 후원 신청 시 회원가입은 자동으로 진행됩니다.</li>
-            <li>후원 납부 방법: CMS 자동이체, 신용카드, 휴대폰 결제, 계좌이체</li>
-          </ul>
-        </article>
-        <article class="sg-card sg-card--accent">
-          <span class="sg-card__icon sg-card__icon--blue" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><circle cx="17" cy="11" r="2.5"/><path d="M7 15h6M7 11h4"/></span>
-          <h3 class="sg-card__title">후원회원이 되면</h3>
-          <ul class="sg-ul">
-            <li>카야 소식지 및 연례보고서를 통해 정기적인 사업 보고와 함께 후원금의 사용처를 확인할 수 있습니다.</li>
-            <li>후원을 통해 기부금 영수증을 발급받을 수 있으며, 연말정산 시 소득공제 혜택을 받을 수 있습니다.</li>
-            <li>카야 후원자님과 함께하는 활동 및 모임에 참여할 수 있습니다.</li>
-          </ul>
-        </article>
-        <article class="sg-card sg-card--accent">
-          <span class="sg-card__icon sg-card__icon--blue" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></span>
-          <h3 class="sg-card__title">후원 추천하기</h3>
-          <p class="sg-card__p">주변 분들에게도 나눔의 기쁨을 누릴 수 있는 방법을 알려 주세요.</p>
-          <p class="sg-card__p sg-card__p--tight">아래 코드를 복사해 카톡이나 문자로 주변에 후원을 추천하실 수 있습니다.</p>
-          <button type="button" class="sg-btn sg-btn--outline" id="sg-copy-nanum">코드 복사</button>
-        </article>
+      <div>
+        <div class="sup-line"><svg aria-hidden="true" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#B11E3B" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8.3-7 10-4-1.7-7-5.5-7-10V6z"></path><path d="M9 12l2 2 4-4"></path></svg><div><b>모든 결제 수단 가능</b><p>CMS 자동이체, 신용카드, 휴대폰 결제 등 다양한 방법으로 간편하게 후원하실 수 있습니다.</p></div></div>
+        <div class="sup-line"><svg aria-hidden="true" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#B11E3B" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"></path></svg><div><b>회원가입은 자동으로</b><p>후원 신청 시 입력하신 정보를 바탕으로 후원회원 등록이 함께 진행됩니다.</p></div></div>
+        <div class="sup-line"><svg aria-hidden="true" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#B11E3B" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h14v16l-3-2-2 2-2-2-2 2-2-2-3 2z"></path><path d="M9 9h6M9 13h4"></path></svg><div><b>기부금 영수증 발급</b><p>후원금에 대한 기부금 영수증 발급이 가능하며, 국세청 연말정산 간소화 서비스(주민등록정보 제공자)를 통해서도 기부 내역을 확인하실 수 있습니다.</p></div></div>
       </div>
     </div>
   </section>
 
-  <section class="sg-section sg-section--surface" aria-labelledby="sg-payrules-heading">
-    <div class="sg-wrap">
-      <div class="sg-paynote">
-        <span class="sg-paynote__bulb" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/></svg></span>
-        <div class="sg-paynote__body">
-          <h2 id="sg-payrules-heading" class="sg-h2 sg-paynote__title">후원 납부 방법</h2>
-          <ul class="sg-ul sg-ul--plain">
-            <li><strong>정기 결제 시</strong> CMS 자동이체, 카드 결제, 휴대폰 결제</li>
-            <li><strong>기념일 후원 및 일시 결제 시</strong> 계좌이체, 카드 결제, 휴대폰 결제</li>
-            <li><strong>개인정보 변경</strong> 카야의 소식 및 정보를 알려 드릴 수 있도록 개인정보 변경 시 꼭 알려 주세요.</li>
+  <section id="steps" class="sup-block">
+    <div class="sup-wrap">
+      <div class="sup-head">
+        <div>
+          <span class="sup-kicker">02 · 신청 절차</span>
+          <h2 class="sup-h2">한 페이지에서 3단계로 신청하세요</h2>
+          <p>'후원하기' 버튼을 누르면 (사)카야인터내셔널 후원 신청서가 새 창으로 열립니다.</p>
+        </div>
+        <a class="sup-more" href="${NANUM_DONATE_URL}" target="_blank" rel="noopener">신청서 바로 열기 →</a>
+      </div>
+      <div class="sup-steps">
+        <article class="sup-step">
+          <span class="sup-kicker">STEP 1</span>
+          <h3 data-k="method.step.0.title">회원정보 입력</h3>
+          <ul>
+            <li>회원명과 휴대전화는 필수입니다.</li>
+            <li>주민등록번호를 입력하시면 기부금 내역이 국세청 연말정산 간소화 서비스에 제공됩니다.</li>
+            <li>소식지를 받으실 주소를 입력해 주세요.</li>
           </ul>
+          <figure class="sup-shot"><img data-k="method.step.0.photo" data-k-mode="src" src="/images/donor-guide/step1-member.png" alt="해피나눔 신청서의 회원정보 입력 화면" /></figure>
+        </article>
+        <article class="sup-step">
+          <span class="sup-kicker">STEP 2</span>
+          <h3 data-k="method.step.1.title">결제정보 선택</h3>
+          <ul>
+            <li>결제방법(정기·일시)과 결제수단(자동이체·신용카드·휴대폰)을 고릅니다.</li>
+            <li>정기후원은 매월 5일·10일·15일·25일 중 결제일을 선택합니다.</li>
+            <li>후원금은 1,000원부터 원하시는 금액을 직접 입력할 수 있습니다.</li>
+          </ul>
+          <figure class="sup-shot"><img data-k="method.step.1.photo" data-k-mode="src" src="/images/donor-guide/step2-pay.png" alt="해피나눔 신청서의 결제정보 선택 화면" /></figure>
+        </article>
+        <article class="sup-step">
+          <span class="sup-kicker">STEP 3</span>
+          <h3 data-k="method.step.2.title">동의·전자서명 후 신청</h3>
+          <ul>
+            <li>필수 동의 2가지(개인정보 수집·이용, 자동결제)에 체크합니다.</li>
+            <li>전자서명은 반드시 예금주 이름으로 해 주세요.</li>
+            <li>'신청하기'를 누르면 접수가 완료됩니다.</li>
+          </ul>
+          <figure class="sup-shot"><img data-k="method.step.2.photo" data-k-mode="src" src="/images/donor-guide/step3-sign.png" alt="해피나눔 신청서의 결제동의와 전자서명 화면" /></figure>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="pay" class="sup-band">
+    <div class="sup-wrap">
+      <span class="sup-kicker">03 · 납부 방법</span>
+      <h2 class="sup-h2">후원 종류별 납부 방법</h2>
+      <div class="sup-table-wrap">
+        <table class="sup-table">
+          <thead>
+            <tr>
+              <th scope="col">후원 종류</th>
+              <th scope="col">CMS 자동이체</th>
+              <th scope="col">신용카드</th>
+              <th scope="col">휴대폰 결제</th>
+              <th scope="col">계좌이체</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">정기후원</th>
+              <td>● 권장</td>
+              <td>● 권장</td>
+              <td>●</td>
+              <td class="sup-dash">–</td>
+            </tr>
+            <tr>
+              <th scope="row">일시·기념일후원</th>
+              <td class="sup-dash">–</td>
+              <td>● 권장</td>
+              <td>●</td>
+              <td>●</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="sup-pay">
+        <div class="sup-panel">
+          <h3><span data-k="method.pay.0.title">CMS 자동이체</span> <span class="sup-rec" data-k="method.pay.0.badge">권장</span></h3>
+          <ul>
+            <li>후원자님의 은행 계좌에서 매월 후원금이 자동이체됩니다.</li>
+            <li>매월 <b>5일, 10일, 15일, 25일</b> 중 선택하신 날에 출금됩니다.</li>
+            <li>평생계좌는 자동이체에 사용할 수 없습니다.</li>
+            <li>등록 시 승인 문자가 발송되며, 잔액이 부족한 경우 당월에 한해 재출금이 시도됩니다.</li>
+          </ul>
+        </div>
+        <div class="sup-panel">
+          <h3><span data-k="method.pay.1.title">신용카드</span> <span class="sup-rec" data-k="method.pay.1.badge">권장</span></h3>
+          <ul>
+            <li>신용카드 또는 체크카드로 후원금이 결제됩니다.</li>
+            <li>신청 시 당월분이 승인 결제되며, 익월부터 약정일에 매월 자동결제됩니다.</li>
+            <li>카드 유효기간 만료·재발급 시 후원이 중단될 수 있으니 변경 사항을 알려 주세요.</li>
+          </ul>
+        </div>
+        <div class="sup-panel">
+          <h3>휴대폰 결제 <span class="sup-rec sup-rec--muted">소액 결제</span></h3>
+          <ul>
+            <li>통신사를 통해 소액결제되며, 신청 시 실시간 승인됩니다.</li>
+            <li>익월부터 해당일에 매월 자동결제되고 승인 문자가 발송됩니다.</li>
+            <li>알뜰폰은 이용하실 수 없습니다. (KT / SK / LG 3사만 가능)</li>
+          </ul>
+        </div>
+        <div class="sup-panel">
+          <h3>기타 후원</h3>
+          <p>기업후원, 물품후원, 자원봉사, 재능기부 등은 카야로 직접 문의해 주세요.</p>
+          <a class="sup-more" href="#contact">문의하기 →</a>
+        </div>
+      </div>
+      <div class="sup-accounts">
+        <div class="sup-head">
+          <h3>후원 계좌 (일시·기념일후원 계좌이체)</h3>
+          <span>예금주 (사)카야인터내셔널</span>
+        </div>
+        <div class="sup-account-grid">
+          <div class="sup-account"><b>우리</b><span>1005-403-029492</span></div>
+          <div class="sup-account"><b>농협</b><span>301-1122-4444-01</span></div>
+          <div class="sup-account"><b>국민</b><span>584101-01-286346</span></div>
+          <div class="sup-account"><b>신한</b><span>100-034-744590</span></div>
+        </div>
+        <p class="sup-note">계좌이체 후 기부금 영수증이 필요하시면 대표번호 또는 이메일로 성함과 연락처를 알려 주세요.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="receipt" class="sup-block">
+    <div class="sup-wrap">
+      <span class="sup-kicker">04 · 후원회원 혜택·영수증</span>
+      <h2 class="sup-h2" data-k="method.receiptTitle">후원회원이 되시면</h2>
+      <div class="sup-cards">
+        <div class="sup-card">
+          <svg aria-hidden="true" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#B11E3B" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h11a3 3 0 013 3v11H7a3 3 0 01-3-3z"></path><path d="M8 9h6M8 13h6"></path></svg>
+          <h3>소식지·연례보고서</h3>
+          <p>정기적인 사업 보고와 함께 후원금 사용 내역을 확인하실 수 있습니다.</p>
+        </div>
+        <div class="sup-card">
+          <svg aria-hidden="true" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#B11E3B" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h14v16l-3-2-2 2-2-2-2 2-2-2-3 2z"></path><path d="M9 9h6M9 13h4"></path></svg>
+          <h3>기부금 영수증</h3>
+          <p>후원금에 대한 기부금 영수증 발급이 가능하며, 국세청 연말정산 간소화 서비스(주민등록정보 제공자)에서도 확인하실 수 있습니다.</p>
+        </div>
+        <div class="sup-card">
+          <svg aria-hidden="true" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#B11E3B" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"></circle><circle cx="17" cy="9" r="2.5"></circle><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M15 14.5c3 0 6 1.8 6 5"></path></svg>
+          <h3>활동·모임 참여</h3>
+          <p>카야 후원자님과 함께하는 활동과 모임에 참여하실 수 있습니다.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="sg-section" aria-labelledby="sg-methods-heading">
-    <div class="sg-wrap">
-      <h2 id="sg-methods-heading" class="sg-h2">후원금 납부 방법</h2>
-      <ol class="sg-method-list">
-        <li class="sg-method">
-          <div class="sg-method__head">
-            <span class="sg-method__num" aria-hidden="true">01</span>
-            <span class="sg-method__icon sg-method__icon--pay" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></span>
-          </div>
-          <div class="sg-method__body">
-            <h3 class="sg-method__title">CMS 자동이체 <span class="sg-badge">권장</span></h3>
-            <p>후원자님의 은행계좌에서 매월 후원금이 자동이체됩니다.</p>
-            <p>정기결제인 경우 매월 <strong>10일, 15일, 25일</strong> 중 선택 가능하며, 해당일에 출금이 이뤄집니다.</p>
-            <p>자동이체 등록 시 승인 문자가 발송됩니다.</p>
-            <p>정기후원일에 잔액이 부족할 경우 당월에 한해 재출금이 시도됩니다.</p>
-          </div>
-        </li>
-        <li class="sg-method">
-          <div class="sg-method__head">
-            <span class="sg-method__num" aria-hidden="true">02</span>
-            <span class="sg-method__icon sg-method__icon--pay" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></span>
-          </div>
-          <div class="sg-method__body">
-            <h3 class="sg-method__title">신용카드</h3>
-            <p>후원자님의 신용카드 또는 체크카드로 후원금이 자동결제됩니다.</p>
-            <p>후원 신청 시 실시간 승인(결제)이 이뤄지며, 익월부터 해당 일에 매월 자동결제됩니다.</p>
-            <p>후원 신청 시 승인(결제) 문자와 매월 결제 문자가 발송됩니다.</p>
-            <p>신용카드 유효기간 만료·재발급 등 정보가 바뀌면 후원이 이뤄지지 않을 수 있으니, 카야 대표번호 <a href="tel:070-5121-2198">070-5121-2198</a> 또는 이메일 <a href="mailto:khayahinternational@gmail.com">khayahinternational@gmail.com</a>으로 변경 사항을 알려 주세요.</p>
-          </div>
-        </li>
-        <li class="sg-method">
-          <div class="sg-method__head">
-            <span class="sg-method__num" aria-hidden="true">03</span>
-            <span class="sg-method__icon sg-method__icon--pay" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></span>
-          </div>
-          <div class="sg-method__body">
-            <h3 class="sg-method__title">휴대폰 결제 <span class="sg-badge sg-badge--muted">소액 결제 시 이용</span></h3>
-            <p>후원자님의 통신사를 통해 소액결제가 됩니다.</p>
-            <p class="sg-warn"><strong>알뜰폰</strong>은 해당 결제방법을 이용하실 수 없습니다. (KT / SK / LG 3사만 가능)</p>
-            <p>후원 신청 시 실시간 승인(결제)이 이뤄지며, 익월부터 해당일에 매월 자동결제됩니다.</p>
-            <p>후원 신청 시 승인(결제) 문자와 매월 결제 문자가 발송됩니다.</p>
-          </div>
-        </li>
-        <li class="sg-method">
-          <div class="sg-method__head">
-            <span class="sg-method__num" aria-hidden="true">04</span>
-            <span class="sg-method__icon sg-method__icon--pay" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10h11M7 10l3-3M7 10l3 3"/><path d="M17 14H6M17 14l-3-3M17 14l-3 3"/></svg></span>
-          </div>
-          <div class="sg-method__body">
-            <h3 class="sg-method__title">계좌이체</h3>
-            <p>일시후원, 기념일 후원 등 카야 후원계좌로 직접 입금하는 방법입니다.</p>
-            <dl class="sg-accounts sg-accounts--inline">
-              <div class="sg-account"><dt>우리</dt><dd><span class="sg-mono">1005-403-029492</span></dd></div>
-              <div class="sg-account"><dt>농협</dt><dd><span class="sg-mono">301-1122-4444-01</span></dd></div>
-              <div class="sg-account"><dt>국민</dt><dd><span class="sg-mono">584101-01-286346</span></dd></div>
-              <div class="sg-account"><dt>신한</dt><dd><span class="sg-mono">100-034-744590</span></dd></div>
-            </dl>
-          </div>
-        </li>
-        <li class="sg-method">
-          <div class="sg-method__head">
-            <span class="sg-method__num" aria-hidden="true">05</span>
-            <span class="sg-method__icon sg-method__icon--pay" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></span>
-          </div>
-          <div class="sg-method__body">
-            <h3 class="sg-method__title">기타 후원</h3>
-            <p>기업후원, 물품후원, 자원봉사, 재능기부 등은 카야로 직접 문의 바랍니다.</p>
-          </div>
-        </li>
-      </ol>
-      <div class="sg-contact-card">
-        <h3 class="sg-contact-card__title">문의</h3>
-        <p class="sg-contact-card__row"><span class="sg-contact-card__label">T</span> <a href="tel:070-5121-2198">070-5121-2198</a></p>
-        <p class="sg-contact-card__row"><span class="sg-contact-card__label">E</span> <a href="mailto:khayahinternational@gmail.com">khayahinternational@gmail.com</a></p>
+  <section id="contact" class="sup-band">
+    <div class="sup-wrap sup-pay">
+      <div class="sup-panel">
+        <span class="sup-kicker">05 · 변경·문의</span>
+        <h2 class="sup-h2" data-k="method.contactTitle">정보 변경과 후원 문의</h2>
+        <p data-k="method.contactBody">주소·연락처·결제 정보가 바뀌면 꼭 알려 주세요. 카야의 소식과 기부금 영수증을 정확히 전해 드릴 수 있습니다. 온라인 신청이 어려우시면 전화로도 신청을 도와드립니다.</p>
+        <a href="tel:07051212198">T  070-5121-2198</a>
+        <a href="mailto:khayahinternational@gmail.com">E  khayahinternational@gmail.com</a>
+      </div>
+      <div class="sup-panel">
+        <h2 class="sup-h2">후원 추천하기</h2>
+        <p>주변 분들에게도 나눔의 기쁨을 전해 주세요. 링크를 복사해 카카오톡이나 문자로 보낼 수 있습니다.</p>
+        <button type="button" class="sup-btn--line" id="sg-copy-nanum">후원 링크 복사</button>
       </div>
     </div>
   </section>
 
-  <section class="sg-band" aria-label="Support Guide">
-    <div class="sg-wrap sg-band__inner">
-      <p class="sg-band__en">Support Guide</p>
-      <p class="sg-band__ko">카야는 지속적이고 자발적인 변혁이 일어날 수 있는<br />개발을 지원합니다.</p>
-    </div>
-  </section>
-
-  <section class="sg-section sg-section--steps" aria-labelledby="sg-step1-heading">
-    <div class="sg-wrap">
-      <div class="sg-step">
-        <div class="sg-step__text">
-          <p class="sg-step__label">STEP 1.</p>
-          <h2 id="sg-step1-heading" class="sg-step__title">정보 입력</h2>
-          <p class="sg-step__lead">후원자님의 정보를 입력해 주세요.</p>
-          <p class="sg-step__sub">정보 입력 시 회원으로 자동 등록됩니다.</p>
-          <span class="sg-step__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M6 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/></svg></span>
-        </div>
-        <figure class="sg-step__fig">
-          <img src="/images/donor-guide/step1-info.jpg" alt="후원 신청 화면 예시: 회원정보 입력 단계" width="640" height="420" loading="eager" decoding="async" />
-        </figure>
+  <section class="sup-block" aria-label="후원 신청">
+    <div class="sup-wrap">
+      <div class="sup-cta sup-cta--wine">
+        <h2 class="sup-h2">오늘의 나눔이 내일의 배움이 됩니다</h2>
+        <p>버튼을 누르면 카야 후원 전자 신청 페이지로 이동합니다.</p>
+        <a class="sup-btn" href="${NANUM_DONATE_URL}" target="_blank" rel="noopener"><span data-k="donate.label">지금 바로 후원하기 ♥</span></a>
       </div>
-    </div>
-  </section>
-
-  <section class="sg-section sg-section--surface sg-section--steps" aria-labelledby="sg-step2-heading">
-    <div class="sg-wrap">
-      <div class="sg-step sg-step--reverse">
-        <div class="sg-step__text">
-          <p class="sg-step__label">STEP 2.</p>
-          <h2 id="sg-step2-heading" class="sg-step__title">결제정보</h2>
-          <p class="sg-step__lead">결제정보를 입력해 주세요.</p>
-          <ul class="sg-ul sg-ul--tight">
-            <li>결제방식(정기·일시)과 결제수단(자동이체·카드결제·휴대폰)에 따라 결제정보 창이 조금씩 달라집니다.</li>
-            <li>후원자님의 계좌번호 또는 카드 정보 등을 정확히 입력해 주세요.</li>
-          </ul>
-          <span class="sg-step__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2.55" y="2.6" width="18.9" height="18.8" rx="2.65" stroke-width="2.45"/><g stroke-width="1.72"><line x1="5.7" y1="8.05" x2="11.85" y2="8.05"/><line x1="5.7" y1="12" x2="11.85" y2="12"/><line x1="5.7" y1="15.95" x2="11.85" y2="15.95"/><circle cx="16.25" cy="12" r="2.25"/></g></svg></span>
-        </div>
-        <figure class="sg-step__fig">
-          <img src="/images/donor-guide/step2-payment.jpg" alt="후원 신청 화면 예시: 결제정보 입력 단계" width="640" height="420" loading="eager" decoding="async" />
-        </figure>
-      </div>
-    </div>
-  </section>
-
-  <section class="sg-footer-cta" aria-label="문의 및 후원">
-    <div class="sg-wrap sg-footer-cta__inner">
-      <a class="sg-btn sg-btn--primary sg-btn--lg" href="${NANUM_DONATE_URL}" target="_blank" rel="noopener noreferrer">지금 바로 후원하기♥</a>
-      <p class="sg-footer-cta__hint">온라인 신청이 어려우시면 전화로 문의해 주세요.</p>
-      <p class="sg-footer-cta__phone-label">대표번호</p>
-      <p class="sg-footer-cta__phone"><a href="tel:070-5121-2198">070-5121-2198</a></p>
     </div>
   </section>
 </div>
-`.trim()
+`

@@ -17,6 +17,9 @@ interface PageHeroProps {
   showScrollHint?: boolean
   /** 경로 대신 직접 지정 (게시글 상세 등) */
   crumbs?: Array<{ label: string; to: string }>
+  /** kaya: 시안 카야 소개 히어로. biz: 시안 사업 소개 히어로. 경로 글과 작은 제목이 사진 안에 있다. */
+  layout?: 'banner' | 'kaya' | 'biz'
+  eyebrow?: string
 }
 
 function safeDecode(segment: string): string {
@@ -64,6 +67,7 @@ function labelForSlug(seg: string, messages: Messages): string {
     case 'press':
       return nav.links.press
     case 'financial-report':
+    case 'transparency':
       return nav.links.financialReport
     case 'stories':
       return nav.links.stories
@@ -94,8 +98,13 @@ function labelForSlug(seg: string, messages: Messages): string {
       return nav.links.overseasVolunteer
     case 'education-research':
       return nav.links.researchEducation
+    case 'social':
     case 'social-business':
       return nav.links.researchSocial
+    case 'academy':
+      return nav.links.socialAcademy
+    case 'color-and-comfort':
+      return nav.links.socialComfort
     case 'support':
       return nav.top.support
     case 'guide':
@@ -174,7 +183,7 @@ function buildCrumbs(
       }
     }
     const crumbs: Array<{ label: string; to: string }> = [
-      { label: messages.nav.top.news, to: L('/stories') },
+      { label: messages.nav.top.news, to: L('/news/activities') },
       { label: messages.nav.links.stories, to: L('/stories') },
     ]
     if (parts[1]) {
@@ -206,7 +215,7 @@ function buildCrumbs(
 
   if (parts[0] === '소식') {
     const crumbs: Array<{ label: string; to: string }> = [
-      { label: messages.nav.top.news, to: L('/stories') },
+      { label: messages.nav.top.news, to: L('/news/activities') },
     ]
     if (parts[1]) {
       const seg = parts[1]
@@ -275,7 +284,7 @@ function buildCrumbs(
   // English slug paths: /news/inquiry, /about/khayah, /business/...
   if (parts[0] === 'news') {
     const crumbs: Array<{ label: string; to: string }> = [
-      { label: messages.nav.top.news, to: L('/stories') },
+      { label: messages.nav.top.news, to: L('/news/activities') },
     ]
     if (parts[1]) {
       crumbs.push({
@@ -402,6 +411,8 @@ export function PageHero({
   showBreadcrumbs = true,
   showScrollHint = true,
   crumbs: crumbsProp,
+  layout = 'banner',
+  eyebrow,
 }: PageHeroProps) {
   const location = useLocation()
   const { localize, messages } = useLocale()
@@ -419,11 +430,26 @@ export function PageHero({
       ? crumbs[crumbs.length - 1]!.label
       : title
 
+  const kaya = layout === 'kaya' || layout === 'biz'
+
   return (
     <>
-      <section className="page-hero" aria-label={displayTitle}>
+      <section className={`page-hero${layout === 'biz' ? ' page-hero--kaya page-hero--biz' : kaya ? ' page-hero--kaya' : ''}`} aria-label={displayTitle}>
         <HeroBackdrop src={backgroundImageUrl} />
         <div className="page-hero__inner">
+          {kaya ? (
+            <p className="page-hero__crumbs">
+              <Link to={localize('/')}>{messages.nav.home}</Link>
+              <span aria-hidden="true"> › </span>
+              {crumbs.map((c, idx) => (
+                <span key={`${c.to}-${idx}`}>
+                  {idx > 0 ? <span aria-hidden="true"> › </span> : null}
+                  {idx === crumbs.length - 1 ? <b>{c.label}</b> : <Link to={c.to}>{c.label}</Link>}
+                </span>
+              ))}
+            </p>
+          ) : null}
+          {kaya && eyebrow ? <p className="page-hero__eyebrow">{eyebrow}</p> : null}
           <h1 className="page-hero__title">{displayTitle}</h1>
         </div>
         {showScrollHint && (
@@ -434,7 +460,7 @@ export function PageHero({
         )}
       </section>
 
-      {showBreadcrumbs && (
+      {showBreadcrumbs && !kaya && (
         <nav className="page-crumbs" aria-label={messages.nav.home}>
           <div className="page-crumbs__inner">
             <Link to={localize('/')} className="page-crumbs__link page-crumbs__home" aria-label={messages.nav.home}>

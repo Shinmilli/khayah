@@ -14,6 +14,7 @@ import {
   type ImpactStatsDocument,
 } from '../../home/impactStatsTypes'
 import { adminFetchImpactStats, adminPutImpactStats } from '../../../services/api'
+import { AdminHomeNumbersPanel } from './AdminHomeNumbersPanel'
 
 function deepClone<T>(v: T): T {
   return JSON.parse(JSON.stringify(v)) as T
@@ -157,15 +158,15 @@ export function AdminImpactStatsPage() {
 
   return (
     <div className="admin-page">
-      <div className="admin-page__head">
-        <div>
-          <h1 className="admin-page__title">나눔의 결실</h1>
-          <p className="admin-page__desc">항목을 누르면 아래에서 바로 수정할 수 있습니다.</p>
+      <AdminHomeNumbersPanel />
+
+      <details className="admin-panel admin-fold">
+        <summary className="admin-fold__summary">나눔의 결실 (기존 메인 섹션)</summary>
+        <div className="admin-page__actions" style={{ marginBottom: 16 }}>
+          <button type="button" className="admin-btn admin-btn--primary" disabled={saving || loading} onClick={() => void onSave()}>
+            {saving ? '저장 중…' : '나눔의 결실 저장'}
+          </button>
         </div>
-        <button type="button" className="admin-btn" disabled={saving || loading} onClick={() => void onSave()}>
-          {saving ? '저장 중…' : '저장'}
-        </button>
-      </div>
 
       <section className="admin-panel" aria-label="나눔의 결실 표시" style={{ marginBottom: '1rem' }}>
         <div className="admin-field admin-field--full">
@@ -610,6 +611,7 @@ export function AdminImpactStatsPage() {
           )}
         </section>
       )}
+      </details>
     </div>
   )
 }

@@ -1,9 +1,11 @@
 import { useEffect } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
+import { AdminViewSwitch } from '../admin/AdminViewSwitch'
+import { MaintenanceModeNotice } from './MaintenanceModeNotice'
 import { splitLocalePath, type Locale } from '../../i18n/locale'
+import '../../styles/admin-view-switch.css'
 import '../../styles/maintenance.css'
 import {
-  searchWithoutMaintenancePreview,
   type MaintenanceDocument,
 } from './maintenanceTypes'
 
@@ -34,7 +36,6 @@ export function MaintenanceScreen({
   embedded?: boolean
 }) {
   const location = useLocation()
-  const navigate = useNavigate()
   const activeLocale = locale ?? splitLocalePath(location.pathname).locale
   const copy = COPY[activeLocale]
   const title = activeLocale === 'en' ? doc.titleEn : doc.titleKo
@@ -56,28 +57,7 @@ export function MaintenanceScreen({
       aria-hidden={embedded ? true : undefined}
       aria-label={embedded ? undefined : title}
     >
-      {preview && !embedded ? (
-        <div className="maintenance-preview-bar">
-          <p className="maintenance-preview-bar__text">
-            미리보기입니다. 로그인하지 않은 방문자는 사이트 대신 이 화면만 봅니다.
-          </p>
-          <button
-            type="button"
-            className="maintenance-preview-bar__btn"
-            onClick={() =>
-              navigate(
-                {
-                  pathname: location.pathname,
-                  search: searchWithoutMaintenancePreview(location.search),
-                },
-                { replace: true },
-              )
-            }
-          >
-            사이트 보기
-          </button>
-        </div>
-      ) : null}
+      {preview && !embedded ? <AdminViewSwitch active="site" notice={<MaintenanceModeNotice />} /> : null}
       <div className="maintenance__stage">
         <div className="maintenance__card">
           <img className="maintenance__logo" src={LOGO_SRC} alt={copy.logoAlt} />

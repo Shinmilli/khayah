@@ -19,14 +19,26 @@ export const LEGACY_PATH_KEY_MAP: Record<string, string> = {
   '국내사업': PATH.businessDomestic,
   '국내사업/교육': PATH.businessDomesticEducation,
   '사업/옹호사업': PATH.businessAdvocacy,
-  '사업/진행사업': PATH.businessProjects,
-  '사업/진행사업/네팔': PATH.businessProjectsNepal,
-  '사업/진행사업/미얀마': PATH.businessProjectsMyanmar,
-  '사업/진행사업/키르기즈스탄': PATH.businessProjectsKyrgyzstan,
-  '사업/진행사업/국내': PATH.businessProjectsDomestic,
+  '사업/진행사업': PATH.businessDomesticProjects,
+  '사업/진행사업/네팔': PATH.businessOverseasProjects,
+  '사업/진행사업/미얀마': PATH.businessOverseasProjects,
+  '사업/진행사업/키르기즈스탄': PATH.businessOverseasProjects,
+  '사업/진행사업/국내': PATH.businessDomesticProjects,
+  'business/projects': PATH.businessDomesticProjects,
+  'business/projects/domestic': PATH.businessDomesticProjects,
+  'business/projects/overseas': PATH.businessOverseasProjects,
+  'business/projects/nepal': PATH.businessOverseasProjects,
+  'business/projects/myanmar': PATH.businessOverseasProjects,
+  'business/projects/kyrgyzstan': PATH.businessOverseasProjects,
+  'business/projects/research': PATH.businessResearchProjects,
+  'business/overseas/health-care': PATH.businessOverseasVolunteer,
+  'business/advocacy/education-research': PATH.businessAdvocacy,
+  'business/advocacy/social-business': PATH.businessSocial,
+  'about/financial-report': PATH.aboutFinancialReport,
+  'support/apply': PATH.supportMethod,
   '후원': PATH.supportGuide,
   '후원/후원-안내': PATH.supportGuide,
-  '후원/후원신청': PATH.supportApply,
+  '후원/후원신청': PATH.supportMethod,
   '후원/정기후원': PATH.supportGuide,
   '후원/일시후원': PATH.supportGuide,
   '후원/물품후원': PATH.supportGuide,
@@ -78,7 +90,7 @@ export function legacyRedirectTarget(
     return { pathKey: PATH.businessOverseasVolunteer, search, hash }
   }
   if (pathKey === '카야/카야소개' || pathKey.startsWith('카야/카야소개/')) {
-    return { pathKey: PATH.aboutKhayah, search: search || '?tab=ci', hash: hash || '#ci' }
+    return { pathKey: PATH.aboutKhayah, search: '', hash: hash === '#ci' ? '#ci' : hash }
   }
   const resolved = resolveLegacyPathKey(pathKey)
   if (!resolved || resolved === pathKey) return null

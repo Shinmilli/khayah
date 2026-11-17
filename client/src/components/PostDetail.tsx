@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { fetchPostsByKind } from '../services/api'
 import { useLocale } from '../i18n/LocaleContext'
 import type { Messages } from '../i18n/messages/ko'
-import { PROJECT_REGION_TO_SLUG, canonicalProjectRegion } from '../i18n/routes'
+import { canonicalProjectRegion } from '../i18n/routes'
 import type { Post } from '../types/post'
 import { parsePdfAttachments, pdfOpenHref, type PdfAttachment } from '../utils/pdfAttachments'
 import { PdfFirstPagePreview } from './PdfFirstPagePreview'
@@ -52,22 +52,27 @@ function listPathForPost(post: Post): string {
   switch (kind) {
     case '공지사항':
       return '/news/announcements'
-    case '활동소식':
+    case '활동소식': {
+      const scope = post.meta?.khayah_story_scope
+      if (scope === '국내') return '/news/activities?scope=domestic'
+      if (scope === '해외') return '/news/activities?scope=overseas'
+      if (scope === '옹호') return '/news/activities?scope=advocacy'
+      if (scope === '진행' || scope === '지원') return '/news/activities?scope=support'
       return '/news/activities'
+    }
     case '연간소식지':
       return '/news/newsletter'
     case '언론보도':
       return '/news/press'
-    case '진행사업':
-      return '/business/projects'
-    case '스토리': {
-      const scope = post.meta?.khayah_story_scope
-      if (scope === '국내') return '/stories/domestic'
-      if (scope === '해외') return '/stories/overseas'
-      if (scope === '옹호') return '/stories/advocacy'
-      if (scope === '진행') return '/stories/support'
-      return '/stories'
+    case '진행사업': {
+      const region = post.meta?.khayah_project_region?.trim()
+      const canonical = region ? canonicalProjectRegion(region) : ''
+      if (canonical === '해외') return '/business/overseas/projects'
+      if (canonical === '연구사업') return '/business/advocacy/projects'
+      return '/business/domestic/projects'
     }
+    case '스토리':
+      return '/news/stories'
     default:
       return '/news/announcements'
   }
@@ -87,36 +92,33 @@ function crumbsForKind(kind: string, messages: Messages): Array<{ label: string;
   switch (kind) {
     case '공지사항':
       return [
-        { label: nav.top.news, to: '/stories' },
+        { label: nav.top.news, to: '/news/activities' },
         { label: nav.links.announcements, to: '/news/announcements' },
       ]
     case '활동소식':
       return [
-        { label: nav.top.news, to: '/stories' },
+        { label: nav.top.news, to: '/news/activities' },
         { label: nav.links.activities, to: '/news/activities' },
       ]
     case '연간소식지':
       return [
-        { label: nav.top.news, to: '/stories' },
+        { label: nav.top.news, to: '/news/activities' },
         { label: nav.links.newsletter, to: '/news/newsletter' },
       ]
     case '언론보도':
       return [
-        { label: nav.top.news, to: '/stories' },
+        { label: nav.top.news, to: '/news/activities' },
         { label: nav.links.press, to: '/news/press' },
       ]
     case '진행사업':
-      return [
-        { label: nav.top.business, to: '/business/domestic' },
-        { label: nav.links.projects, to: '/business/projects' },
-      ]
+      return [{ label: nav.top.business, to: '/business/domestic' }]
     case '스토리':
       return [
-        { label: nav.top.news, to: '/stories' },
-        { label: pages.stories.title, to: '/stories' },
+        { label: nav.top.news, to: '/news/activities' },
+        { label: pages.stories.title, to: '/news/stories' },
       ]
     default:
-      return [{ label: nav.top.news, to: '/stories' }]
+      return [{ label: nav.top.news, to: '/news/activities' }]
   }
 }
 
@@ -132,17 +134,24 @@ function crumbsForPost(post: Post, messages: Messages): Array<{ label: string; t
     const region = post.meta?.khayah_project_region?.trim()
     if (region) {
       const canonical = canonicalProjectRegion(region)
-      const slug = PROJECT_REGION_TO_SLUG[canonical] ?? encodeURIComponent(canonical)
-      crumbs.push({ label: regionLabel(canonical, messages), to: `/business/projects/${slug}` })
+      const listPath =
+        canonical === '해외'
+          ? '/business/overseas/projects'
+          : canonical === '연구사업'
+            ? '/business/advocacy/projects'
+            : '/business/domestic/projects'
+      crumbs.push({ label: regionLabel(canonical, messages), to: listPath })
+    } else {
+      crumbs.push({ label: messages.nav.links.domesticProjects, to: '/business/domestic/projects' })
     }
-  } else if (kind === '스토리') {
+  } else if (kind === '활동소식') {
     const scope = post.meta?.khayah_story_scope
     const { pages } = messages
-    if (scope === '국내') crumbs.push({ label: pages.stories.scopes.domestic, to: '/stories/domestic' })
-    else if (scope === '해외') crumbs.push({ label: pages.stories.scopes.overseas, to: '/stories/overseas' })
-    else if (scope === '옹호') crumbs.push({ label: pages.stories.scopes.advocacy, to: '/stories/advocacy' })
+    if (scope === '국내') crumbs.push({ label: pages.stories.scopes.domestic, to: '/news/activities?scope=domestic' })
+    else if (scope === '해외') crumbs.push({ label: pages.stories.scopes.overseas, to: '/news/activities?scope=overseas' })
+    else if (scope === '옹호') crumbs.push({ label: pages.stories.scopes.advocacy, to: '/news/activities?scope=advocacy' })
     else if (scope === '진행' || scope === '지원') {
-      crumbs.push({ label: pages.stories.scopes.support, to: '/stories/support' })
+      crumbs.push({ label: pages.stories.scopes.support, to: '/news/activities?scope=support' })
     }
   }
   return crumbs
@@ -186,7 +195,7 @@ function NewsletterPdfPreview({ post }: { post: Post }) {
           <time dateTime={post.publishedAt}>{formatDotDate(post.publishedAt)}</time>
         </p>
       </header>
-      {content ? (
+      {content && !pdf ? (
         looksHtml ? (
           <PostBody html={content} />
         ) : (
@@ -239,7 +248,10 @@ export function PostDetail({ post }: { post: Post }) {
   const kind = post.meta?.khayah_kind ?? ''
   const listTo = localize(listPathForPost(post))
   const [siblings, setSiblings] = useState<Post[]>([])
-  const storyChip = kind === '스토리' ? storyScopeChip(post.meta?.khayah_story_scope, messages) : null
+  const storyChip =
+    kind === '스토리' || kind === '활동소식'
+      ? storyScopeChip(post.meta?.khayah_story_scope, messages)
+      : null
 
   useEffect(() => {
     if (!kind) {

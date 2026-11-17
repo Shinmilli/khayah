@@ -1,5 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
+import { BusinessSectionNav } from '../components/BusinessSectionNav'
+import { ProjectSetList } from '../components/ProjectSetList'
+import { ProjectListIntro } from '../components/ProjectListIntro'
 import { PageHero } from '../components/PageHero'
 import { Pagination } from '../components/Pagination'
 import { fetchPostsByKindAndRegion } from '../services/api'
@@ -8,6 +11,15 @@ import { paginate } from '../utils/paginate'
 import { useLocale } from '../i18n/LocaleContext'
 import { PATH, PROJECT_SLUG_TO_REGION, canonicalProjectRegion, projectRegionHref } from '../i18n/routes'
 import { pageHeroImageForPath } from '../constants/pageHeroImages'
+import {
+  DOMESTIC_PROJECTS,
+  OVERSEAS_PROJECTS,
+  RESEARCH_PROJECTS,
+  projectsByField,
+} from '../features/projects/projectCatalog'
+import { PROJECT_FIELDS } from '../features/projects/projectSetTypes'
+import { publicSetsFor, type ProjectListKind } from '../features/projects/publicProjectSets'
+import { useProjectSets } from '../features/projects/useProjectSets'
 import { ListStatus } from '../components/ListStatus'
 import { PostCoverThumb } from '../components/PostCoverThumb'
 import { postCoverMedia } from '../utils/postMedia'
@@ -15,6 +27,7 @@ import '../styles/projects.css'
 
 const REGIONS = ['전체', '해외', '국내', '연구사업'] as const
 type Region = (typeof REGIONS)[number]
+type FixedRegion = Exclude<Region, '전체'>
 
 function normalizeRegion(param: string | undefined): Region {
   if (!param) return '전체'
@@ -32,9 +45,16 @@ function projectCoverUrl(post: Post): string | undefined {
   return undefined
 }
 
-export function ProjectsPage() {
+export function ProjectsPage({
+  fixedRegion,
+  projectList,
+}: {
+  fixedRegion?: FixedRegion
+  projectList?: ProjectListKind
+}) {
   const params = useParams()
   const { locale, localize, messages } = useLocale()
+  const projectSets = useProjectSets()
   const pj = messages.pages.projects
   const regionLabels: Record<Region, string> = {
     전체: pj.regions.all,
@@ -42,7 +62,66 @@ export function ProjectsPage() {
     국내: pj.regions.domestic,
     연구사업: pj.regions.research,
   }
-  const region = useMemo(() => normalizeRegion(params.region), [params.region])
+  const region = useMemo(
+    () => fixedRegion ?? normalizeRegion(params.region),
+    [fixedRegion, params.region],
+  )
+  const heroPath =
+    projectList === 'overseas-education'
+      ? PATH.businessOverseasEducationProjects
+      : projectList === 'volunteer'
+        ? PATH.businessVolunteerProjects
+        : region === '국내'
+          ? PATH.businessDomesticProjects
+          : region === '해외'
+            ? PATH.businessOverseasProjects
+            : region === '연구사업'
+              ? PATH.businessResearchProjects
+              : PATH.businessProjects
+  const fallbackTitle =
+    locale === 'ko' && projectList === 'overseas-education'
+      ? '해외 교육 진행사업'
+      : locale === 'ko' && projectList === 'volunteer'
+        ? '해외봉사단 진행사업'
+        : region === '국내'
+          ? messages.nav.links.domesticProjects
+          : region === '해외'
+            ? messages.nav.links.overseasProjects
+            : region === '연구사업'
+              ? messages.nav.links.researchProjects
+              : pj.title
+  const live = locale === 'ko' && projectList && projectSets ? publicSetsFor(projectSets, projectList) : null
+  const title = live?.title || fallbackTitle
+  const catalog =
+    live ??
+    (locale !== 'ko' || !projectList
+      ? null
+      : projectList === 'domestic'
+        ? { items: DOMESTIC_PROJECTS, eyebrow: 'PROGRAMS · 국내 진행사업', recentFromYear: 2020 }
+        : projectList === 'overseas'
+          ? {
+              items: OVERSEAS_PROJECTS,
+              eyebrow: 'PROGRAMS · 해외 진행사업',
+              recentFromYear: 2024,
+              fields: PROJECT_FIELDS,
+            }
+          : projectList === 'overseas-education'
+            ? {
+                items: projectsByField(OVERSEAS_PROJECTS, '교육'),
+                eyebrow: 'PROGRAMS · 해외 교육 진행사업',
+                recentFromYear: 2024,
+              }
+            : projectList === 'volunteer'
+              ? {
+                  items: projectsByField(OVERSEAS_PROJECTS, '해외봉사단'),
+                  eyebrow: 'PROGRAMS · 해외봉사단 진행사업',
+                  recentFromYear: 2024,
+                }
+              : {
+                  items: RESEARCH_PROJECTS,
+                  eyebrow: 'PROGRAMS · 연구사업 진행사업',
+                  recentFromYear: 2020,
+                })
   const [rows, setRows] = useState<Post[]>([])
   const [listPage, setListPage] = useState(1)
   const [loading, setLoading] = useState(true)
@@ -73,10 +152,193 @@ export function ProjectsPage() {
 
   return (
     <div className="projects-page">
-      <PageHero title={pj.title} backgroundImageUrl={pageHeroImageForPath(PATH.businessProjects)} />
+      <PageHero
+        title={title}
+        backgroundImageUrl={live?.photo || pageHeroImageForPath(heroPath)}
+        layout={
+          locale === 'ko' &&
+          (projectList === 'domestic' ||
+            projectList === 'overseas' ||
+            projectList === 'overseas-education' ||
+            projectList === 'volunteer' ||
+            projectList === 'research')
+            ? 'biz'
+            : 'banner'
+        }
+        eyebrow={
+          locale === 'ko' && projectList === 'domestic'
+            ? 'DOMESTIC PROGRAMS'
+            : locale === 'ko' && projectList === 'overseas-education'
+              ? 'OVERSEAS · EDUCATION'
+              : locale === 'ko' && projectList === 'volunteer'
+                ? 'OVERSEAS · VOLUNTEERS'
+                : locale === 'ko' && projectList === 'overseas'
+                  ? 'OVERSEAS PROGRAMS'
+                  : locale === 'ko' && projectList === 'research'
+                    ? 'RESEARCH'
+                    : undefined
+        }
+        showScrollHint={
+          !(
+            locale === 'ko' &&
+            (projectList === 'domestic' ||
+              projectList === 'overseas' ||
+              projectList === 'overseas-education' ||
+              projectList === 'volunteer' ||
+              projectList === 'research')
+          )
+        }
+      />
+      <BusinessSectionNav />
+      {locale === 'ko' && projectList ? <ProjectListIntro kind={projectList} cards={live?.cards} flow={live?.flow} /> : null}
+      {catalog ? (
+        <ProjectSetList
+          items={catalog.items}
+          eyebrow={catalog.eyebrow}
+          recentFromYear={catalog.recentFromYear}
+          fields={'fields' in catalog ? catalog.fields : undefined}
+        />
+      ) : null}
+      {locale === 'ko' && projectList === 'research' ? (
+        <section className="dom-more dom-more--after">
+          <div className="dom-wrap">
+            <p className="dom-kicker">MORE · 다른 사업 보기</p>
+            <div className="dom-more__row">
+              <Link className="dom-go" to={localize('/business/domestic')}>
+                국내사업
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B11E3B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M5 12h14M13 6l6 6-6 6" />
+                </svg>
+              </Link>
+              <Link className="dom-go" to={localize('/business/overseas')}>
+                해외사업
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B11E3B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M5 12h14M13 6l6 6-6 6" />
+                </svg>
+              </Link>
+              <Link className="dom-go" to={localize('/business/social')}>
+                소셜비즈니스
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B11E3B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M5 12h14M13 6l6 6-6 6" />
+                </svg>
+              </Link>
+            </div>
+          </div>
+        </section>
+      ) : null}
+      {locale === 'ko' && projectList === 'overseas' ? (
+        <section className="dom-more dom-more--after">
+          <div className="dom-wrap">
+            <p className="dom-kicker">MORE · 다른 사업 보기</p>
+            <div className="dom-more__row">
+              <Link className="dom-go" to={localize('/business/domestic')}>
+                국내사업
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B11E3B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M5 12h14M13 6l6 6-6 6" />
+                </svg>
+              </Link>
+              <Link className="dom-go" to={localize('/business/advocacy')}>
+                연구사업
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B11E3B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M5 12h14M13 6l6 6-6 6" />
+                </svg>
+              </Link>
+              <Link className="dom-go" to={localize('/business/social')}>
+                소셜비즈니스
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B11E3B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M5 12h14M13 6l6 6-6 6" />
+                </svg>
+              </Link>
+            </div>
+          </div>
+        </section>
+      ) : null}
+      {locale === 'ko' && projectList === 'volunteer' ? (
+        <section className="dom-more dom-more--after">
+          <div className="dom-wrap">
+            <p className="dom-kicker">MORE · 다른 사업 보기</p>
+            <div className="dom-more__row">
+              <Link className="dom-go" to={localize('/business/overseas/education')}>
+                해외 교육
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B11E3B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M5 12h14M13 6l6 6-6 6" />
+                </svg>
+              </Link>
+              <Link className="dom-go" to={localize('/business/domestic')}>
+                국내사업
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B11E3B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M5 12h14M13 6l6 6-6 6" />
+                </svg>
+              </Link>
+              <Link className="dom-go" to={localize('/business/advocacy')}>
+                연구사업
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B11E3B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M5 12h14M13 6l6 6-6 6" />
+                </svg>
+              </Link>
+            </div>
+          </div>
+        </section>
+      ) : null}
+      {locale === 'ko' && projectList === 'overseas-education' ? (
+        <section className="dom-more dom-more--after">
+          <div className="dom-wrap">
+            <p className="dom-kicker">MORE · 다른 사업 보기</p>
+            <div className="dom-more__row">
+              <Link className="dom-go" to={localize('/business/overseas/volunteer')}>
+                해외봉사단
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B11E3B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M5 12h14M13 6l6 6-6 6" />
+                </svg>
+              </Link>
+              <Link className="dom-go" to={localize('/business/domestic')}>
+                국내사업
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B11E3B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M5 12h14M13 6l6 6-6 6" />
+                </svg>
+              </Link>
+              <Link className="dom-go" to={localize('/business/advocacy')}>
+                연구사업
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B11E3B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M5 12h14M13 6l6 6-6 6" />
+                </svg>
+              </Link>
+            </div>
+          </div>
+        </section>
+      ) : null}
+      {locale === 'ko' && projectList === 'domestic' ? (
+        <section className="dom-more dom-more--after">
+          <div className="dom-wrap">
+            <p className="dom-kicker">MORE · 다른 사업 보기</p>
+            <div className="dom-more__row">
+              <Link className="dom-go" to={localize('/business/overseas')}>
+                해외사업
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B11E3B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M5 12h14M13 6l6 6-6 6" />
+                </svg>
+              </Link>
+              <Link className="dom-go" to={localize('/business/advocacy')}>
+                연구사업
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B11E3B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M5 12h14M13 6l6 6-6 6" />
+                </svg>
+              </Link>
+              <Link className="dom-go" to={localize('/business/social')}>
+                소셜비즈니스
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B11E3B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M5 12h14M13 6l6 6-6 6" />
+                </svg>
+              </Link>
+            </div>
+          </div>
+        </section>
+      ) : null}
 
+      {catalog ? null : (
       <div className="projects-wrap">
         <p className="projects-lead">{pj.lead}</p>
+        {fixedRegion ? null : (
         <nav className="projects-tabs" aria-label={pj.filterAria}>
           {REGIONS.map((r) => {
             const active = r === region
@@ -88,6 +350,7 @@ export function ProjectsPage() {
             )
           })}
         </nav>
+        )}
 
         {loading ? (
           <ListStatus variant="loading" message={pj.loading} lines={5} />
@@ -146,6 +409,7 @@ export function ProjectsPage() {
           </>
         )}
       </div>
+      )}
     </div>
   )
 }

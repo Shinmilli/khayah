@@ -12,6 +12,14 @@ import { inquiriesRouter } from './routes/inquiries'
 import { inquiryFaqRouter } from './routes/inquiryFaq'
 import { impactStatsRouter } from './routes/impactStats'
 import { heroBannerRouter } from './routes/heroBanner'
+import { siteCommonRouter } from './routes/siteCommon'
+import { kayaPagesRouter } from './routes/kayaPages'
+import { bizSupportRouter } from './routes/bizSupport'
+import { projectSetsRouter } from './routes/projectSets'
+import { impactPageRouter } from './routes/impactPage'
+
+
+
 import { historyRouter } from './routes/history'
 import { navMenuImagesRouter } from './routes/navMenuImages'
 import { navVisibilityRouter } from './routes/navVisibility'
@@ -59,6 +67,11 @@ app.use('/api', inquiriesRouter)
 app.use('/api', inquiryFaqRouter)
 app.use('/api', impactStatsRouter)
 app.use('/api', heroBannerRouter)
+app.use('/api', siteCommonRouter)
+app.use('/api', kayaPagesRouter)
+app.use('/api', bizSupportRouter)
+app.use('/api', projectSetsRouter)
+app.use('/api', impactPageRouter) // 한눈에 보는 카야. 공개 여부는 문서의 public
 app.use('/api', historyRouter)
 app.use('/api', navMenuImagesRouter)
 app.use('/api', navVisibilityRouter)

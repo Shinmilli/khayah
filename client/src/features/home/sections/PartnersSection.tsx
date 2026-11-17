@@ -1,6 +1,7 @@
 import { useLocale } from '../../../i18n/LocaleContext'
+import { useSiteCommon } from '../../site/useSiteCommon'
 
-const PARTNER_LOGOS: { src: string; alt: string }[] = [
+export const PARTNER_LOGOS: { src: string; alt: string }[] = [
   { src: '/images/Home/parteners/partner-1.png', alt: '협력기관 로고 1' },
   { src: '/images/Home/parteners/partner-2.png', alt: '협력기관 로고 2' },
   { src: '/images/Home/parteners/partner-3.png', alt: '바보의나눔' },
@@ -25,8 +26,61 @@ const PARTNER_LOGOS: { src: string; alt: string }[] = [
 ]
 
 export function PartnersSection() {
-  const { messages } = useLocale()
+  const { locale, messages } = useLocale()
+  const site = useSiteCommon()
   const m = messages.home.partners
+  if (locale === 'ko') {
+    const logos = (site?.partners ?? PARTNER_LOGOS.map((logo, i) => ({
+      id: logo.src,
+      order: i + 1,
+      enabled: true,
+      logo: logo.src,
+      nameKo: logo.alt,
+      nameEn: '',
+      kind: '',
+      href: '',
+    })))
+      .filter((logo) => logo.enabled && logo.logo)
+      .sort((a, b) => a.order - b.order)
+    const row = (copy: number) =>
+      logos.map((logo) => {
+        const img = <img className="partner-logo" src={logo.logo} alt={copy === 0 ? logo.nameKo : ''} />
+        const key = `${logo.id}-${copy}`
+        return logo.href ? (
+          <a
+            key={key}
+            className="partner-card"
+            href={logo.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-hidden={copy === 1}
+          >
+            {img}
+          </a>
+        ) : (
+          <div key={key} className="partner-card" aria-hidden={copy === 1}>
+            {img}
+          </div>
+        )
+      })
+
+    return (
+      <section className="partners-section partners-section--marquee" aria-label={m.aria}>
+        <div className="partners-container">
+          <header className="partners-head partners-head--left">
+            <h2 className="partners-title">{m.title}</h2>
+            <p className="partners-sub">{m.subtitle}</p>
+          </header>
+          <div className="partners-marquee">
+            <div className="partners-track">
+              {row(0)}
+              {row(1)}
+            </div>
+          </div>
+        </div>
+      </section>
+    )
+  }
 
   return (
     <section className="partners-section" aria-label={m.aria}>

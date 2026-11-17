@@ -169,6 +169,18 @@ function PostEditorForm({
   const [storyScope, setStoryScope] = useState<StoryPostScope | null>(() =>
     initialPostType === '스토리' ? initialStoryScope : null,
   )
+  const [storyCategory, setStoryCategory] = useState(initialMeta.khayah_story_category === '전문가 이야기' ? '전문가 이야기' : '변화의 이야기')
+  const [storyFeatured, setStoryFeatured] = useState(initialMeta.khayah_story_featured === '1')
+  const [storyConsent, setStoryConsent] = useState(initialMeta.khayah_story_consent === '1')
+  const [storyPlace, setStoryPlace] = useState(initialMeta.khayah_story_place ?? '')
+  const [storyBefore, setStoryBefore] = useState(initialMeta.khayah_story_before ?? '')
+  const [storyIntervention, setStoryIntervention] = useState(initialMeta.khayah_story_intervention ?? '')
+  const [storyAfter, setStoryAfter] = useState(initialMeta.khayah_story_after ?? '')
+  const [storyEvidence, setStoryEvidence] = useState(initialMeta.khayah_story_evidence ?? '')
+  const [storySustain, setStorySustain] = useState(initialMeta.khayah_story_sustain ?? '')
+  const [storyExpertName, setStoryExpertName] = useState(initialMeta.khayah_story_expert_name ?? '')
+  const [storyExpertOrg, setStoryExpertOrg] = useState(initialMeta.khayah_story_expert_org ?? '')
+  const [storyExpertQuote, setStoryExpertQuote] = useState(initialMeta.khayah_story_expert_quote ?? '')
   const [projectRegion, setProjectRegion] = useState<ProjectRegion | null>(null)
   const [yearlyMode, setYearlyMode] = useState<YearlyNewsletterMode>('PDF소식지')
   const [title, setTitle] = useState<string>(initialTitle)
@@ -484,10 +496,14 @@ function PostEditorForm({
     }
   }
 
-  const onSave = async () => {
+  const onSave = async (status: 'publish' | 'draft') => {
     setSaveError('')
     if (postType !== '언론보도' && !title.trim()) {
       setSaveError('제목을 입력해 주세요.')
+      return
+    }
+    if (postType === '스토리' && status === 'publish' && !storyConsent) {
+      setSaveError('사진·인터뷰 게재 동의 확인 (체크해야 공개 가능)')
       return
     }
     if (postType === '스토리' && !storyScope) {
@@ -554,6 +570,18 @@ function PostEditorForm({
       }
       if (postType === '스토리' && storyScope) {
         meta.khayah_story_scope = storyScope
+        meta.khayah_story_category = storyCategory
+        meta.khayah_story_featured = storyFeatured ? '1' : ''
+        meta.khayah_story_consent = storyConsent ? '1' : ''
+        meta.khayah_story_place = storyPlace.trim()
+        meta.khayah_story_before = storyBefore.trim()
+        meta.khayah_story_intervention = storyIntervention.trim()
+        meta.khayah_story_after = storyAfter.trim()
+        meta.khayah_story_evidence = storyEvidence.trim()
+        meta.khayah_story_sustain = storySustain.trim()
+        meta.khayah_story_expert_name = storyExpertName.trim()
+        meta.khayah_story_expert_org = storyExpertOrg.trim()
+        meta.khayah_story_expert_quote = storyExpertQuote.trim()
       }
       if (postType === '진행사업' && projectRegion) {
         meta.khayah_project_region = projectRegion
@@ -615,7 +643,7 @@ function PostEditorForm({
           title: resolvedTitle,
           excerpt: excerptAuto,
           content,
-          status: 'publish',
+          status,
           meta,
           publishedAt: publishedDate.trim(),
         })
@@ -625,7 +653,7 @@ function PostEditorForm({
           title: resolvedTitle,
           excerpt: excerptAuto,
           content,
-          status: 'publish',
+          status,
           meta,
           publishedAt: publishedDate.trim(),
         })
@@ -856,6 +884,43 @@ function PostEditorForm({
                   게시 유형을 선택해 주세요.
                 </p>
               ) : null}
+              <span className="admin-field__label">카테고리</span>
+              <div className="admin-segmented admin-segmented--tight" role="group" aria-label="스토리 카테고리">
+                {(['변화의 이야기', '전문가 이야기'] as const).map((category) => (
+                  <button
+                    key={category}
+                    type="button"
+                    className={`admin-segmented__btn${storyCategory === category ? ' admin-segmented__btn--active' : ''}`}
+                    onClick={() => setStoryCategory(category)}
+                  >
+                    {category}
+                  </button>
+                ))}
+              </div>
+              <label className="admin-check">
+                <input type="checkbox" checked={storyFeatured} onChange={(e) => setStoryFeatured(e.target.checked)} />
+                대표 글로 지정
+              </label>
+              <label className="admin-check">
+                <input type="checkbox" checked={storyConsent} onChange={(e) => setStoryConsent(e.target.checked)} />
+                사진·인터뷰 게재 동의 확인 (체크해야 공개 가능)
+              </label>
+              {storyCategory === '변화의 이야기' ? (
+                <>
+                  <label className="admin-field admin-field--full"><span className="admin-field__label">[국가] · [사업명]</span><input className="admin-input" value={storyPlace} onChange={(e) => setStoryPlace(e.target.value)} /></label>
+                  <label className="admin-field admin-field--full"><span className="admin-field__label">Before</span><input className="admin-input" value={storyBefore} onChange={(e) => setStoryBefore(e.target.value)} /></label>
+                  <label className="admin-field admin-field--full"><span className="admin-field__label">Intervention</span><input className="admin-input" value={storyIntervention} onChange={(e) => setStoryIntervention(e.target.value)} /></label>
+                  <label className="admin-field admin-field--full"><span className="admin-field__label">After</span><input className="admin-input" value={storyAfter} onChange={(e) => setStoryAfter(e.target.value)} /></label>
+                  <label className="admin-field admin-field--full"><span className="admin-field__label">Evidence</span><input className="admin-input" value={storyEvidence} onChange={(e) => setStoryEvidence(e.target.value)} /></label>
+                  <label className="admin-field admin-field--full"><span className="admin-field__label">Sustainability</span><input className="admin-input" value={storySustain} onChange={(e) => setStorySustain(e.target.value)} /></label>
+                </>
+              ) : (
+                <>
+                  <label className="admin-field admin-field--full"><span className="admin-field__label">이름</span><input className="admin-input" value={storyExpertName} onChange={(e) => setStoryExpertName(e.target.value)} /></label>
+                  <label className="admin-field admin-field--full"><span className="admin-field__label">소속 · 전문 분야</span><input className="admin-input" value={storyExpertOrg} onChange={(e) => setStoryExpertOrg(e.target.value)} /></label>
+                  <label className="admin-field admin-field--full"><span className="admin-field__label">평가 한두 문장</span><input className="admin-input" value={storyExpertQuote} onChange={(e) => setStoryExpertQuote(e.target.value)} /></label>
+                </>
+              )}
             </div>
           ) : postType === '진행사업' ? (
             <div className="admin-field admin-field--full">
@@ -1190,8 +1255,11 @@ function PostEditorForm({
           >
             취소
           </button>
-          <button type="button" className="admin-btn admin-btn--primary" onClick={onSave} disabled={saving}>
-            {saving ? '저장 중…' : '저장'}
+          <button type="button" className="admin-btn admin-btn--ghost" onClick={() => void onSave('draft')} disabled={saving}>
+            {saving ? '저장 중…' : '임시저장'}
+          </button>
+          <button type="button" className="admin-btn admin-btn--primary" onClick={() => void onSave('publish')} disabled={saving || (postType === '스토리' && !storyConsent)}>
+            {saving ? '저장 중…' : '게시'}
           </button>
         </div>
       </section>
@@ -1206,6 +1274,7 @@ export function AdminPostsPage() {
   const [editingId, setEditingId] = useState<number | null>(null)
   const [rows, setRows] = useState<AdminPost[]>([])
   const [listPage, setListPage] = useState(1)
+  const [query, setQuery] = useState('')
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -1228,11 +1297,11 @@ export function AdminPostsPage() {
     setError('')
     try {
       if (filterType === '언론보도') {
-        const res = await adminFetchPostsByKind(filterType, 1, 100)
+        const res = await adminFetchPostsByKind(filterType, 1, 100, query)
         setRows(res.posts)
         setTotal(res.total)
       } else {
-        const res = await adminFetchPostsByKind(filterType, page, ADMIN_POSTS_PER_PAGE)
+        const res = await adminFetchPostsByKind(filterType, page, ADMIN_POSTS_PER_PAGE, query)
         setRows(res.posts)
         setTotal(res.total)
       }
@@ -1246,7 +1315,7 @@ export function AdminPostsPage() {
   useEffect(() => {
     void load(listPage)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filterType, listPage])
+  }, [filterType, listPage, query])
 
   useEffect(() => {
     if (listPage > totalPages) setListPage(totalPages)
@@ -1338,6 +1407,19 @@ export function AdminPostsPage() {
         <h2 id="posts-list-heading" className="admin-panel__title">
           목록
         </h2>
+        <label className="admin-field">
+          <span className="admin-field__label">검색</span>
+          <input
+            className="admin-input"
+            type="search"
+            value={query}
+            placeholder="제목"
+            onChange={(e) => {
+              setQuery(e.target.value)
+              setListPage(1)
+            }}
+          />
+        </label>
         {filterType === '언론보도' ? (
           <ul className="admin-press-list" aria-label="언론보도 목록">
             {loading ? (
@@ -1432,7 +1514,10 @@ export function AdminPostsPage() {
                   listItems.map((row) => (
                     <tr key={row.id}>
                       <td className="admin-table__type">{filterType}</td>
-                      <td>{row.title}</td>
+                      <td>
+                        {row.status === 'draft' ? '임시저장 ' : ''}
+                        {row.title}
+                      </td>
                       <td>{row.excerpt}</td>
                       <td>{new Date(row.publishedAt).toISOString().slice(0, 10)}</td>
                       <td>

@@ -24,7 +24,6 @@ const EDIT_LOCALES: { id: HeroBannerEditLocale; label: string }[] = [
 export function AdminBannerPage() {
   const [doc, setDoc] = useState<HeroBannerDocument>(() => deepClone(DEFAULT_HERO_BANNER))
   const [editLocale, setEditLocale] = useState<HeroBannerEditLocale>('ko')
-  const [selectedId, setSelectedId] = useState<string>(DEFAULT_HERO_BANNER.slides[0]?.id ?? '')
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
@@ -34,19 +33,12 @@ export function AdminBannerPage() {
     () => [...doc.slides].sort((a, b) => a.order - b.order),
     [doc.slides],
   )
-  const selected = slides.find((s) => s.id === selectedId) ?? slides[0] ?? null
-  const selectedCopy = selected?.locales[editLocale]
-
   const load = useCallback(async () => {
     setLoading(true)
     setError('')
     try {
       const data = await adminFetchHeroBanner()
       setDoc(data)
-      setSelectedId((cur) => {
-        if (data.slides.some((s) => s.id === cur)) return cur
-        return data.slides[0]?.id ?? ''
-      })
     } catch (e) {
       setError(e instanceof Error ? e.message : '불러오지 못했습니다.')
       setDoc(deepClone(DEFAULT_HERO_BANNER))
@@ -66,19 +58,12 @@ export function AdminBannerPage() {
     }))
   }
 
-  const updateSelectedCopy = (patch: Partial<{ alt: string; lines: string[] }>) => {
-    if (!selected) return
+  const updateCopy = (id: string, patch: Partial<{ alt: string; lines: string[]; smallLine: string }>) => {
     setDoc((prev) => ({
       ...prev,
       slides: prev.slides.map((s) =>
-        s.id === selected.id
-          ? {
-              ...s,
-              locales: {
-                ...s.locales,
-                [editLocale]: { ...s.locales[editLocale], ...patch },
-              },
-            }
+        s.id === id
+          ? { ...s, locales: { ...s.locales, [editLocale]: { ...s.locales[editLocale], ...patch } } }
           : s,
       ),
     }))
@@ -92,25 +77,25 @@ export function AdminBannerPage() {
       order,
       enabled: true,
       image: '',
+      mobileImage: '',
+      align: 'left',
+      dim: 'mid',
+      buttons: [],
       locales: {
-        ko: { alt: '', lines: [''] },
-        en: { alt: '', lines: [''] },
+        ko: { alt: '', lines: [''], smallLine: '교육으로 사람을 세우는 국제개발협력 NGO, 카야인터내셔널' },
+        en: { alt: '', lines: [''], smallLine: '' },
       },
     }
     setDoc((prev) => ({ ...prev, slides: [...prev.slides, blank] }))
-    setSelectedId(id)
   }
 
-  const removeSelected = () => {
-    if (!selected) return
+  const removeSlide = (slide: HeroBannerSlide) => {
     if (doc.slides.length <= 1) {
       window.alert('슬라이드는 최소 1개가 필요합니다.')
       return
     }
-    if (!window.confirm(`${selected.order}번 슬라이드를 삭제할까요?`)) return
-    const next = doc.slides.filter((s) => s.id !== selected.id)
-    setDoc({ ...doc, slides: next })
-    setSelectedId(next[0]?.id ?? '')
+    if (!window.confirm(`${slide.order}번 슬라이드를 삭제할까요?`)) return
+    setDoc({ ...doc, slides: doc.slides.filter((s) => s.id !== slide.id) })
   }
 
   const onSave = async () => {
@@ -129,10 +114,12 @@ export function AdminBannerPage() {
             ko: {
               alt: s.locales.ko.alt.trim(),
               lines: s.locales.ko.lines.map((l) => l.trimEnd()),
+              smallLine: (s.locales.ko.smallLine ?? '교육으로 사람을 세우는 국제개발협력 NGO, 카야인터내셔널').trim(),
             },
             en: {
               alt: s.locales.en.alt.trim(),
               lines: s.locales.en.lines.map((l) => l.trimEnd()),
+              smallLine: (s.locales.en.smallLine ?? '').trim(),
             },
           },
         })),
@@ -159,186 +146,127 @@ export function AdminBannerPage() {
     <div className="admin-page">
       <div className="admin-page__head">
         <div>
-          <h1 className="admin-page__title">메인 배너 관리</h1>
-          <p className="admin-page__desc">
-            홈 상단 히어로 슬라이드의 배경 이미지·문구·alt를 한·영으로 관리합니다. 이미지는 공통, 문구는
-            언어별입니다. 문구가 이미지에 들어가 있으면 텍스트는 비워도 저장됩니다. 저장 후 공개 홈(`/`, `/en`)에 반영됩니다.
-          </p>
+          <p className="admin-page__desc">메인 · 사이트 설정</p>
+          <h1 className="admin-page__title">① 메인 배너</h1>
         </div>
-        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-          <button type="button" className="admin-btn admin-btn--ghost" onClick={addSlide}>
-            슬라이드 추가
-          </button>
+        <div className="admin-page__actions">
+          <div className="admin-segmented" role="group" aria-label="편집 언어">
+            {EDIT_LOCALES.map(({ id }) => (
+              <button key={id} type="button" className={`admin-segmented__btn${editLocale === id ? ' admin-segmented__btn--active' : ''}`} onClick={() => setEditLocale(id)}>
+                {id === 'ko' ? '국문' : '영문'}
+              </button>
+            ))}
+          </div>
+          <a className="admin-btn" href="/" target="_blank" rel="noopener noreferrer">미리보기</a>
           <button type="button" className="admin-btn admin-btn--primary" disabled={saving} onClick={() => void onSave()}>
             {saving ? '저장 중…' : '저장'}
           </button>
         </div>
       </div>
 
-      <div className="admin-field admin-field--full" style={{ marginBottom: '1rem' }}>
-        <span className="admin-field__label">편집 언어</span>
-        <div className="admin-segmented admin-segmented--tight" role="group" aria-label="편집 언어">
-          {EDIT_LOCALES.map(({ id, label }) => (
-            <button
-              key={id}
-              type="button"
-              className={`admin-segmented__btn${editLocale === id ? ' admin-segmented__btn--active' : ''}`}
-              onClick={() => setEditLocale(id)}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-      </div>
-
       {error ? <p className="admin-banner admin-banner--error">{error}</p> : null}
-      {savedAt ? (
-        <p className="admin-panel__foot" role="status">
-          저장됨 ({savedAt})
-        </p>
-      ) : null}
+      {savedAt ? <p className="admin-panel__foot" role="status">저장됨 ({savedAt})</p> : null}
 
       <section className="admin-panel" aria-labelledby="hero-heading">
-        <h2 id="hero-heading" className="admin-panel__title">
-          홈 히어로 슬라이드
-        </h2>
-
-        <div className="admin-split admin-split--hero">
-          <div>
-            <h3 className="admin-subpanel__title">슬라이드 목록</h3>
-            <div className="admin-table-wrap">
-              <table className="admin-table">
-                <thead>
-                  <tr>
-                    <th scope="col">순서</th>
-                    <th scope="col">표시</th>
-                    <th scope="col">문구 미리보기</th>
-                    <th scope="col">관리</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {slides.map((slide) => (
-                    <tr
-                      key={slide.id}
-                      className={slide.id === selected?.id ? 'admin-table__row--selected' : undefined}
-                    >
-                      <td>{slide.order}</td>
-                      <td>{slide.enabled ? 'ON' : 'OFF'}</td>
-                      <td>
-                        <span className="admin-hero-preview">
-                          {slide.locales[editLocale].lines.filter(Boolean).join(' · ') || '(문구 없음)'}
-                        </span>
-                      </td>
-                      <td>
-                        <button
-                          type="button"
-                          className="admin-btn admin-btn--sm admin-btn--ghost"
-                          onClick={() => setSelectedId(slide.id)}
-                        >
-                          편집 선택
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <div>
-            <h3 className="admin-subpanel__title">선택 슬라이드 편집</h3>
-            {selected && selectedCopy ? (
-              <>
-                <p className="admin-fieldset__hint admin-fieldset__hint--flush">
-                  슬라이드: {selected.order}번 · {selectedCopy.alt || '(alt 없음)'}
-                </p>
+        <div className="admin-panel__head">
+          <h2 id="hero-heading" className="admin-panel__title">① 메인 배너</h2>
+          <span className="admin-panel__foot">슬라이드 {slides.length}개 · 끌어서 순서 변경</span>
+        </div>
+        {slides.map((slide) => {
+          const copy = slide.locales[editLocale]
+          const buttons = slide.buttons ?? []
+          return (
+            <div
+              key={slide.id}
+              className="admin-slide"
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={(e) => {
+                const id = e.dataTransfer.getData('text/plain')
+                if (!id || id === slide.id) return
+                const ordered = [...doc.slides].sort((a, b) => a.order - b.order)
+                const moving = ordered.find((item) => item.id === id)
+                if (!moving) return
+                const rest = ordered.filter((item) => item.id !== id)
+                const index = rest.findIndex((item) => item.id === slide.id)
+                rest.splice(index < 0 ? rest.length : index, 0, moving)
+                const orderOf = new Map(rest.map((item, itemIndex) => [item.id, itemIndex + 1]))
+                setDoc((prev) => ({ ...prev, slides: prev.slides.map((item) => ({ ...item, order: orderOf.get(item.id) ?? item.order })) }))
+              }}
+            >
+              <span
+                className="admin-org__grip"
+                draggable
+                aria-label="순서 변경"
+                onDragStart={(e) => {
+                  e.dataTransfer.setData('text/plain', slide.id)
+                  e.dataTransfer.effectAllowed = 'move'
+                }}
+              >
+                ⋮⋮
+              </span>
+              <AdminMediaUpload layout="slot" slotTitle="PC 이미지" slotRatio="2.2 : 1" label="PC 이미지" variant="image" value={slide.image?.trim() ? slide.image : null} onChange={(url) => updateSlide(slide.id, { image: url ?? '' })} />
+              <AdminMediaUpload layout="slot" slotTitle="모바일" slotRatio="4 : 5" label="모바일 이미지" variant="image" value={slide.mobileImage?.trim() ? slide.mobileImage : null} onChange={(url) => updateSlide(slide.id, { mobileImage: url ?? '' })} />
+              <div className="admin-slide__fields">
                 <div className="admin-form-grid">
-                  <div className="admin-field admin-field--full">
-                    <span className="admin-field__label">표시</span>
-                    <div className="admin-segmented admin-segmented--tight" role="group" aria-label="슬라이드 표시">
-                      <button
-                        type="button"
-                        className={`admin-segmented__btn${selected.enabled ? ' admin-segmented__btn--active' : ''}`}
-                        onClick={() => updateSlide(selected.id, { enabled: true })}
-                      >
-                        ON
-                      </button>
-                      <button
-                        type="button"
-                        className={`admin-segmented__btn${!selected.enabled ? ' admin-segmented__btn--active' : ''}`}
-                        onClick={() => updateSlide(selected.id, { enabled: false })}
-                      >
-                        OFF
-                      </button>
+                  <label className="admin-field admin-field--full">
+                    <span className="admin-field__label">큰 문구</span>
+                    <textarea className="admin-input" rows={2} value={copy.lines.join('\n')} onChange={(e) => updateCopy(slide.id, { lines: e.target.value.split('\n') })} />
+                  </label>
+                  <label className="admin-field admin-field--full">
+                    <span className="admin-field__label">작은 문구</span>
+                    <input className="admin-input" value={copy.smallLine ?? ''} onChange={(e) => updateCopy(slide.id, { smallLine: e.target.value })} />
+                  </label>
+                  <div className="admin-field">
+                    <span className="admin-field__label">문구 위치</span>
+                    <div className="admin-segmented" role="group" aria-label="문구 위치">
+                      {(['left', 'center'] as const).map((align) => (
+                        <button key={align} type="button" className={`admin-segmented__btn${(slide.align ?? 'left') === align ? ' admin-segmented__btn--active' : ''}`} onClick={() => updateSlide(slide.id, { align })}>{align === 'left' ? '왼쪽' : '가운데'}</button>
+                      ))}
                     </div>
                   </div>
+                  <div className="admin-field">
+                    <span className="admin-field__label">사진 어둡게</span>
+                    <div className="admin-segmented" role="group" aria-label="사진 어둡게">
+                      {([['weak', '약하게'], ['mid', '보통'], ['strong', '강하게']] as const).map(([dim, label]) => (
+                        <button key={dim} type="button" className={`admin-segmented__btn${(slide.dim ?? 'mid') === dim ? ' admin-segmented__btn--active' : ''}`} onClick={() => updateSlide(slide.id, { dim })}>{label}</button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="admin-field">
+                    <span className="admin-field__label">표시</span>
+                    <div className="admin-segmented" role="group" aria-label="슬라이드 표시">
+                      <button type="button" className={`admin-segmented__btn${slide.enabled ? ' admin-segmented__btn--active' : ''}`} onClick={() => updateSlide(slide.id, { enabled: true })}>표시</button>
+                      <button type="button" className={`admin-segmented__btn${!slide.enabled ? ' admin-segmented__btn--active' : ''}`} onClick={() => updateSlide(slide.id, { enabled: false })}>숨김</button>
+                    </div>
+                  </div>
+                  {buttons.map((button, index) => (
+                    <div key={index} className="admin-form-grid" style={{ gridColumn: '1 / -1' }}>
+                      <label className="admin-field">
+                        <span className="admin-field__label">버튼 {index + 1} 문구</span>
+                        <input className="admin-input" value={button.label} onChange={(e) => updateSlide(slide.id, { buttons: buttons.map((item, itemIndex) => itemIndex === index ? { ...item, label: e.target.value } : item) })} />
+                      </label>
+                      <label className="admin-field">
+                        <span className="admin-field__label">버튼 {index + 1} 링크</span>
+                        <input className="admin-input" value={button.href} onChange={(e) => updateSlide(slide.id, { buttons: buttons.map((item, itemIndex) => itemIndex === index ? { ...item, href: e.target.value } : item) })} />
+                      </label>
+                    </div>
+                  ))}
                   <label className="admin-field">
-                    <span className="admin-field__label">순서</span>
-                    <input
-                      className="admin-input"
-                      type="number"
-                      value={selected.order}
-                      onChange={(e) =>
-                        updateSlide(selected.id, { order: parseInt(e.target.value, 10) || selected.order })
-                      }
-                    />
-                  </label>
-                  <AdminMediaUpload
-                    label="배너 배경 이미지 (한·영 공통)"
-                    hint="가로 2640 × 세로 1200(2.2:1) 권장. 글자는 넣지 않습니다. 업로드 후 「저장」을 누르면 홈에 반영됩니다."
-                    variant="image"
-                    layout="wide"
-                    value={selected.image?.trim() ? selected.image : null}
-                    onChange={(url) => updateSlide(selected.id, { image: url ?? '' })}
-                  />
-                  {!/^https?:\/\//i.test(selected.image) && selected.image.trim() ? (
-                    <p className="admin-media-upload__hint">
-                      현재 경로: {selected.image} — 업로드하면 HTTPS URL로 교체할 수 있습니다.
-                    </p>
-                  ) : null}
-                  <label className="admin-field admin-field--full">
-                    <span className="admin-field__label">
-                      배너 문구 ({editLocale === 'ko' ? '한국어' : 'English'}, 줄마다 Enter, 비워도 됨)
-                    </span>
-                    <textarea
-                      className="admin-input admin-input--area"
-                      rows={4}
-                      value={selectedCopy.lines.join('\n')}
-                      onChange={(e) =>
-                        updateSelectedCopy({
-                          lines: e.target.value.split('\n'),
-                        })
-                      }
-                    />
-                  </label>
-                  <label className="admin-field admin-field--full">
-                    <span className="admin-field__label">
-                      이미지 설명 alt ({editLocale === 'ko' ? '한국어' : 'English'})
-                    </span>
-                    <input
-                      className="admin-input"
-                      type="text"
-                      value={selectedCopy.alt}
-                      onChange={(e) => updateSelectedCopy({ alt: e.target.value })}
-                    />
+                    <span className="admin-field__label">이미지 설명</span>
+                    <input className="admin-input" value={copy.alt} onChange={(e) => updateCopy(slide.id, { alt: e.target.value })} />
                   </label>
                 </div>
                 <div className="admin-form-actions">
-                  <button
-                    type="button"
-                    className="admin-btn admin-btn--danger-ghost"
-                    onClick={removeSelected}
-                    disabled={doc.slides.length <= 1}
-                  >
-                    이 슬라이드 삭제
-                  </button>
+                  {buttons.length < 2 ? (
+                    <button type="button" className="admin-btn" onClick={() => updateSlide(slide.id, { buttons: [...buttons, { label: '', href: '' }] })}>+ 버튼 추가</button>
+                  ) : null}
+                  <button type="button" className="admin-btn admin-btn--danger-ghost" onClick={() => removeSlide(slide)} disabled={doc.slides.length <= 1}>삭제</button>
                 </div>
-              </>
-            ) : (
-              <p className="admin-panel__foot">슬라이드를 추가해 주세요.</p>
-            )}
-          </div>
-        </div>
+              </div>
+            </div>
+          )
+        })}
+        <button type="button" className="admin-btn" style={{ marginTop: 12, color: 'var(--adm-wine)', borderStyle: 'dashed', borderColor: '#e3b3bd' }} onClick={addSlide}>+ 슬라이드 추가</button>
       </section>
     </div>
   )

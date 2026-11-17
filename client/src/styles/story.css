@@ -152,6 +152,16 @@
   text-decoration: none;
 }
 
+.story-cat.is-change {
+  color: #b11e3b;
+  font-weight: 800;
+}
+
+.story-cat.is-expert {
+  color: #2e5c9a;
+  font-weight: 800;
+}
+
 .story-list-card__title-text {
   display: -webkit-box;
   -webkit-line-clamp: 2;

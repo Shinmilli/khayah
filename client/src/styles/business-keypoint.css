@@ -65,7 +65,7 @@
 .biz-kp__quote {
   grid-column: 1;
   grid-row: 2;
-  font-family: Georgia, 'Times New Roman', serif;
+  font-family: var(--font-sans);
   font-size: 3.9rem;
   font-weight: 700;
   line-height: 0.72;
@@ -85,6 +85,19 @@
   font-weight: 700;
   letter-spacing: -0.02em;
   color: var(--bk-rose);
+}
+
+.biz-kp__em {
+  color: #b11e3b;
+}
+
+.biz-project-note {
+  margin: 48px 0 0;
+  text-align: center;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #485063;
+  word-break: keep-all;
 }
 
 .biz-kp__title {
@@ -172,7 +185,7 @@
 .biz-kp__no {
   margin: 0;
   padding-top: 0;
-  font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  font-family: var(--font-sans);
   font-size: clamp(3rem, 3.6vw, 3.85rem);
   font-weight: 600;
   letter-spacing: -0.03em;
@@ -274,7 +287,7 @@
 .page-content-wrapper .page-body .biz-kp p.biz-kp__no {
   margin: 0;
   color: var(--bk-rose);
-  font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  font-family: var(--font-sans);
   font-size: clamp(3rem, 3.6vw, 3.85rem);
   font-weight: 600;
   line-height: 1;
@@ -297,4 +310,156 @@
   .page-content-wrapper .page-body .biz-kp ol.biz-kp__list {
     max-width: none;
   }
+}
+
+/* 시안: 남색 제목, 와인 키커, 원형 사진, 번호 상자 */
+.biz-kp,
+.biz-kp::before,
+.biz-kp__intro::before {
+  background: #fff;
+}
+
+.biz-kp {
+  padding: 96px 0 88px;
+}
+
+.biz-kp__intro {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 48px 64px;
+  align-items: center;
+  padding-bottom: 72px;
+}
+
+.biz-kp__copy {
+  flex: 1 1 520px;
+}
+
+.biz-kp__statement {
+  display: block;
+}
+
+.biz-kp__quote {
+  display: none;
+}
+
+.page-content-wrapper .page-body .biz-kp p.biz-kp__kicker,
+.biz-kp__kicker {
+  margin: 0 0 16px;
+  font-size: 12px;
+  letter-spacing: 0.22em;
+  font-weight: 700;
+  color: #b11e3b;
+}
+
+.page-content-wrapper .page-body .biz-kp h1.biz-kp__title,
+.biz-kp__title {
+  font-size: 38px;
+  line-height: 1.35;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: #1f2a44;
+}
+
+.page-content-wrapper .page-body .biz-kp p.biz-kp__lead,
+.biz-kp__lead,
+.page-content-wrapper .page-body .biz-kp p.biz-kp__desc,
+.biz-kp__desc {
+  margin-top: 22px;
+  font-size: 16px;
+  line-height: 1.85;
+  color: #485063;
+}
+
+.biz-kp__photo {
+  flex: 0 1 380px;
+  width: 380px;
+  max-width: 100%;
+}
+
+.biz-kp__photo::before {
+  display: none;
+}
+
+.biz-kp__photo img {
+  box-shadow: none;
+  border-radius: 50%;
+}
+
+.page-content-wrapper .page-body .biz-kp ol.biz-kp__list,
+.biz-kp__list {
+  display: block;
+  margin-top: 8px;
+  max-width: none;
+}
+
+.page-content-wrapper .page-body .biz-kp li.biz-kp__item,
+.biz-kp__item {
+  display: flex;
+  gap: 28px;
+  align-items: flex-start;
+  padding: 30px 0;
+  border-top: 1px solid #e6e6e3;
+}
+
+.biz-kp__item:first-child {
+  border-top: 0;
+}
+
+.page-content-wrapper .page-body .biz-kp p.biz-kp__no,
+.biz-kp__no {
+  flex: 0 0 48px;
+  width: 48px;
+  height: 48px;
+  margin-top: 2px;
+  border-radius: 10px;
+  background: #1f2a44;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 48px;
+  text-align: center;
+}
+
+.page-content-wrapper .page-body .biz-kp h2.biz-kp__h,
+.biz-kp__h {
+  margin: 0 0 10px;
+  font-size: 21px;
+  font-weight: 800;
+  line-height: 1.4;
+  color: #1f2a44;
+}
+
+.page-content-wrapper .page-body .biz-kp p.biz-kp__desc,
+.biz-kp__desc {
+  margin-top: 0;
+}
+
+.biz-project-note {
+  margin: 72px 0 18px;
+  text-align: center;
+  font-size: 15px;
+  color: #485063;
+}
+
+a.biz-project-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 auto 8px;
+  background: #b11e3b;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 800;
+  font-size: 16px;
+  padding: 16px 30px;
+  border-radius: 8px;
+  min-height: 44px;
+}
+
+.biz-project-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 40px;
 }

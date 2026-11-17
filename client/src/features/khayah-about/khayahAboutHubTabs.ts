@@ -25,7 +25,7 @@ export const KHAYAH_SECTION_NAV: Array<{ id: KhayahSectionId; to: string; labelK
   { id: 'greeting', to: '/about/greeting', labelKey: 'greeting' },
   { id: 'history', to: '/about/history', labelKey: 'history' },
   { id: 'org', to: '/about/khayah?tab=org', labelKey: 'org' },
-  { id: 'financialReport', to: '/about/financial-report', labelKey: 'financialReport' },
+  { id: 'financialReport', to: '/about/transparency', labelKey: 'financialReport' },
   { id: 'location', to: '/about/location', labelKey: 'location' },
 ]
 
@@ -48,7 +48,7 @@ export function getActiveKhayahSection(pathname: string, search: string, hash = 
   if (path.endsWith('/about/greeting')) return 'greeting'
   if (path.endsWith('/about/history')) return 'history'
   if (path.endsWith('/about/location')) return 'location'
-  if (path.endsWith('/about/financial-report')) return 'financialReport'
+  if (path.endsWith('/about/transparency') || path.endsWith('/about/financial-report')) return 'financialReport'
   if (path.endsWith('/about/khayah')) {
     const tab = parseAboutTab(search, hash)
     if (tab === 'org') return 'org'
@@ -62,6 +62,7 @@ export function isKhayahSectionPathKey(pathKey: string): boolean {
     pathKey === 'about/greeting' ||
     pathKey === 'about/history' ||
     pathKey === 'about/location' ||
+    pathKey === 'about/transparency' ||
     pathKey === 'about/financial-report' ||
     pathKey === 'about/khayah'
   )

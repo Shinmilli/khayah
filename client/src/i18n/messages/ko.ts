@@ -15,16 +15,23 @@ export type NavLinkKey =
   | 'overseasHealth'
   | 'overseasVolunteer'
   | 'researchEducation'
+  | 'domesticProjects'
+  | 'overseasProjects'
+  | 'researchProjects'
   | 'researchSocial'
+  | 'socialAcademy'
+  | 'socialComfort'
   | 'advocacy'
   | 'projects'
   | 'supportGuide'
+  | 'supportMethod'
   | 'stories'
   | 'announcements'
   | 'activities'
   | 'newsletter'
   | 'press'
   | 'inquiry'
+  | 'impactGlance'
 
 export type FooterTopLinkKey =
   | 'donate'
@@ -316,34 +323,41 @@ export const koMessages: Messages = {
       greeting: '인사말',
       history: '연혁',
       location: '오시는 길',
-      financialReport: '재정보고',
-      aboutKhayah: '카야 소개 · CI',
+      financialReport: '투명경영',
+      aboutKhayah: '카야 소개·CI',
       ci: 'CI',
-      org: '조직도 · 이사회 · 전문위원',
+      org: '조직도·이사회·전문위원',
       domestic: '국내사업',
       domesticEducation: '교육',
       overseas: '해외사업',
       overseasEducation: '교육',
       overseasHealth: '보건의료',
       overseasVolunteer: '해외봉사단',
+      domesticProjects: '국내 진행사업',
+      overseasProjects: '해외 진행사업',
+      researchProjects: '연구사업 진행사업',
       researchEducation: '교육연구',
       researchSocial: '소셜비즈니스',
+      socialAcademy: '카야 아카데미',
+      socialComfort: '컬러앤컴포트',
       advocacy: '연구사업',
       projects: '진행사업',
       supportGuide: '후원 안내',
+      supportMethod: '후원 방법',
       stories: '스토리',
       announcements: '공지사항',
       activities: '활동소식',
       newsletter: '연간소식지',
       press: '언론보도',
       inquiry: '고객 문의',
+      impactGlance: '한눈에 보는 카야',
     },
   },
   footer: {
     aria: '푸터 바로가기',
     topLinks: {
       donate: '후원신청',
-      projects: '진행사업',
+      projects: '사업소개',
       location: '위치안내',
       instagram: '인스타그램',
       blog: '블로그',
@@ -361,7 +375,7 @@ export const koMessages: Messages = {
       slideLabel: (n: number) => `${n}번 슬라이드`,
       slidesNavAria: '히어로 슬라이드',
       bizStrip: '사업 분야',
-      bizLabels: ['국내사업', '해외사업', '연구사업', '진행사업'],
+      bizLabels: ['국내사업', '해외사업', '연구사업', '소셜비즈니스'],
       slides: [
         {
           alt: '아이들 이미지',
@@ -479,14 +493,12 @@ export const koMessages: Messages = {
       tablePlaceholderOps: '운영성과표 이미지 영역',
       tablePlaceholderHint: '관리자 페이지에서 이미지 URL을 등록하면 표시됩니다.',
       actionHometax: '공익법인 결산서류 등 공시',
-      actionDonation: '기부금 모금액 및 활용 실적 공시',
-      actionAcrc: '공공위반사항 제보\n"국민권익위원회"',
+      actionDonation: '기부금 모금액 및 활용실적 공시',
+      actionAcrc: '공익위반사항 제보',
       pdfModalTitle: '기부금 공시 PDF',
-      pdfModalBody:
-        '이 연도에 기부금 공시 PDF가 없습니다. 관리자 화면의 재정보고 메뉴에서 해당 연도의 PDF를 등록하면 새 창으로 열립니다.',
+      pdfModalBody: '이 연도에 기부금 공시 PDF가 없습니다.',
       pdfModalTitlePublicInterest: '공익법인 결산서류 공시 PDF',
-      pdfModalBodyPublicInterest:
-        '이 연도에 공익법인 결산서류 공시 PDF가 없습니다. 관리자 화면의 재정보고 메뉴에서 해당 연도의 PDF를 등록하면 새 창으로 열립니다.',
+      pdfModalBodyPublicInterest: '이 연도에 공익법인 결산서류 공시 PDF가 없습니다.',
       pdfModalClose: '닫기',
       incomeChart: '수입총액',
       expenseChart: '지출총액',

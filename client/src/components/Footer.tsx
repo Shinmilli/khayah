@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { FOOTER_LOGO_DARK, FOOTER_LOGO_FALLBACK, FOOTER_TOP_LINKS } from '../constants'
 import { useLocale } from '../i18n/LocaleContext'
 import type { FooterTopLinkKey } from '../i18n/messages/ko'
+import { useSiteCommon } from '../features/site/useSiteCommon'
 
 type TopLinkItem = (typeof FOOTER_TOP_LINKS)[number]
 
@@ -65,9 +66,23 @@ function ContactText({ text }: { text: string }) {
 }
 
 export function Footer() {
-  const { localize, messages } = useLocale()
+  const { locale, localize, messages } = useLocale()
   const { footer } = messages
+  const site = useSiteCommon()
   const year = new Date().getFullYear()
+  const koOrg = locale === 'ko' ? site?.org : null
+  const contactText = koOrg
+    ? [koOrg.nameKo, koOrg.addressKo, koOrg.phoneFax, koOrg.email ? `E ${koOrg.email.replace(/^E\s*/i, '')}` : '']
+        .map((line) => line.trim())
+        .filter(Boolean)
+        .join('\n')
+    : footer.contactText
+  const koLinks =
+    locale === 'ko' && site
+      ? site.footerLinks
+          .filter((row) => row.enabled && row.labelKo.trim() && row.href.trim() && row.href.trim() !== '#')
+          .sort((a, b) => a.order - b.order)
+      : null
 
   return (
     <footer id="Footer" className="clearfix">
@@ -75,7 +90,31 @@ export function Footer() {
         <div className="container footer-links-bar__inner">
           <nav className="footer-links-bar__nav" aria-label={footer.aria}>
             <div className="footer-links-bar__row">
-              {FOOTER_TOP_LINKS.map((item, i) => (
+              {koLinks
+                ? koLinks.map((row, i) => {
+                    const href = row.href.trim()
+                    const external = /^https?:/i.test(href)
+                    return (
+                      <Fragment key={row.id}>
+                        {i > 0 && (
+                          <span className="footer-links-bar__sep" aria-hidden>
+                            |
+                          </span>
+                        )}
+                        {external ? (
+                          <a className="footer-links-bar__link" href={href} target="_blank" rel="noopener noreferrer">
+                            {row.labelKo}
+                          </a>
+                        ) : (
+                          <Link className="footer-links-bar__link" to={localize(href)}>
+                            {row.labelKo}
+                          </Link>
+                        )}
+                      </Fragment>
+                    )
+                  })
+                : null}
+              {!koLinks && FOOTER_TOP_LINKS.map((item, i) => (
                 <Fragment key={item.key}>
                   {i > 0 && (
                     <span className="footer-links-bar__sep" aria-hidden>
@@ -84,7 +123,15 @@ export function Footer() {
                   )}
                   <FooterTopLink
                     item={item}
-                    to={'to' in item ? localize(item.to) : undefined}
+                    to={
+                      'to' in item
+                        ? localize(
+                            item.key === 'projects' && locale === 'ko'
+                              ? '/business/domestic'
+                              : item.to,
+                          )
+                        : undefined
+                    }
                   >
                     {footer.topLinks[item.key as FooterTopLinkKey]}
                   </FooterTopLink>
@@ -99,7 +146,7 @@ export function Footer() {
         <div className="container footer-main__inner">
           <div className="footer-main__left">
             <FooterBrandLogo />
-            <ContactText text={footer.contactText} />
+            <ContactText text={contactText} />
           </div>
         </div>
       </div>

@@ -18,10 +18,11 @@
   padding-bottom: 0;
 }
 
-/* 인사말 본문이 시안 비율로 더 커져도 칸 안에 들어가게 */
 .page-content-wrapper > .section:has(.greeting-modern) > .section_wrapper {
-  width: min(1520px, 100%);
-  max-width: 1520px;
+  width: 100%;
+  max-width: none;
+  padding-left: 0;
+  padding-right: 0;
 }
 
 .page-content-wrapper > .section:has(.greeting-modern) .column.one {
@@ -100,6 +101,87 @@
   line-height: 1.15;
   font-size: clamp(1.9rem, 3.5vw, 3rem);
   text-shadow: 0 4px 22px rgba(0, 0, 0, 0.35);
+}
+
+.page-hero--kaya {
+  height: 320px;
+  min-height: 320px;
+  display: block;
+  background: #2f2b28;
+}
+
+.page-hero--kaya .page-hero__blur {
+  display: none;
+}
+
+.page-hero--kaya .page-hero__bg::after {
+  background: rgba(47, 43, 40, 0.72);
+}
+
+.page-hero--kaya .page-hero__inner {
+  width: min(1120px, 100%);
+  max-width: 1120px;
+  height: 100%;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 10px;
+  text-align: left;
+  box-sizing: border-box;
+}
+
+.page-hero--kaya .page-hero__crumbs {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: #eadfe2;
+}
+
+.page-hero--kaya .page-hero__crumbs a {
+  color: #eadfe2;
+  text-decoration: none;
+}
+
+.page-hero--kaya .page-hero__crumbs b {
+  color: #fff;
+  font-weight: 700;
+}
+
+.page-hero--kaya .page-hero__eyebrow {
+  margin: 6px 0 0;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  color: #eadfe2;
+}
+
+.page-hero--kaya .page-hero__title {
+  margin: 0;
+  font-size: 46px;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: 0;
+  text-shadow: none;
+}
+
+.page-hero--biz {
+  height: 300px;
+  min-height: 300px;
+  background: #1f2a44;
+}
+
+.page-hero--biz .page-hero__bg::after {
+  background: rgba(31, 42, 68, 0.58);
+}
+
+.page-hero--biz .page-hero__crumbs,
+.page-hero--biz .page-hero__crumbs a,
+.page-hero--biz .page-hero__eyebrow {
+  color: #d6dae3;
 }
 
 .page-hero__scroll {

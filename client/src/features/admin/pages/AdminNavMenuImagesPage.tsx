@@ -87,7 +87,6 @@ export function AdminNavMenuImagesPage() {
             <h2 className="admin-panel__title">{NAV_MENU_IMAGE_LABELS[key]}</h2>
             <AdminMediaUpload
               label={`${NAV_MENU_IMAGE_LABELS[key]} 메뉴 이미지`}
-              hint="세로로 긴 사진(3:4)을 권장합니다. 제거 후 저장하면 메뉴에서 이미지가 빠집니다."
               variant="image"
               layout="portrait"
               value={doc.images[key] || null}

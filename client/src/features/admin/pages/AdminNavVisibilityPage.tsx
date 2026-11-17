@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { adminFetchNavVisibility, adminPutNavVisibility } from '../../../services/api'
 import {
   DEFAULT_NAV_VISIBILITY,
+  mergeNavVisibility,
   NAV_LINK_LABELS,
   NAV_MENU_COLUMNS,
   NAV_TOP_LABELS,
@@ -88,7 +89,7 @@ export function AdminNavVisibilityPage() {
     setError('')
     try {
       const data = await adminFetchNavVisibility()
-      setDoc(data)
+      setDoc(mergeNavVisibility(data))
     } catch (e) {
       setError(e instanceof Error ? e.message : '불러오지 못했습니다.')
       setDoc(deepClone(DEFAULT_NAV_VISIBILITY))
@@ -115,7 +116,7 @@ export function AdminNavVisibilityPage() {
     setSavedAt('')
     try {
       const saved = await adminPutNavVisibility(doc)
-      setDoc(saved)
+      setDoc(mergeNavVisibility(saved))
       setSavedAt(new Date().toLocaleTimeString('ko-KR'))
     } catch (e) {
       setError(e instanceof Error ? e.message : '저장에 실패했습니다.')
@@ -136,10 +137,12 @@ export function AdminNavVisibilityPage() {
     <div className="admin-page">
       <div className="admin-page__head">
         <div>
-          <h1 className="admin-page__title">메뉴 표시</h1>
+          <p className="admin-page__desc">메인 · 사이트 설정</p>
+          <h1 className="admin-page__title">⑦ 메뉴 표시</h1>
           <p className="admin-page__desc">
-            상단 네비게이션 메뉴를 켜고 끌 수 있습니다. 상위 메뉴를 OFF하면 그 아래 항목도 사이트에서 보이지 않습니다.
-            숨긴 페이지는 주소로 직접 들어갈 수는 있습니다.
+            새 구조 반영: 국내사업 › 교육·연구사업 › 교육연구 삭제, 소셜비즈니스 신규, 해외사업 › 보건 → 해외봉사단,
+            재정보고 → 투명경영, 후원 방법 신규, 한눈에 보는 카야 신규(숨김), 지원사업 숨김, 진행사업 유지.
+            상위 메뉴를 OFF하면 그 아래 항목도 사이트에서 보이지 않습니다.
           </p>
         </div>
         <button type="button" className="admin-btn admin-btn--primary" disabled={saving} onClick={() => void save()}>

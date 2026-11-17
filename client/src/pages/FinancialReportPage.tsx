@@ -8,11 +8,80 @@ import { formatWon } from '../features/financial-report/financialReportDefaults'
 import type { FinancialReportsPublicDocument } from '../features/financial-report/financialReportTypes'
 import { fetchFinancialReports } from '../services/api'
 import { useLocale } from '../i18n/LocaleContext'
+import { useKayaPages } from '../features/kaya/useKayaPages'
+import { donateHref, useBizSupport } from '../features/biz/useBizSupport'
 import { pdfOpenHref } from '../utils/pdfAttachments'
 import { toCloudinaryWebpUrl } from '../utils/cloudinaryWebp'
 import '../styles/financial-report.css'
 
 const ACRC_URL = 'https://www.acrc.go.kr/'
+
+function layoutTitle(text: string, line: string): string {
+  if (text.includes('<br')) return text
+  const plain = text.replace(/<[^>]+>/g, '')
+  const at = plain.indexOf(line)
+  if (at <= 0) return text
+  const head = plain.slice(0, at).replace(/\s+$/, '')
+  const tail = plain.slice(at + line.length)
+  return `${head}<br /><span>${line}</span>${tail}`
+}
+
+function trimPercent(percent: number): string {
+  if (!Number.isFinite(percent)) return '0'
+  return String(Math.round(percent * 100) / 100)
+}
+
+function FrRing({
+  title,
+  centerLabel,
+  total,
+  segments,
+  year,
+}: {
+  title: string
+  centerLabel: string
+  total: string
+  segments: { id: string; label: string; percent: number; color: string }[]
+  year: number
+}) {
+  let acc = 0
+  const stops = segments
+    .map((segment) => {
+      const start = acc
+      acc += segment.percent
+      return `${segment.color} ${start}% ${acc}%`
+    })
+    .join(', ')
+  return (
+    <div className="fr-card">
+      <p>{title}</p>
+      <div className="fr-card__body">
+        <div
+          className="fr-ring"
+          role="img"
+          aria-label={segments.map((segment) => `${segment.label} ${trimPercent(segment.percent)}%`).join(', ')}
+          style={{ background: stops ? `conic-gradient(${stops})` : '#eceae6' }}
+        >
+          <div>
+            <span>
+              {year} {centerLabel}
+            </span>
+            <span>{total}</span>
+          </div>
+        </div>
+        <div className="fr-legend">
+          {segments.map((segment) => (
+            <div key={segment.id}>
+              <span style={{ background: segment.color }} />
+              {segment.label}
+              <b>{trimPercent(segment.percent)}%</b>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
 
 type PdfModalKind = 'donation' | 'publicInterest'
 
@@ -30,7 +99,7 @@ function ArrowCircleIcon() {
 function ChevronLeftIcon() {
   return (
     <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M14 7l-5 5 5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M14.5 5.5 8 12l6.5 6.5" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   )
 }
@@ -38,13 +107,16 @@ function ChevronLeftIcon() {
 function ChevronRightIcon() {
   return (
     <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M10 7l5 5-5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M9.5 5.5 16 12l-6.5 6.5" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   )
 }
 
 export function FinancialReportPage() {
   const { locale, messages } = useLocale()
+  const kaya = useKayaPages()
+  const biz = useBizSupport()
+  const ko = (key: string, fallback: string) => (locale === 'ko' && kaya?.fields[key] ? kaya.fields[key] : fallback)
   const fr = messages.pages.financialReport
   const nav = messages.nav
   const [doc, setDoc] = useState<FinancialReportsPublicDocument | null>(null)
@@ -120,6 +192,11 @@ export function FinancialReportPage() {
   )
 
   const [pdfModalKind, setPdfModalKind] = useState<PdfModalKind | null>(null)
+  const [statementsOpen, setStatementsOpen] = useState(false)
+
+  useEffect(() => {
+    setStatementsOpen(false)
+  }, [year])
 
   const report = useMemo(() => {
     if (!doc?.reports.length || year === null) return null
@@ -130,11 +207,11 @@ export function FinancialReportPage() {
 
   useEffect(() => {
     if (!report) return
-    document.title = messages.pages.documentTitle(fr.pageTitle(report.year))
+    document.title = messages.pages.documentTitle(nav.links.financialReport)
     return () => {
       document.title = messages.pages.defaultTitle
     }
-  }, [report?.year, fr, messages.pages])
+  }, [report?.year, nav.links.financialReport, messages.pages])
 
   useEffect(() => {
     if (!pdfModalKind) return
@@ -159,11 +236,13 @@ export function FinancialReportPage() {
 
   if (loading) {
     return (
-      <div className="financial-report-page">
+      <div className={`financial-report-page${locale === 'ko' ? ' financial-report-page--ko' : ''}`}>
         <PageHero
           title={nav.links.financialReport}
           backgroundImageUrl={pageHeroImageForPath(PATH.aboutFinancialReport)}
           showScrollHint={false}
+          layout={locale === 'ko' ? 'kaya' : 'banner'}
+          eyebrow={locale === 'ko' ? 'TRANSPARENCY' : undefined}
         />
         <KhayahSectionNav />
         <div className="financial-report__inner">
@@ -175,11 +254,13 @@ export function FinancialReportPage() {
 
   if (error) {
     return (
-      <div className="financial-report-page">
+      <div className={`financial-report-page${locale === 'ko' ? ' financial-report-page--ko' : ''}`}>
         <PageHero
           title={nav.links.financialReport}
           backgroundImageUrl={pageHeroImageForPath(PATH.aboutFinancialReport)}
           showScrollHint={false}
+          layout={locale === 'ko' ? 'kaya' : 'banner'}
+          eyebrow={locale === 'ko' ? 'TRANSPARENCY' : undefined}
         />
         <KhayahSectionNav />
         <div className="financial-report__inner">
@@ -197,11 +278,13 @@ export function FinancialReportPage() {
 
   if (!doc || !report || year === null || !settings) {
     return (
-      <div className="financial-report-page">
+      <div className={`financial-report-page${locale === 'ko' ? ' financial-report-page--ko' : ''}`}>
         <PageHero
           title={nav.links.financialReport}
           backgroundImageUrl={pageHeroImageForPath(PATH.aboutFinancialReport)}
           showScrollHint={false}
+          layout={locale === 'ko' ? 'kaya' : 'banner'}
+          eyebrow={locale === 'ko' ? 'TRANSPARENCY' : undefined}
         />
         <KhayahSectionNav />
         <div className="financial-report__inner">
@@ -214,17 +297,188 @@ export function FinancialReportPage() {
   }
 
   const showAnyTable = settings.showBalanceSheet || settings.showOperationsStatement
+  const statementBlock = showAnyTable ? (
+    <div className="fr-statements">
+      <button
+        type="button"
+        className="fr-statements__toggle"
+        aria-expanded={statementsOpen}
+        onClick={() => setStatementsOpen((open) => !open)}
+      >
+        재무제표 자세히 보기
+      </button>
+      <div
+        className={`financial-report__tables${
+          settings.showBalanceSheet && settings.showOperationsStatement ? '' : ' financial-report__tables--single'
+        }`}
+        hidden={!statementsOpen}
+      >
+        {settings.showBalanceSheet ? (
+          <div className="financial-report__table-card">
+            <div className="financial-report__table-head">{fr.balanceSheet(report.year)}</div>
+            {report.balanceSheetImageUrl ? (
+              <img src={toCloudinaryWebpUrl(report.balanceSheetImageUrl)} alt={`${fr.balanceSheet(report.year)}`} />
+            ) : (
+              <div className="financial-report__table-placeholder">
+                {fr.tablePlaceholderBalance}
+                <span style={{ fontSize: '0.8rem', marginTop: '0.5rem', color: '#999' }}>
+                  {fr.tablePlaceholderHint}
+                </span>
+              </div>
+            )}
+          </div>
+        ) : null}
+        {settings.showOperationsStatement ? (
+          <div className="financial-report__table-card">
+            <div className="financial-report__table-head">{fr.operationsStatement(report.year)}</div>
+            {report.operationsStatementImageUrl ? (
+              <img src={toCloudinaryWebpUrl(report.operationsStatementImageUrl)} alt={`${fr.operationsStatement(report.year)}`} />
+            ) : (
+              <div className="financial-report__table-placeholder">
+                {fr.tablePlaceholderOps}
+                <span style={{ fontSize: '0.8rem', marginTop: '0.5rem', color: '#999' }}>
+                  {fr.tablePlaceholderHint}
+                </span>
+              </div>
+            )}
+          </div>
+        ) : null}
+      </div>
+    </div>
+  ) : null
 
   return (
-    <div className="financial-report-page">
+    <div className={`financial-report-page${locale === 'ko' ? ' financial-report-page--ko' : ''}`}>
       <PageHero
-        title={fr.pageTitle(report.year)}
+        title={nav.links.financialReport}
         backgroundImageUrl={pageHeroImageForPath(PATH.aboutFinancialReport)}
         showScrollHint={false}
+        layout={locale === 'ko' ? 'kaya' : 'banner'}
+        eyebrow={locale === 'ko' ? 'TRANSPARENCY' : undefined}
       />
       <KhayahSectionNav />
 
       <div className="financial-report__inner">
+        {locale === 'ko' ? (
+          <>
+            <section className="fr-intro">
+              <div className="fr-intro__copy">
+                <p className="fr-kicker">TRANSPARENCY · 투명경영</p>
+                <h2
+                  dangerouslySetInnerHTML={{
+                    __html: layoutTitle(
+                      ko('trans.introTitle', '투명하게 운영하고, 정직하게 보고합니다.'),
+                      '정직하게 보고합니다.',
+                    ),
+                  }}
+                />
+                <p>
+                  {ko(
+                    'trans.introBody',
+                    '카야는 후원자와 협력기관이 보내주신 신뢰를 가장 소중한 자산으로 여깁니다. 모든 재정을 관련 법령과 내부 규정에 따라 관리하고, 운영 현황과 재무 정보를 정기적으로 공개합니다.',
+                  )}
+                </p>
+                <div className="fr-chips">
+                  <span className="is-on">{ko('trans.chip.0', '내부 감사')}</span>
+                  <span>{ko('trans.chip.1', '외부 감사')}</span>
+                  <span>{ko('trans.chip.2', '재무 공개')}</span>
+                </div>
+              </div>
+              {settings.showActionButtons ? (
+                <div className="fr-disclose">
+                  <p>DISCLOSURE · 공시 자료</p>
+                  <button
+                    type="button"
+                    className="fr-disclose__row"
+                    onClick={() =>
+                      openYearPdf(
+                        report.publicInterestDisclosurePdfUrl,
+                        `${report.year}년 공익법인 결산서류 공시.pdf`,
+                        'publicInterest',
+                      )
+                    }
+                  >
+                    <span>01</span>
+                    <span>{ko('trans.action.0', fr.actionHometax)}</span>
+                    <span>PDF</span>
+                  </button>
+                  <button
+                    type="button"
+                    className="fr-disclose__row"
+                    onClick={() =>
+                      openYearPdf(report.donationDisclosurePdfUrl, `${report.year}년 기부금 공시.pdf`, 'donation')
+                    }
+                  >
+                    <span>02</span>
+                    <span>{ko('trans.action.1', fr.actionDonation)}</span>
+                    <span>PDF</span>
+                  </button>
+                  <a className="fr-disclose__row" href={ACRC_URL} target="_blank" rel="noopener noreferrer">
+                    <span>03</span>
+                    <span>{ko('trans.action.2', fr.actionAcrc)}</span>
+                    <span aria-hidden="true">→</span>
+                  </a>
+                </div>
+              ) : null}
+            </section>
+          </>
+        ) : null}
+        {locale === 'ko' ? (
+          <>
+            <section className="fr-principles">
+              <div className="fr-principles__copy">
+                <p className="fr-kicker">ACCOUNTABILITY · 투명경영 원칙</p>
+                <h2
+                  dangerouslySetInnerHTML={{
+                    __html: layoutTitle(ko('trans.principlesTitle', '감사와 공시로 재정의 투명성을 지킵니다.'), '재정의 투명성'),
+                  }}
+                />
+              </div>
+              <div className="fr-principle-grid">
+                <article>
+                  <span>01</span>
+                  <h3>{ko('trans.principle.0.title', '내부 감사')}</h3>
+                  <p>{ko('trans.principle.0.body', '예산과 결산은 이사회의 심의와 의결을 거치며, 감사가 법인의 재무와 업무 집행을 정기적으로 점검합니다.')}</p>
+                </article>
+                <article>
+                  <span>02</span>
+                  <h3>{ko('trans.principle.1.title', '외부 감사')}</h3>
+                  <p>{ko('trans.principle.1.body', '외부 회계 전문가의 회계감사를 통해 재무 처리의 정확성과 적정성을 검증합니다.')}</p>
+                </article>
+                <article>
+                  <span>03</span>
+                  <h3>{ko('trans.principle.2.title', '재무 공개')}</h3>
+                  <p>
+                    {ko(
+                      'trans.principle.2.body',
+                      '국세청 공익법인 결산서류 공시와 기부금 모금액 및 활용실적 공개를 매년 이행하고, 연도별 재무보고를 홈페이지에 게시합니다.',
+                    )}
+                  </p>
+                </article>
+              </div>
+            </section>
+            <section className="fr-compliance">
+              <p className="fr-kicker">COMPLIANCE · 공시·준수 현황</p>
+              <h2
+                dangerouslySetInnerHTML={{
+                  __html: layoutTitle(
+                    ko('trans.complianceTitle', '법령에 따른 공시와 정보 제공, 후원자 소통을 성실히 이행합니다.'),
+                    '후원자 소통을 성실히 이행합니다.',
+                  ),
+                }}
+              />
+              <dl>
+                <div><dt>{ko('trans.compliance.0.dt', '홈페이지 공개')}</dt><dd>{ko('trans.compliance.0.dd', '기관 소개, 이사회·전문위원 명단, 사업 소개, 연도별 재무보고')}</dd></div>
+                <div><dt>{ko('trans.compliance.1.dt', '국세청 공시')}</dt><dd>{ko('trans.compliance.1.dd', '공익법인 결산서류 등 공시 (매년)')}</dd></div>
+                <div><dt>{ko('trans.compliance.2.dt', '기부금 공개')}</dt><dd>{ko('trans.compliance.2.dd', '기부금 모금액 및 활용실적 공개 (매년)')}</dd></div>
+                <div><dt>{ko('trans.compliance.3.dt', '기부금영수증')}</dt><dd>{ko('trans.compliance.3.dd', '연말정산 간소화 자료 제출 및 후원자 요청 시 발급')}</dd></div>
+                <div><dt>{ko('trans.compliance.4.dt', '후원자 소통')}</dt><dd>{ko('trans.compliance.4.dd', '전화·이메일·온라인 문의 창구 운영')}</dd></div>
+                <div><dt>{ko('trans.compliance.5.dt', '공익신고')}</dt><dd>{ko('trans.compliance.5.dd', '국민권익위원회 신고 창구 연결')}</dd></div>
+              </dl>
+            </section>
+          </>
+        ) : null}
+        {locale === 'ko' ? null : (
         <div className="financial-report__year-row">
           <span className="financial-report__year-label" id="fr-year-label">
             연도
@@ -269,7 +523,74 @@ export function FinancialReportPage() {
             </button>
           </div>
         </div>
+        )}
 
+        {locale === 'ko' ? (
+          <section className="fr-finance">
+            <div className="fr-finance__head">
+              <div>
+                <p className="fr-kicker">FINANCIAL REPORT · 연도별 재무보고</p>
+                <h2>연도별 재무보고</h2>
+                <p>이사회 승인과 결산 공시를 마친 연도별 결산 자료를 기준으로 작성되었습니다.</p>
+              </div>
+              <div className="fr-pills" role="group" aria-label="연도 선택">
+                {years.length > MAX_VISIBLE_YEARS ? (
+                  <button
+                    type="button"
+                    className="fr-pills__nav"
+                    aria-label={fr.yearNavNewer}
+                    disabled={yearWindowStart <= 0}
+                    onClick={() => shiftYearWindow(-1)}
+                  >
+                    <ChevronLeftIcon />
+                  </button>
+                ) : null}
+                {visibleYears.map((y) => (
+                  <button key={y} type="button" className={y === year ? 'is-on' : undefined} onClick={() => setYear(y)}>
+                    {y}
+                  </button>
+                ))}
+                {years.length > MAX_VISIBLE_YEARS ? (
+                  <button
+                    type="button"
+                    className="fr-pills__nav"
+                    aria-label={fr.yearNavOlder}
+                    disabled={yearWindowStart >= maxYearWindowStart}
+                    onClick={() => shiftYearWindow(1)}
+                  >
+                    <ChevronRightIcon />
+                  </button>
+                ) : null}
+              </div>
+            </div>
+            {(() => {
+              const program = report.expenseSegments.find((segment) => segment.label.includes('사업수행'))
+              if (!program) return null
+              return (
+                <div className="fr-highlight">
+                  <b>{report.year}년</b> 지출의 <b>{trimPercent(program.percent)}%</b>를 사업 수행에 사용했습니다.
+                </div>
+              )
+            })()}
+            <div className="fr-charts">
+              <FrRing
+                title="수입 구성"
+                centerLabel={fr.incomeChart}
+                total={formatWon(report.incomeTotalWon, locale)}
+                segments={report.incomeSegments}
+                year={report.year}
+              />
+              <FrRing
+                title="지출 구성"
+                centerLabel={fr.expenseChart}
+                total={formatWon(report.expenseTotalWon, locale)}
+                segments={report.expenseSegments}
+                year={report.year}
+              />
+            </div>
+            {statementBlock}
+          </section>
+        ) : (
         <div className="financial-report__charts">
           <FinancialDonutChart
             key={`fr-income-${report.year}`}
@@ -288,47 +609,11 @@ export function FinancialReportPage() {
             expenseTitle={fr.expenseChart}
           />
         </div>
+        )}
 
-        {showAnyTable ? (
-          <div
-            className={`financial-report__tables${
-              settings.showBalanceSheet && settings.showOperationsStatement ? '' : ' financial-report__tables--single'
-            }`}
-          >
-            {settings.showBalanceSheet ? (
-              <div className="financial-report__table-card">
-                <div className="financial-report__table-head">{fr.balanceSheet(report.year)}</div>
-                {report.balanceSheetImageUrl ? (
-                  <img src={toCloudinaryWebpUrl(report.balanceSheetImageUrl)} alt={`${fr.balanceSheet(report.year)}`} />
-                ) : (
-                  <div className="financial-report__table-placeholder">
-                    {fr.tablePlaceholderBalance}
-                    <span style={{ fontSize: '0.8rem', marginTop: '0.5rem', color: '#999' }}>
-                      {fr.tablePlaceholderHint}
-                    </span>
-                  </div>
-                )}
-              </div>
-            ) : null}
-            {settings.showOperationsStatement ? (
-              <div className="financial-report__table-card">
-                <div className="financial-report__table-head">{fr.operationsStatement(report.year)}</div>
-                {report.operationsStatementImageUrl ? (
-                  <img src={toCloudinaryWebpUrl(report.operationsStatementImageUrl)} alt={`${fr.operationsStatement(report.year)}`} />
-                ) : (
-                  <div className="financial-report__table-placeholder">
-                    {fr.tablePlaceholderOps}
-                    <span style={{ fontSize: '0.8rem', marginTop: '0.5rem', color: '#999' }}>
-                      {fr.tablePlaceholderHint}
-                    </span>
-                  </div>
-                )}
-              </div>
-            ) : null}
-          </div>
-        ) : null}
+        {locale === 'ko' ? null : statementBlock}
 
-        {settings.showActionButtons ? (
+        {locale !== 'ko' && settings.showActionButtons ? (
           <div className="financial-report__actions">
             <button
               type="button"
@@ -381,6 +666,17 @@ export function FinancialReportPage() {
               </span>
             </a>
           </div>
+        ) : null}
+        {locale === 'ko' ? (
+          <section className="fr-support">
+            <div>
+              <p className="fr-kicker">SUPPORT</p>
+              <h2>{ko('trans.supportTitle', '투명하게 운영되는 나눔에 함께해 주세요')}</h2>
+            </div>
+            <a href={donateHref(biz)} target="_blank" rel="noopener noreferrer">
+              {ko('trans.supportButton', '후원하러 가기')}
+            </a>
+          </section>
         ) : null}
       </div>
 

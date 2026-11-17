@@ -1,13 +1,20 @@
 export type HeroBannerLocaleCopy = {
   alt: string
   lines: string[]
+  smallLine?: string
 }
+
+export type HeroBannerButton = { label: string; href: string }
 
 export type HeroBannerSlide = {
   id: string
   order: number
   enabled: boolean
   image: string
+  mobileImage: string
+  align: 'left' | 'center'
+  dim: 'weak' | 'mid' | 'strong'
+  buttons: HeroBannerButton[]
   locales: {
     ko: HeroBannerLocaleCopy
     en: HeroBannerLocaleCopy
@@ -23,8 +30,13 @@ export type HeroBannerPublicSlide = {
   id: string
   order: number
   image: string
+  mobileImage?: string
+  align?: 'left' | 'center'
+  dim?: 'weak' | 'mid' | 'strong'
+  buttons?: HeroBannerButton[]
   alt: string
   lines: string[]
+  smallLine?: string
 }
 
 export type HeroBannerPublicDocument = {
@@ -42,6 +54,10 @@ export const DEFAULT_HERO_BANNER: HeroBannerDocument = {
       order: 1,
       enabled: true,
       image: '/images/Home/slider/SliderImg1.JPG',
+      mobileImage: '',
+      align: 'left',
+      dim: 'mid',
+      buttons: [],
       locales: {
         ko: {
           alt: '아이들 이미지',
@@ -58,6 +74,10 @@ export const DEFAULT_HERO_BANNER: HeroBannerDocument = {
       order: 2,
       enabled: true,
       image: '/images/Home/slider/sliderImg2.jpg',
+      mobileImage: '',
+      align: 'left',
+      dim: 'mid',
+      buttons: [],
       locales: {
         ko: {
           alt: '함께 만들어가는 세상',
@@ -74,6 +94,10 @@ export const DEFAULT_HERO_BANNER: HeroBannerDocument = {
       order: 3,
       enabled: true,
       image: '/images/Home/slider/sliderImg3.jpg',
+      mobileImage: '',
+      align: 'left',
+      dim: 'mid',
+      buttons: [],
       locales: {
         ko: {
           alt: '작은 변화와 희망',

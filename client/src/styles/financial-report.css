@@ -400,6 +400,10 @@
   margin-bottom: 3rem;
 }
 
+.financial-report__tables[hidden] {
+  display: none;
+}
+
 @media (max-width: 900px) {
   .financial-report__tables {
     grid-template-columns: 1fr;
@@ -619,4 +623,617 @@
   background: var(--fr-burgundy);
   color: #fff;
   border-color: var(--fr-burgundy);
+}
+
+.fr-kicker {
+  margin: 0 0 12px;
+  font-size: 12px;
+  letter-spacing: 0.22em;
+  font-weight: 700;
+  color: #b11e3b;
+}
+
+.fr-intro {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 48px 72px;
+  align-items: center;
+  padding: 104px 0;
+}
+
+.fr-intro__copy {
+  flex: 1.2 1 440px;
+  min-width: 0;
+}
+
+.fr-intro h2,
+.fr-principles h2,
+.fr-compliance h2,
+.fr-year-head h2 {
+  margin: 0;
+  font-size: 40px;
+  line-height: 1.32;
+  font-weight: 800;
+  color: #2f2b28;
+}
+
+.fr-support h2 {
+  margin: 0 0 10px;
+  font-size: 26px;
+  line-height: 1.45;
+  font-weight: 800;
+  color: #2f2b28;
+}
+
+.fr-intro p,
+.fr-year-head p,
+.fr-principles p,
+.fr-compliance p {
+  margin: 16px 0 0;
+  font-size: 16px;
+  line-height: 1.85;
+  color: #5c5650;
+}
+
+.fr-principles h2 span {
+  color: #b11e3b;
+}
+
+.fr-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 22px;
+}
+
+.fr-chips span {
+  font-size: 13px;
+  font-weight: 700;
+  padding: 9px 14px;
+  border-radius: 6px;
+  background: #f6f1e6;
+  color: #2f2b28;
+}
+
+.fr-chips .is-on {
+  background: #2f2b28;
+  color: #fff;
+}
+
+.fr-disclose {
+  flex: 0.8 1 340px;
+  min-width: 0;
+  background: #fbf8f1;
+  border-radius: 16px;
+  padding: 30px 28px 14px;
+}
+
+.fr-disclose > p {
+  margin: 0 0 8px;
+  font-size: 12px;
+  letter-spacing: 0.22em;
+  color: #7a736b;
+  font-weight: 700;
+}
+
+.fr-disclose__row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  padding: 18px 0;
+  border: 0;
+  border-top: 1px solid #e3e3df;
+  background: transparent;
+  text-align: left;
+  text-decoration: none;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.fr-disclose__row span:first-child {
+  font-size: 13px;
+  font-weight: 700;
+  color: #b11e3b;
+}
+
+.fr-disclose__row span:nth-child(2) {
+  flex: 1;
+  font-size: 15px;
+  font-weight: 800;
+  color: #2f2b28;
+}
+
+.fr-disclose__row span:last-child {
+  font-size: 12px;
+  font-weight: 700;
+  color: #7a736b;
+}
+
+.fr-actions {
+  margin: 28px 0 48px;
+}
+
+.fr-principles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 48px 72px;
+  margin: 0 -24px;
+  padding: 104px 24px;
+  background: #fbf8f1;
+}
+
+.fr-principles h2 {
+  font-size: 36px;
+}
+
+.fr-compliance,
+.fr-year-head {
+  margin-top: 64px;
+}
+
+.fr-principle-grid {
+  flex: 1.4 1 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+  margin-top: 0;
+}
+
+.fr-principle-grid article {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  column-gap: 22px;
+  background: transparent;
+  padding: 0;
+}
+
+.fr-principle-grid span {
+  grid-row: 1 / span 3;
+  width: 44px;
+  height: 44px;
+  border-radius: 9px;
+  background: #b11e3b;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fr-principle-grid h3 {
+  margin: 8px 0;
+  font-size: 20px;
+  color: #2f2b28;
+}
+
+.fr-compliance dl {
+  margin: 22px 0 0;
+}
+
+.fr-compliance div {
+  display: grid;
+  grid-template-columns: 140px minmax(0, 1fr);
+  gap: 16px;
+  padding: 14px 0;
+  border-top: 1px solid #ece4d6;
+}
+
+.fr-compliance dt {
+  font-weight: 800;
+  color: #2f2b28;
+}
+
+.fr-compliance dd {
+  margin: 0;
+  color: #5c5650;
+}
+
+.fr-statements {
+  margin-top: 28px;
+}
+
+.fr-statements__toggle {
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 800;
+  color: #1f2a44;
+  background: #fff;
+  border: 1px solid #d9dbe1;
+  border-radius: 999px;
+  padding: 12px 22px;
+  cursor: pointer;
+}
+
+.fr-statements .financial-report__tables {
+  margin-top: 18px;
+}
+
+.fr-support {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+  margin: 72px -24px 0;
+  padding: 72px 24px;
+  border-top: 1px solid #ece4d6;
+  background: #f6f1e6;
+  color: #2f2b28;
+  text-align: left;
+}
+
+.fr-support .fr-kicker {
+  margin: 0 0 12px;
+}
+
+.fr-support a {
+  display: inline-block;
+  background: #b11e3b;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 15px;
+  border-radius: 6px;
+  padding: 15px 28px;
+}
+
+.fr-support a::after {
+  content: ' →';
+}
+
+@media (max-width: 640px) {
+  .fr-compliance div {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+}
+
+.financial-report-page--ko .financial-report__inner {
+  width: 100%;
+  max-width: none;
+  padding: 0;
+}
+
+.financial-report-page--ko .fr-intro,
+.financial-report-page--ko .fr-compliance {
+  width: min(1120px, 100%);
+  margin: 0 auto;
+  padding: 104px 24px;
+  box-sizing: border-box;
+}
+
+.financial-report-page--ko .fr-intro h2 {
+  font-size: 40px;
+  line-height: 1.32;
+}
+
+.financial-report-page--ko .fr-intro h2 span,
+.financial-report-page--ko .fr-compliance h2 span {
+  color: #b11e3b;
+}
+
+.financial-report-page--ko .fr-intro__copy > h2 + p {
+  margin-top: 26px;
+  max-width: 520px;
+}
+
+.financial-report-page--ko .fr-chips {
+  margin-top: 28px;
+}
+
+.financial-report-page--ko .fr-principles {
+  width: 100%;
+  margin: 0;
+  padding: 104px max(24px, calc((100% - 1120px) / 2 + 24px));
+  box-sizing: border-box;
+  background: #fbf8f1;
+}
+
+.financial-report-page--ko .fr-principles__copy {
+  flex: 1 1 340px;
+  min-width: 0;
+}
+
+.financial-report-page--ko .fr-principles h2 {
+  font-size: 36px;
+  line-height: 1.32;
+}
+
+.financial-report-page--ko .fr-principle-grid h3 {
+  margin: 0 0 8px;
+}
+
+.financial-report-page--ko .fr-principle-grid p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.85;
+}
+
+.financial-report-page--ko .fr-compliance {
+  margin-top: 0;
+}
+
+.financial-report-page--ko .fr-compliance h2 {
+  font-size: 34px;
+  line-height: 1.32;
+}
+
+.financial-report-page--ko .fr-compliance div {
+  grid-template-columns: 180px minmax(0, 1fr);
+  gap: 8px 32px;
+  padding: 20px 0;
+  border-top: 1px solid #ece4d6;
+}
+
+.financial-report-page--ko .fr-compliance div:first-child {
+  border-top: 2px solid #2f2b28;
+}
+
+.financial-report-page--ko .fr-compliance dt,
+.financial-report-page--ko .fr-compliance dd {
+  font-size: 15px;
+}
+
+.financial-report-page--ko .fr-compliance dd {
+  line-height: 1.7;
+}
+
+.financial-report-page--ko .fr-kicker {
+  margin: 0 0 18px;
+  color: #b11e3b;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+}
+
+.financial-report-page--ko .fr-support .fr-kicker {
+  margin: 0 0 12px;
+}
+
+.financial-report-page--ko .fr-compliance dl {
+  margin: 36px 0 0;
+  border-bottom: 1px solid #ece4d6;
+}
+
+.financial-report-page--ko .fr-principle-grid h3 {
+  font-weight: 800;
+}
+
+.financial-report-page--ko .fr-finance {
+  background: #fbf8f1;
+  padding: 104px max(24px, calc((100% - 1120px) / 2 + 24px)) 104px;
+  box-sizing: border-box;
+}
+
+.financial-report-page--ko .fr-finance__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 20px;
+  margin-bottom: 32px;
+}
+
+.financial-report-page--ko .fr-finance h2 {
+  margin: 0;
+  font-size: 34px;
+  font-weight: 800;
+  line-height: 1.32;
+  color: #2f2b28;
+}
+
+.financial-report-page--ko .fr-finance__head p:last-child {
+  margin: 12px 0 0;
+  max-width: 520px;
+  font-size: 15px;
+  line-height: 1.7;
+  color: #5c5650;
+}
+
+.financial-report-page--ko .fr-pills {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.financial-report-page--ko .fr-pills button {
+  border: 1px solid #e3d9c8;
+  background: #fff;
+  border-radius: 6px;
+  padding: 9px 16px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  color: #5c5650;
+  min-height: 40px;
+  cursor: pointer;
+}
+
+.financial-report-page--ko .fr-pills button.is-on {
+  background: #2f2b28;
+  border-color: #2f2b28;
+  color: #fff;
+}
+
+.financial-report-page--ko .fr-pills__nav {
+  width: 48px;
+  min-height: 48px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.financial-report-page--ko .fr-pills__nav svg {
+  width: 28px;
+  height: 28px;
+}
+
+.financial-report-page--ko .fr-pills__nav:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.financial-report-page--ko .fr-highlight {
+  background: #fff;
+  border-radius: 12px;
+  border-left: 4px solid #b11e3b;
+  padding: 20px 26px;
+  margin-bottom: 20px;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #2f2b28;
+}
+
+.financial-report-page--ko .fr-highlight b:last-of-type {
+  color: #b11e3b;
+}
+
+.financial-report-page--ko .financial-report__tables {
+  text-align: left;
+  margin-top: 28px;
+}
+
+.financial-report-page--ko .fr-charts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.financial-report-page--ko .fr-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 32px 30px;
+}
+
+.financial-report-page--ko .fr-card > p {
+  margin: 0 0 24px;
+  font-size: 16px;
+  font-weight: 800;
+  color: #2f2b28;
+}
+
+.financial-report-page--ko .fr-card__body {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 32px;
+}
+
+.financial-report-page--ko .fr-ring {
+  width: 196px;
+  height: 196px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  flex: 0 0 196px;
+}
+
+.financial-report-page--ko .fr-ring > div {
+  width: 126px;
+  height: 126px;
+  border-radius: 50%;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 2px;
+}
+
+.financial-report-page--ko .fr-ring span:first-child {
+  font-size: 12px;
+  color: #7a736b;
+}
+
+.financial-report-page--ko .fr-ring span:last-child {
+  font-size: 14px;
+  font-weight: 800;
+  color: #2f2b28;
+}
+
+.financial-report-page--ko .fr-legend {
+  flex: 1 1 160px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.financial-report-page--ko .fr-legend div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: #5c5650;
+}
+
+.financial-report-page--ko .fr-legend span {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  flex: 0 0 10px;
+}
+
+.financial-report-page--ko .fr-legend b {
+  margin-left: auto;
+  font-weight: 800;
+  color: #2f2b28;
+}
+
+.financial-report-page--ko .fr-statements {
+  margin: 28px 0 0;
+  text-align: center;
+}
+
+.financial-report-page--ko .fr-statements__toggle {
+  font-size: 15px;
+  font-weight: 700;
+  color: #2f2b28;
+  background: #fff;
+  border: 1px solid #e3d9c8;
+  border-radius: 6px;
+  padding: 14px 30px;
+  min-height: 48px;
+}
+
+.financial-report-page--ko .fr-statements__toggle::after {
+  content: ' ▾';
+}
+
+.financial-report-page--ko .fr-statements__toggle[aria-expanded='true']::after {
+  content: ' ▴';
+}
+
+.financial-report-page--ko .fr-support {
+  width: 100%;
+  margin: 0;
+  box-sizing: border-box;
+  background: #f6f1e6;
+  border-top: 1px solid #ece4d6;
+  padding: 72px max(24px, calc((100% - 1120px) / 2 + 24px));
+}
+
+.financial-report-page--ko .fr-support > div {
+  flex: 1 1 420px;
+}
+
+.financial-report-page--ko .fr-support h2 {
+  font-size: 26px;
+  line-height: 1.45;
+  margin: 0 0 10px;
+}
+
+@media (max-width: 720px) {
+  .financial-report-page--ko .fr-finance__head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .financial-report-page--ko .fr-pills {
+    justify-content: flex-start;
+  }
 }

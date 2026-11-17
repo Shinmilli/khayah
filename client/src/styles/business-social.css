@@ -1,0 +1,592 @@
+.page-content-wrapper .page-body .sbiz {
+  color: #1f2a44;
+  word-break: keep-all;
+}
+
+.page-content-wrapper .page-body .sbiz-hero {
+  padding: 96px 0 80px;
+}
+
+.page-content-wrapper .page-body .sbiz-hero--center {
+  text-align: center;
+}
+
+.page-content-wrapper .page-body .sbiz-split {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px 64px;
+  align-items: center;
+}
+
+.page-content-wrapper .page-body .sbiz-split--start {
+  align-items: flex-start;
+}
+
+.page-content-wrapper .page-body .sbiz-col {
+  flex: 1 1 420px;
+  min-width: 0;
+}
+
+.page-content-wrapper .page-body .sbiz-band {
+  background: #f4f4f2;
+  padding: 88px 0;
+}
+
+.page-content-wrapper .page-body .sbiz-hero--center {
+  padding-bottom: 72px;
+}
+
+.page-content-wrapper .page-body .sbiz-band + .sbiz-hero {
+  padding: 88px 0;
+}
+
+.page-content-wrapper .page-body .sbiz-hero + .sbiz-hero {
+  padding: 88px 0 96px;
+}
+
+.page-content-wrapper .page-body .sbiz-band--soft {
+  padding: 80px 0;
+}
+
+.page-content-wrapper .page-body .sbiz-hero--flush {
+  padding: 88px 0 0;
+}
+
+.page-content-wrapper .page-body .sbiz-band:last-child {
+  padding: 64px 0;
+}
+
+.page-content-wrapper .page-body .sbiz-kicker {
+  margin: 0 0 16px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  color: #b11e3b;
+}
+
+.page-content-wrapper .page-body h2.sbiz-title {
+  margin: 0;
+  font-size: 38px;
+  font-weight: 800;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  color: #1f2a44;
+}
+
+.page-content-wrapper .page-body h2.sbiz-title .wn {
+  color: #b11e3b;
+}
+
+.page-content-wrapper .page-body h3.sbiz-name {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 800;
+  color: #1f2a44;
+}
+
+.page-content-wrapper .page-body h3.sbiz-sub {
+  margin: 0;
+  font-size: 30px;
+  line-height: 1.4;
+  font-weight: 800;
+  color: #1f2a44;
+}
+
+.page-content-wrapper .page-body .sbiz p {
+  margin: 0;
+  color: #485063;
+  font-size: 16px;
+  line-height: 1.85;
+}
+
+.page-content-wrapper .page-body .sbiz-lead {
+  margin-top: 24px;
+}
+
+.page-content-wrapper .page-body .sbiz-brand + .sbiz-lead {
+  margin-top: 20px;
+}
+
+.page-content-wrapper .page-body .sbiz-sub + .sbiz-lead {
+  margin-top: 14px;
+}
+
+.page-content-wrapper .page-body .sbiz-hero--center .sbiz-lead {
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.page-content-wrapper .page-body .sbiz-brand {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.page-content-wrapper .page-body .sbiz-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  flex: 0 0 80px;
+  border-radius: 16px;
+  border: 1px dashed #d9d5cf;
+  background: #f4f4f2;
+  overflow: hidden;
+  text-align: center;
+  font-size: 11.5px;
+  font-weight: 700;
+  line-height: 1.4;
+  color: #5a6275;
+}
+
+.page-content-wrapper .page-body .sbiz-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.page-content-wrapper .page-body .sbiz-since {
+  margin: 0 0 2px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: #6b7385;
+}
+
+.page-content-wrapper .page-body .sbiz-facts {
+  margin-top: 18px;
+  border-bottom: 1px solid #e6e6e3;
+}
+
+.page-content-wrapper .page-body .sbiz-fact {
+  display: flex;
+  gap: 12px;
+  padding: 13px 0;
+  border-top: 1px solid #e6e6e3;
+}
+
+.page-content-wrapper .page-body .sbiz-fact dt {
+  flex: 0 0 84px;
+  font-size: 14px;
+  font-weight: 800;
+  color: #1f2a44;
+}
+
+.page-content-wrapper .page-body .sbiz-fact dd {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.6;
+  color: #485063;
+}
+
+.page-content-wrapper .page-body a.sbiz-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 18px;
+  color: #b11e3b;
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+  min-height: 44px;
+}
+
+.page-content-wrapper .page-body a.sbiz-more::after {
+  content: ' →';
+}
+
+.page-content-wrapper .page-body .sbiz-photo {
+  margin: 0;
+}
+
+.page-content-wrapper .page-body .sbiz-photo img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 12px;
+  background: #eceae6;
+}
+
+.page-content-wrapper .page-body .sbiz-photo figcaption {
+  margin-top: 8px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #6b7385;
+}
+
+.page-content-wrapper .page-body .sbiz-photos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.page-content-wrapper .page-body .sbiz-photos--3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 20px;
+}
+
+.page-content-wrapper .page-body .sbiz-center {
+  text-align: center;
+}
+
+.page-content-wrapper .page-body .sbiz-cells {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 24px;
+}
+
+.page-content-wrapper .page-body .sbiz-cell {
+  flex: 1 1 160px;
+  min-width: 0;
+  padding: 20px 16px;
+  background: #fff;
+  border: 1px solid #e1e2e6;
+  border-radius: 12px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.page-content-wrapper .page-body .sbiz-cell strong {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 22px;
+  color: #b11e3b;
+}
+
+.page-content-wrapper .page-body .sbiz-cell span {
+  display: block;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #1f2a44;
+}
+
+.page-content-wrapper .page-body .sbiz-note {
+  margin-top: 14px;
+  text-align: center;
+  font-size: 12.5px;
+  font-weight: 400;
+  color: #6b7385;
+}
+
+.page-content-wrapper .page-body .sbiz-steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 8px;
+}
+
+.page-content-wrapper .page-body .sbiz-step {
+  flex: 1 1 300px;
+  min-width: 0;
+  padding: 26px;
+  background: #fff;
+  border: 1px solid #e6e6e3;
+  border-radius: 14px;
+  box-sizing: border-box;
+}
+
+.page-content-wrapper .page-body .sbiz-step b {
+  display: block;
+  font-size: 13px;
+  color: #b11e3b;
+}
+
+.page-content-wrapper .page-body .sbiz-step strong {
+  display: block;
+  margin: 8px 0 6px;
+  font-size: 18px;
+  color: #1f2a44;
+}
+
+.page-content-wrapper .page-body .sbiz-step span {
+  display: block;
+  font-size: 14.5px;
+  line-height: 1.7;
+  color: #485063;
+}
+
+.page-content-wrapper .page-body .sbiz-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.page-content-wrapper .page-body a.sbiz-btn[hidden] {
+  display: none;
+}
+
+.page-content-wrapper .page-body a.sbiz-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 14px 24px;
+  border-radius: 8px;
+  background: #b11e3b;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+  box-sizing: border-box;
+}
+
+.page-content-wrapper .page-body a.sbiz-btn--line {
+  background: #fff;
+  color: #1f2a44;
+  border: 1px solid #d9d5cf;
+}
+
+.page-content-wrapper .page-body .sbiz-csr {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  align-items: baseline;
+  margin-top: 0;
+  padding: 22px 26px;
+  background: #fff;
+  border: 1px solid #e6e6e3;
+  border-radius: 14px;
+}
+
+.page-content-wrapper .page-body .sbiz-csr b {
+  flex: 0 0 auto;
+  color: #b11e3b;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+.page-content-wrapper .page-body .sbiz-csr p {
+  flex: 1 1 400px;
+  font-size: 15px;
+  line-height: 1.7;
+  color: #1f2a44;
+}
+
+@media (max-width: 720px) {
+  .page-content-wrapper .page-body .sbiz-photos--3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.page-content-wrapper > .section:has(.sbiz--intro) {
+  padding: 0;
+}
+
+.page-content-wrapper > .section:has(.sbiz--intro) > .section_wrapper,
+.page-content-wrapper > .section:has(.sbiz--intro) .column.one {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  float: none;
+}
+
+.page-content-wrapper .page-body .sbiz--intro .sbiz-hero--center,
+.page-content-wrapper .page-body .sbiz--intro .sbiz-split {
+  width: min(1120px, 100%);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 24px;
+  padding-right: 24px;
+  box-sizing: border-box;
+}
+
+.page-content-wrapper .page-body .sbiz p.dom-kicker,
+.page-content-wrapper .page-body .sbiz p.sbiz-kicker {
+  margin: 0 0 16px;
+  font-size: 12px;
+  line-height: 1.4;
+  letter-spacing: 0.22em;
+  font-weight: 700;
+  color: #b11e3b;
+}
+
+.page-content-wrapper .page-body .sbiz p.sbiz-since {
+  margin: 0 0 2px;
+  font-size: 12px;
+  line-height: 1.4;
+  letter-spacing: 0.2em;
+  font-weight: 700;
+  color: #6b7385;
+}
+
+.page-content-wrapper .page-body .sbiz p.sbiz-lead {
+  margin-top: 24px;
+  font-size: 16px;
+  line-height: 1.85;
+  color: #485063;
+}
+
+.page-content-wrapper .page-body .sbiz .sbiz-hero--center p.sbiz-lead {
+  margin-top: 22px;
+}
+
+.page-content-wrapper .page-body .sbiz .sbiz-brand + p.sbiz-lead {
+  margin-top: 20px;
+}
+
+.page-content-wrapper .page-body .sbiz--intro .sbiz-photo.sbiz-col {
+  flex: 1 1 420px;
+}
+
+.page-content-wrapper .page-body .sbiz--intro .sbiz-split > div.sbiz-col {
+  flex: 1 1 440px;
+}
+
+.page-content-wrapper .page-body .sbiz--intro .sbiz-photo figcaption {
+  display: none;
+}
+
+.page-content-wrapper > .section:has(.sbiz--aca) {
+  padding: 0;
+}
+
+.page-content-wrapper > .section:has(.sbiz--aca) > .section_wrapper,
+.page-content-wrapper > .section:has(.sbiz--aca) .column.one {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  float: none;
+}
+
+.page-content-wrapper .page-body .sbiz--aca .sbiz-split,
+.page-content-wrapper .page-body .sbiz--aca .sbiz-inner {
+  width: min(1120px, 100%);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 24px;
+  padding-right: 24px;
+  box-sizing: border-box;
+}
+
+.page-content-wrapper .page-body .sbiz--aca .sbiz-split--wide {
+  gap: 48px 64px;
+}
+
+.page-content-wrapper .page-body .sbiz--aca .sbiz-split--wide > div.sbiz-col {
+  flex: 1 1 480px;
+}
+
+.page-content-wrapper .page-body .sbiz--aca .sbiz-split--wide > .sbiz-photo.sbiz-col {
+  flex: 1 1 400px;
+}
+
+.page-content-wrapper .page-body .sbiz--aca .sbiz-photo figcaption {
+  display: none;
+}
+
+.page-content-wrapper .page-body .sbiz h3.sbiz-sub + p.sbiz-lead {
+  margin-top: 14px;
+}
+
+.page-content-wrapper .page-body .sbiz--aca .sbiz-facts {
+  margin-top: 20px;
+}
+
+.page-content-wrapper .page-body .sbiz--aca .sbiz-facts--soft,
+.page-content-wrapper .page-body .sbiz--aca .sbiz-facts--soft .sbiz-fact {
+  border-color: #e1e2e6;
+}
+
+.page-content-wrapper .page-body .sbiz--aca .sbiz-band--short {
+  padding: 64px 0;
+}
+
+.page-content-wrapper .page-body .sbiz--aca .sbiz-csr {
+  margin-top: 20px;
+}
+
+.page-content-wrapper .page-body .sbiz-news {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.page-content-wrapper .page-body .sbiz-news:not(:has(a:not([hidden]))) {
+  display: none;
+}
+
+.page-content-wrapper .page-body .sbiz-news > span {
+  margin-right: 6px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #485063;
+}
+
+.page-content-wrapper .page-body .sbiz p.sbiz-note {
+  margin-top: 14px;
+  font-size: 12.5px;
+  font-weight: 400;
+  line-height: 1.7;
+  color: #6b7385;
+  text-align: center;
+}
+
+.page-content-wrapper > .section:has(.sbiz--cnc) {
+  padding: 0;
+}
+
+.page-content-wrapper > .section:has(.sbiz--cnc) > .section_wrapper,
+.page-content-wrapper > .section:has(.sbiz--cnc) .column.one {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  float: none;
+}
+
+.page-content-wrapper .page-body .sbiz--cnc .sbiz-hero > *,
+.page-content-wrapper .page-body .sbiz--cnc .sbiz-band > * {
+  width: min(1120px, 100%);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 24px;
+  padding-right: 24px;
+  box-sizing: border-box;
+}
+
+.page-content-wrapper .page-body .sbiz--cnc .sbiz-split--wide {
+  gap: 48px 64px;
+}
+
+.page-content-wrapper .page-body .sbiz--cnc .sbiz-split--wide > div.sbiz-col {
+  flex: 1 1 480px;
+}
+
+.page-content-wrapper .page-body .sbiz--cnc .sbiz-split--wide > .sbiz-photo.sbiz-col {
+  flex: 1 1 400px;
+}
+
+.page-content-wrapper .page-body .sbiz--cnc .sbiz-photo figcaption {
+  display: none;
+}
+
+.page-content-wrapper .page-body .sbiz--cnc .sbiz-cell strong {
+  margin-bottom: 0;
+}
+
+.page-content-wrapper .page-body .sbiz--cnc .sbiz-cell span {
+  margin-top: 6px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: #485063;
+}
+
+.page-content-wrapper .page-body .sbiz--cnc .sbiz-photos--3 {
+  gap: 14px;
+  margin-top: 0;
+}
+
+.page-content-wrapper .page-body .sbiz--cnc p.sbiz-kicker {
+  margin-bottom: 18px;
+}

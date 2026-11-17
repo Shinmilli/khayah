@@ -5,6 +5,7 @@ import { pageHeroImageForPath } from '../constants/pageHeroImages'
 import { PATH } from '../i18n/routes'
 import { ListStatus } from '../components/ListStatus'
 import {
+  FAQ_PUBLIC,
   INQUIRY_HUB_TAB_IDS,
   type InquiryHubTabId,
   parseInquiryHubTab,
@@ -79,6 +80,13 @@ export function InquiryPage() {
   }, [iq.title, messages.pages])
 
   useEffect(() => {
+    if (FAQ_PUBLIC) return
+    if (new URLSearchParams(location.search).get('tab') !== 'faq') return
+    navigate({ pathname: localize('/news/inquiry') }, { replace: true })
+  }, [location.search, localize, navigate])
+
+  useEffect(() => {
+    if (!FAQ_PUBLIC) return
     let cancelled = false
     setFaqLoading(true)
     setFaqError(false)
@@ -175,6 +183,7 @@ export function InquiryPage() {
     <div className="khayah-about-hub inquiry-page">
       <PageHero title={iq.title} backgroundImageUrl={pageHeroImageForPath(PATH.newsInquiry)} showScrollHint={false} />
 
+      {FAQ_PUBLIC ? (
       <nav className="khayah-about-tabs" aria-label={iq.tabsAria}>
         <div className="khayah-about-tabs__rail" role="tablist">
           {hubTabs.map((t) => {
@@ -196,6 +205,7 @@ export function InquiryPage() {
           })}
         </div>
       </nav>
+      ) : null}
 
       <div className="khayah-about-hub__inner inquiry-hub__inner">
         <div

@@ -1,5 +1,6 @@
 import type { Request, Response } from 'express'
 import { inquiriesService } from '../services/inquiriesService'
+import { notifyInquiry } from '../services/inquiryNotify'
 import { clientIp, isRateLimited } from '../utils/rateLimit'
 import { prismaInitStatus } from '../utils/prisma'
 
@@ -38,6 +39,7 @@ export async function createInquiry(req: Request, res: Response) {
       subject: String(body.subject ?? ''),
       body: String(body.body ?? ''),
     })
+    void notifyInquiry(created).catch((error) => console.error('inquiry notify', error))
     res.status(201).json(created)
   } catch (e) {
     const status = errStatus(e)

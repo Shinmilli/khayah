@@ -1,9 +1,11 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { SITE_NAME } from '../constants'
-import { NANUM_DONATE_URL } from '../constants/nanumDonate'
+import { donateHref, useBizSupport } from '../features/biz/useBizSupport'
+import { useImpactPage } from '../features/impact/useImpactPage'
 import { pageHeroImageForPath, prefetchPageHeroImage } from '../constants/pageHeroImages'
 import { PATH } from '../i18n/routes'
+import { splitLocalePath } from '../i18n/locale'
 import { useLocale } from '../i18n/LocaleContext'
 import type { NavLinkKey, NavTopKey } from '../i18n/messages/ko'
 import { fetchNavMenuImages } from '../services/api'
@@ -15,11 +17,23 @@ import {
   type NavMenuLinkDef,
 } from '../features/nav/navVisibilityTypes'
 import { useNavVisibility } from '../features/nav/useNavVisibility'
+import { useSiteCommon } from '../features/site/useSiteCommon'
 import { toCloudinaryWebpUrl } from '../utils/cloudinaryWebp'
 import '../styles/site-header.css'
 
 const LOGO_SRC = '/images/logo/khayah_logo.png'
 const FALLBACK_LOGO = '/images/logo/khayah_logo.png'
+const LOGO_SLOGAN = '사람을 키우고 섬기는 개발 NGO'
+
+function activeTopKey(pathname: string): NavTopKey | null {
+  const { pathnameWithoutLocale } = splitLocalePath(pathname)
+  const path = pathnameWithoutLocale.replace(/\/+$/, '') || '/'
+  if (path.startsWith('/about')) return 'khayah'
+  if (path.startsWith('/business')) return 'business'
+  if (path.startsWith('/support')) return 'support'
+  if (path.startsWith('/news') || path.startsWith('/stories') || path.startsWith('/together')) return 'news'
+  return null
+}
 
 function columnAllLinks(col: NavMenuColumn): NavMenuLinkDef[] {
   const base = col.links ?? []
@@ -38,7 +52,7 @@ const TOP_LANDING_KEY: Record<NavTopKey, NavLinkKey> = {
   khayah: 'aboutKhayah',
   business: 'domestic',
   support: 'supportGuide',
-  news: 'announcements',
+  news: 'activities',
 }
 
 function topLandingPath(col: NavMenuColumn | undefined, key: NavTopKey): string | null {
@@ -72,6 +86,8 @@ export function Header() {
   const desktopMenuCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [menuImages, setMenuImages] = useState(DEFAULT_NAV_MENU_IMAGES.images)
   const navVisibility = useNavVisibility()
+  const biz = useBizSupport()
+  const impact = useImpactPage()
   const location = useLocation()
   const { locale, localize, swapLocale, messages } = useLocale()
   const nav = messages.nav
@@ -80,10 +96,21 @@ export function Header() {
   const topLabel = (key: NavTopKey) => nav.top[key]
   const linkLabel = (key: NavLinkKey) => nav.links[key]
 
-  const navColumns = useMemo(
-    () => filterNavColumns(NAV_MENU_COLUMNS, navVisibility),
-    [navVisibility],
-  )
+  const navColumns = useMemo(() => {
+    const columns = filterNavColumns(NAV_MENU_COLUMNS, navVisibility)
+    const showImpact = locale === 'ko' && impact?.public === true
+    const withImpact = (col: (typeof columns)[number]) => {
+      if (!showImpact || col.topKey !== 'business') return col
+      return { ...col, links: [...col.links, { key: 'impactGlance' as const, to: '/business/impact' }] }
+    }
+    if (!biz) return columns.map(withImpact)
+    const orderOf = (key: string) => biz.menu.find((row) => row.key === key)?.order ?? 0
+    const sortLinks = (links: NavMenuLinkDef[]): NavMenuLinkDef[] =>
+      [...links]
+        .sort((a, b) => orderOf(a.key) - orderOf(b.key))
+        .map((link) => ({ ...link, children: link.children ? sortLinks(link.children) : undefined }))
+    return columns.map((col) => withImpact(col.topKey === 'business' ? { ...col, links: sortLinks(col.links) } : col))
+  }, [navVisibility, biz, impact, locale])
   const navByKey = useMemo(() => new Map(navColumns.map((c) => [c.topKey, c])), [navColumns])
   const visibleTopLinks = useMemo(
     () => TOP_LINKS.filter((item) => navColumns.some((col) => col.topKey === item.key)),
@@ -173,22 +200,32 @@ export function Header() {
   useEffect(() => () => cancelDesktopMenuTimer(), [])
 
   const closeMobile = () => setMobileOpen(false)
-
-  const renderStackedList = (links: NavMenuLinkDef[]) => (
-    <div className="site-header__submenu-list site-header__submenu-list--stack">
-      {links.map((l) => (
-        <Link
-          key={`${l.to}-${l.key}`}
-          to={loc(l.to)}
-          role="menuitem"
-          className="site-header__submenu-link"
-          onClick={closeDesktopMenu}
-        >
-          {linkLabel(l.key)}
-        </Link>
-      ))}
-    </div>
-  )
+  const currentTop = activeTopKey(location.pathname)
+  const site = useSiteCommon()
+  const koSlogans = (site?.logo.slogansKo ?? [{ id: 's1', order: 1, text: LOGO_SLOGAN }])
+    .slice()
+    .sort((a, b) => a.order - b.order)
+    .map((row) => row.text.trim())
+    .filter(Boolean)
+  const enSlogan = site?.logo.sloganEn.trim() ?? ''
+  const slogans = locale === 'ko' ? koSlogans : enSlogan ? [enSlogan] : []
+  const rotateSlogan = locale === 'ko' ? (site ? site.logo.rotate && slogans.length > 0 : true) : Boolean(enSlogan)
+  const intervalSec = site?.logo.intervalSec ?? 3
+  const [sloganIndex, setSloganIndex] = useState(0)
+  useEffect(() => {
+    if (!rotateSlogan || slogans.length < 2) return
+    const timer = window.setInterval(() => {
+      setSloganIndex((i) => (i + 1) % slogans.length)
+    }, intervalSec * 2000)
+    return () => window.clearInterval(timer)
+  }, [rotateSlogan, intervalSec, slogans.join('\n')])
+  const sloganText = slogans[sloganIndex % Math.max(slogans.length, 1)] ?? ''
+  const logoSrc = locale === 'ko' ? site?.logo.imageKo || LOGO_SRC : site?.logo.imageEn || LOGO_SRC
+  const headerDonateLabel =
+    locale === 'ko'
+      ? biz?.donate.menuLabel?.trim() || site?.headerDonate.labelKo || messages.home.hero.donate
+      : messages.home.hero.donate
+  const hideHeaderDonate = locale === 'ko' && site ? !site.headerDonate.pinned && !atTop : false
 
   const renderLinkList = (links: NavMenuLinkDef[]) => (
     <div className="site-header__submenu-list">
@@ -264,18 +301,38 @@ export function Header() {
     >
       <div className="site-header__bar">
         <div className="site-header__left">
-          <Link to={loc('/')} className="site-header__logo" rel="home">
-            <img
-              className="site-header__logo-img site-header__logo-img--color"
-              src={LOGO_SRC}
-              alt={SITE_NAME}
-              onError={(e) => {
-                const el = e.currentTarget
-                if (el.dataset.fallback === '1') return
-                el.dataset.fallback = '1'
-                el.src = FALLBACK_LOGO
-              }}
-            />
+          <Link
+            to={loc('/')}
+            className={`site-header__logo${rotateSlogan ? '' : ' site-header__logo--still'}`}
+            rel="home"
+            aria-label={SITE_NAME}
+            style={
+              rotateSlogan
+                ? ({
+                    ['--logo-rot']: `${intervalSec * 2}s`,
+                    ['--logo-rot-delay']: `${intervalSec}s`,
+                  } as CSSProperties)
+                : undefined
+            }
+          >
+            <span className="site-header__logo-face site-header__logo-face--mark" aria-hidden>
+              <img
+                className="site-header__logo-img site-header__logo-img--color"
+                src={logoSrc}
+                alt=""
+                onError={(e) => {
+                  const el = e.currentTarget
+                  if (el.dataset.fallback === '1') return
+                  el.dataset.fallback = '1'
+                  el.src = FALLBACK_LOGO
+                }}
+              />
+            </span>
+            {rotateSlogan ? (
+              <span className="site-header__logo-face site-header__logo-face--slogan" aria-hidden>
+                {sloganText}
+              </span>
+            ) : null}
           </Link>
 
           <nav aria-label={nav.aria.main}>
@@ -291,7 +348,9 @@ export function Header() {
                 return (
                   <li
                     key={item.key}
-                    className={`site-header__nav-item${subOpen ? ' is-menu-open' : ''}`}
+                    className={`site-header__nav-item${subOpen ? ' is-menu-open' : ''}${
+                      currentTop === item.key ? ' is-current' : ''
+                    }`}
                     onMouseEnter={(e) => {
                       if (!hasSub) return
                       const focused = document.activeElement
@@ -345,9 +404,7 @@ export function Header() {
                             <p className="site-header__submenu-title">{topLabel(col.topKey)}</p>
                           </div>
                           <div className="site-header__submenu-right">
-                            {col.topKey === 'khayah'
-                              ? renderStackedList(col.links ?? [])
-                              : renderLinkList(col.links ?? [])}
+                            {renderLinkList(col.links ?? [])}
                           </div>
                           {menuImages[col.topKey] ? (
                             <div className="site-header__submenu-visual" aria-hidden="true">
@@ -365,14 +422,6 @@ export function Header() {
         </div>
 
         <div className="site-header__right">
-          <a
-            href={NANUM_DONATE_URL}
-            className="site-header__donate"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {messages.home.hero.donate}
-          </a>
           <nav className="site-header__locale" aria-label={nav.aria.locale}>
             <Link
               to={swapLocale('ko')}
@@ -392,6 +441,15 @@ export function Header() {
               EN
             </Link>
           </nav>
+          <a
+            href={donateHref(biz)}
+            className={`site-header__donate${hideHeaderDonate ? ' is-hidden' : ''}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            hidden={hideHeaderDonate || undefined}
+          >
+            {headerDonateLabel}
+          </a>
           <button
             type="button"
             className="site-header__toggle"

@@ -18,39 +18,22 @@ export function KhayahSectionNav() {
   if (items.length === 0) return null
 
   return (
-    <nav className="khayah-about-tabs khayah-about-tabs--sections" aria-label={messages.pages.aboutHub.tabsAria}>
-      <div className="khayah-about-tabs__rail">
+    <div className="kaya-subnav">
+      <nav className="kaya-subnav__row" aria-label={messages.pages.aboutHub.tabsAria}>
         {items.map((item) => {
           const isActive = active === item.id
-          const label = messages.nav.links[item.labelKey]
-          const stacked = item.id === 'org' ? splitOrgLabel(label) : null
           return (
             <Link
               key={item.id}
               to={localize(item.to)}
-              className={`khayah-about-tabs__tab${isActive ? ' is-active' : ''}${stacked ? ' khayah-about-tabs__tab--stack' : ''}`}
+              className={`kaya-subnav__link${isActive ? ' is-active' : ''}`}
               aria-current={isActive ? 'page' : undefined}
             >
-              {stacked ? (
-                <>
-                  <span>{stacked[0]}</span>
-                  <span>{stacked[1]}</span>
-                </>
-              ) : (
-                label
-              )}
+              {messages.nav.links[item.labelKey]}
             </Link>
           )
         })}
-      </div>
-    </nav>
+      </nav>
+    </div>
   )
-}
-
-/** "조직도 · 이사회 · 전문위원" → 조직도 / 이사회 · 전문위원 */
-function splitOrgLabel(label: string): [string, string] | null {
-  const sep = ' · '
-  const i = label.indexOf(sep)
-  if (i <= 0) return null
-  return [label.slice(0, i), label.slice(i + sep.length)]
 }

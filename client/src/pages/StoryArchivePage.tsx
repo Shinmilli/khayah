@@ -52,11 +52,19 @@ function formatDotDate(iso: string): string {
   return `${y}. ${m}. ${day}.`
 }
 
-export function StoryArchivePage() {
+export function StoryArchivePage({
+  kind = '스토리',
+  heading,
+}: {
+  kind?: '스토리' | '활동소식'
+  heading?: '스토리' | '활동소식'
+} = {}) {
   const params = useParams()
   const query = useQuery()
   const { localize, messages } = useLocale()
   const st = messages.pages.stories
+  const titleKind = heading ?? kind
+  const boardTitle = titleKind === '활동소식' ? messages.nav.links.activities : st.title
   const initialScope = parseScope(params.scope ?? query.get('scope'))
 
   const [scope, setScope] = useState<StoryScopeKey>(initialScope)
@@ -69,7 +77,7 @@ export function StoryArchivePage() {
     let cancelled = false
     setLoading(true)
     setError(false)
-    fetchPostsByKind('스토리', 1, 200)
+    fetchPostsByKind(kind, 1, 200)
       .then((res) => {
         if (!cancelled) setPosts(res.posts)
       })
@@ -85,7 +93,7 @@ export function StoryArchivePage() {
     return () => {
       cancelled = true
     }
-  }, [])
+  }, [kind])
 
   const items = useMemo(() => {
     if (scope === 'all') return posts
@@ -109,14 +117,14 @@ export function StoryArchivePage() {
   ]
 
   const title =
-    scope === 'all' ? st.title : st.scopeTitle(st.scopes[scope as Exclude<StoryScopeKey, 'all'>])
+    scope === 'all' ? boardTitle : st.scopeTitle(st.scopes[scope as Exclude<StoryScopeKey, 'all'>])
 
   const chipForMeta = (s: string): string => {
     if (s === '국내') return st.chips.domestic
     if (s === '해외') return st.chips.overseas
     if (s === '옹호') return st.chips.advocacy
     if (s === '지원' || s === '진행') return st.chips.support
-    return st.chips.default
+    return titleKind === '활동소식' ? boardTitle : st.chips.default
   }
 
   const chipForScope = (s: Exclude<StoryScopeKey, 'all'>): string => {
@@ -134,7 +142,7 @@ export function StoryArchivePage() {
 
   return (
     <div className="page-content-wrapper">
-      <PageHero title={st.title} backgroundImageUrl={pageHeroImageForStoryScope(scope)} />
+      <PageHero title={boardTitle} backgroundImageUrl={pageHeroImageForStoryScope(scope)} />
       <div className="section">
         <div className="section_wrapper clearfix">
           <div className="column one">
@@ -144,7 +152,7 @@ export function StoryArchivePage() {
                   <h2 className="story-archive__title">{title}</h2>
                 </div>
                 <p className="story-archive__sub">{st.subtitle}</p>
-                <nav className="story-filter" aria-label={st.filterAria}>
+                <nav className="story-filter" aria-label={titleKind === '활동소식' ? '활동소식 범위 선택' : st.filterAria}>
                   {scopeTabs.map((t) => (
                     <button
                       key={t.key}
@@ -164,7 +172,11 @@ export function StoryArchivePage() {
               {loading ? (
                 <ListStatus variant="loading" message={messages.pages.archive.loading} lines={0} />
               ) : null}
-              <section className="story-archive__grid" aria-label={st.listAria} aria-busy={loading || undefined}>
+              <section
+                className="story-archive__grid"
+                aria-label={titleKind === '활동소식' ? '활동소식 목록' : st.listAria}
+                aria-busy={loading || undefined}
+              >
                 {loading
                   ? Array.from({ length: STORY_PER_PAGE }, (_, i) => (
                       <article key={i} className="story-archive__item story-archive__item--skeleton" aria-hidden>
@@ -179,9 +191,17 @@ export function StoryArchivePage() {
                       </article>
                     ))
                   : null}
-                {error ? <ListStatus variant="error" message={st.loadError} /> : null}
+                {error ? (
+                  <ListStatus
+                    variant="error"
+                    message={titleKind === '활동소식' ? '활동소식을 불러오지 못했습니다.' : st.loadError}
+                  />
+                ) : null}
                 {!loading && !error && items.length === 0 ? (
-                  <ListStatus variant="empty" message={st.empty} />
+                  <ListStatus
+                    variant="empty"
+                    message={titleKind === '활동소식' ? '등록된 활동소식이 없습니다.' : st.empty}
+                  />
                 ) : null}
                 {!loading && !error
                   ? paged.items.map((p) => (
@@ -194,7 +214,7 @@ export function StoryArchivePage() {
                             <h3 className="story-list-card__title">
                               <Link
                                 to={localize(`/posts/${encodeURIComponent(p.slug)}`)}
-                                state={{ postKind: '스토리' }}
+                                state={{ postKind: kind }}
                               >
                                 <span className="story-list-card__title-text">{p.title}</span>
                               </Link>
@@ -223,7 +243,7 @@ export function StoryArchivePage() {
                   page={paged.page}
                   totalPages={paged.totalPages}
                   onChange={setListPage}
-                  label={st.pagination}
+                  label={titleKind === '활동소식' ? '활동소식 페이지' : st.pagination}
                 />
               </div>
               ) : null}

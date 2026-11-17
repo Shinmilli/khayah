@@ -52,27 +52,28 @@
 }
 
 #Content.type-readable .page-content-wrapper .page-body .greeting-modern .article-body {
-  font-size: 1.38rem;
+  font-size: 16.5px;
 }
 
 #Content.type-readable .page-content-wrapper .page-body .greeting-modern .article-lead-text {
-  font-size: 1.72rem;
+  font-size: 23px;
 }
 
 #Content.type-readable .page-content-wrapper .page-body .greeting-modern .sidebar-sub {
-  font-size: 1.35rem;
+  font-size: 19px;
 }
 
 #Content.type-readable .page-content-wrapper .page-body .greeting-modern .sidebar-role {
-  font-size: 1.25rem;
+  font-size: 14px;
 }
 
 #Content.type-readable .page-content-wrapper .page-body .greeting-modern .sidebar-kicker {
-  font-size: 1.05rem;
+  font-size: 12px;
 }
 
 #Content.type-readable .page-content-wrapper .page-body .greeting-modern h2.sidebar-title {
-  font-size: 2.35rem;
+  font-size: 44px;
+  line-height: 1.3;
 }
 
 #Content.type-readable .notice-archive-page .notice-archive__title,

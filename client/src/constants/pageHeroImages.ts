@@ -1,6 +1,6 @@
 import { PATH } from '../i18n/routes'
 
-const ABOUT = '/images/banners/about.jpg'
+const ABOUT = '/images/banners/kaya.jpg'
 /** 소식·스토리 공통 배너 */
 const NEWS = '/images/banners/news.jpg'
 
@@ -119,6 +119,9 @@ function defaultHeroImageForPath(pathKey: string): string | null {
   if (pathKey.startsWith(`${PATH.businessDomestic}/`)) return BY_PATH[PATH.businessDomestic]
   if (pathKey.startsWith(`${PATH.businessOverseas}/`)) return BY_PATH[PATH.businessOverseas]
   if (pathKey.startsWith(`${PATH.businessAdvocacy}/`)) return BY_PATH[PATH.businessAdvocacy]
+  if (pathKey === PATH.businessSocial || pathKey.startsWith(`${PATH.businessSocial}/`)) {
+    return BY_PATH[PATH.businessAdvocacy]
+  }
   if (pathKey.startsWith('news/')) return NEWS
   if (pathKey.startsWith('stories')) return NEWS
   return null

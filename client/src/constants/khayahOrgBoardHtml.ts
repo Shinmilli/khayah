@@ -2,14 +2,15 @@
 
 export const KHAYAH_ORG_CHART_HTML = `
 <div class="khayah-org-chart">
-  <p class="khayah-org-chart__lead">카야의 운영 구조를 도식으로 나타낸 것입니다.<br />중앙의 세 영역이 유기적으로 맞물리고, 이사회·전문위원이 함께합니다.</p>
+  <p class="khayah-org-chart__lead" data-k="org.lead" data-k-mode="html">카야는 국제개발협력사업, 대외협력홍보, 경영지원의 세 부문이 유기적으로 협력하여 공동의 목표를 실현합니다.<br />이사회는 조직의 주요 의사결정과 책임 있는 운영을 이끌고,<br />전문위원은 분야별 전문지식과 경험을 바탕으로 사업의 전문성을 강화합니다.</p>
   <figure class="khayah-org-chart__figure">
     <img
       class="khayah-org-chart__img"
-      src="/images/Khayah/org-chart-diagram.png"
-      width="640"
-      height="640"
-      alt="KHAYAH 조직도: 국내시민사업·국제개발협력사업·경영지원과 이사회·전문위원"
+      data-k="org.image" data-k-mode="src" data-k-alt="org.imageAlt"
+      src="/images/about/org-chart.jpg"
+      width="1020"
+      height="849"
+      alt="카야 조직도: 국제개발협력사업, 대외협력홍보, 경영지원 세 부문이 맞물리고, 양옆에 이사회와 전문위원이 함께함"
       decoding="async"
       loading="lazy"
     />
@@ -18,103 +19,102 @@ export const KHAYAH_ORG_CHART_HTML = `
 `.trim()
 
 const KHAYAH_DIRECTORS_GRID_HTML = `
-<div class="khayah-board-grid" role="list">
+<div class="khayah-board-grid" data-org="directors" role="list">
   <div class="khayah-board-cell" role="listitem">
-    <div class="khayah-board-name">최순태 이사</div>
+    <div class="khayah-board-name"><span>이사</span> 최순태</div>
     <div class="khayah-board-role">카야 대표이사</div>
   </div>
   <div class="khayah-board-cell" role="listitem">
-    <div class="khayah-board-name">김선우 이사</div>
+    <div class="khayah-board-name"><span>상임이사</span> 김선우</div>
     <div class="khayah-board-role">카야 상임이사</div>
   </div>
   <div class="khayah-board-cell" role="listitem">
-    <div class="khayah-board-name">김경휘 이사</div>
+    <div class="khayah-board-name"><span>이사</span> 김경휘</div>
     <div class="khayah-board-role">전주예수대 사회복지학과 교수</div>
   </div>
   <div class="khayah-board-cell" role="listitem">
-    <div class="khayah-board-name">이재혁 이사</div>
+    <div class="khayah-board-name"><span>이사</span> 이재혁</div>
     <div class="khayah-board-role">성남시의료원 가정의학과 전문의</div>
   </div>
   <div class="khayah-board-cell" role="listitem">
-    <div class="khayah-board-name">이필우 이사</div>
+    <div class="khayah-board-name"><span>이사</span> 이필우</div>
     <div class="khayah-board-role">법무법인 강남 변호사</div>
   </div>
   <div class="khayah-board-cell" role="listitem">
-    <div class="khayah-board-name">Stephan Hyosik Rhee 이사</div>
+    <div class="khayah-board-name"><span>이사</span> Stephan Hyosik Rhee</div>
     <div class="khayah-board-role">Leeway Global Network, Inc. 대표</div>
   </div>
   <div class="khayah-board-cell" role="listitem">
-    <div class="khayah-board-name">홍민 감사</div>
+    <div class="khayah-board-name"><span>감사</span> 홍민</div>
     <div class="khayah-board-role">법률사무소 에스제이파트너스 변호사</div>
   </div>
-  <div class="khayah-board-cell khayah-board-cell--empty" aria-hidden="true"></div>
 </div>
 `.trim()
 
 const KHAYAH_EXPERTS_GRID_HTML = `
-<div class="khayah-board-grid" role="list">
+<div class="khayah-board-grid" data-org="experts" role="list">
   <div class="khayah-board-cell" role="listitem">
-    <div class="khayah-board-name">정재훈 전문위원</div>
+    <div class="khayah-board-name"><span>전문위원</span> 정재훈</div>
     <div class="khayah-board-role">인류학박사(교육 인류학), 국제개발협력 컨설턴트</div>
   </div>
   <div class="khayah-board-cell" role="listitem">
-    <div class="khayah-board-name">임진호 전문위원</div>
+    <div class="khayah-board-name"><span>전문위원</span> 임진호</div>
     <div class="khayah-board-role">(전)한국기술교육대학교 개도국기술이전연구소 교수</div>
   </div>
   <div class="khayah-board-cell" role="listitem">
-    <div class="khayah-board-name">최윤석 전문위원</div>
+    <div class="khayah-board-name"><span>전문위원</span> 최윤석</div>
     <div class="khayah-board-role">매표화학 대표</div>
   </div>
   <div class="khayah-board-cell" role="listitem">
-    <div class="khayah-board-name">황남기 전문위원</div>
+    <div class="khayah-board-name"><span>전문위원</span> 황남기</div>
     <div class="khayah-board-role">(주)합격캠프 대표</div>
   </div>
   <div class="khayah-board-cell" role="listitem">
-    <div class="khayah-board-name">이재운 전문위원</div>
+    <div class="khayah-board-name"><span>전문위원</span> 이재운</div>
     <div class="khayah-board-role">홍콩 중문대학교 법학과 교수</div>
   </div>
   <div class="khayah-board-cell" role="listitem">
-    <div class="khayah-board-name">오나영 전문위원</div>
+    <div class="khayah-board-name"><span>전문위원</span> 오나영</div>
     <div class="khayah-board-role">ONA Creation 대표</div>
   </div>
   <div class="khayah-board-cell" role="listitem">
-    <div class="khayah-board-name">김찬민 전문위원</div>
+    <div class="khayah-board-name"><span>전문위원</span> 김찬민</div>
     <div class="khayah-board-role">성균관대학교 통계학과 교수</div>
   </div>
   <div class="khayah-board-cell" role="listitem">
-    <div class="khayah-board-name">노형우 전문위원</div>
+    <div class="khayah-board-name"><span>전문위원</span> 노형우</div>
     <div class="khayah-board-role">(주)코아스 사장</div>
   </div>
   <div class="khayah-board-cell" role="listitem">
-    <div class="khayah-board-name">이진영 전문위원</div>
+    <div class="khayah-board-name"><span>전문위원</span> 이진영</div>
     <div class="khayah-board-role">(주)The Organic 디오 대표</div>
   </div>
   <div class="khayah-board-cell" role="listitem">
-    <div class="khayah-board-name">고현학 전문위원</div>
+    <div class="khayah-board-name"><span>전문위원</span> 고현학</div>
     <div class="khayah-board-role">신한라이프 신강남지점 지점장</div>
   </div>
   <div class="khayah-board-cell" role="listitem">
-    <div class="khayah-board-name">정영미 전문위원</div>
+    <div class="khayah-board-name"><span>전문위원</span> 정영미</div>
     <div class="khayah-board-role">준오헤어 미금지점 원장</div>
   </div>
   <div class="khayah-board-cell" role="listitem">
-    <div class="khayah-board-name">박래형 전문위원</div>
+    <div class="khayah-board-name"><span>전문위원</span> 박래형</div>
     <div class="khayah-board-role">노무라종합연구소 뉴욕 지부 컨설팅 부문 대표</div>
   </div>
   <div class="khayah-board-cell" role="listitem">
-    <div class="khayah-board-name">나용범 전문위원</div>
+    <div class="khayah-board-name"><span>전문위원</span> 나용범</div>
     <div class="khayah-board-role">(주)한국C&amp;S 대표</div>
   </div>
   <div class="khayah-board-cell" role="listitem">
-    <div class="khayah-board-name">김창현 전문위원</div>
+    <div class="khayah-board-name"><span>전문위원</span> 김창현</div>
     <div class="khayah-board-role">AA Studio 대표</div>
   </div>
   <div class="khayah-board-cell" role="listitem">
-    <div class="khayah-board-name">변선주 전문위원</div>
+    <div class="khayah-board-name"><span>전문위원</span> 변선주</div>
     <div class="khayah-board-role">CINCO PANES 대표</div>
   </div>
   <div class="khayah-board-cell" role="listitem">
-    <div class="khayah-board-name">김은수 전문위원</div>
+    <div class="khayah-board-name"><span>전문위원</span> 김은수</div>
     <div class="khayah-board-role">Child Fund International Research &amp; Learning Senior Advisor</div>
   </div>
 </div>
@@ -122,23 +122,42 @@ const KHAYAH_EXPERTS_GRID_HTML = `
 
 /** 허브 탭·단독 페이지 공통: 왼쪽 제목 · 오른쪽 본문 */
 export const KHAYAH_ORG_BOARD_MERGED_HTML = `
-<div class="khayah-org-board-merged">
-  <article class="khayah-split-row" id="org-chart" aria-labelledby="khayah-split-org">
-    <h2 id="khayah-split-org" class="khayah-split-row__title">조직도</h2>
-    <div class="khayah-split-row__body">
-      ${KHAYAH_ORG_CHART_HTML}
-    </div>
+<div class="khayah-org-board-merged kaya-org-page">
+  <article class="kaya-org" id="org-chart" aria-labelledby="khayah-split-org">
+    <p class="kaya-kicker">ORGANIZATION · 조직도</p>
+    <h2 id="khayah-split-org" class="kaya-display" data-k="org.title" data-k-mode="html">각자의 전문성이 모여<br /><span class="kaya-wine">하나의 변화를 만듭니다.</span></h2>
+    ${KHAYAH_ORG_CHART_HTML}
   </article>
-  <article class="khayah-split-row" id="directors" aria-labelledby="khayah-split-directors">
-    <h2 id="khayah-split-directors" class="khayah-split-row__title">이사회</h2>
-    <div class="khayah-split-row__body">
-      ${KHAYAH_DIRECTORS_GRID_HTML}
-    </div>
-  </article>
-  <article class="khayah-split-row" id="experts" aria-labelledby="khayah-split-experts">
-    <h2 id="khayah-split-experts" class="khayah-split-row__title">전문위원</h2>
-    <div class="khayah-split-row__body">
-      ${KHAYAH_EXPERTS_GRID_HTML}
+  <article class="kaya-people" id="directors" aria-labelledby="khayah-split-directors">
+    <div class="kaya-people__frame">
+      <div class="kaya-people__head">
+        <p class="kaya-kicker">PEOPLE · 함께하는 사람들</p>
+        <h2 id="khayah-split-directors" class="kaya-display kaya-display--sub" data-k="org.peopleTitle" data-k-mode="html">카야의 성장과 변화를 <span class="kaya-wine">함께 만드는 사람들</span></h2>
+      </div>
+      <div class="kaya-people__panel">
+        <section class="kaya-people__group" aria-labelledby="khayah-board-directors">
+          <div class="kaya-people__hd">
+            <span class="kaya-people__tri" aria-hidden="true"></span>
+            <h3 id="khayah-board-directors">이사회</h3>
+            <p class="kaya-people__en">BOARD OF DIRECTORS</p>
+          </div>
+          <div class="kaya-people__vline" aria-hidden="true"></div>
+          <div class="kaya-people__rule" aria-hidden="true"></div>
+          <div class="kaya-people__dots" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+          ${KHAYAH_DIRECTORS_GRID_HTML}
+        </section>
+        <section class="kaya-people__group kaya-people__group--experts" id="experts" aria-labelledby="khayah-split-experts">
+          <div class="kaya-people__hd">
+            <span class="kaya-people__tri" aria-hidden="true"></span>
+            <h3 id="khayah-split-experts">전문위원회</h3>
+            <p class="kaya-people__en">ADVISORY COMMITTEE</p>
+          </div>
+          <div class="kaya-people__vline" aria-hidden="true"></div>
+          <div class="kaya-people__rule" aria-hidden="true"></div>
+          <div class="kaya-people__dots" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+          ${KHAYAH_EXPERTS_GRID_HTML}
+        </section>
+      </div>
     </div>
   </article>
 </div>

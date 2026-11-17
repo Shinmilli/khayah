@@ -1,0 +1,130 @@
+.admin-view-switch {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 48px;
+  padding: 0 16px;
+  box-sizing: border-box;
+  background: #2b2629;
+  font-family: 'NanumSquareRound', 'NanumSquare Round', system-ui, sans-serif;
+}
+
+.admin-view-switch--with-notice {
+  height: auto;
+  min-height: 48px;
+  flex-wrap: wrap;
+  padding-top: 7px;
+  padding-bottom: 7px;
+  row-gap: 8px;
+}
+
+.admin-view-switch--fixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1200;
+}
+
+.admin-view-switch > a {
+  display: inline-flex;
+  align-items: center;
+  height: 34px;
+  padding: 0 16px;
+  border-radius: 999px;
+  color: #f4efe9;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+  text-decoration: none;
+}
+
+.admin-view-switch > a[aria-current='page'] {
+  background: #b11e3b;
+  color: #fff;
+}
+
+.admin-view-switch__notice {
+  display: flex;
+  flex: 1 1 280px;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px 10px;
+  min-width: 0;
+  margin-left: auto;
+  color: #f4efe9;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.admin-view-switch__notice p {
+  margin: 0;
+  flex: 1 1 220px;
+  text-align: right;
+}
+
+.admin-view-switch__notice button,
+.admin-view-switch__notice a {
+  display: inline-flex;
+  align-items: center;
+  height: 32px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 999px;
+  background: #fff;
+  color: #2a3038;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.admin-view-switch__notice a {
+  background: transparent;
+  color: #fff;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+}
+
+html.has-admin-switch {
+  --admin-switch-height: 48px;
+}
+
+html.has-admin-switch body:not(.admin-route) {
+  padding-top: calc(var(--site-header-height) + var(--admin-switch-height));
+}
+
+html.has-admin-switch .site-header {
+  top: var(--admin-switch-height);
+}
+
+html.has-admin-switch .site-header__submenu,
+html.has-admin-switch .site-header__mobile {
+  top: calc(var(--site-header-height, 72px) + var(--admin-switch-height));
+}
+
+html.has-admin-switch .site-header__mobile {
+  height: calc(100dvh - var(--site-header-height, 72px) - var(--admin-switch-height));
+}
+
+.admin-shell {
+  --admin-switch-height: 48px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #f7f5f2;
+}
+
+.admin-shell > .admin-view-switch {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+}
+
+.admin-shell > .admin-app {
+  flex: 1;
+  min-height: 0;
+}

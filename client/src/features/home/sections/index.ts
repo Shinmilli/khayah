@@ -1,5 +1,6 @@
 export { BoardSection } from './BoardSection'
 export { HeroSection } from './HeroSection'
+export { HomeNumbersSection } from './HomeNumbersSection'
 export { ImpactSection } from './ImpactSection'
 export { PartnersSection } from './PartnersSection'
 export { StorySection } from './StorySection'

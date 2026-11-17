@@ -14,6 +14,10 @@ export type PopupItem = {
   buttonEnabled: boolean
   buttonLabels: PopupButtonLabels
   buttonUrl: string
+  /** YYYY-MM-DD. 비우면 시작 제한 없음 */
+  startsOn: string
+  /** YYYY-MM-DD. 비우면 종료 제한 없음 */
+  endsOn: string
 }
 
 export type PopupDocument = {
@@ -25,6 +29,11 @@ const DEFAULT_BUTTON_LABELS: PopupButtonLabels = { ko: '자세히 보기', en: '
 
 function isPlainObject(v: unknown): v is Record<string, unknown> {
   return typeof v === 'object' && v !== null && !Array.isArray(v)
+}
+
+function asDate(v: unknown): string {
+  const s = asString(v)
+  return /^\d{4}-\d{2}-\d{2}$/.test(s) ? s : ''
 }
 
 function asString(v: unknown): string {
@@ -78,6 +87,8 @@ function parseItem(raw: unknown, usedIds: Set<string>): PopupItem | null {
     buttonEnabled: raw.buttonEnabled === true,
     buttonLabels: asButtonLabels(raw.buttonLabels),
     buttonUrl: asExternalUrl(raw.buttonUrl),
+    startsOn: asDate(raw.startsOn),
+    endsOn: asDate(raw.endsOn),
   }
 }
 

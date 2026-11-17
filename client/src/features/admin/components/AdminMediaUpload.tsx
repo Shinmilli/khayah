@@ -7,7 +7,9 @@ export type AdminMediaUploadProps = {
   hint?: string
   variant: 'image' | 'pdf'
   /** 배너·팝업 등 넓은 미리보기 */
-  layout?: 'default' | 'wide' | 'portrait'
+  layout?: 'default' | 'wide' | 'portrait' | 'slot'
+  slotTitle?: string
+  slotRatio?: string
   value: string | null
   onChange: (url: string | null) => void
   disabled?: boolean
@@ -18,6 +20,8 @@ export function AdminMediaUpload({
   hint,
   variant,
   layout = 'default',
+  slotTitle,
+  slotRatio,
   value,
   onChange,
   disabled = false,
@@ -78,6 +82,39 @@ export function AdminMediaUpload({
   )
 
   const previewHref = value && variant === 'pdf' ? pdfOpenHref(value) : value
+
+  if (layout === 'slot') {
+    return (
+      <div className={`admin-slot${slotRatio === '4 : 5' ? ' admin-slot--narrow' : ''}${slotRatio === 'logo' ? ' admin-slot--logo' : ''}${slotRatio === '1920×640' ? ' admin-slot--wide' : ''}`}>
+        <div
+          className={`admin-slot__box${dragOver ? ' is-active' : ''}${uploading ? ' is-busy' : ''}`}
+          onDragEnter={(e) => {
+            if (disabled) return
+            e.preventDefault()
+            setDragOver(true)
+          }}
+          onDragOver={(e) => {
+            if (disabled) return
+            e.preventDefault()
+            setDragOver(true)
+          }}
+          onDragLeave={(e) => {
+            if (!e.currentTarget.contains(e.relatedTarget as Node)) setDragOver(false)
+          }}
+          onDrop={onDrop}
+        >
+          <input ref={inputRef} type="file" accept={accept} className="admin-media-upload__input" onChange={onInputChange} aria-label={label} disabled={disabled || uploading} />
+          {value && variant === 'image' ? <img src={value} alt="" /> : null}
+          <span>{uploading ? '업로드 중…' : slotTitle || label}</span>
+          {slotRatio ? <b>{slotRatio}</b> : null}
+          <button type="button" className="admin-btn admin-btn--sm" disabled={disabled || uploading} onClick={() => inputRef.current?.click()}>
+            {value ? '교체' : '올리기'}
+          </button>
+        </div>
+        {localErr ? <p className="admin-media-upload__err">{localErr}</p> : null}
+      </div>
+    )
+  }
 
   return (
     <div className="admin-field admin-field--full">

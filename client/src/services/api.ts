@@ -9,6 +9,11 @@ import type { InquiryAdmin, InquiryPublic } from '../types/inquiry'
 import type { InquiryFaqDocument, InquiryFaqPublicDocument } from '../types/inquiryFaq'
 import type { ImpactStatsDocument, ImpactStatsPublicView } from '../features/home/impactStatsTypes'
 import type { HeroBannerDocument, HeroBannerPublicDocument } from '../features/home/heroBannerTypes'
+import type { SiteCommonDocument } from '../features/site/siteCommonTypes'
+import type { KayaPagesDocument } from '../features/kaya/kayaPagesTypes'
+import type { BizSupportDocument } from '../features/biz/bizSupportTypes'
+import type { ProjectSetsDocument } from '../features/projects/projectSetTypes'
+import type { ImpactPageDocument } from '../features/impact/impactPageTypes'
 import type { HistoryDocument, HistoryLocaleContent } from '../features/history/historyTypes'
 import type { NavMenuImagesDocument } from '../features/nav/navMenuImagesTypes'
 import type { NavVisibilityDocument } from '../features/nav/navVisibilityTypes'
@@ -228,9 +233,10 @@ export async function uploadPostVideo(file: File): Promise<DocumentUploadResult>
   return data
 }
 
-export async function adminFetchPostsByKind(kind: string, page = 1, perPage = 20): Promise<AdminPostsResponse> {
+export async function adminFetchPostsByKind(kind: string, page = 1, perPage = 20, q = ''): Promise<AdminPostsResponse> {
+  const query = q.trim() ? `&q=${encodeURIComponent(q.trim())}` : ''
   const res = await apiFetch(
-    `${API_BASE}/admin/posts?kind=${encodeURIComponent(kind)}&page=${page}&perPage=${perPage}`,
+    `${API_BASE}/admin/posts?kind=${encodeURIComponent(kind)}&page=${page}&perPage=${perPage}${query}`,
   )
   if (!res.ok) throw new Error(await readApiError(res, '게시글 목록을 불러오지 못했습니다.'))
   return res.json()
@@ -369,6 +375,116 @@ export async function fetchHeroBanner(locale: Locale = 'ko'): Promise<HeroBanner
 export async function adminFetchHeroBanner(): Promise<HeroBannerDocument> {
   const res = await apiFetch(`${API_BASE}/admin/hero-banner`)
   if (!res.ok) throw new Error('Failed to fetch hero banner')
+  return res.json()
+}
+
+export async function fetchSiteCommon(): Promise<SiteCommonDocument> {
+  const res = await fetch(`${API_BASE}/site-common`)
+  if (!res.ok) throw new Error('Failed to fetch site common')
+  return res.json()
+}
+
+export async function adminFetchSiteCommon(): Promise<SiteCommonDocument> {
+  const res = await apiFetch(`${API_BASE}/admin/site-common`)
+  if (!res.ok) throw new Error('사이트 설정을 불러오지 못했습니다.')
+  return res.json()
+}
+
+export async function fetchKayaPages(): Promise<KayaPagesDocument> {
+  const res = await fetch(`${API_BASE}/kaya-pages`)
+  if (!res.ok) throw new Error('Failed to fetch kaya pages')
+  return res.json()
+}
+
+export async function adminFetchKayaPages(): Promise<KayaPagesDocument> {
+  const res = await apiFetch(`${API_BASE}/admin/kaya-pages`)
+  if (!res.ok) throw new Error('카야 페이지를 불러오지 못했습니다.')
+  return res.json()
+}
+
+export async function fetchBizSupport(): Promise<BizSupportDocument> {
+  const res = await fetch(`${API_BASE}/biz-support`)
+  if (!res.ok) throw new Error('Failed to fetch biz support')
+  return res.json()
+}
+
+export async function adminFetchBizSupport(): Promise<BizSupportDocument> {
+  const res = await apiFetch(`${API_BASE}/admin/biz-support`)
+  if (!res.ok) throw new Error('사업·후원 설정을 불러오지 못했습니다.')
+  return res.json()
+}
+
+export async function fetchImpactPage(): Promise<ImpactPageDocument> {
+  const res = await fetch(`${API_BASE}/impact-page`)
+  if (!res.ok) throw new Error('Failed to fetch impact page')
+  return res.json()
+}
+
+export async function adminFetchImpactPage(): Promise<ImpactPageDocument> {
+  const res = await apiFetch(`${API_BASE}/admin/impact-page`)
+  if (!res.ok) throw new Error('임팩트 설정을 불러오지 못했습니다.')
+  return res.json()
+}
+
+export async function adminPutImpactPage(doc: ImpactPageDocument): Promise<ImpactPageDocument> {
+  const res = await apiFetch(`${API_BASE}/admin/impact-page`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(doc),
+  })
+  if (!res.ok) throw new Error('임팩트 설정을 저장하지 못했습니다.')
+  return res.json()
+}
+
+export async function fetchProjectSets(): Promise<ProjectSetsDocument> {
+  const res = await fetch(`${API_BASE}/project-sets`)
+  if (!res.ok) throw new Error('Failed to fetch project sets')
+  return res.json()
+}
+
+export async function adminFetchProjectSets(): Promise<ProjectSetsDocument> {
+  const res = await apiFetch(`${API_BASE}/admin/project-sets`)
+  if (!res.ok) throw new Error('진행사업 설정을 불러오지 못했습니다.')
+  return res.json()
+}
+
+export async function adminPutProjectSets(doc: ProjectSetsDocument): Promise<ProjectSetsDocument> {
+  const res = await apiFetch(`${API_BASE}/admin/project-sets`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(doc),
+  })
+  if (!res.ok) throw new Error('진행사업 설정을 저장하지 못했습니다.')
+  return res.json()
+}
+
+export async function adminPutBizSupport(doc: BizSupportDocument): Promise<BizSupportDocument> {
+  const res = await apiFetch(`${API_BASE}/admin/biz-support`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(doc),
+  })
+  if (!res.ok) throw new Error('사업·후원 설정을 저장하지 못했습니다.')
+  return res.json()
+}
+
+export async function adminPutKayaPages(doc: KayaPagesDocument): Promise<KayaPagesDocument> {
+  const res = await apiFetch(`${API_BASE}/admin/kaya-pages`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(doc),
+  })
+  if (!res.ok) throw new Error('카야 페이지를 저장하지 못했습니다.')
+  return res.json()
+}
+
+export async function adminPutSiteCommon(doc: SiteCommonDocument): Promise<SiteCommonDocument> {
+  const res = await apiFetch(`${API_BASE}/admin/site-common`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(doc),
+  })
+  if (!res.ok) throw new Error('사이트 설정을 저장하지 못했습니다.')
   return res.json()
 }
 

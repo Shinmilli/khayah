@@ -1,23 +1,95 @@
 /* 인사말 페이지 본문 */
 
 .greeting-modern {
-  --gm-text: #1a1a1a;
-  --gm-soft: #9a9a9a;
-  --gm-body: #6f6f6f;
-  --gm-line: #e6e6e6;
-  --gm-card: #faf7f2;
-  --gm-red: var(--khayah-red, #b20838);
+  --gm-text: #2f2b28;
+  --gm-soft: #5c5650;
+  --gm-body: #2f2b28;
+  --gm-line: #ece4d6;
+  --gm-card: #fbf8f1;
+  --gm-red: #b11e3b;
 
   box-sizing: border-box;
-  width: min(1320px, 100%);
-  /* 시안 비율은 유지하고 전체만 조금 축소 */
-  zoom: 0.92;
+  width: 100%;
   margin: 0 auto;
-  padding: clamp(36px, 4vw, 56px) 0 clamp(40px, 5vw, 72px);
-  font-family: var(--font-sans, 'Pretendard', 'Noto Sans KR', sans-serif);
-  font-weight: 400;
+  padding: 0;
   color: var(--gm-text);
   background: #fff;
+}
+
+.greeting-modern .gm-hero {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 48px 72px;
+  align-items: center;
+  width: min(1120px, 100%);
+  margin: 0 auto;
+  padding: 104px 24px;
+  box-sizing: border-box;
+}
+
+.greeting-modern .gm-hero__copy {
+  flex: 1.1 1 420px;
+  min-width: 0;
+}
+
+.greeting-modern .gm-who {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid #ece4d6;
+}
+
+.greeting-modern .gm-badge {
+  background: #2f2b28;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 9px 14px;
+  border-radius: 6px;
+}
+
+.greeting-modern .gm-photo {
+  flex: 0.9 1 340px;
+  min-width: 0;
+  position: relative;
+}
+
+.greeting-modern .gm-photo__back {
+  position: absolute;
+  left: -20px;
+  top: 28px;
+  right: 28px;
+  bottom: -20px;
+  background: #fbf8f1;
+  border-radius: 16px;
+}
+
+.greeting-modern .gm-photo__mark {
+  position: absolute;
+  right: -12px;
+  top: -12px;
+  z-index: 1;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: #b11e3b;
+  color: #fff;
+  font-size: 40px;
+  font-weight: 800;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 14px;
+  box-sizing: border-box;
+}
+
+.greeting-modern .gm-band {
+  margin: 0;
+  padding: 96px 24px;
+  background: #fbf8f1;
 }
 
 .greeting-modern *,
@@ -28,46 +100,51 @@
 
 .greeting-modern .main-grid {
   display: grid;
-  /* 시안 비율: 사진 30% · 간격 8% · 본문 62% */
   grid-template-columns: 393px minmax(0, 1fr);
   gap: 106px;
   align-items: start;
 }
 
 .greeting-modern .sidebar-photo {
+  position: relative;
   display: block;
   width: 100%;
-  height: auto;
-  border-radius: 18px;
-  margin: 0 0 36px;
+  max-width: 380px;
+  margin-left: auto;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  border-radius: 16px;
+  background: #dedfe3;
 }
 
 .page-content-wrapper .page-body .greeting-modern .sidebar-kicker {
-  margin: 0 0 14px;
-  font-size: 1.05rem;
+  margin: 0 0 18px;
+  font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  text-transform: none;
   color: var(--gm-red);
-  line-height: 1.35;
+  line-height: 1.4;
 }
 
 .page-content-wrapper .page-body .greeting-modern h2.sidebar-title {
-  margin: 0 0 14px;
+  margin: 0;
   font-family: inherit;
-  font-size: 2.35rem;
-  font-weight: 700;
+  font-size: 44px;
+  font-weight: 800;
   font-style: normal;
-  line-height: 1.35;
-  letter-spacing: 0;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
   color: var(--gm-text);
+  white-space: nowrap;
 }
 
 .page-content-wrapper .page-body .greeting-modern .sidebar-sub {
-  margin: 0 0 22px;
-  font-size: 1.35rem;
+  margin: 22px 0 0;
+  font-size: 19px;
+  font-weight: 700;
   line-height: 1.5;
-  color: var(--gm-soft);
+  color: #5c5650;
 }
 
 .greeting-modern .sidebar-rule {
@@ -78,60 +155,86 @@
 }
 
 .page-content-wrapper .page-body .greeting-modern .sidebar-role {
-  margin: 0 0 6px;
-  font-size: 1.25rem;
+  margin: 0;
+  font-size: 14px;
   line-height: 1.45;
-  color: #b0b0b0;
+  color: #5c5650;
 }
 
 .page-content-wrapper .page-body .greeting-modern .sidebar-name {
   margin: 0;
-  font-size: 1.7rem;
-  font-weight: 700;
+  font-size: 20px;
+  font-weight: 800;
   line-height: 1.4;
-  color: var(--gm-text);
+  color: #2f2b28;
 }
 
-.greeting-modern .article-lead {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  column-gap: 14px;
-  align-items: start;
-  margin: 0 0 56px;
-  padding-bottom: 48px;
-  border-bottom: 1px solid var(--gm-line);
+.page-content-wrapper .page-body .greeting-modern .article-lead {
+  display: block;
+  width: auto;
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: center;
 }
 
 .greeting-modern .article-quote-mark {
-  font-family: Georgia, 'Times New Roman', serif;
-  font-size: 3.9rem;
-  font-weight: 700;
-  line-height: 0.72;
-  color: var(--gm-red);
-  margin-top: 0.02em;
+  display: block;
+  font-size: 56px;
+  font-weight: 800;
+  line-height: 0.6;
+  color: #b11e3b;
+  margin-bottom: 22px;
 }
 
 .page-content-wrapper .page-body .greeting-modern .article-lead-text {
   margin: 0;
-  font-size: 1.72rem;
-  font-weight: 700;
-  line-height: 1.85;
+  font-size: 23px;
+  font-weight: 800;
+  line-height: 1.75;
   letter-spacing: 0;
-  color: var(--gm-text);
+  color: #2f2b28;
 }
 
 .page-content-wrapper .page-body .greeting-modern .article-body {
-  margin: 0 0 1.3em;
-  font-size: 1.38rem;
+  margin: 0;
+  font-size: 16.5px;
   font-weight: 400;
-  line-height: 1.75;
-  color: var(--gm-body);
+  line-height: 2;
+  color: #5c5650;
   word-break: keep-all;
+}
+
+.greeting-modern .article {
+  max-width: 760px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+  padding: 104px 24px 112px;
+  box-sizing: border-box;
 }
 
 .page-content-wrapper .page-body .greeting-modern .article-body strong {
   font-weight: 700;
-  color: #1a1a1a;
+  color: #2f2b28;
+}
+
+.page-content-wrapper .page-body .greeting-modern .gm-wine {
+  color: #b11e3b;
+}
+
+.page-content-wrapper .page-body .greeting-modern .sidebar-title .gm-wine {
+  color: #b11e3b;
+}
+
+.page-content-wrapper .page-body .greeting-modern .gm-mark {
+  font-weight: 700;
+  color: #2f2b28;
+  background: linear-gradient(transparent 62%, #f8e1e6 62%);
 }
 
 .page-content-wrapper .page-body .greeting-modern .article-body:last-of-type {
@@ -139,26 +242,89 @@
 }
 
 .page-content-wrapper .page-body .greeting-modern .article-sign {
-  margin: 64px 0 0;
+  display: flex;
+  justify-content: flex-end;
+  align-items: baseline;
+  gap: 10px;
+  margin: 18px 0 0;
+  padding-top: 26px;
+  border-top: 1px solid #ece4d6;
   text-align: right;
-  font-size: 1.38rem;
+  font-size: 16px;
   line-height: 1.45;
   color: var(--gm-text);
 }
 
 .page-content-wrapper .page-body .greeting-modern .article-sign-role {
   margin-right: 6px;
-  color: #b0b0b0;
+  color: #5c5650;
   font-weight: 400;
 }
 
 .page-content-wrapper .page-body .greeting-modern .article-sign strong {
-  font-weight: 700;
-  color: var(--gm-text);
+  font-size: 20px;
+  font-weight: 800;
+  color: #2f2b28;
+}
+
+.page-content-wrapper .page-body .greeting-modern .article-sign-role {
+  margin-right: 0;
+  font-size: 14px;
+}
+
+.greeting-modern .gm-closing {
+  position: relative;
+  background-color: #2f2b28;
+  background-image: url('/images/about/greeting-closing.jpg');
+  background-size: cover;
+  background-position: center 35%;
+}
+
+.greeting-modern .gm-closing::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(47, 43, 40, 0.82);
+}
+
+.greeting-modern .gm-closing__inner {
+  position: relative;
+  width: min(1120px, 100%);
+  margin: 0 auto;
+  padding: 96px 24px;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.greeting-modern .gm-closing__mark {
+  display: block;
+  font-size: 56px;
+  line-height: 0.6;
+  color: #e58a9e;
+  font-weight: 800;
+  margin-bottom: 26px;
+}
+
+.page-content-wrapper .page-body .greeting-modern .gm-closing__text {
+  margin: 0 auto;
+  max-width: 680px;
+  font-size: 30px;
+  line-height: 1.6;
+  font-weight: 800;
+  color: #fff;
+}
+
+.greeting-modern .gm-closing__rule {
+  width: 48px;
+  height: 2px;
+  background: #b11e3b;
+  margin: 40px auto 0;
 }
 
 .greeting-modern .sig-section {
-  margin-top: 112px;
+  margin: 72px -24px 0;
+  padding: 72px 24px;
+  background: #fbf8f1;
 }
 
 .greeting-modern .sig-inner {
@@ -194,7 +360,7 @@
 }
 
 .greeting-modern .sig-quote-mark {
-  font-family: Georgia, 'Times New Roman', serif;
+  font-family: var(--font-sans);
   font-size: 3.2rem;
   font-weight: 700;
   line-height: 0.72;
@@ -250,27 +416,32 @@
 
 /* 본문 가독 모드가 인용/본문 크기 차이를 지우지 않도록 고정 */
 #Content.type-readable .page-content-wrapper .page-body .greeting-modern .article-lead-text {
-  font-size: 1.72rem;
+  font-size: 23px;
 }
 
 #Content.type-readable .page-content-wrapper .page-body .greeting-modern .article-body {
-  font-size: 1.38rem;
+  font-size: 16.5px;
 }
 
 #Content.type-readable .page-content-wrapper .page-body .greeting-modern h2.sidebar-title {
-  font-size: 2.35rem;
+  font-size: 44px;
+  line-height: 1.3;
+}
+
+#Content.type-readable .page-content-wrapper .page-body .greeting-modern .gm-closing__text {
+  font-size: 30px;
 }
 
 #Content.type-readable .page-content-wrapper .page-body .greeting-modern .sidebar-sub {
-  font-size: 1.35rem;
+  font-size: 19px;
 }
 
 #Content.type-readable .page-content-wrapper .page-body .greeting-modern .sidebar-role {
-  font-size: 1.25rem;
+  font-size: 14px;
 }
 
 #Content.type-readable .page-content-wrapper .page-body .greeting-modern .sidebar-kicker {
-  font-size: 1.05rem;
+  font-size: 12px;
 }
 
 #Content.type-readable .page-content-wrapper .page-body .greeting-modern .sig-quote {

@@ -202,6 +202,17 @@ export function AdminPopupPage() {
             </div>
             <p className="admin-upload__hint">ON이면 일반 화면에서 접속 시 팝업이 표시됩니다. (오늘 그만보기 적용)</p>
           </div>
+          <div className="admin-form-grid">
+            <label className="admin-field">
+              <span className="admin-field__label">시작일</span>
+              <input className="admin-input" type="date" value={selected?.startsOn ?? ''} onChange={(e) => updateSelected({ startsOn: e.target.value })} />
+            </label>
+            <label className="admin-field">
+              <span className="admin-field__label">종료일</span>
+              <input className="admin-input" type="date" value={selected?.endsOn ?? ''} onChange={(e) => updateSelected({ endsOn: e.target.value })} />
+            </label>
+          </div>
+          <p className="admin-upload__hint">비우면 기간 제한 없이 표시합니다. 시작일 전이나 종료일 다음 날부터는 뜨지 않습니다.</p>
 
           <AdminMediaUpload
             label="팝업 이미지"

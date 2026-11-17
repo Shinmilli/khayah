@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, Navigate, useLocation } from 'react-router-dom'
 import { fetchPageBySlug, fetchPostBySlug } from '../services/api'
 import { PostDetail, crumbsForKind, crumbsForPost, heroTitleForKind } from '../components/PostDetail'
 import { getStaticPage, normalizePathKey, pathToSlug } from '../constants/pagesContent'
@@ -8,8 +8,11 @@ import type { Page } from '../types/page'
 import type { Post } from '../types/post'
 import { NewsArchivePage } from './NewsArchivePage'
 import { InquiryPage } from './InquiryPage'
+import { StoryArchivePage } from './StoryArchivePage'
+import { StoryCategoryPage } from './StoryCategoryPage'
 import { HistoryPage } from './HistoryPage'
 import { PageHero } from '../components/PageHero'
+import { BusinessSectionNav } from '../components/BusinessSectionNav'
 import { KhayahSectionNav } from '../components/KhayahSectionNav'
 import '../styles/page.css'
 import '../styles/greeting-modern.css'
@@ -19,19 +22,33 @@ import '../styles/business-overseas.css'
 import '../styles/business-overseas-education.css'
 import '../styles/business-overseas-health.css'
 import '../styles/business-advocacy.css'
+import '../styles/business-social.css'
 import '../styles/business-keypoint.css'
 import '../styles/donor-guide.css'
+import '../styles/support-pages.css'
 import { NANUM_DONATE_URL } from '../constants/nanumDonate'
-import { PATH } from '../i18n/routes'
+import { canonicalProjectRegion, PATH } from '../i18n/routes'
 import { pageHeroImageForPath, pageHeroImageForPostKind } from '../constants/pageHeroImages'
 import { isKhayahSectionPathKey } from '../features/khayah-about/khayahAboutHubTabs'
 import { ListStatus } from '../components/ListStatus'
 import { BusinessHubCards } from '../features/business/BusinessHubCards'
+import { KayaBoundHtml } from '../features/kaya/KayaBoundHtml'
+import { BizBoundHtml } from '../features/biz/BizBoundHtml'
+import { useBizSupport } from '../features/biz/useBizSupport'
 
 function storyCtaForPathKey(
   pathKey: string,
   messages: ReturnType<typeof useLocale>['messages'],
+  locale: ReturnType<typeof useLocale>['locale'],
 ): { label: string; to: string } | null {
+  if (locale === 'ko') {
+    if (pathKey === PATH.businessDomestic) return null
+    if (pathKey === PATH.businessDomesticEducation) return null
+    if (pathKey === PATH.businessOverseas) return null
+    if (pathKey === PATH.businessOverseasEducation) return null
+    if (pathKey === PATH.businessOverseasVolunteer) return null
+    if (pathKey === PATH.businessAdvocacy) return null
+  }
   const cta = messages.pages.storyCta
   if (!pathKey) return null
   if (pathKey === PATH.businessDomestic || pathKey.startsWith(`${PATH.businessDomestic}/`)) {
@@ -78,6 +95,7 @@ export function PageByPath() {
 function PageByPathInner({ kindHint }: { kindHint: string }) {
   const location = useLocation()
   const { locale, localize, messages } = useLocale()
+  const biz = useBizSupport()
   const pathKey = normalizePathKey(location.pathname)
 
   const isNewsArchive =
@@ -156,7 +174,7 @@ function PageByPathInner({ kindHint }: { kindHint: string }) {
   }, [hashId, pathKey, staticPage, apiPage, post])
 
   useEffect(() => {
-    if (pathKey !== PATH.supportGuide) return
+    if (pathKey !== PATH.supportGuide && pathKey !== PATH.supportMethod) return
     const root = document.querySelector<HTMLElement>('.page-content-wrapper .the_content_wrapper.page-body')
     if (!root) return
     let hideTimer: number
@@ -190,6 +208,13 @@ function PageByPathInner({ kindHint }: { kindHint: string }) {
 
   if (isHistory) return <HistoryPage />
 
+  if (locale === 'ko' && pathKey === PATH.newsActivities) return <StoryArchivePage kind="활동소식" heading="활동소식" />
+
+  if (pathKey === PATH.newsStories) {
+    if (locale === 'ko') return <StoryCategoryPage />
+    return <StoryArchivePage />
+  }
+
   if (isNewsArchive) return <NewsArchivePage />
 
   if (postLoading) {
@@ -215,6 +240,16 @@ function PageByPathInner({ kindHint }: { kindHint: string }) {
 
   if (post) {
     const kind = post.meta?.khayah_kind ?? ''
+    if (kind === '진행사업') {
+      const region = canonicalProjectRegion(post.meta?.khayah_project_region?.trim() || '국내')
+      const path =
+        region === '해외'
+          ? '/business/overseas/projects'
+          : region === '연구사업'
+            ? '/business/advocacy/projects'
+            : '/business/domestic/projects'
+      return <Navigate to={localize(path)} replace />
+    }
     return (
       <div className="page-content-wrapper">
         <PageHero
@@ -234,22 +269,105 @@ function PageByPathInner({ kindHint }: { kindHint: string }) {
   }
 
   if (staticPage) {
-    const storyCta = storyCtaForPathKey(pathKey, messages)
+    const storyCtaBase = storyCtaForPathKey(pathKey, messages, locale)
+    const ctaKey =
+      pathKey === PATH.businessDomesticEducation
+        ? 'dedu.cta'
+        : pathKey === PATH.businessOverseas
+          ? 'ovs.cta'
+          : pathKey === PATH.businessOverseasEducation
+            ? 'oedu.cta'
+            : pathKey === PATH.businessOverseasVolunteer
+              ? 'vol.cta'
+              : pathKey === PATH.businessAdvocacy
+                ? 'res.cta'
+                : ''
+    const storyCta =
+      locale === 'ko' && storyCtaBase && ctaKey && biz?.fields[ctaKey]
+        ? { ...storyCtaBase, label: biz.fields[ctaKey] }
+        : storyCtaBase
+    const bindBiz = locale === 'ko' && (pathKey.startsWith('business/') || pathKey.startsWith('support/'))
+    const koreanSupportPage =
+      locale === 'ko' && (pathKey === PATH.supportGuide || pathKey === PATH.supportMethod)
     return (
       <div className="page-content-wrapper">
-        <PageHero
-          title={staticPage.title}
-          backgroundImageUrl={pageHeroImageForPath(pathKey)}
-          showScrollHint={pathKey !== PATH.aboutLocation}
-        />
+        {koreanSupportPage ? null : (
+          <PageHero
+            title={staticPage.title}
+            backgroundImageUrl={pageHeroImageForPath(pathKey)}
+            showScrollHint={
+              pathKey !== PATH.aboutLocation &&
+              !(
+                locale === 'ko' &&
+                (pathKey === PATH.aboutGreeting ||
+                  pathKey === PATH.businessDomestic ||
+                  pathKey === PATH.businessDomesticEducation ||
+                  pathKey === PATH.businessOverseas ||
+                  pathKey === PATH.businessOverseasEducation ||
+                  pathKey === PATH.businessOverseasVolunteer ||
+                  pathKey === PATH.businessAdvocacy ||
+                  pathKey === PATH.businessSocial ||
+                  pathKey === PATH.businessSocialAcademy ||
+                  pathKey === PATH.businessSocialComfort)
+              )
+            }
+            layout={
+              locale === 'ko' && pathKey === PATH.aboutGreeting
+                ? 'kaya'
+                : locale === 'ko' &&
+                    (pathKey === PATH.businessDomestic ||
+                      pathKey === PATH.businessDomesticEducation ||
+                      pathKey === PATH.businessOverseas ||
+                      pathKey === PATH.businessOverseasEducation ||
+                      pathKey === PATH.businessOverseasVolunteer ||
+                      pathKey === PATH.businessAdvocacy ||
+                      pathKey === PATH.businessSocial ||
+                      pathKey === PATH.businessSocialAcademy ||
+                      pathKey === PATH.businessSocialComfort)
+                  ? 'biz'
+                  : 'banner'
+            }
+            eyebrow={
+              locale === 'ko' && pathKey === PATH.aboutGreeting
+                ? 'MESSAGE'
+                : locale === 'ko' && pathKey === PATH.businessDomestic
+                  ? 'DOMESTIC PROGRAMS'
+                  : locale === 'ko' && pathKey === PATH.businessDomesticEducation
+                    ? 'DOMESTIC EDUCATION'
+                    : locale === 'ko' && pathKey === PATH.businessOverseas
+                      ? 'OVERSEAS PROGRAMS'
+                      : locale === 'ko' && pathKey === PATH.businessOverseasEducation
+                        ? 'OVERSEAS EDUCATION'
+                        : locale === 'ko' && pathKey === PATH.businessOverseasVolunteer
+                          ? 'OVERSEAS VOLUNTEERS'
+                          : locale === 'ko' && pathKey === PATH.businessAdvocacy
+                            ? 'RESEARCH'
+                            : locale === 'ko' && pathKey === PATH.businessSocial
+                              ? 'SOCIAL BUSINESS'
+                              : locale === 'ko' && pathKey === PATH.businessSocialAcademy
+                                ? 'KHAYAH ACADEMY'
+                                : locale === 'ko' && pathKey === PATH.businessSocialComfort
+                                  ? 'COLOR & COMFORT'
+                                  : undefined
+            }
+          />
+        )}
         {isKhayahSectionPathKey(pathKey) ? <KhayahSectionNav /> : null}
+        {pathKey.startsWith('business/') ? <BusinessSectionNav /> : null}
         <div className="section">
           <div className="section_wrapper clearfix">
             <div className="column one">
-              <div
-                className="the_content_wrapper page-body"
-                dangerouslySetInnerHTML={{ __html: staticPage.content }}
-              />
+              {locale === 'ko' &&
+              (pathKey === PATH.aboutGreeting || pathKey === 'about/org-chart' || pathKey === 'about/directors') ? (
+                <KayaBoundHtml className="the_content_wrapper page-body" html={staticPage.content} />
+              ) : bindBiz ? (
+                <BizBoundHtml className="the_content_wrapper page-body" html={staticPage.content} />
+              ) : (
+                <div
+                  className="the_content_wrapper page-body"
+                  dangerouslySetInnerHTML={{ __html: staticPage.content }}
+                />
+              )}
               {pathKey === PATH.businessOverseas ? <BusinessHubCards hub="overseas" /> : null}
               {pathKey === PATH.businessDomestic ? <BusinessHubCards hub="domestic" /> : null}
               {storyCta ? (
@@ -267,7 +385,7 @@ function PageByPathInner({ kindHint }: { kindHint: string }) {
   }
 
   if (apiPage) {
-    const storyCta = storyCtaForPathKey(pathKey, messages)
+    const storyCta = storyCtaForPathKey(pathKey, messages, locale)
     return (
       <div className="page-content-wrapper">
         <PageHero title={apiPage.title} backgroundImageUrl={pageHeroImageForPath(pathKey)} />

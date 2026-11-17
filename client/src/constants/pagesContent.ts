@@ -14,8 +14,23 @@ const BY_LOCALE: Record<Locale, Record<string, StaticPage>> = {
   en: PAGES_STATIC_EN,
 }
 
+const PAGE_ALIASES: Record<string, string> = {
+  'business/social': 'business/advocacy/social-business',
+  'business/social/academy': 'business/advocacy/social-business',
+  'business/social/color-and-comfort': 'business/advocacy/social-business',
+  'support/method': 'support/apply',
+}
+
+const KO_OWN_PAGES = new Set([
+  'business/social',
+  'business/social/academy',
+  'business/social/color-and-comfort',
+  'support/method',
+])
+
 export function getStaticPage(pathKey: string, locale: Locale): StaticPage | null {
-  return BY_LOCALE[locale][pathKey] ?? null
+  const key = locale === 'ko' && KO_OWN_PAGES.has(pathKey) ? pathKey : (PAGE_ALIASES[pathKey] ?? pathKey)
+  return BY_LOCALE[locale][key] ?? null
 }
 
 /** 각 세그먼트를 한 번 디코드해 정적 키·API slug와 맞춤 (이중 인코딩 URL 대응) */

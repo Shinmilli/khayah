@@ -95,6 +95,10 @@
   font-size: 1.02rem;
 }
 
+.edu-ref-hero__title .wn {
+  color: #b11e3b;
+}
+
 .edu-ref-hero__title {
   margin: 0;
   font-size: clamp(34px, 4.3vw, 48px);
@@ -375,5 +379,321 @@
   .edu-media {
     min-height: 220px;
   }
+}
+
+.edu-ref-hero {
+  padding: 96px 0 40px;
+  text-align: center;
+}
+
+.edu-ref-hero::before {
+  display: none;
+}
+
+.edu-ref-hero__kicker {
+  margin: 0 0 16px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: none;
+  color: #b11e3b;
+}
+
+.page-content-wrapper .page-body h1.edu-ref-hero__title,
+.edu-ref-hero__title {
+  font-size: 38px;
+  line-height: 1.35;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: #1f2a44;
+}
+
+.edu-ref-hero__desc {
+  margin: 22px auto 0;
+  max-width: 820px;
+  font-size: 16px;
+  line-height: 1.85;
+  color: #485063;
+}
+
+.edu-ref-section {
+  padding: 0;
+}
+
+.edu-ref-grid,
+.edu-ref-section.is-flipped .edu-ref-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 36px 56px;
+  align-items: center;
+  padding: 56px 0;
+  border-top: 1px solid #e6e6e3;
+}
+
+.edu-ref-section:first-of-type .edu-ref-grid {
+  border-top: 0;
+}
+
+.edu-ref-grid > div:not(.edu-ref-media),
+.edu-ref-media {
+  flex: 1 1 420px;
+}
+
+.edu-ref-label,
+.page-content-wrapper .page-body p.edu-ref-label {
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  color: #b11e3b;
+}
+
+.edu-ref-label__badge {
+  display: none;
+}
+
+.page-content-wrapper .page-body h2.edu-ref-h2,
+.edu-ref-h2 {
+  font-size: 26px;
+  line-height: 1.4;
+  font-weight: 800;
+  color: #1f2a44;
+}
+
+.edu-ref-h2::after {
+  display: none;
+}
+
+.edu-ref-p {
+  margin-top: 8px;
+  font-size: 16px;
+  line-height: 1.85;
+  color: #485063;
+}
+
+.edu-ref-sub {
+  display: inline-block;
+  margin: 14px 6px 8px 0;
+  padding: 7px 12px;
+  border-radius: 6px;
+  background: #f4f4f2;
+  color: #1f2a44;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.edu-ref-media {
+  position: relative;
+  min-height: 0;
+  aspect-ratio: 4 / 3;
+  border: 0;
+  border-radius: 12px;
+  background: #eceae6;
+  overflow: hidden;
+}
+
+.edu-ref-media__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.edu-ref-media::after {
+  display: none;
+}
+
+.edu-ref-media__caption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 10px 14px;
+  background: transparent;
+  border: 0;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+}
+
+.page-content-wrapper > .section:has(.dedu-page) {
+  padding: 0;
+}
+
+.page-content-wrapper > .section:has(.dedu-page) > .section_wrapper,
+.page-content-wrapper > .section:has(.dedu-page) .column.one {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  float: none;
+}
+
+.dedu-lead,
+.dedu-programs,
+.dedu-cta {
+  width: min(1120px, 100%);
+  margin: 0 auto;
+  padding-left: 24px;
+  padding-right: 24px;
+  box-sizing: border-box;
+}
+
+.dedu-lead {
+  padding-top: 96px;
+  padding-bottom: 40px;
+  text-align: center;
+}
+
+.page-content-wrapper .page-body .dedu-page p.dom-kicker {
+  margin: 0 0 16px;
+  font-size: 12px;
+  line-height: 1.4;
+  letter-spacing: 0.22em;
+  font-weight: 700;
+  color: #b11e3b;
+}
+
+.page-content-wrapper .page-body .dedu-lead h2 {
+  margin: 0;
+  font-size: 38px;
+  line-height: 1.35;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: #1f2a44;
+}
+
+.page-content-wrapper .page-body .dedu-lead h2 span {
+  color: #b11e3b;
+}
+
+.page-content-wrapper .page-body .dedu-lead > p:not(.dom-kicker) {
+  margin: 22px auto 0;
+  max-width: 820px;
+  font-size: 16px;
+  line-height: 1.85;
+  color: #485063;
+}
+
+.dedu-programs {
+  padding-bottom: 24px;
+}
+
+.dedu-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 36px 56px;
+  align-items: center;
+  padding: 56px 0;
+  border-top: 1px solid #e6e6e3;
+}
+
+.dedu-row:first-child {
+  border-top: 0;
+}
+
+.dedu-row > div {
+  flex: 1 1 440px;
+  min-width: 0;
+}
+
+.page-content-wrapper .page-body .dedu-label {
+  margin: 0 0 10px;
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  font-weight: 800;
+  line-height: 1.4;
+  color: #b11e3b;
+}
+
+.page-content-wrapper .page-body .dedu-row h3 {
+  margin: 0;
+  font-size: 26px;
+  line-height: 1.4;
+  font-weight: 800;
+  color: #1f2a44;
+}
+
+.dedu-tags {
+  margin-top: 14px;
+}
+
+.dedu-tags span {
+  display: inline-block;
+  margin: 0 6px 8px 0;
+  padding: 7px 12px;
+  border-radius: 6px;
+  background: #f4f4f2;
+  color: #1f2a44;
+  font-size: 13px;
+}
+
+.page-content-wrapper .page-body .dedu-row p:not(.dedu-label) {
+  margin: 8px 0 0;
+  font-size: 16px;
+  line-height: 1.85;
+  color: #485063;
+}
+
+.dedu-photo {
+  flex: 1 1 420px;
+  min-width: 0;
+  margin: 0;
+  aspect-ratio: 4 / 3;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #eceae6;
+}
+
+.dedu-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.dedu-cta {
+  padding-top: 72px;
+  padding-bottom: 80px;
+  text-align: center;
+}
+
+.page-content-wrapper .page-body .dedu-cta > p {
+  margin: 0 0 18px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #485063;
+}
+
+.page-content-wrapper .page-body a.dedu-pj {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #b11e3b;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 800;
+  font-size: 16px;
+  padding: 16px 30px;
+  border-radius: 8px;
+  min-height: 44px;
+  box-sizing: border-box;
+}
+
+.page-content-wrapper .page-body a.dedu-pj:hover {
+  background: #8e1730;
+  color: #fff;
+  text-decoration: none;
+}
+
+.page-content-wrapper .page-body a.dom-go {
+  color: #1f2a44;
+  text-decoration: none;
+}
+
+.page-content-wrapper .page-body a.dom-go:hover {
+  text-decoration: none;
 }
 

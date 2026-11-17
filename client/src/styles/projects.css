@@ -59,7 +59,7 @@
 
 .projects-thumb {
   border-radius: 0;
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  border: 0;
   background: #111;
   min-height: 200px;
   position: relative;

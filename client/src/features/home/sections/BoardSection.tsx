@@ -4,6 +4,7 @@ import { PROMO_YOUTUBE_CHANNEL_URL } from '../../../constants/youtube'
 import { fetchYoutubeLatest } from '../../../services/api'
 import type { YoutubeLatestVideo } from '../../../types/youtube'
 import { useLocale } from '../../../i18n/LocaleContext'
+import { useSiteCommon } from '../../site/useSiteCommon'
 
 const BLOG_CARD_IMAGE = '/images/home/board-blog.jpg'
 const INSTAGRAM_CARD_IMAGE = '/images/home/board-instagram.jpg'
@@ -71,6 +72,47 @@ function ChannelCard({
 }
 
 export function BoardSection() {
+  const { locale } = useLocale()
+  if (locale === 'ko') return <KoreanFieldRecords />
+  return <LegacyBoardSection />
+}
+
+function KoreanFieldRecords() {
+  const site = useSiteCommon()
+  const channels = site?.homeStories
+  const blogHref = channels?.blog.href.trim() || BLOG_URL
+  const blogImage = channels?.blog.image.trim() || BLOG_CARD_IMAGE
+  const instaHref = channels?.instagram.href.trim() || INSTAGRAM_URL
+  const instaImage = channels?.instagram.image.trim() || INSTAGRAM_CARD_IMAGE
+  const youtubeHref = channels?.youtube.href.trim() || PROMO_YOUTUBE_CHANNEL_URL
+  const youtubeImage = channels?.youtube.image.trim() || '/images/business/volunteer-field.jpg'
+  return (
+    <section className="home-follow" aria-labelledby="home-follow-title">
+      <p className="home-follow__kicker">FOLLOW</p>
+      <h2 id="home-follow-title">현장의 기록</h2>
+      <p className="home-follow__sub">블로그, 인스타그램, 유튜브에 담긴 카야의 하루입니다.</p>
+      <div className="home-follow__grid">
+        <a href={blogHref} target="_blank" rel="noopener noreferrer">
+          <img src={blogImage} alt="" />
+          <p className="home-follow__name">네이버 블로그 ↗</p>
+          <p>카야의 이야기를 블로그에서 만나보세요.</p>
+        </a>
+        <a href={instaHref} target="_blank" rel="noopener noreferrer">
+          <img src={instaImage} alt="" />
+          <p className="home-follow__name">인스타그램 ↗</p>
+          <p>현장의 순간을 인스타그램에서 확인하세요.</p>
+        </a>
+        <a href={youtubeHref} target="_blank" rel="noopener noreferrer">
+          <img src={youtubeImage} alt="" />
+          <p className="home-follow__name">유튜브 ↗</p>
+          <p>활동 영상을 유튜브에서 만나보세요.</p>
+        </a>
+      </div>
+    </section>
+  )
+}
+
+function LegacyBoardSection() {
   const { messages } = useLocale()
   const m = messages.home.board
   const [promo, setPromo] = useState<YoutubeLatestVideo | null>(null)

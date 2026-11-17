@@ -36,7 +36,12 @@ function pressPublisher(post: Post): string {
 }
 
 function pressArticleUrl(post: Post): string {
-  return post.meta?.khayah_press_url?.trim() || ''
+  const raw = post.meta?.khayah_press_url?.trim() || ''
+  return raw
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
 }
 
 /** 기사 날짜 메타(YYYY-MM-DD) 우선, 없으면 게시일 */

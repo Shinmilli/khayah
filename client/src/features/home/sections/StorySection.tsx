@@ -3,9 +3,110 @@ import { Link } from 'react-router-dom'
 import { fetchPostsByKind } from '../../../services/api'
 import type { Post } from '../../../types/post'
 import { useLocale } from '../../../i18n/LocaleContext'
+import { useSiteCommon } from '../../site/useSiteCommon'
 import { PostCoverThumb } from '../../../components/PostCoverThumb'
 
 export function StorySection() {
+  const { locale } = useLocale()
+  if (locale === 'ko') return <KoreanHomeStories />
+  return <LegacyStorySection />
+}
+
+function storyCategory(post: Post): '변화의 이야기' | '전문가 이야기' | null {
+  const raw = post.meta?.khayah_story_category ?? ''
+  if (raw === '변화의 이야기' || raw === '전문가 이야기') return raw
+  return null
+}
+
+function KoreanHomeStories() {
+  const { localize } = useLocale()
+  const site = useSiteCommon()
+  const wanted = site?.homeStories?.featured?.trim() ?? ''
+  const manual = site?.homeStories?.rest === 'manual' ? (site.homeStories.manual ?? []).map((title) => title.trim()).filter(Boolean) : []
+  const [posts, setPosts] = useState<Post[]>([])
+
+  useEffect(() => {
+    let cancelled = false
+    fetchPostsByKind('스토리', 1, wanted || manual.length ? 30 : 4)
+      .then((res) => {
+        if (!cancelled) setPosts(res.posts)
+      })
+      .catch(() => {
+        if (!cancelled) setPosts([])
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [wanted, manual.join('\n')])
+
+  const featured = (wanted ? posts.find((post) => post.title.trim() === wanted) : null) ?? posts[0]
+  const rest = manual.length
+    ? manual.map((title) => posts.find((post) => post.title.trim() === title)).filter((post): post is Post => Boolean(post))
+    : posts.filter((post) => post.id !== featured?.id).slice(0, 3)
+  const featuredCategory = featured ? storyCategory(featured) : null
+
+  return (
+    <section className="home-stories" aria-labelledby="home-stories-title">
+      <div className="home-stories__head">
+        <div>
+          <p className="home-stories__kicker">STORIES</p>
+          <h2 id="home-stories-title">스토리</h2>
+          <p>카야가 전하는 현장 이야기</p>
+        </div>
+        <Link to={localize('/news/stories')}>전체보기 →</Link>
+      </div>
+      {featured ? (
+        <Link
+          className="home-stories__lead"
+          to={localize(`/posts/${encodeURIComponent(featured.slug)}`)}
+          state={{ postKind: '스토리' }}
+        >
+          <div className="home-stories__lead-photo">
+            <PostCoverThumb post={featured} />
+          </div>
+          <div className="home-stories__lead-copy">
+            <span className={featuredCategory === '전문가 이야기' ? 'is-expert' : 'is-change'}>
+              {featuredCategory ? `대표 사례 · ${featuredCategory}` : '대표 사례'}
+            </span>
+            <p className="home-stories__lead-title">{featured.title}</p>
+            {featured.excerpt ? <p>{featured.excerpt}</p> : null}
+            {featuredCategory ? (
+              <p className="home-stories__more">
+                {featuredCategory} 보기 →
+              </p>
+            ) : null}
+          </div>
+        </Link>
+      ) : null}
+      {rest.length > 0 ? (
+        <div className="home-stories__grid">
+          {rest.map((post) => {
+            const category = storyCategory(post)
+            return (
+              <Link
+                key={post.id}
+                to={localize(`/posts/${encodeURIComponent(post.slug)}`)}
+                state={{ postKind: '스토리' }}
+              >
+                <div className="home-stories__thumb">
+                  <PostCoverThumb post={post} />
+                </div>
+                <p>
+                  {category ? (
+                    <span className={category === '전문가 이야기' ? 'is-expert' : 'is-change'}>[{category}]</span>
+                  ) : null}{' '}
+                  {post.title}
+                </p>
+              </Link>
+            )
+          })}
+        </div>
+      ) : null}
+    </section>
+  )
+}
+
+function LegacyStorySection() {
   const { messages, localize } = useLocale()
   const m = messages.home.story
   const trackRef = useRef<HTMLDivElement | null>(null)

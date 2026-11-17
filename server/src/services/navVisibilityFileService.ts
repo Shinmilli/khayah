@@ -18,17 +18,24 @@ export const NAV_VISIBILITY_LINK_KEYS = [
   'overseas',
   'overseasEducation',
   'overseasVolunteer',
+  'domesticProjects',
+  'overseasProjects',
+  'researchProjects',
   'researchEducation',
   'researchSocial',
+  'socialAcademy',
+  'socialComfort',
   'advocacy',
   'projects',
   'supportGuide',
+  'supportMethod',
   'announcements',
   'activities',
   'stories',
   'newsletter',
   'press',
   'inquiry',
+  'impactGlance',
 ] as const
 export type NavVisibilityLinkKey = (typeof NAV_VISIBILITY_LINK_KEYS)[number]
 
@@ -50,7 +57,7 @@ function emptyDocument(): NavVisibilityDocument {
   const top = {} as Record<NavVisibilityTopKey, boolean>
   const links = {} as Record<NavVisibilityLinkKey, boolean>
   for (const key of NAV_VISIBILITY_TOP_KEYS) top[key] = true
-  for (const key of NAV_VISIBILITY_LINK_KEYS) links[key] = true
+  for (const key of NAV_VISIBILITY_LINK_KEYS) links[key] = key !== 'impactGlance'
   return { version: 1, top, links }
 }
 
@@ -63,7 +70,7 @@ export function normalizeNavVisibilityDocument(body: unknown): NavVisibilityDocu
     base.top[key] = asBoolean(top[key], true)
   }
   for (const key of NAV_VISIBILITY_LINK_KEYS) {
-    base.links[key] = asBoolean(links[key], true)
+    base.links[key] = asBoolean(links[key], key !== 'impactGlance')
   }
   return base
 }

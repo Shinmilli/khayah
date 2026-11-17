@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { NANUM_DONATE_URL } from '../constants/nanumDonate'
+import { donateHref, useBizSupport } from '../features/biz/useBizSupport'
 import { useLocale } from '../i18n/LocaleContext'
 import { splitLocalePath } from '../i18n/locale'
+import { useSiteCommon } from '../features/site/useSiteCommon'
+import type { SiteClicker } from '../features/site/siteCommonTypes'
 
 const HERO_ID = 'home-hero-banner'
 
@@ -44,29 +47,26 @@ const SOCIAL_LINKS = [
     href: 'https://blog.naver.com/khayah',
     labelKey: 'blog',
     className: 'site-floating-fab__social site-floating-fab__social--blog',
-    icon: (
-      <svg viewBox="0 0 24 24" width={22} height={22} aria-hidden focusable="false">
-        <text
-          x="12"
-          y="15.6"
-          textAnchor="middle"
-          fill="currentColor"
-          fontSize="8.4"
-          fontWeight="800"
-          fontFamily="Arial, Helvetica, sans-serif"
-          letterSpacing="-0.35"
-        >
-          blog
-        </text>
-      </svg>
-    ),
+    icon: <span className="site-floating-fab__blog-word">blog</span>,
   },
 ] as const
 
+const CLICKER_FALLBACK: SiteClicker[] = [
+  { id: 'kakao', order: 1, enabled: true, labelKo: '카카오톡', href: 'https://pf.kakao.com/_TnWKK' },
+  { id: 'instagram', order: 2, enabled: true, labelKo: '인스타그램', href: 'https://www.instagram.com/khayah_international' },
+  { id: 'blog', order: 3, enabled: true, labelKo: '네이버 블로그', href: 'https://blog.naver.com/khayah' },
+  { id: 'donate', order: 4, enabled: true, labelKo: '후원하기', href: NANUM_DONATE_URL },
+]
+
 export function FloatingDonateButton() {
-  const { messages } = useLocale()
+  const { locale, messages } = useLocale()
+  const site = useSiteCommon()
+  const biz = useBizSupport()
   const location = useLocation()
-  const donateLabel = messages.home.hero.donate
+  const donateLabel = locale === 'ko' ? site?.headerDonate.labelKo || messages.home.hero.donate : messages.home.hero.donate
+  const clickers = (site?.clickers ?? CLICKER_FALLBACK)
+    .filter((item) => item.enabled && item.href.trim() && item.href.trim() !== '#')
+    .sort((a, b) => a.order - b.order)
   const socialLabels = {
     kakao: messages.footer.topLinks.kakao,
     instagram: messages.footer.topLinks.instagram,
@@ -104,38 +104,52 @@ export function FloatingDonateButton() {
       aria-hidden={!showFab}
     >
       <div className="site-floating-fab__socials">
-        {SOCIAL_LINKS.map((s) => (
-          <a
-            key={s.key}
-            href={s.href}
-            className={s.className}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={socialLabels[s.labelKey]}
-            tabIndex={showFab ? 0 : -1}
-          >
-            {s.icon}
-          </a>
-        ))}
+        {clickers
+          .filter((item) => item.id !== 'donate')
+          .map((item) => {
+            const social = SOCIAL_LINKS.find((s) => s.key === item.id)
+            if (!social) return null
+            return (
+              <a
+                key={item.id}
+                href={item.href}
+                className={social.className}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={locale === 'ko' ? item.labelKo : socialLabels[social.labelKey]}
+                tabIndex={showFab ? 0 : -1}
+              >
+                {social.icon}
+              </a>
+            )
+          })}
       </div>
-      <a
-        href={NANUM_DONATE_URL}
-        className="site-floating-fab__donate"
-        aria-label={donateLabel}
-        tabIndex={showFab ? 0 : -1}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <span className="site-floating-fab__heart" aria-hidden>
-          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" focusable="false">
-            <path
-              fill="currentColor"
-              d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
-            />
-          </svg>
-        </span>
-        <span className="site-floating-fab__label">{donateLabel}</span>
-      </a>
+      {clickers
+        .filter((item) => item.id === 'donate')
+        .map((item) => {
+          const label = locale === 'ko' ? item.labelKo || donateLabel : donateLabel
+          return (
+            <a
+              key={item.id}
+              href={donateHref(biz)}
+              className="site-floating-fab__donate"
+              aria-label={label}
+              tabIndex={showFab ? 0 : -1}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span className="site-floating-fab__heart" aria-hidden>
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" focusable="false">
+                  <path
+                    fill="currentColor"
+                    d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+                  />
+                </svg>
+              </span>
+              <span className="site-floating-fab__label">{label}</span>
+            </a>
+          )
+        })}
     </div>
   )
 }

@@ -13,7 +13,7 @@ export type PageHeroBannersDocument = {
 }
 
 const LEGACY_BY_SECTION: Record<PageHeroBannerKey, string[]> = {
-  khayah: ['about/khayah', 'about/greeting', 'about/history', 'about/location', 'about/financial-report'],
+  khayah: ['about/khayah', 'about/greeting', 'about/history', 'about/location', 'about/transparency', 'about/financial-report'],
   business: [
     'business/domestic',
     'business/overseas',

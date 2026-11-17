@@ -70,9 +70,10 @@ async function ensureAuthorId(): Promise<number> {
 }
 
 export const adminPostsService = {
-  async list(options: { page: number; perPage: number; kind?: string }) {
-    const { page, perPage, kind } = options
+  async list(options: { page: number; perPage: number; kind?: string; q?: string }) {
+    const { page, perPage, kind, q } = options
     const skip = (page - 1) * perPage
+    const query = q?.trim()
 
     const kindFilter = kind
       ? {
@@ -81,10 +82,11 @@ export const adminPostsService = {
           },
         }
       : {}
+    const titleFilter = query ? { postTitle: { contains: query, mode: 'insensitive' as const } } : {}
 
     const [posts, total] = await Promise.all([
       prisma!.post.findMany({
-        where: { postType: 'post', ...kindFilter },
+        where: { postType: 'post', ...kindFilter, ...titleFilter },
         orderBy: [{ postDate: 'desc' }, { id: 'desc' }],
         skip,
         take: perPage,
@@ -93,7 +95,7 @@ export const adminPostsService = {
           postMeta: { select: { metaKey: true, metaValue: true } },
         },
       }),
-      prisma!.post.count({ where: { postType: 'post', ...kindFilter } }),
+      prisma!.post.count({ where: { postType: 'post', ...kindFilter, ...titleFilter } }),
     ])
 
     return {

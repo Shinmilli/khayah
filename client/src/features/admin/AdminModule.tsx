@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
 import '../../styles/admin.css'
 import { AdminAppShell } from './AdminAppShell'
+
 import { AdminAuthProvider } from './AdminAuthContext'
 import { AdminLoginPage } from './AdminLoginPage'
 import { AdminRequireRole, AdminAppHomeRedirect } from './AdminRequireRole'
@@ -19,6 +20,11 @@ import { AdminNavVisibilityPage } from './pages/AdminNavVisibilityPage'
 import { AdminPageBannersPage } from './pages/AdminPageBannersPage'
 import { AdminBusinessHubCardsPage } from './pages/AdminBusinessHubCardsPage'
 import { AdminMaintenancePage } from './pages/AdminMaintenancePage'
+import { AdminSiteCommonPage } from './pages/AdminSiteCommonPage'
+import { AdminKayaPagesPage } from './pages/AdminKayaPagesPage'
+import { AdminBizSupportPage } from './pages/AdminBizSupportPage'
+import { AdminImpactPage } from './pages/AdminImpactPage'
+import { AdminProjectSetsPage } from './pages/AdminProjectSetsPage'
 
 export function AdminModule() {
   return (
@@ -30,11 +36,16 @@ export function AdminModule() {
             <Route index element={<AdminAppHomeRedirect />} />
             <Route element={<AdminRequireRole roles={['super', 'content']} />}>
               <Route path="main-banner" element={<AdminBannerPage />} />
+              <Route path="site-common" element={<AdminSiteCommonPage />} />
+              <Route path="kaya" element={<AdminKayaPagesPage />} />
+              <Route path="biz-support" element={<AdminBizSupportPage />} />
+              <Route path="projects" element={<AdminProjectSetsPage />} />
               <Route path="popup" element={<AdminPopupPage />} />
               <Route path="posts" element={<AdminPostsPage />} />
               <Route path="banner" element={<Navigate to="/admin/app/main-banner" replace />} />
               <Route path="content" element={<Navigate to="/admin/app/main-banner" replace />} />
               <Route path="financial-reports" element={<AdminFinancialReportsPage />} />
+              <Route path="impact" element={<AdminImpactPage />} />
               <Route path="impact-stats" element={<AdminImpactStatsPage />} />
               <Route path="impact-stats/:section" element={<Navigate to="/admin/app/impact-stats" replace />} />
               <Route path="history" element={<AdminHistoryPage />} />
