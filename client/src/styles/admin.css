@@ -955,7 +955,7 @@ body.admin-route {
 }
 
 .admin-panel[id] {
-  scroll-margin-top: 16px;
+  scroll-margin-top: 72px;
 }
 
 .admin-segmented__btn--active {

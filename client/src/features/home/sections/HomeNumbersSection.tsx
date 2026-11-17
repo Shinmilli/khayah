@@ -2,11 +2,11 @@ import { Link } from 'react-router-dom'
 import { useLocale } from '../../../i18n/LocaleContext'
 import { useImpactPage } from '../../impact/useImpactPage'
 
-/** 메인 숫자 섹션. 메인 표시가 꺼져 있으면 숨기고, 한눈에 보는 카야 링크는 임팩트 공개일 때만 둔다. */
+/** 메인 숫자 섹션. 임팩트 페이지 공개가 꺼져 있거나 메인 표시가 꺼져 있으면 숨긴다. */
 export function HomeNumbersSection() {
   const { locale } = useLocale()
   const impact = useImpactPage()
-  const shown = impact ? (impact.homePublic ?? impact.public) : false
+  const shown = Boolean(impact?.public) && impact?.homePublic !== false
   if (locale !== 'ko' || !impact || !shown) return null
 
   const cards = impact.homeNumbers

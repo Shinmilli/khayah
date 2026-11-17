@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 import { AdminMediaUpload } from '../components/AdminMediaUpload'
 import { adminFetchSiteCommon, adminPutSiteCommon } from '../../../services/api'
 import { resetSiteCommonCache } from '../../site/useSiteCommon'
@@ -71,12 +72,21 @@ export function AdminSiteCommonPage() {
     void load()
   }, [load])
 
+  const location = useLocation()
+  const ready = doc != null
+
   useEffect(() => {
-    if (!doc) return
-    const id = window.location.hash.replace('#', '')
+    if (!ready) return
+    const id = location.hash.replace(/^#/, '')
     if (!id) return
-    document.getElementById(id)?.scrollIntoView({ block: 'start' })
-  }, [doc])
+    const scroll = () => document.getElementById(id)?.scrollIntoView({ block: 'start' })
+    const frame = window.requestAnimationFrame(scroll)
+    const timer = window.setTimeout(scroll, 250)
+    return () => {
+      window.cancelAnimationFrame(frame)
+      window.clearTimeout(timer)
+    }
+  }, [ready, location.hash])
 
   const patch = (next: SiteCommonDocument) => setDoc(next)
 

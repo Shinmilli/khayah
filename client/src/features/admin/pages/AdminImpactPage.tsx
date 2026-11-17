@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 import { AdminMediaUpload } from '../components/AdminMediaUpload'
 import { adminFetchImpactPage, adminPutImpactPage } from '../../../services/api'
 import { resetImpactPageCache } from '../../impact/useImpactPage'
@@ -52,12 +53,21 @@ export function AdminImpactPage() {
     void load()
   }, [load])
 
+  const location = useLocation()
+  const ready = doc != null
+
   useEffect(() => {
-    if (!doc) return
-    const id = window.location.hash.replace('#', '')
+    if (!ready) return
+    const id = location.hash.replace(/^#/, '')
     if (!id) return
-    document.getElementById(id)?.scrollIntoView({ block: 'start' })
-  }, [doc])
+    const scroll = () => document.getElementById(id)?.scrollIntoView({ block: 'start' })
+    const frame = window.requestAnimationFrame(scroll)
+    const timer = window.setTimeout(scroll, 250)
+    return () => {
+      window.cancelAnimationFrame(frame)
+      window.clearTimeout(timer)
+    }
+  }, [ready, location.hash])
 
   const onSave = async () => {
     if (!doc) return
@@ -144,7 +154,7 @@ export function AdminImpactPage() {
       <section id="impact-screen" className="admin-panel">
         <div className="admin-panel__head">
           <h2 className="admin-panel__title">① 화면 설정</h2>
-          <label className="admin-onoff" title="끄면 메뉴와 연결 버튼도 함께 숨깁니다">
+          <label className="admin-onoff" title="끄면 메인 숫자 섹션, 메뉴, 연결 버튼도 함께 숨깁니다">
             <span>페이지 공개</span>
             <span className={`admin-onoff__state${doc.public ? ' is-on' : ''}`} aria-hidden>
               {doc.public ? 'ON' : 'OFF'}
@@ -154,7 +164,7 @@ export function AdminImpactPage() {
               role="switch"
               checked={doc.public}
               onChange={(e) => setDoc({ ...doc, public: e.target.checked })}
-              aria-label="페이지 공개. 끄면 메뉴와 연결 버튼도 함께 숨깁니다"
+              aria-label="페이지 공개. 끄면 메인 숫자 섹션, 메뉴, 연결 버튼도 함께 숨깁니다"
             />
             <span className="admin-onoff__track" aria-hidden>
               <span className="admin-onoff__thumb" />
