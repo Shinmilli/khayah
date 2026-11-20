@@ -251,11 +251,25 @@ export function AdminAppShell() {
     const onResize = () => {
       if (window.innerWidth > 900) setMenuOpen(false)
     }
+    const scrollY = window.scrollY
+    document.documentElement.classList.add('admin-menu-open')
     document.body.classList.add('admin-menu-open')
+    document.body.style.position = 'fixed'
+    document.body.style.top = `-${scrollY}px`
+    document.body.style.left = '0'
+    document.body.style.right = '0'
+    document.body.style.width = '100%'
     window.addEventListener('keydown', onKey)
     window.addEventListener('resize', onResize)
     return () => {
+      document.documentElement.classList.remove('admin-menu-open')
       document.body.classList.remove('admin-menu-open')
+      document.body.style.position = ''
+      document.body.style.top = ''
+      document.body.style.left = ''
+      document.body.style.right = ''
+      document.body.style.width = ''
+      window.scrollTo(0, scrollY)
       window.removeEventListener('keydown', onKey)
       window.removeEventListener('resize', onResize)
     }

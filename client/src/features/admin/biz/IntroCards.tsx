@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { AdminMediaUpload } from '../components/AdminMediaUpload'
 import { BUSINESS_HUB_ICON_LABELS } from '../../business/businessHubCardIcons'
 import { BUSINESS_HUB_ICONS, type BusinessHub, type BusinessHubCard, type BusinessHubIcon } from '../../business/businessHubCardsTypes'
+import { breaksToHtml, plainFromBreaks, plainTextFromBreaks } from '../../../utils/lineBreaks'
 
 function shiftPairs(
   fields: Record<string, string>,
@@ -80,7 +81,12 @@ export function PrincipleCards({
             </label>
             <label className="admin-field admin-field--full">
               <span className="admin-field__label">설명</span>
-              <textarea className="admin-input" rows={2} value={fields[`${prefix}.${index}.body`] ?? ''} onChange={(e) => set(index, 'body', e.target.value)} />
+              <textarea
+                className="admin-input"
+                rows={2}
+                value={plainTextFromBreaks(fields[`${prefix}.${index}.body`] ?? '')}
+                onChange={(e) => set(index, 'body', breaksToHtml(e.target.value))}
+              />
             </label>
           </div>
           <button
@@ -133,7 +139,12 @@ export function ProgramCards({
             </label>
             <label className="admin-field admin-field--full">
               <span className="admin-field__label">설명</span>
-              <textarea className="admin-input" rows={2} value={fields[`dedu.${index}.body`] ?? ''} onChange={(e) => set(`dedu.${index}.body`, e.target.value)} />
+              <textarea
+                className="admin-input"
+                rows={2}
+                value={plainFromBreaks(fields[`dedu.${index}.body`] ?? '')}
+                onChange={(e) => set(`dedu.${index}.body`, e.target.value)}
+              />
             </label>
             <AdminMediaUpload layout="slot" slotTitle={`사진 ${index + 1}`} slotRatio="4:3" label={`프로그램 ${index + 1} 사진`} variant="image" value={fields[`dedu.${index}.photo`] || null} onChange={(url) => set(`dedu.${index}.photo`, url ?? '')} />
             <label className="admin-field">
@@ -175,7 +186,12 @@ export function StepList({
           </label>
           <label className="admin-field admin-field--full">
             <span className="admin-field__label">기획 설명</span>
-            <textarea className="admin-input" rows={2} value={fields['vol.block.0.lead'] ?? ''} onChange={(e) => set('vol.block.0.lead', e.target.value)} />
+            <textarea
+              className="admin-input"
+              rows={2}
+              value={plainTextFromBreaks(fields['vol.block.0.lead'] ?? '')}
+              onChange={(e) => set('vol.block.0.lead', breaksToHtml(e.target.value))}
+            />
           </label>
           <label className="admin-field admin-field--full">
             <span className="admin-field__label">운영 전 과정 제목</span>
@@ -183,7 +199,12 @@ export function StepList({
           </label>
           <label className="admin-field admin-field--full">
             <span className="admin-field__label">운영 전 과정 설명</span>
-            <textarea className="admin-input" rows={2} value={fields['vol.block.1.lead'] ?? ''} onChange={(e) => set('vol.block.1.lead', e.target.value)} />
+            <textarea
+              className="admin-input"
+              rows={2}
+              value={plainFromBreaks(fields['vol.block.1.lead'] ?? '')}
+              onChange={(e) => set('vol.block.1.lead', e.target.value)}
+            />
           </label>
         </div>
       </div>
@@ -232,7 +253,12 @@ export function BottomCards({
             </label>
             <label className="admin-field admin-field--full">
               <span className="admin-field__label">설명</span>
-              <textarea className="admin-input" rows={2} value={fields[`res.card.${index}.desc`] ?? ''} onChange={(e) => set(`res.card.${index}.desc`, e.target.value)} />
+              <textarea
+                className="admin-input"
+                rows={2}
+                value={plainFromBreaks(fields[`res.card.${index}.desc`] ?? '')}
+                onChange={(e) => set(`res.card.${index}.desc`, e.target.value)}
+              />
             </label>
           </div>
         </div>
@@ -288,11 +314,21 @@ export function AxisCards({
           <div className="admin-form-grid">
             <label className="admin-field admin-field--full">
               <span className="admin-field__label">제목</span>
-              <input className="admin-input" value={fields[`oedu.${index}.title`] ?? ''} onChange={(e) => set(`oedu.${index}.title`, e.target.value)} />
+              <textarea
+                className="admin-input"
+                rows={2}
+                value={plainTextFromBreaks(fields[`oedu.${index}.title`] ?? '')}
+                onChange={(e) => set(`oedu.${index}.title`, breaksToHtml(e.target.value))}
+              />
             </label>
             <label className="admin-field admin-field--full">
               <span className="admin-field__label">설명</span>
-              <textarea className="admin-input" rows={3} value={fields[`oedu.${index}.body`] ?? ''} onChange={(e) => set(`oedu.${index}.body`, e.target.value)} />
+              <textarea
+                className="admin-input"
+                rows={3}
+                value={plainFromBreaks(fields[`oedu.${index}.body`] ?? '')}
+                onChange={(e) => set(`oedu.${index}.body`, e.target.value)}
+              />
             </label>
             {index === 1 ? (
               <label className="admin-field admin-field--full">

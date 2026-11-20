@@ -1,10 +1,11 @@
 import { AdminMediaUpload } from '../components/AdminMediaUpload'
+import { breaksToHtml, plainTextFromBreaks } from '../../../utils/lineBreaks'
 
 type Values = Record<string, string>
 type SetField = (key: string, value: string) => void
 
 function plain(html: string): string {
-  return html.replace(/<br\s*\/?>/gi, '\n').replace(/<[^>]+>/g, '')
+  return plainTextFromBreaks(html)
 }
 
 function emphasis(html: string): string {
@@ -16,7 +17,7 @@ function htmlTitle(plainText: string, word: string): string {
 }
 
 function htmlLines(plainText: string): string {
-  return plainText.replace(/\n/g, '<br>')
+  return breaksToHtml(plainText)
 }
 
 function modeKey(title: string): string {

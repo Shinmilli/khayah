@@ -497,6 +497,7 @@
   font-size: 16px;
   line-height: 1.85;
   color: #485063;
+  white-space: pre-line;
 }
 
 .oedu-bxg {

@@ -14,6 +14,7 @@ import { rankedSupportSections } from '../../biz/supportSections'
 import { AcademyBody, AcademyModeSwitch } from '../biz/AcademyPanels'
 import { ComfortBody, ComfortModeSwitch } from '../biz/ComfortPanels'
 import { SupportComposer, SupportSettings } from '../biz/SupportComposer'
+import { breaksToHtml, plainFromBreaks, plainTextFromBreaks } from '../../../utils/lineBreaks'
 
 type TabId = 'common' | 'intro' | 'social' | 'academy' | 'cnc' | 'guide' | 'method' | 'settings'
 
@@ -49,7 +50,7 @@ const MENU_LABEL: Record<string, string> = {
 type Field = { key: string; label: string; html?: boolean; image?: boolean; rows?: number; em?: string }
 
 function plainFromHtml(html: string): string {
-  return html.replace(/<br\s*\/?>/gi, '\n').replace(/<[^>]+>/g, '')
+  return plainTextFromBreaks(html)
 }
 
 function emphasisFromHtml(html: string): string {
@@ -60,7 +61,7 @@ function htmlFromPlain(plain: string, word: string, className: string): string {
   return plain
     .split('\n')
     .map((line) => (word && line.includes(word) ? line.replace(word, `<span class="${className}">${word}</span>`) : line))
-    .join('<br />')
+    .join('<br>')
 }
 
 function widePhoto(key: string): boolean {
@@ -168,16 +169,23 @@ function fieldNode(
       </div>
     )
   }
+  const multiline = Boolean(field.rows || field.html)
+  const shown = multiline ? (field.html ? plainTextFromBreaks(value) : plainFromBreaks(value)) : value
   return (
-    <label key={field.key} className={`admin-field${field.rows || field.html ? ' admin-field--full' : ''}`}>
+    <label key={field.key} className={`admin-field${multiline ? ' admin-field--full' : ''}`}>
       <span className="admin-field__label">{field.label}</span>
-      {field.rows || field.html ? (
-        <textarea className="admin-input" rows={field.rows ?? 2} value={value} onChange={(e) => setField(field.key, e.target.value)} />
+      {multiline ? (
+        <textarea
+          className="admin-input"
+          rows={field.rows ?? 2}
+          value={shown}
+          onChange={(e) => setField(field.key, field.html ? breaksToHtml(e.target.value) : e.target.value)}
+        />
       ) : (
         <input className="admin-input" value={value} onChange={(e) => setField(field.key, e.target.value)} />
       )}
-      {field.label === '설명' && limitWarning('lines', value, titleLimit, lineLimit) ? <span className="admin-field__warn">{limitWarning('lines', value, titleLimit, lineLimit)}</span> : null}
-      {field.em ? null : field.label.includes('제목') && limitWarning('title', value, titleLimit, lineLimit) ? <span className="admin-field__warn">{limitWarning('title', value, titleLimit, lineLimit)}</span> : null}
+      {field.label === '설명' && limitWarning('lines', shown, titleLimit, lineLimit) ? <span className="admin-field__warn">{limitWarning('lines', shown, titleLimit, lineLimit)}</span> : null}
+      {field.em ? null : field.label.includes('제목') && limitWarning('title', shown, titleLimit, lineLimit) ? <span className="admin-field__warn">{limitWarning('title', shown, titleLimit, lineLimit)}</span> : null}
     </label>
   )
 }
@@ -285,7 +293,7 @@ const INTRO_PAGES: Array<{ id: string; label: string; fields: Field[] }> = [
     label: '해외봉사단',
     fields: [
       { key: 'vol.title', label: '제목', html: true, em: 'wn' },
-      { key: 'vol.desc', label: '소개 문장', rows: 4 },
+      { key: 'vol.desc', label: '소개 문장', html: true, rows: 4 },
       { key: 'vol.cta', label: '진행사업 확인하기' },
       { key: 'vol.ctaNote', label: '버튼 위 안내' },
       { key: 'vol.ctaHref', label: '연결 페이지' },
@@ -412,6 +420,7 @@ const PAGE_FIELDS: Record<Exclude<TabId, 'common' | 'intro' | 'settings'>, Field
     { key: 'aca.csr', label: 'CSR', rows: 2 },
     { key: 'aca.facebook', label: '페이스북 링크' },
     { key: 'aca.instagram', label: '인스타그램 링크' },
+    { key: 'aca.tiktok', label: '틱톡 링크' },
   ],
   cnc: [
     { key: 'cnc.heroLabel', label: '상단 영문 라벨' },

@@ -133,7 +133,7 @@ export function defaultSiteCommonDocument(): SiteCommonDocument {
       registrationNo: '',
       addressKo: '경기도 성남시 분당구 이매동 81-3 (방아로 38) 3층',
       addressEn: '',
-      phoneFax: 'T 070.5121.2198 | F 070.8650.3639',
+      phoneFax: '070.5121.2198 | 070.8650.3639',
       email: 'khayahinternational@gmail.com',
       accounts:
         '우리 1005-403-029492\n농협 301-1122-4444-01\n국민 584101-01-286346\n신한 100-034-744590\n예금주 (사)카야인터내셔널',

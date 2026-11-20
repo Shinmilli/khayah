@@ -2,9 +2,11 @@ import { useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import type { BizSupportDocument } from '../../biz/bizSupportTypes'
 import { rankedSupportSections } from '../../biz/supportSections'
+import { cleanEmail, parsePhoneFax } from '../../site/orgContact'
 import { useSiteCommon } from '../../site/useSiteCommon'
 import { AdminMediaUpload } from '../components/AdminMediaUpload'
 import { bizTitle } from './BizChrome'
+import { breaksToHtml, plainFromBreaks, plainTextFromBreaks } from '../../../utils/lineBreaks'
 
 type SetField = (key: string, value: string) => void
 
@@ -25,18 +27,15 @@ const LINKS = [
 ]
 
 function linesOf(value: string): string {
-  return value.replace(/\\n/g, '\n')
+  return plainFromBreaks(value.replace(/\\n/g, '\n'))
 }
 
 function htmlLines(value: string): string {
-  return value.replace(/<br\s*\/?>/gi, '\n').replace(/<[^>]+>/g, '')
+  return plainTextFromBreaks(value)
 }
 
 function linesToBr(value: string): string {
-  return value
-    .split('\n')
-    .map((line) => line.trimEnd())
-    .join('<br>')
+  return breaksToHtml(value)
 }
 
 function accountRows(value: string): Array<{ bank: string; number: string }> {
@@ -442,7 +441,12 @@ function WhereEditor({ values, setField }: { values: Record<string, string>; set
         </label>
         <label className="admin-field admin-field--full">
           <span className="admin-field__label">소개 문구</span>
-          <textarea className="admin-input" rows={2} value={values['guide.whereLead'] ?? ''} onChange={(e) => setField('guide.whereLead', e.target.value)} />
+          <textarea
+            className="admin-input"
+            rows={2}
+            value={plainFromBreaks(values['guide.whereLead'] ?? '')}
+            onChange={(e) => setField('guide.whereLead', e.target.value)}
+          />
         </label>
       </div>
       <div className="sup-style">
@@ -490,7 +494,12 @@ function WhereEditor({ values, setField }: { values: Record<string, string>; set
             </label>
             <label className="admin-field admin-field--full">
               <span className="admin-field__label">본문</span>
-              <textarea className="admin-input" rows={4} value={values['guide.placeBody'] ?? ''} onChange={(e) => setField('guide.placeBody', e.target.value)} />
+              <textarea
+                className="admin-input"
+                rows={4}
+                value={plainFromBreaks(values['guide.placeBody'] ?? '')}
+                onChange={(e) => setField('guide.placeBody', e.target.value)}
+              />
             </label>
             <label className="admin-field admin-field--full">
               <span className="admin-field__label">링크</span>
@@ -531,8 +540,13 @@ function WhereEditor({ values, setField }: { values: Record<string, string>; set
               </label>
             </div>
             <div className="sup-card__row">
-              <textarea className="admin-input" rows={2} value={values[`guide.item.${index}.body`] ?? ''} onChange={(e) => setField(`guide.item.${index}.body`, e.target.value)} />
-              <button type="button" className="biz-del" onClick={() => { setField(`guide.item.${index}.title`, ''); setField(`guide.item.${index}.body`, '') }}>삭제</button>
+              <textarea
+                className="admin-input"
+                rows={2}
+                value={plainFromBreaks(values[`guide.item.${index}.body`] ?? '')}
+                onChange={(e) => setField(`guide.item.${index}.body`, e.target.value)}
+              />
+              <button type="button" className="biz-del" onClick={() => { setField(`guide.item.${index}.title`, ''); setField(`guide.item.${index}.body`, ''); setField(`guide.item.${index}.icon`, '') }}>삭제</button>
             </div>
           </div>
         ))}
@@ -595,19 +609,32 @@ function AccountEditor({ values, setField }: { values: Record<string, string>; s
   )
 }
 
-function contactPhone(raw: string | undefined): string {
-  const text = (raw || '070-5121-2198').replace(/^T\s*/i, '')
-  const match = text.match(/0\d[\d.\-\s]{7,}/)
-  return (match?.[0] || text.split('|')[0] || text).trim()
+function ContactPhoneIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M6 4h3l2 5-2 1a12 12 0 006 6l1-2 5 2v3a2 2 0 01-2 2A16 16 0 014 6a2 2 0 012-2z" />
+    </svg>
+  )
+}
+
+function ContactMailIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <rect x="3" y="5" width="18" height="14" rx="2" />
+      <path d="M3 7l9 6 9-6" />
+    </svg>
+  )
 }
 
 function ContactNote() {
   const site = useSiteCommon()
+  const phone = parsePhoneFax(site?.org.phoneFax).phone || '070-5121-2198'
+  const email = cleanEmail(site?.org.email) || 'khayahinternational@gmail.com'
   return (
     <div>
       <div className="sup-contact">
-        <p>T  {contactPhone(site?.org.phoneFax)}</p>
-        <p>E  {site?.org.email || 'khayahinternational@gmail.com'}</p>
+        <p className="sup-contact__row"><ContactPhoneIcon /><span>{phone}</span></p>
+        <p className="sup-contact__row"><ContactMailIcon /><span>{email}</span></p>
       </div>
       <p className="admin-panel__foot">사이트 공통 정보에서 불러옴. 수정은 <Link to="/admin/app/site-common#org">사이트 설정 › 기관 정보</Link>에서 (한 곳 수정 시 전체 반영)</p>
     </div>
@@ -666,8 +693,14 @@ export function SupportSettings({
         <section className="admin-panel">
           <h2 className="admin-panel__title">문의 정보</h2>
           <div className="sup-contact">
-            <p>T  {contactPhone(site?.org.phoneFax)}</p>
-            <p>E  {site?.org.email || 'khayahinternational@gmail.com'}</p>
+            <p className="sup-contact__row">
+              <ContactPhoneIcon />
+              <span>{parsePhoneFax(site?.org.phoneFax).phone || '070-5121-2198'}</span>
+            </p>
+            <p className="sup-contact__row">
+              <ContactMailIcon />
+              <span>{cleanEmail(site?.org.email) || 'khayahinternational@gmail.com'}</span>
+            </p>
           </div>
           <p className="admin-panel__foot">사이트 공통 정보에서 불러옴. 수정은 <Link to="/admin/app/site-common#org">사이트 설정 › 기관 정보</Link>에서 (한 곳 수정 시 전체 반영)</p>
         </section>

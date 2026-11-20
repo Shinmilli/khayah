@@ -1,5 +1,6 @@
 import type { KayaMember, KayaPagesDocument } from './kayaPagesTypes'
 import { greetSectionOrder } from './kayaSectionOrder'
+import { fillTextWithBreaks, normalizeHtmlBreaks } from '../../utils/lineBreaks'
 
 function esc(value: string): string {
   return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
@@ -26,14 +27,14 @@ export function applyKayaFields(root: HTMLElement, doc: KayaPagesDocument) {
               .replace(/[“”„‟「」]/g, '')
               .trim()
           : value
-      el.innerHTML = html
+      el.innerHTML = normalizeHtmlBreaks(html)
     } else if (mode === 'tel' || mode === 'mail') {
-      el.textContent = value
+      fillTextWithBreaks(el, value)
       if (el instanceof HTMLAnchorElement) {
         el.href = mode === 'tel' ? `tel:${value.replace(/[^\d+]/g, '')}` : `mailto:${value}`
       }
     } else {
-      el.textContent = value
+      fillTextWithBreaks(el, value)
     }
     const altKey = el.getAttribute('data-k-alt')
     if (altKey && altKey in doc.fields && el instanceof HTMLImageElement && doc.fields[altKey]) {

@@ -18,11 +18,12 @@ import {
   principlePatch,
   type DisclosureFile,
 } from '../../kaya/transparencyLists'
+import { breaksToHtml, plainFromBreaks, plainTextFromBreaks } from '../../../utils/lineBreaks'
 
 type TabId = 'intro' | 'greet' | 'trans' | 'location'
 
 function plainFromHtml(html: string): string {
-  return html.replace(/<br\s*\/?>/gi, '\n').replace(/<[^>]+>/g, '')
+  return plainTextFromBreaks(html)
 }
 
 function emphasisFromHtml(html: string): string {
@@ -33,138 +34,113 @@ function htmlFromPlain(plain: string, word: string, className: string): string {
   return plain
     .split('\n')
     .map((line) => (word && line.includes(word) ? line.replace(word, `<span class="${className}">${word}</span>`) : line))
-    .join('<br />')
+    .join('<br>')
 }
 
-function selectAfter(
-  el: HTMLTextAreaElement,
-  start: number,
-  end: number,
-  onCaret?: (start: number, end: number) => void,
-) {
-  onCaret?.(start, end)
-  requestAnimationFrame(() => {
-    el.focus()
-    el.setSelectionRange(start, end)
+const BODY_MARKS = [
+  { label: '굵게', kind: 'bold' as const },
+  { label: '밑줄 강조', kind: 'mark' as const },
+  { label: '와인색', kind: 'wine' as const },
+]
+
+function normalizeBodyHtml(root: HTMLElement): string {
+  const clone = root.cloneNode(true) as HTMLElement
+  clone.querySelectorAll('b').forEach((node) => {
+    const strong = document.createElement('strong')
+    while (node.firstChild) strong.appendChild(node.firstChild)
+    node.replaceWith(strong)
   })
+  clone.querySelectorAll('div, p').forEach((node) => {
+    if (node === clone) return
+    const br = document.createElement('br')
+    node.replaceWith(...Array.from(node.childNodes), br)
+  })
+  return clone.innerHTML
+    .replace(/&nbsp;/g, ' ')
+    .replace(/(<br\s*\/?>\s*)+$/i, '')
+    .trim()
 }
 
-function unwrapInner(selected: string, open: string, close: string): string | null {
-  if (!selected.startsWith(open) || !selected.endsWith(close)) return null
-  const inner = selected.slice(open.length, -close.length)
-  if (inner.includes(open) || inner.includes(close)) return null
-  return inner
-}
-
-function peelOuter(value: string, open: string, close: string): string | null {
-  if (!value.startsWith(open) || !value.endsWith(close)) return null
-  let depth = 0
-  let index = 0
-  while (index < value.length) {
-    if (value.startsWith(open, index)) {
-      depth += 1
-      index += open.length
-      continue
-    }
-    if (value.startsWith(close, index)) {
-      depth -= 1
-      index += close.length
-      if (depth === 0) return index === value.length ? value.slice(open.length, -close.length) : null
-      continue
-    }
-    index += 1
+function closestMark(node: Node | null, className: string): HTMLElement | null {
+  let el: Element | null = node instanceof Element ? node : node?.parentElement ?? null
+  while (el) {
+    if (el instanceof HTMLElement && el.classList.contains(className)) return el
+    if (el.getAttribute('contenteditable') === 'true') break
+    el = el.parentElement
   }
   return null
 }
 
-function withoutPlaceholder(value: string, open: string, close: string): string {
-  const token = `${open}문구${close}`
-  return value.startsWith(token) ? value.slice(token.length) : value
+function unwrapElement(el: HTMLElement) {
+  const parent = el.parentNode
+  if (!parent) return
+  while (el.firstChild) parent.insertBefore(el.firstChild, el)
+  parent.removeChild(el)
 }
 
-function toggleWhole(value: string, open: string, close: string): string {
-  const body = withoutPlaceholder(value, open, close)
-  const peeled = peelOuter(body, open, close)
-  if (peeled != null) return peeled
-  if (!body.trim()) return body
-  return `${open}${body}${close}`
+function selectContents(selection: Selection, node: Node) {
+  selection.removeAllRanges()
+  const next = document.createRange()
+  next.selectNodeContents(node)
+  selection.addRange(next)
 }
 
-function markCovers(value: string, start: number, end: number, open: string, close: string): boolean {
-  const selected = value.slice(start, end)
-  if (unwrapInner(selected, open, close) != null) return true
-  const before = value.slice(0, start)
-  const after = value.slice(end)
-  if (before.endsWith(open) && after.startsWith(close)) return true
-  const openAt = before.lastIndexOf(open)
-  const closeAt = after.indexOf(close)
-  if (openAt === -1 || closeAt === -1) return false
-  const beforeInner = before.slice(openAt + open.length)
-  const afterInner = after.slice(0, closeAt)
-  return !beforeInner.includes(open) && !beforeInner.includes(close) && !afterInner.includes(open) && !afterInner.includes(close)
-}
+/** 선택 구간에 서식 적용 · 이미 있으면 한 번 더 눌러 해제 (토글) */
+function wrapRichSelection(kind: 'bold' | 'mark' | 'wine') {
+  const selection = window.getSelection()
+  if (!selection || selection.rangeCount === 0 || selection.isCollapsed) return
+  const range = selection.getRangeAt(0)
 
-const BODY_MARKS = [
-  { label: '굵게', open: '<strong>', close: '</strong>' },
-  { label: '밑줄 강조', open: '<span class="gm-mark">', close: '</span>' },
-  { label: '와인색', open: '<span class="gm-wine">', close: '</span>' },
-] as const
-
-function wrapSelection(
-  el: HTMLTextAreaElement | null,
-  value: string,
-  open: string,
-  close: string,
-  onChange: (next: string) => void,
-  onCaret?: (start: number, end: number) => void,
-) {
-  if (!el) return
-  const start = el.selectionStart
-  const end = el.selectionEnd
-  const selected = value.slice(start, end)
-  const before = value.slice(0, start)
-  const after = value.slice(end)
-  const placeholder = `${open}문구${close}`
-
-  if (!selected || (selected === '문구' && before.endsWith(open) && after.startsWith(close)) || (value.startsWith(placeholder) && start < placeholder.length)) {
-    const next = toggleWhole(value, open, close)
-    const inner = peelOuter(next, open, close)
-    onChange(next)
-    selectAfter(el, inner == null ? 0 : open.length, inner == null ? next.length : open.length + inner.length, onCaret)
+  // 굵게: 브라우저 기본 명령이 토글
+  if (kind === 'bold') {
+    document.execCommand('bold')
     return
   }
 
-  const wrapped = unwrapInner(selected, open, close)
-  if (wrapped != null) {
-    onChange(before + wrapped + after)
-    selectAfter(el, start, start + wrapped.length, onCaret)
-    return
-  }
+  const className = kind === 'mark' ? 'gm-mark' : 'gm-wine'
+  const startMark = closestMark(range.startContainer, className)
+  const endMark = closestMark(range.endContainer, className)
 
-  if (before.endsWith(open) && after.startsWith(close)) {
-    const next = before.slice(0, -open.length) + selected + after.slice(close.length)
-    const caret = start - open.length
-    onChange(next)
-    selectAfter(el, caret, caret + selected.length, onCaret)
-    return
-  }
-
-  const openAt = before.lastIndexOf(open)
-  const closeAt = after.indexOf(close)
-  if (openAt !== -1 && closeAt !== -1) {
-    const beforeInner = before.slice(openAt + open.length)
-    const afterInner = after.slice(0, closeAt)
-    if (!beforeInner.includes(open) && !beforeInner.includes(close) && !afterInner.includes(open) && !afterInner.includes(close)) {
-      const inner = beforeInner + selected + afterInner
-      onChange(before.slice(0, openAt) + inner + after.slice(closeAt + close.length))
-      selectAfter(el, openAt, openAt + inner.length, onCaret)
-      return
+  // 선택 구간이 같은 강조 태그 안이면 → 해제
+  if (startMark && startMark === endMark) {
+    const first = startMark.firstChild
+    const last = startMark.lastChild
+    unwrapElement(startMark)
+    if (first && last) {
+      selection.removeAllRanges()
+      const next = document.createRange()
+      next.setStartBefore(first)
+      next.setEndAfter(last)
+      selection.addRange(next)
     }
+    return
   }
 
-  onChange(before + open + selected + close + after)
-  const caret = start + open.length
-  selectAfter(el, caret, caret + selected.length, onCaret)
+  // 선택 안에 같은 강조만 있으면 → 벗겨서 해제
+  const probe = range.cloneContents()
+  const nested = probe.querySelectorAll(`span.${className}`)
+  if (nested.length > 0 && startMark == null && endMark == null) {
+    const fragment = range.extractContents()
+    fragment.querySelectorAll(`span.${className}`).forEach((node) => {
+      if (node instanceof HTMLElement) unwrapElement(node)
+    })
+    range.insertNode(fragment)
+    return
+  }
+
+  const span = document.createElement('span')
+  span.className = className
+  try {
+    range.surroundContents(span)
+  } catch {
+    const fragment = range.extractContents()
+    fragment.querySelectorAll(`span.${className}`).forEach((node) => {
+      if (node instanceof HTMLElement) unwrapElement(node)
+    })
+    span.appendChild(fragment)
+    range.insertNode(span)
+  }
+  selectContents(selection, span)
 }
 
 export function AdminKayaSectionForms({
@@ -391,7 +367,12 @@ function IntroForm({
               </label>
               <label className="admin-field admin-field--full">
                 <span className="admin-field__label">설명</span>
-                <textarea className="admin-input" rows={2} value={text('intro.lead')} onChange={(e) => setField('intro.lead', e.target.value)} />
+                <textarea
+                  className="admin-input"
+                  rows={2}
+                  value={plainFromBreaks(text('intro.lead'))}
+                  onChange={(e) => setField('intro.lead', e.target.value)}
+                />
               </label>
             </div>
             <div className="admin-field admin-intro-chips">
@@ -474,9 +455,14 @@ function IntroForm({
                 <span className="admin-field__label">소제목 (국문)</span>
                 <input className="admin-input" value={text('identity.kickerKo')} onChange={(e) => setField('identity.kickerKo', e.target.value)} />
               </label>
-              <label className="admin-field">
-                <span className="admin-field__label">제목</span>
-                <input className="admin-input" value={plainFromHtml(identityTitle)} onChange={(e) => setIdentityTitle(e.target.value, emphasisFromHtml(identityTitle))} />
+              <label className="admin-field admin-field--full">
+                <span className="admin-field__label">제목 (줄바꿈 가능)</span>
+                <textarea
+                  className="admin-input"
+                  rows={2}
+                  value={plainFromHtml(identityTitle)}
+                  onChange={(e) => setIdentityTitle(e.target.value, emphasisFromHtml(identityTitle))}
+                />
               </label>
               <label className="admin-field">
                 <span className="admin-field__label">강조 단어 (와인색)</span>
@@ -498,7 +484,12 @@ function IntroForm({
                     </label>
                     <label className="admin-field admin-field--full">
                       <span className="admin-field__label">설명</span>
-                      <textarea className="admin-input" rows={2} value={text(idBodyKey(index))} onChange={(e) => setField(idBodyKey(index), e.target.value)} />
+                      <textarea
+                        className="admin-input"
+                        rows={2}
+                        value={plainFromBreaks(text(idBodyKey(index)))}
+                        onChange={(e) => setField(idBodyKey(index), e.target.value)}
+                      />
                     </label>
                   </div>
                   {index >= 3 ? (
@@ -676,7 +667,13 @@ function GreetForm({
         {shown('body') ? (
           <>
             {[0, 1, 2, 3, 4, 5].map((index) => (
-              <BodyRow key={index} index={index} value={text(`greet.body.${index}`)} onChange={(value) => setField(`greet.body.${index}`, value)} onDrop={(from) => moveBody(from, index)} />
+              <BodyRow
+                key={index}
+                index={index}
+                value={text(`greet.body.${index}`)}
+                onChange={(value) => setField(`greet.body.${index}`, value)}
+                onDrop={(from) => moveBody(from, index)}
+              />
             ))}
             <div className="admin-field" style={{ marginTop: 14 }}>
               <span className="admin-field__label">서명 방식</span>
@@ -733,8 +730,13 @@ function GreetForm({
           <AdminMediaUpload layout="slot" slotTitle="대표 사진" slotRatio="4 : 5" label="대표 사진" variant="image" value={text('greet.photo') || null} onChange={(url) => setField('greet.photo', url ?? '')} />
           <div className="admin-form-grid" style={{ flex: '1 1 320px' }}>
             <label className="admin-field admin-field--full">
-              <span className="admin-field__label">제목</span>
-              <input className="admin-input" value={plainFromHtml(title)} onChange={(e) => setTitle(e.target.value, emphasisFromHtml(title))} />
+              <span className="admin-field__label">제목 (줄바꿈 가능)</span>
+              <textarea
+                className="admin-input"
+                rows={2}
+                value={plainFromHtml(title)}
+                onChange={(e) => setTitle(e.target.value, emphasisFromHtml(title))}
+              />
             </label>
             <label className="admin-field">
               <span className="admin-field__label">강조 단어</span>
@@ -764,7 +766,12 @@ function GreetForm({
         <BizHead title={bizTitle(4, '마지막 인용 띠')} enabled={shown('close')} onToggle={() => toggle('close')} />
         <label className="admin-field">
           <span className="admin-field__label">인용 문구 (줄바꿈 가능)</span>
-          <textarea className="admin-input" rows={3} value={text('greet.quote')} onChange={(e) => setField('greet.quote', e.target.value)} />
+          <textarea
+            className="admin-input"
+            rows={3}
+            value={plainTextFromBreaks(text('greet.quote'))}
+            onChange={(e) => setField('greet.quote', breaksToHtml(e.target.value))}
+          />
         </label>
         <label className="admin-field" style={{ marginTop: 12 }}>
           <span className="admin-field__label">이름</span>
@@ -786,18 +793,31 @@ function BodyRow({
   onChange: (next: string) => void
   onDrop: (from: number) => void
 }) {
-  const ref = useRef<HTMLTextAreaElement>(null)
-  const [caret, setCaret] = useState<{ start: number; end: number } | null>(null)
-  const syncCaret = () => {
-    const el = ref.current
-    if (!el || document.activeElement !== el) return
-    setCaret({ start: el.selectionStart, end: el.selectionEnd })
-  }
+  const ref = useRef<HTMLDivElement>(null)
+  const last = useRef<string | null>(null)
+
   useEffect(() => {
-    const sync = () => syncCaret()
-    document.addEventListener('selectionchange', sync)
-    return () => document.removeEventListener('selectionchange', sync)
-  }, [])
+    const el = ref.current
+    if (!el) return
+    if (last.current === value && el.innerHTML) return
+    last.current = value
+    el.innerHTML = value || ''
+  }, [value])
+
+  const emit = () => {
+    const el = ref.current
+    if (!el) return
+    const html = normalizeBodyHtml(el)
+    last.current = html
+    onChange(html)
+  }
+
+  const apply = (kind: 'bold' | 'mark' | 'wine') => {
+    ref.current?.focus()
+    wrapRichSelection(kind)
+    emit()
+  }
+
   return (
     <div
       className="admin-item"
@@ -818,39 +838,34 @@ function BodyRow({
       <div style={{ flex: 1, minWidth: 0 }}>
         <p className="admin-field__label">문단 {index + 1}</p>
         <div className="admin-form-actions" style={{ marginBottom: 8 }}>
-          {BODY_MARKS.map((mark) => {
-            const on =
-              peelOuter(value, mark.open, mark.close) != null ||
-              (caret != null && markCovers(value, caret.start, caret.end, mark.open, mark.close))
-            return (
-              <button
-                key={mark.label}
-                type="button"
-                className={`admin-btn admin-btn--sm${on ? ' is-on' : ''}`}
-                aria-pressed={on}
-                onMouseDown={(e) => e.preventDefault()}
-                onClick={() => wrapSelection(ref.current, value, mark.open, mark.close, onChange, (start, end) => setCaret({ start, end }))}
-              >
-                {mark.label}
-              </button>
-            )
-          })}
+          {BODY_MARKS.map((mark) => (
+            <button
+              key={mark.label}
+              type="button"
+              className="admin-btn admin-btn--sm"
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => apply(mark.kind)}
+            >
+              {mark.label}
+            </button>
+          ))}
         </div>
-        <textarea
+        <div
           ref={ref}
-          className="admin-input"
-          rows={3}
+          className="admin-input admin-rich"
+          contentEditable
+          role="textbox"
+          aria-multiline="true"
           aria-label={`문단 ${index + 1}`}
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          onSelect={syncCaret}
-          onKeyUp={syncCaret}
-          onMouseUp={syncCaret}
-          onFocus={syncCaret}
-          onBlur={(e) => {
-            const next = e.relatedTarget
-            if (next instanceof HTMLElement && next.closest('.admin-form-actions')) return
-            setCaret(null)
+          suppressContentEditableWarning
+          data-placeholder="문단을 입력하세요"
+          onInput={emit}
+          onBlur={emit}
+          onKeyDown={(e) => {
+            if (e.key !== 'Enter') return
+            e.preventDefault()
+            document.execCommand('insertLineBreak')
+            emit()
           }}
         />
       </div>
@@ -934,7 +949,12 @@ function TransForm({
           </label>
           <label className="admin-field admin-field--full">
             <span className="admin-field__label">소개 설명</span>
-            <textarea className="admin-input" rows={3} value={text('trans.introBody')} onChange={(e) => setField('trans.introBody', e.target.value)} />
+            <textarea
+              className="admin-input"
+              rows={3}
+              value={plainFromBreaks(text('trans.introBody'))}
+              onChange={(e) => setField('trans.introBody', e.target.value)}
+            />
           </label>
           {[0, 1, 2].map((index) => (
             <label key={index} className="admin-field">

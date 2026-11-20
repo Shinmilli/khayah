@@ -605,6 +605,23 @@ a:hover {
   margin-bottom: 6px;
 }
 
+.footer-main__line--meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer-main__sep {
+  opacity: 0.7;
+  margin: 0 2px;
+}
+
+.footer-main__icon {
+  flex: 0 0 auto;
+  opacity: 0.92;
+}
+
 #Footer .footer_copy {
   padding: 16px 16px 18px;
   border-top: none;

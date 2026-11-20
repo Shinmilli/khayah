@@ -223,8 +223,11 @@ body.admin-route {
   gap: 4px;
   flex: 1;
   min-height: 0;
+  overflow-x: hidden;
   overflow-y: auto;
-  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
 }
 
 .admin-app__nav::-webkit-scrollbar {
@@ -508,9 +511,9 @@ body.admin-route {
 
   .admin-app > .admin-app__sidebar {
     position: fixed;
-    z-index: 26;
+    z-index: 35;
     top: var(--admin-switch-height, 48px);
-    bottom: auto;
+    bottom: 0;
     left: 0;
     width: min(280px, 88vw);
     height: calc(100dvh - var(--admin-switch-height, 48px));
@@ -525,13 +528,13 @@ body.admin-route {
     box-shadow: 8px 0 24px rgba(43, 38, 41, 0.18);
   }
 
+  .admin-app__backdrop {
+    z-index: 34;
+  }
+
   .admin-app__content {
     padding: 16px 12px;
   }
-}
-
-body.admin-menu-open {
-  overflow: hidden;
 }
 
 /* Page blocks */
@@ -1495,6 +1498,43 @@ body.admin-menu-open {
   color: var(--adm-ink);
   background: #fff;
   box-sizing: border-box;
+}
+
+textarea.admin-input {
+  white-space: pre-wrap;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.admin-rich {
+  min-height: 96px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  word-break: keep-all;
+  overflow-y: auto;
+  cursor: text;
+}
+
+.admin-rich:empty::before {
+  content: attr(data-placeholder);
+  color: #9aa3b2;
+  pointer-events: none;
+}
+
+.admin-rich strong,
+.admin-rich b {
+  font-weight: 700;
+  color: #2f2b28;
+}
+
+.admin-rich .gm-wine {
+  color: #b11e3b;
+}
+
+.admin-rich .gm-mark {
+  font-weight: 700;
+  color: #2f2b28;
+  background: linear-gradient(transparent 62%, #f8e1e6 62%);
 }
 
 .admin-input:focus {
@@ -2837,7 +2877,8 @@ body.admin-menu-open {
 @media (max-width: 768px) {
   .admin-app {
     max-width: 100%;
-    overflow-x: hidden;
+    /* hidden 은 overflow-y 도 잠가 중간 폭에서 스크롤이 안 보이는 경우가 있음 */
+    overflow-x: clip;
   }
 
   .admin-app__main,
@@ -2848,7 +2889,7 @@ body.admin-menu-open {
   }
 
   .admin-page {
-    overflow-x: hidden;
+    overflow-x: clip;
   }
 
   .admin-panel {
@@ -4121,6 +4162,21 @@ body.admin-menu-open {
 
 .sup-contact p {
   margin: 0;
+}
+
+.sup-contact__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sup-contact__row + .sup-contact__row {
+  margin-top: 4px;
+}
+
+.sup-contact__row svg {
+  flex: 0 0 auto;
+  color: #b11e3b;
 }
 
 .sup-settings {

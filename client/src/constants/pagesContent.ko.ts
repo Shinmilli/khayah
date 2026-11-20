@@ -897,6 +897,7 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
         <span>카야 아카데미 소식</span>
         <a class="sbiz-btn sbiz-btn--line" data-k-href="aca.facebook" href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14 8h3V4h-3c-2.8 0-4.5 1.8-4.5 4.6V11H7v4h2.5v8h4v-8h3l.5-4h-3.5V9c0-.6.4-1 1-1z"></path></svg>페이스북 바로가기</a>
         <a class="sbiz-btn sbiz-btn--line" data-k-href="aca.instagram" href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"></circle></svg>인스타그램 바로가기</a>
+        <a class="sbiz-btn sbiz-btn--line" data-k-href="aca.tiktok" href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 00-.79-.05A6.34 6.34 0 003.15 15.4a6.34 6.34 0 0010.86 4.48V13a8.24 8.24 0 004.77 1.52V11a4.84 4.84 0 01-.19-4.31z"></path></svg>틱톡 바로가기</a>
       </div>
     </div>
   </section>

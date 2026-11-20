@@ -1,6 +1,7 @@
 import type { BizSupportDocument } from './bizSupportTypes'
 import { rankedSupportSections } from './supportSections'
 import { donateHref } from './useBizSupport'
+import { fillTextWithBreaks, normalizeHtmlBreaks } from '../../utils/lineBreaks'
 
 function sectionOf(doc: BizSupportDocument, id: string | null) {
   if (!id) return undefined
@@ -20,7 +21,8 @@ function reorder(parent: Element, selector: string, doc: BizSupportDocument) {
   const sorted = items.slice().sort((a, b) => {
     const left = sectionOf(doc, a.getAttribute('data-item') || a.getAttribute('data-sec'))
     const right = sectionOf(doc, b.getAttribute('data-item') || b.getAttribute('data-sec'))
-    return (left?.order ?? 0) - (right?.order ?? 0)
+    // Missing section must not jump to the front (empty slots used to sort as order 0)
+    return (left?.order ?? 999) - (right?.order ?? 999)
   })
   for (const el of sorted) {
     const row = sectionOf(doc, el.getAttribute('data-item') || el.getAttribute('data-sec'))
@@ -38,7 +40,7 @@ export function applyBizFields(root: HTMLElement, doc: BizSupportDocument, accou
     if (mode === 'src') {
       if (value && el instanceof HTMLImageElement) el.src = value
     } else if (mode === 'html') {
-      el.innerHTML = value
+      el.innerHTML = normalizeHtmlBreaks(value)
     } else if (mode === 'chips') {
       const source = (value || el.textContent || '').trim()
       if (!source) return
@@ -67,7 +69,7 @@ export function applyBizFields(root: HTMLElement, doc: BizSupportDocument, accou
         }),
       )
     } else {
-      el.textContent = value
+      fillTextWithBreaks(el, value)
     }
     if (el.classList.contains('sup-rec')) {
       const muted = el.getAttribute('data-k-badge') === 'muted' || /소액/.test(value)
@@ -135,16 +137,17 @@ export function applyBizFields(root: HTMLElement, doc: BizSupportDocument, accou
     el.hidden = !name
   })
 
+  const socialHrefKeys = new Set(['aca.facebook', 'aca.instagram', 'aca.tiktok', 'cnc.instagram'])
   root.querySelectorAll<HTMLAnchorElement>('[data-k-href]').forEach((el) => {
     const key = el.getAttribute('data-k-href')
-    if (!key || !(key in doc.fields)) return
+    if (!key) return
     const href = (doc.fields[key] ?? '').trim()
     if (!href || href === '#') {
-      const hrefKey = el.getAttribute('data-k-href')
-      if (hrefKey === 'aca.facebook' || hrefKey === 'aca.instagram' || hrefKey === 'cnc.instagram') {
+      if (socialHrefKeys.has(key)) {
         el.hidden = true
         return
       }
+      if (!(key in doc.fields)) return
       if (el.classList.contains('sbiz-btn')) {
         el.hidden = false
         return
@@ -154,6 +157,10 @@ export function applyBizFields(root: HTMLElement, doc: BizSupportDocument, accou
     }
     el.hidden = false
     el.href = href
+    if (socialHrefKeys.has(key)) {
+      el.target = '_blank'
+      el.rel = 'noopener'
+    }
   })
 
   const url = donateHref(doc)
@@ -197,19 +204,14 @@ export function applyBizFields(root: HTMLElement, doc: BizSupportDocument, accou
     heart: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B11E3B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.4-7-10a4 4 0 017-2.6A4 4 0 0119 11c0 5.6-7 10-7 10z"></path></svg>',
     person: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B11E3B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"></circle><path d="M5 20a7 7 0 0114 0"></path></svg>',
   }
+  syncGuideSideItems(root, doc, ICONS)
+
   root.querySelectorAll<HTMLElement>('[data-icon]').forEach((el) => {
     const key = el.getAttribute('data-icon')
     if (!key) return
     const icon = doc.fields[key] || 'house'
     if (ICONS[icon]) el.innerHTML = ICONS[icon]
   })
-  root.querySelectorAll<HTMLElement>('.sup-item[data-item]').forEach((el) => {
-    const id = el.getAttribute('data-item')
-    if (!id) return
-    const title = doc.fields[`${id}.title`]?.trim() ?? ''
-    el.hidden = !title
-  })
-
   const impactTitle = doc.donate.impactTitle?.trim()
   if (impactTitle) {
     const el = root.querySelector<HTMLElement>('#sup-impact, [data-sec="guide.impact"] .sup-h2')
@@ -246,6 +248,38 @@ export function applyBizFields(root: HTMLElement, doc: BizSupportDocument, accou
       return `<div class="sup-account"><b>${bank.replace(/&/g, '&amp;').replace(/</g, '&lt;')}</b><span>${number.replace(/&/g, '&amp;').replace(/</g, '&lt;')}</span></div>`
     })
     .join('')
+}
+
+/** Empty guide side cards are removed from the DOM (not merely hidden). */
+function syncGuideSideItems(root: HTMLElement, doc: BizSupportDocument, icons: Record<string, string>) {
+  const side = root.querySelector('.sup-side')
+  if (!side) return
+  for (let index = 0; index < 4; index += 1) {
+    const id = `guide.item.${index}`
+    const title = doc.fields[`${id}.title`]?.trim() ?? ''
+    const body = doc.fields[`${id}.body`]?.trim() ?? ''
+    let el = side.querySelector<HTMLElement>(`:scope > .sup-item[data-item="${id}"]`)
+    if (!title && !body) {
+      el?.remove()
+      continue
+    }
+    if (!el) {
+      el = document.createElement('div')
+      el.className = 'sup-item'
+      el.setAttribute('data-item', id)
+      el.innerHTML = `<span class="sup-ico" data-icon="${id}.icon" aria-hidden="true"></span><div><h3 data-k="${id}.title"></h3><p data-k="${id}.body"></p></div>`
+      side.appendChild(el)
+    }
+    el.hidden = false
+    el.removeAttribute('hidden')
+    const titleEl = el.querySelector<HTMLElement>('h3')
+    const bodyEl = el.querySelector<HTMLElement>('p')
+    if (titleEl) titleEl.textContent = title
+    if (bodyEl) bodyEl.textContent = body
+    const iconKey = doc.fields[`${id}.icon`] || (['house', 'book', 'heart', 'person'][index] ?? 'house')
+    const ico = el.querySelector<HTMLElement>('.sup-ico')
+    if (ico && icons[iconKey]) ico.innerHTML = icons[iconKey]
+  }
 }
 
 function layoutSupport(root: HTMLElement, doc: BizSupportDocument) {

@@ -5,6 +5,7 @@ import { AdminLocaleEmptyNote, AdminLocaleTabs, type AdminEditLocale } from '../
 import { AdminSaveActions, draftStatus, takeUnpublished } from '../AdminSaveActions'
 import { adminFetchSiteCommon, adminPutSiteCommon, type SaveMode } from '../../../services/api'
 import { resetSiteCommonCache } from '../../site/useSiteCommon'
+import { formatPhoneFax, parsePhoneFax } from '../../site/orgContact'
 import type { SiteCommonDocument, SiteFooterLink, SitePartner, SiteSlogan } from '../../site/siteCommonTypes'
 
 function reorderRows<T extends { id: string; order: number }>(rows: T[], id: string, beforeId: string): T[] {
@@ -293,12 +294,26 @@ export function AdminSiteCommonPage() {
             />
           </label>
           <label className="admin-field">
-            <span className="admin-field__label">전화 · 팩스</span>
-            <input className="admin-input" value={doc.org.phoneFax} onChange={(e) => setOrg('phoneFax', e.target.value)} />
+            <span className="admin-field__label">전화</span>
+            <input
+              className="admin-input"
+              value={parsePhoneFax(doc.org.phoneFax).phone}
+              onChange={(e) => setOrg('phoneFax', formatPhoneFax(e.target.value, parsePhoneFax(doc.org.phoneFax).fax))}
+              placeholder="070.5121.2198"
+            />
+          </label>
+          <label className="admin-field">
+            <span className="admin-field__label">팩스</span>
+            <input
+              className="admin-input"
+              value={parsePhoneFax(doc.org.phoneFax).fax}
+              onChange={(e) => setOrg('phoneFax', formatPhoneFax(parsePhoneFax(doc.org.phoneFax).phone, e.target.value))}
+              placeholder="070.8650.3639"
+            />
           </label>
           <label className="admin-field">
             <span className="admin-field__label">이메일</span>
-            <input className="admin-input" value={doc.org.email} onChange={(e) => setOrg('email', e.target.value)} />
+            <input className="admin-input" value={doc.org.email.replace(/^E\s*/i, '')} onChange={(e) => setOrg('email', e.target.value.replace(/^E\s*/i, '').trim())} />
           </label>
           <label className="admin-field admin-field--full">
             <span className="admin-field__label">후원 계좌 · SWIFT</span>

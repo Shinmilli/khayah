@@ -197,7 +197,11 @@
   margin-top: 40px;
 }
 
-.page-content-wrapper .page-body .sup-place,
+.page-content-wrapper .page-body .sup-place {
+  flex: 1 1 480px;
+  min-width: 0;
+}
+
 .page-content-wrapper .page-body .sup-side {
   flex: 1 1 420px;
   min-width: 0;
@@ -240,7 +244,7 @@
 .page-content-wrapper .page-body .sup-card,
 .page-content-wrapper .page-body .sup-panel {
   background: #fff;
-  border-radius: 16px;
+  border-radius: 20px;
 }
 
 .page-content-wrapper .page-body .sup-item {
@@ -249,6 +253,10 @@
   align-items: flex-start;
   flex-grow: 1;
   padding: 28px;
+}
+
+.page-content-wrapper .page-body .sup-item[hidden] {
+  display: none !important;
 }
 
 .page-content-wrapper .page-body .sup-ico {
@@ -627,6 +635,46 @@
   gap: 10px;
 }
 
+.page-content-wrapper .page-body #contact .sup-panel a.sup-contact {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 48px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: #f4f1ee;
+  color: var(--sup-ink);
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.page-content-wrapper .page-body #contact .sup-panel a.sup-contact svg {
+  flex: 0 0 auto;
+}
+
+.page-content-wrapper .page-body #contact .sup-panel a.sup-contact span {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.page-content-wrapper .page-body #contact .sup-panel {
+  justify-content: flex-start;
+  gap: 12px;
+}
+
+.page-content-wrapper .page-body #contact .sup-panel > p {
+  margin: 0;
+}
+
+.page-content-wrapper .page-body #contact .sup-panel a.sup-contact + a.sup-contact {
+  margin-top: 0;
+}
+
 .page-content-wrapper .page-body .sup b {
   color: var(--sup-ink);
 }
@@ -751,12 +799,25 @@
   font-size: 14px;
 }
 
-.page-content-wrapper .page-body .sup--guide .sup-contact a {
-  font-size: 16px;
+.page-content-wrapper .page-body .sup--guide .sup-contact .sup-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 28px;
 }
 
-.page-content-wrapper .page-body .sup--guide .sup-contact .sup-actions {
-  gap: 28px;
+.page-content-wrapper .page-body .sup--guide .sup-contact a.sup-contact {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--sup-ink);
+  text-decoration: none;
+}
+
+.page-content-wrapper .page-body .sup--guide .sup-contact a.sup-contact svg {
+  flex: 0 0 auto;
 }
 
 .page-content-wrapper .page-body .sup--method .sup-intro .sup-pills {
@@ -779,6 +840,35 @@
 
 #Content.type-readable .page-content-wrapper .page-body #contact h2.sup-h2 {
   font-size: 24px;
+}
+
+@media (max-width: 900px) {
+  #Content.type-readable .page-content-wrapper .page-body #contact h2.sup-h2 {
+    font-size: 20px;
+    line-height: 1.35;
+  }
+
+  #Content.type-readable .page-content-wrapper .page-body #contact .sup-panel > p {
+    font-size: 14px;
+    line-height: 1.55;
+  }
+
+  .page-content-wrapper .page-body #contact .sup-pay {
+    gap: 12px;
+    margin-top: 0;
+  }
+
+  .page-content-wrapper .page-body #contact .sup-panel {
+    gap: 10px;
+    padding: 22px 18px;
+  }
+
+  .page-content-wrapper .page-body #contact .sup-panel a.sup-contact {
+    gap: 8px;
+    min-height: 44px;
+    padding: 11px 14px;
+    font-size: 14px;
+  }
 }
 
 .page-content-wrapper .page-body .sup-cta--wine a.sup-btn {

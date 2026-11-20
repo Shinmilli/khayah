@@ -73,13 +73,6 @@ export const DONOR_GUIDE_PAGE_HTML = `
               <p data-k="guide.item.2.body">지진으로 일상이 흔들린 아이들이 마음의 안정을 되찾고 학업을 이어가도록 돕습니다.</p>
             </div>
           </div>
-          <div class="sup-item" data-item="guide.item.3" hidden>
-            <span class="sup-ico" data-icon="guide.item.3.icon" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B11E3B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"></circle><path d="M5 20a7 7 0 0114 0"></path></svg></span>
-            <div>
-              <h3 data-k="guide.item.3.title"></h3>
-              <p data-k="guide.item.3.body"></p>
-            </div>
-          </div>
         </div>
       </div>
     </div>

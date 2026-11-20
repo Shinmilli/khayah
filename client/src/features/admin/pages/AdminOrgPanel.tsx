@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { AdminMediaUpload } from '../components/AdminMediaUpload'
 import type { KayaMember, KayaPagesDocument } from '../../kaya/kayaPagesTypes'
+import { breaksToHtml, plainTextFromBreaks } from '../../../utils/lineBreaks'
 
 const ROLES = ['이사', '상임이사', '감사', '전문위원'] as const
 
@@ -11,6 +12,21 @@ function newId(): string {
 function fileLabel(url: string): string {
   const name = decodeURIComponent(url.split('?')[0]?.split('/').pop() || '')
   return name || url
+}
+
+function plainFromHtml(html: string): string {
+  return plainTextFromBreaks(html)
+}
+
+function emphasisFromHtml(html: string): string {
+  return html.match(/<span[^>]*>([^<]*)<\/span>/)?.[1] ?? ''
+}
+
+function htmlFromPlain(plain: string, word: string, className = 'kaya-wine'): string {
+  return plain
+    .split('\n')
+    .map((line) => (word && line.includes(word) ? line.replace(word, `<span class="${className}">${word}</span>`) : line))
+    .join('<br>')
 }
 
 function termText(row: KayaMember): string {
@@ -86,12 +102,30 @@ export function AdminOrgPanel({
         </div>
         <div className="admin-form-grid">
           <label className="admin-field admin-field--full">
-            <span className="admin-field__label">제목 / 강조 단어</span>
-            <input className="admin-input" value={doc.fields['org.title'] ?? ''} onChange={(e) => setField('org.title', e.target.value)} />
+            <span className="admin-field__label">제목 (줄바꿈 가능)</span>
+            <textarea
+              className="admin-input"
+              rows={2}
+              value={plainFromHtml(doc.fields['org.title'] ?? '')}
+              onChange={(e) => setField('org.title', htmlFromPlain(e.target.value, emphasisFromHtml(doc.fields['org.title'] ?? '')))}
+            />
+          </label>
+          <label className="admin-field">
+            <span className="admin-field__label">강조 단어 (와인색)</span>
+            <input
+              className="admin-input"
+              value={emphasisFromHtml(doc.fields['org.title'] ?? '')}
+              onChange={(e) => setField('org.title', htmlFromPlain(plainFromHtml(doc.fields['org.title'] ?? ''), e.target.value))}
+            />
           </label>
           <label className="admin-field admin-field--full">
             <span className="admin-field__label">설명 (줄바꿈 가능)</span>
-            <input className="admin-input" value={doc.fields['org.lead'] ?? ''} onChange={(e) => setField('org.lead', e.target.value)} />
+            <textarea
+              className="admin-input"
+              rows={4}
+              value={plainFromHtml(doc.fields['org.lead'] ?? '')}
+              onChange={(e) => setField('org.lead', breaksToHtml(e.target.value))}
+            />
           </label>
         </div>
         <div className="admin-section-images">
@@ -135,10 +169,25 @@ export function AdminOrgPanel({
               </button>
             </div>
           </div>
-          <label className="admin-field admin-field--full">
-            <span className="admin-field__label">섹션 제목 / 강조 단어</span>
-            <input className="admin-input" value={doc.fields['org.peopleTitle'] ?? ''} onChange={(e) => setField('org.peopleTitle', e.target.value)} />
-          </label>
+          <div className="admin-form-grid">
+            <label className="admin-field admin-field--full">
+              <span className="admin-field__label">섹션 제목 (줄바꿈 가능)</span>
+              <textarea
+                className="admin-input"
+                rows={2}
+                value={plainFromHtml(doc.fields['org.peopleTitle'] ?? '')}
+                onChange={(e) => setField('org.peopleTitle', htmlFromPlain(e.target.value, emphasisFromHtml(doc.fields['org.peopleTitle'] ?? '')))}
+              />
+            </label>
+            <label className="admin-field">
+              <span className="admin-field__label">강조 단어 (와인색)</span>
+              <input
+                className="admin-input"
+                value={emphasisFromHtml(doc.fields['org.peopleTitle'] ?? '')}
+                onChange={(e) => setField('org.peopleTitle', htmlFromPlain(plainFromHtml(doc.fields['org.peopleTitle'] ?? ''), e.target.value))}
+              />
+            </label>
+          </div>
           <div className="admin-org__table-wrap">
             <table className="admin-sheet admin-org__table">
               <thead>

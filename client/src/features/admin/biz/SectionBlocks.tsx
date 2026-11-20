@@ -95,7 +95,12 @@ function BlockFields({ block, onChange }: { block: PageBlock; onChange: (patch: 
         </label>
         <label className="admin-field admin-field--full">
           <span className="admin-field__label">설명 (문장마다 줄바꿈)</span>
-          <textarea className="admin-input" rows={3} value={block.lead} onChange={(e) => onChange({ lead: e.target.value })} />
+          <textarea
+            className="admin-input"
+            rows={3}
+            value={block.lead.replace(/<br\s*\/?>/gi, '\n').replace(/<[^>]+>/g, '')}
+            onChange={(e) => onChange({ lead: e.target.value })}
+          />
         </label>
         <AdminMediaUpload layout="slot" slotTitle="사진" slotRatio="4:3" label="사진" variant="image" value={block.photo || null} onChange={(url) => onChange({ photo: url ?? '' })} />
         <label className="admin-field">

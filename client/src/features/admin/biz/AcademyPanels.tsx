@@ -1,10 +1,11 @@
 import { AdminMediaUpload } from '../components/AdminMediaUpload'
+import { breaksToHtml, plainFromBreaks, plainTextFromBreaks } from '../../../utils/lineBreaks'
 
 type Values = Record<string, string>
 type SetField = (key: string, value: string) => void
 
 function plain(html: string): string {
-  return html.replace(/<br\s*\/?>/gi, '\n').replace(/<[^>]+>/g, '')
+  return plainTextFromBreaks(html)
 }
 
 function emphasis(html: string): string {
@@ -16,7 +17,7 @@ function htmlTitle(plainText: string, word: string): string {
 }
 
 function htmlLines(plainText: string): string {
-  return plainText.replace(/\n/g, '<br>')
+  return breaksToHtml(plainText)
 }
 
 function modeOf(values: Values, key: string): 'text' | 'image' {
@@ -264,7 +265,12 @@ export function AcademyBody({ title, values, setField }: { title: string; values
           </label>
           <label className="admin-field admin-field--full">
             <span className="admin-field__label">설명</span>
-            <textarea className="admin-input" rows={2} value={values['aca.pre.lead'] ?? ''} onChange={(e) => setField('aca.pre.lead', e.target.value)} />
+            <textarea
+              className="admin-input"
+              rows={2}
+              value={plainFromBreaks(values['aca.pre.lead'] ?? '')}
+              onChange={(e) => setField('aca.pre.lead', e.target.value)}
+            />
           </label>
         </div>
         <FactRows pairs={PRE_FACTS} values={values} setField={setField} />
@@ -305,7 +311,12 @@ export function AcademyBody({ title, values, setField }: { title: string; values
           </label>
           <label className="admin-field admin-field--full">
             <span className="admin-field__label">내용</span>
-            <textarea className="admin-input" rows={3} value={values['aca.csr'] ?? ''} onChange={(e) => setField('aca.csr', e.target.value)} />
+            <textarea
+              className="admin-input"
+              rows={3}
+              value={plainFromBreaks(values['aca.csr'] ?? '')}
+              onChange={(e) => setField('aca.csr', e.target.value)}
+            />
           </label>
           <label className="admin-field">
             <span className="admin-field__label">페이스북 주소</span>
@@ -315,8 +326,12 @@ export function AcademyBody({ title, values, setField }: { title: string; values
             <span className="admin-field__label">인스타그램 주소</span>
             <input className="admin-input" placeholder="카야 아카데미 인스타그램 주소 입력" value={values['aca.instagram'] ?? ''} onChange={(e) => setField('aca.instagram', e.target.value)} />
           </label>
+          <label className="admin-field">
+            <span className="admin-field__label">틱톡 주소</span>
+            <input className="admin-input" placeholder="카야 아카데미 틱톡 주소 입력" value={values['aca.tiktok'] ?? ''} onChange={(e) => setField('aca.tiktok', e.target.value)} />
+          </label>
         </div>
-        <p className="admin-panel__foot">CSR 박스 아래에 페이스북·인스타그램 바로가기 버튼이 새 창으로 열립니다. 주소가 비면 그 버튼은 숨깁니다.</p>
+        <p className="admin-panel__foot">CSR 박스 아래에 페이스북·인스타그램·틱톡 바로가기 버튼이 새 창으로 열립니다. 주소가 비면 그 버튼은 숨깁니다.</p>
       </>
     )
   }

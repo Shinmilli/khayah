@@ -128,3 +128,39 @@ html.has-admin-switch .site-header__mobile {
   flex: 1;
   min-height: 0;
 }
+
+/* 드로어 메뉴 구간: 상단바 고정 · 메뉴 열면 뒤 본문 스크롤 잠금 */
+@media (max-width: 900px) {
+  .admin-shell > .admin-view-switch {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 40;
+  }
+
+  .admin-shell > .admin-app {
+    padding-top: var(--admin-switch-height, 48px);
+  }
+}
+
+html.admin-menu-open,
+body.admin-menu-open {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+body.admin-menu-open .admin-shell,
+body.admin-menu-open .admin-app,
+body.admin-menu-open .admin-app__main,
+body.admin-menu-open .admin-app__content {
+  overflow: hidden !important;
+  overscroll-behavior: none;
+  touch-action: none;
+}
+
+body.admin-menu-open .admin-app__sidebar,
+body.admin-menu-open .admin-app__nav {
+  touch-action: pan-y;
+  overscroll-behavior: contain;
+}

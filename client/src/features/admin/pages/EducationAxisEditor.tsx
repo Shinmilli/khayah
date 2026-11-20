@@ -80,9 +80,9 @@ export function EducationAxisEditor({
                     <span className="admin-field__label">영문 라벨</span>
                     <input className="admin-input" value={axis.phrase} onChange={(e) => patchAxis(index, { phrase: e.target.value })} />
                   </label>
-                  <label className="admin-field">
-                    <span className="admin-field__label">제목</span>
-                    <input className="admin-input" value={axis.title} onChange={(e) => patchAxis(index, { title: e.target.value })} />
+                  <label className="admin-field admin-field--full">
+                    <span className="admin-field__label">제목 (줄바꿈 가능)</span>
+                    <textarea className="admin-input" rows={2} value={axis.title} onChange={(e) => patchAxis(index, { title: e.target.value })} />
                   </label>
                   <label className="admin-field admin-field--full">
                     <span className="admin-field__label">설명 (문장마다 줄바꿈)</span>
