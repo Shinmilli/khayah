@@ -2,11 +2,12 @@ import { Link } from 'react-router-dom'
 import { useLocale } from '../../../i18n/LocaleContext'
 import { useImpactPage } from '../../impact/useImpactPage'
 
-/** 메인 숫자 섹션. 메인 표시가 꺼져 있을 때만 숨긴다. 페이지 공개가 꺼져 있으면 연결 링크만 뺀다. */
+/** 메인 숫자 섹션. 메인 표시(homePublic)가 꺼져 있을 때만 숨긴다. 한눈에 보는 카야 링크는 페이지 공개(public)일 때만 붙인다. */
 export function HomeNumbersSection() {
   const { locale, localize } = useLocale()
   const impact = useImpactPage()
-  const shown = impact?.homePublic !== false
+  // 관리자 「메인 표시」와 동일: homePublic이 있으면 그것, 없으면 페이지 공개 여부를 따른다.
+  const shown = impact ? (typeof impact.homePublic === 'boolean' ? impact.homePublic : impact.public) : false
   if (!impact || !shown) return null
 
   const en = locale === 'en'
@@ -15,6 +16,7 @@ export function HomeNumbersSection() {
 
   const lead = (en ? impact.homeLeadEn : impact.homeLead)?.trim() || ''
   const note = (en ? impact.homeNoteEn : impact.homeNote)?.trim() || ''
+  const glanceHref = localize('/business/impact')
 
   const cards = impact.homeNumbers
     .filter((item) => item.enabled !== false)
@@ -40,7 +42,7 @@ export function HomeNumbersSection() {
           {lead ? <p>{lead}</p> : null}
         </div>
         {impact.public ? (
-          <Link to={localize('/business/impact')}>{en ? 'Khayah at a glance →' : '한눈에 보는 카야 →'}</Link>
+          <Link to={glanceHref}>{en ? 'Khayah at a glance →' : '한눈에 보는 카야 →'}</Link>
         ) : null}
       </div>
       <div className="home-numbers__grid">
