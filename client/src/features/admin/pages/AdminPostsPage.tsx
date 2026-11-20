@@ -32,22 +32,22 @@ import {
   type SessionMediaRef,
 } from '../../../utils/sessionUploads'
 
-const contentTypes = ['스토리', '공지사항', '활동소식', '연간소식지', '언론보도', '진행사업'] as const
+const contentTypes = ['공지사항', '활동소식', '연간소식지', '언론보도', '진행사업'] as const
 type ContentType = (typeof contentTypes)[number]
 
 const ADMIN_POSTS_PER_PAGE = 10
 
 type YearlyNewsletterMode = '글쓰기' | 'PDF소식지'
 
-/** 스토리 선택 시 필수 구분 (홈 스토리 칩과 대응) */
-const storyPostScopes = ['국내', '해외', '옹호', '진행'] as const
-const storyScopeLabel: Record<(typeof storyPostScopes)[number], string> = {
+/** 활동소식 범위 (목록 필터·칩과 대응). 스토리 구분은 임팩트 관리에서만 다룸 */
+const activityScopes = ['국내', '해외', '옹호', '진행'] as const
+const activityScopeLabel: Record<(typeof activityScopes)[number], string> = {
   국내: '국내',
   해외: '해외',
   옹호: '연구',
   진행: '진행',
 }
-type StoryPostScope = (typeof storyPostScopes)[number]
+type ActivityScope = (typeof activityScopes)[number]
 
 const projectRegions = ['해외', '국내', '연구사업'] as const
 type ProjectRegion = (typeof projectRegions)[number]
@@ -146,7 +146,7 @@ function PostEditorForm({
   mode,
   initialPostType,
   initialTitle,
-  initialStoryScope,
+  initialActivityScope,
   initialPostId,
   initialMeta,
   initialContentHtml,
@@ -157,7 +157,7 @@ function PostEditorForm({
   mode: 'new' | 'edit'
   initialPostType: ContentType
   initialTitle: string
-  initialStoryScope: StoryPostScope | null
+  initialActivityScope: ActivityScope | null
   initialPostId: number | null
   initialMeta: Record<string, string>
   initialContentHtml: string
@@ -168,21 +168,9 @@ function PostEditorForm({
   const titleHeading = mode === 'new' ? '새 글 작성' : '게시글 수정'
   const isEditLocked = mode === 'edit'
   const [postType, setPostType] = useState<ContentType>(initialPostType)
-  const [storyScope, setStoryScope] = useState<StoryPostScope | null>(() =>
-    initialPostType === '스토리' ? initialStoryScope : null,
+  const [activityScope, setActivityScope] = useState<ActivityScope | null>(() =>
+    initialPostType === '활동소식' ? initialActivityScope : null,
   )
-  const [storyCategory, setStoryCategory] = useState(initialMeta.khayah_story_category === '전문가 이야기' ? '전문가 이야기' : '변화의 이야기')
-  const [storyFeatured, setStoryFeatured] = useState(initialMeta.khayah_story_featured === '1')
-  const [storyConsent, setStoryConsent] = useState(initialMeta.khayah_story_consent === '1')
-  const [storyPlace, setStoryPlace] = useState(initialMeta.khayah_story_place ?? '')
-  const [storyBefore, setStoryBefore] = useState(initialMeta.khayah_story_before ?? '')
-  const [storyIntervention, setStoryIntervention] = useState(initialMeta.khayah_story_intervention ?? '')
-  const [storyAfter, setStoryAfter] = useState(initialMeta.khayah_story_after ?? '')
-  const [storyEvidence, setStoryEvidence] = useState(initialMeta.khayah_story_evidence ?? '')
-  const [storySustain, setStorySustain] = useState(initialMeta.khayah_story_sustain ?? '')
-  const [storyExpertName, setStoryExpertName] = useState(initialMeta.khayah_story_expert_name ?? '')
-  const [storyExpertOrg, setStoryExpertOrg] = useState(initialMeta.khayah_story_expert_org ?? '')
-  const [storyExpertQuote, setStoryExpertQuote] = useState(initialMeta.khayah_story_expert_quote ?? '')
   const [projectRegion, setProjectRegion] = useState<ProjectRegion | null>(null)
   const [yearlyMode, setYearlyMode] = useState<YearlyNewsletterMode>('PDF소식지')
   const [title, setTitle] = useState<string>(initialTitle)
@@ -257,10 +245,10 @@ function PostEditorForm({
   }, [])
 
   useEffect(() => {
-    if (postType !== '스토리') {
-      setStoryScope(null)
-    } else if (prevPostType.current !== '스토리') {
-      setStoryScope(null)
+    if (postType !== '활동소식') {
+      setActivityScope(null)
+    } else if (prevPostType.current !== '활동소식') {
+      setActivityScope(null)
     }
     if (postType !== '진행사업') {
       setProjectRegion(null)
@@ -277,7 +265,7 @@ function PostEditorForm({
       setNewsletterYearEnd('')
       setNewsletterYearRange(false)
     }
-    if (postType !== '연간소식지' && postType !== '활동소식' && postType !== '스토리' && postType !== '진행사업') {
+    if (postType !== '연간소식지' && postType !== '활동소식' && postType !== '진행사업') {
       setCoverFile(null)
       setCoverPreviewUrl('')
     }
@@ -308,7 +296,7 @@ function PostEditorForm({
         }
       }
     }
-    if (initialPostType === '활동소식' || initialPostType === '스토리' || initialPostType === '진행사업') {
+    if (initialPostType === '활동소식' || initialPostType === '진행사업') {
       if (initialMeta.khayah_cover_url) setCoverPreviewUrl(initialMeta.khayah_cover_url)
     }
     if (initialPostType === '언론보도') {
@@ -317,9 +305,9 @@ function PostEditorForm({
       setPressUrl(initialMeta.khayah_press_url ?? '')
       setPressDate(initialMeta.khayah_press_date ?? '')
     }
-    if (initialPostType === '스토리') {
-      const s = initialMeta.khayah_story_scope as StoryPostScope | undefined
-      if (s && storyPostScopes.includes(s)) setStoryScope(s)
+    if (initialPostType === '활동소식') {
+      const s = initialMeta.khayah_story_scope as ActivityScope | undefined
+      if (s && activityScopes.includes(s)) setActivityScope(s)
     }
     if (initialPostType === '진행사업') {
       const stored = initialMeta.khayah_project_region
@@ -504,12 +492,8 @@ function PostEditorForm({
       setSaveError('제목을 입력해 주세요.')
       return
     }
-    if (postType === '스토리' && status === 'publish' && !storyConsent) {
-      setSaveError('사진·인터뷰 게재 동의 확인 (체크해야 공개 가능)')
-      return
-    }
-    if (postType === '스토리' && !storyScope) {
-      setSaveError('스토리 게시 유형(국내/해외/연구/진행)을 선택해 주세요.')
+    if (postType === '활동소식' && !activityScope) {
+      setSaveError('활동소식 범위(국내/해외/연구/진행)를 선택해 주세요.')
       return
     }
     if (postType === '진행사업' && !projectRegion) {
@@ -570,20 +554,8 @@ function PostEditorForm({
       if (postType === '공지사항') {
         meta.khayah_notice = 'true'
       }
-      if (postType === '스토리' && storyScope) {
-        meta.khayah_story_scope = storyScope
-        meta.khayah_story_category = storyCategory
-        meta.khayah_story_featured = storyFeatured ? '1' : ''
-        meta.khayah_story_consent = storyConsent ? '1' : ''
-        meta.khayah_story_place = storyPlace.trim()
-        meta.khayah_story_before = storyBefore.trim()
-        meta.khayah_story_intervention = storyIntervention.trim()
-        meta.khayah_story_after = storyAfter.trim()
-        meta.khayah_story_evidence = storyEvidence.trim()
-        meta.khayah_story_sustain = storySustain.trim()
-        meta.khayah_story_expert_name = storyExpertName.trim()
-        meta.khayah_story_expert_org = storyExpertOrg.trim()
-        meta.khayah_story_expert_quote = storyExpertQuote.trim()
+      if (postType === '활동소식' && activityScope) {
+        meta.khayah_story_scope = activityScope
       }
       if (postType === '진행사업' && projectRegion) {
         meta.khayah_project_region = projectRegion
@@ -598,7 +570,7 @@ function PostEditorForm({
       }
       const storedCover =
         coverPreviewUrl.trim() && !coverPreviewUrl.startsWith('blob:') ? coverPreviewUrl.trim() : ''
-      if (postType === '연간소식지' || postType === '활동소식' || postType === '스토리' || postType === '진행사업') {
+      if (postType === '연간소식지' || postType === '활동소식' || postType === '진행사업') {
         meta.khayah_cover_url = storedCover
         meta.khayah_cover_blank = coverBlank ? 'true' : ''
       }
@@ -859,70 +831,33 @@ function PostEditorForm({
                 </label>
               </div>
             </div>
-          ) : postType === '스토리' ? (
+          ) : postType === '활동소식' ? (
             <div className="admin-field admin-field--full">
-              <span className="admin-field__label">게시 유형</span>
+              <span className="admin-field__label">범위</span>
               <p className="admin-fieldset__hint admin-fieldset__hint--flush">
-                스토리 글은 국내·해외·연구·진행 네 가지 중 하나를 반드시 선택합니다.
+                활동소식 목록의 국내·해외·연구·진행 필터에 사용됩니다. 변화의 이야기·전문가 이야기는 임팩트 관리 › 스토리 관리에서 등록합니다.
               </p>
-              <div className="admin-segmented admin-segmented--tight" role="group" aria-label="스토리 게시 유형">
-                {storyPostScopes.map((s) => (
+              <div className="admin-segmented admin-segmented--tight" role="group" aria-label="활동소식 범위">
+                {activityScopes.map((s) => (
                   <button
                     key={s}
                     type="button"
-                    className={`admin-segmented__btn${storyScope === s ? ' admin-segmented__btn--active' : ''}`}
+                    className={`admin-segmented__btn${activityScope === s ? ' admin-segmented__btn--active' : ''}`}
                     onClick={() => {
                       if (isEditLocked) return
-                      setStoryScope(s)
+                      setActivityScope(s)
                     }}
                     disabled={isEditLocked}
                   >
-                    {storyScopeLabel[s]}
+                    {activityScopeLabel[s]}
                   </button>
                 ))}
               </div>
-              {storyScope === null ? (
+              {activityScope === null ? (
                 <p className="admin-upload__hint" role="status">
-                  게시 유형을 선택해 주세요.
+                  범위를 선택해 주세요.
                 </p>
               ) : null}
-              <span className="admin-field__label">카테고리</span>
-              <div className="admin-segmented admin-segmented--tight" role="group" aria-label="스토리 카테고리">
-                {(['변화의 이야기', '전문가 이야기'] as const).map((category) => (
-                  <button
-                    key={category}
-                    type="button"
-                    className={`admin-segmented__btn${storyCategory === category ? ' admin-segmented__btn--active' : ''}`}
-                    onClick={() => setStoryCategory(category)}
-                  >
-                    {category}
-                  </button>
-                ))}
-              </div>
-              <label className="admin-check">
-                <input type="checkbox" checked={storyFeatured} onChange={(e) => setStoryFeatured(e.target.checked)} />
-                대표 글로 지정
-              </label>
-              <label className="admin-check">
-                <input type="checkbox" checked={storyConsent} onChange={(e) => setStoryConsent(e.target.checked)} />
-                사진·인터뷰 게재 동의 확인 (체크해야 공개 가능)
-              </label>
-              {storyCategory === '변화의 이야기' ? (
-                <>
-                  <label className="admin-field admin-field--full"><span className="admin-field__label">[국가] · [사업명]</span><input className="admin-input" value={storyPlace} onChange={(e) => setStoryPlace(e.target.value)} /></label>
-                  <label className="admin-field admin-field--full"><span className="admin-field__label">Before</span><input className="admin-input" value={storyBefore} onChange={(e) => setStoryBefore(e.target.value)} /></label>
-                  <label className="admin-field admin-field--full"><span className="admin-field__label">Intervention</span><input className="admin-input" value={storyIntervention} onChange={(e) => setStoryIntervention(e.target.value)} /></label>
-                  <label className="admin-field admin-field--full"><span className="admin-field__label">After</span><input className="admin-input" value={storyAfter} onChange={(e) => setStoryAfter(e.target.value)} /></label>
-                  <label className="admin-field admin-field--full"><span className="admin-field__label">Evidence</span><input className="admin-input" value={storyEvidence} onChange={(e) => setStoryEvidence(e.target.value)} /></label>
-                  <label className="admin-field admin-field--full"><span className="admin-field__label">Sustainability</span><input className="admin-input" value={storySustain} onChange={(e) => setStorySustain(e.target.value)} /></label>
-                </>
-              ) : (
-                <>
-                  <label className="admin-field admin-field--full"><span className="admin-field__label">이름</span><input className="admin-input" value={storyExpertName} onChange={(e) => setStoryExpertName(e.target.value)} /></label>
-                  <label className="admin-field admin-field--full"><span className="admin-field__label">소속 · 전문 분야</span><input className="admin-input" value={storyExpertOrg} onChange={(e) => setStoryExpertOrg(e.target.value)} /></label>
-                  <label className="admin-field admin-field--full"><span className="admin-field__label">평가 한두 문장</span><input className="admin-input" value={storyExpertQuote} onChange={(e) => setStoryExpertQuote(e.target.value)} /></label>
-                </>
-              )}
             </div>
           ) : postType === '진행사업' ? (
             <div className="admin-field admin-field--full">
@@ -971,7 +906,7 @@ function PostEditorForm({
                     대표 이미지
                     {postType === '연간소식지' && yearlyMode === 'PDF소식지'
                       ? ' (PDF 표지 또는 이미지)'
-                      : postType === '활동소식' || postType === '스토리' || postType === '진행사업'
+                      : postType === '활동소식' || postType === '진행사업'
                         ? ' (목록 왼쪽 썸네일)'
                         : ''}
                   </span>
@@ -1022,7 +957,7 @@ function PostEditorForm({
                             칸으로 둡니다.
                           </p>
                         </>
-                      ) : postType === '활동소식' || postType === '스토리' || postType === '진행사업' ? (
+                      ) : postType === '활동소식' || postType === '진행사업' ? (
                         <>
                           <label
                             className="admin-btn admin-btn--ghost"
@@ -1260,7 +1195,7 @@ function PostEditorForm({
           <button type="button" className="admin-btn admin-btn--ghost" onClick={() => void onSave('draft')} disabled={saving}>
             {saving ? '저장 중…' : '임시저장'}
           </button>
-          <button type="button" className="admin-btn admin-btn--primary" onClick={() => void onSave('publish')} disabled={saving || (postType === '스토리' && !storyConsent)}>
+          <button type="button" className="admin-btn admin-btn--primary" onClick={() => void onSave('publish')} disabled={saving}>
             {saving ? '저장 중…' : '게시'}
           </button>
         </div>
@@ -1276,7 +1211,6 @@ export function AdminPostsPage() {
   const [editorMode, setEditorMode] = useState<'new' | 'edit'>('new')
   const [editingId, setEditingId] = useState<number | null>(null)
   const [rows, setRows] = useState<AdminPost[]>([])
-  const [featuredStories, setFeaturedStories] = useState<AdminPost[]>([])
   const [listPage, setListPage] = useState(1)
   const [query, setQuery] = useState('')
   const [total, setTotal] = useState(0)
@@ -1304,17 +1238,10 @@ export function AdminPostsPage() {
         const res = await adminFetchPostsByKind(filterType, 1, 100, query)
         setRows(res.posts)
         setTotal(res.total)
-        setFeaturedStories([])
       } else {
         const res = await adminFetchPostsByKind(filterType, page, ADMIN_POSTS_PER_PAGE, query)
         setRows(res.posts)
         setTotal(res.total)
-        if (filterType === '스토리') {
-          const all = await adminFetchPostsByKind('스토리', 1, 200)
-          setFeaturedStories(all.posts.filter((post) => post.meta?.khayah_story_featured === '1'))
-        } else {
-          setFeaturedStories([])
-        }
       }
     } catch (e) {
       setError(e instanceof Error ? e.message : '목록을 불러오지 못했습니다.')
@@ -1362,10 +1289,14 @@ export function AdminPostsPage() {
   if (view === 'editor') {
     const row = editingId ? rows.find((r) => r.id === editingId) : undefined
     const initialTitle = row?.title ?? ''
-    const initialPostType = (row?.meta?.khayah_kind as ContentType | undefined) ?? (row ? filterType : filterType)
-    const initialStoryScope =
-      row?.meta?.khayah_story_scope && storyPostScopes.includes(row.meta.khayah_story_scope as StoryPostScope)
-        ? (row.meta.khayah_story_scope as StoryPostScope)
+    const rawKind = row?.meta?.khayah_kind as string | undefined
+    const initialPostType: ContentType =
+      rawKind && (contentTypes as readonly string[]).includes(rawKind)
+        ? (rawKind as ContentType)
+        : filterType
+    const initialActivityScope =
+      row?.meta?.khayah_story_scope && activityScopes.includes(row.meta.khayah_story_scope as ActivityScope)
+        ? (row.meta.khayah_story_scope as ActivityScope)
         : null
     const initialMeta = row?.meta ?? {}
     const initialContentHtml = row?.content ?? ''
@@ -1376,7 +1307,7 @@ export function AdminPostsPage() {
         mode={editorMode}
         initialPostType={initialPostType}
         initialTitle={initialTitle}
-        initialStoryScope={initialStoryScope}
+        initialActivityScope={initialActivityScope}
         initialPostId={editingId}
         initialMeta={initialMeta}
         initialContentHtml={initialContentHtml}
@@ -1393,8 +1324,8 @@ export function AdminPostsPage() {
         <div>
           <h1 className="admin-page__title">게시글 관리</h1>
           <p className="admin-page__desc">
-            공지사항, 스토리, 언론보도, 연간소식지 등 게시형 콘텐츠를 유형별로 등록·수정·삭제합니다. 메인
-            히어로 배너는 <strong>메인 배너 관리</strong>(콘텐츠 관리 하위)에서 다룹니다.
+            공지사항, 활동소식, 언론보도, 연간소식지 등 게시형 콘텐츠를 유형별로 등록·수정·삭제합니다. 변화의 이야기·전문가 이야기는 임팩트 관리에서 다룹니다.
+            메인 히어로 배너는 <strong>메인 배너 관리</strong>(콘텐츠 관리 하위)에서 다룹니다.
           </p>
         </div>
         <div className="admin-page__actions">
@@ -1420,55 +1351,6 @@ export function AdminPostsPage() {
           <>선택한 유형의 글만 아래 목록에 표시됩니다. 새 글 작성 화면에서도 동일한 UI로 유형을 고릅니다.</>
         }
       />
-
-      {filterType === '스토리' ? (
-        <section className="admin-panel" aria-labelledby="story-featured-heading">
-          <h2 id="story-featured-heading" className="admin-panel__title">대표 스토리</h2>
-          <p className="admin-panel__foot">
-            대표로 지정한 글만 모았습니다. 아래 목록에는 스토리 전체가 나오고, 여기에는 그 중 대표 글이 다시 보입니다. 홈의 큰 칸은 공개된 대표 글 중 가장 최근 1건이고, 그 아래 3칸은 대표 글을 뺀 최신 3건입니다.
-          </p>
-          {featuredStories.length === 0 ? (
-            <p className="admin-table__empty">대표로 지정한 스토리가 없습니다.</p>
-          ) : (
-            <div className="admin-table-wrap">
-              <table className="admin-table">
-                <thead>
-                  <tr>
-                    <th scope="col">구분</th>
-                    <th scope="col">제목</th>
-                    <th scope="col">홈</th>
-                    <th scope="col">수정일</th>
-                    <th scope="col">관리</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {featuredStories.map((row) => {
-                    const homeLead = featuredStories.find((post) => post.status !== 'draft')
-                    return (
-                      <tr key={row.id}>
-                        <td>{row.meta?.khayah_story_category || '스토리'}</td>
-                        <td>
-                          {row.status === 'draft' ? '임시저장 ' : ''}
-                          {row.title}
-                        </td>
-                        <td>{homeLead?.id === row.id ? '대표 칸' : ''}</td>
-                        <td>{new Date(row.publishedAt).toISOString().slice(0, 10)}</td>
-                        <td>
-                          <div className="admin-row-actions">
-                            <button type="button" className="admin-btn admin-btn--sm admin-btn--ghost" onClick={() => openEdit(row.id)}>
-                              수정
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    )
-                  })}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </section>
-      ) : null}
 
       <section className="admin-panel" aria-labelledby="posts-list-heading">
         <h2 id="posts-list-heading" className="admin-panel__title">

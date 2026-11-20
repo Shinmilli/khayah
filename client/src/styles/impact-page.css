@@ -166,6 +166,28 @@
   font-weight: 800;
 }
 
+.impact-story__body {
+  margin: 14px 0 0;
+  font-size: 15px;
+  line-height: 1.7;
+  color: #485063;
+}
+
+.impact-story__body p {
+  margin: 0 0 0.75em;
+}
+
+.impact-story__body p:last-child {
+  margin-bottom: 0;
+}
+
+.impact-story__body img,
+.impact-story__body video {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
 .impact-story__rows {
   display: flex;
   flex-direction: column;

@@ -74,7 +74,7 @@ export function defaultImpactPageDocument(): ImpactPageDocument {
     homeTitle: '카야가 함께 걸어온 길',
     homeLead: '한 사람의 성장을 믿으며 10년 동안 이어온 걸음을 전합니다.',
     homeNote: '2026년 ○월 기준 · 설립 이후 누적',
-    homePublic: false,
+    homePublic: true,
     homeNumbers: [
       { label: '함께 걸어온 시간', value: '10', unit: '년', note: '2016년 5월 설립' },
       { label: '함께한 사람들', value: '[0,000]', unit: '명', note: '국내외 사업에 직접 참여한 사람들' },
@@ -129,7 +129,27 @@ export function defaultImpactPageDocument(): ImpactPageDocument {
     projects: [],
     years: [],
     evals: [],
-    stories: [],
+    stories: [
+      {
+        id: 's-test-1',
+        category: '변화의 이야기',
+        title: '스토리 test 1',
+        project: '테스트 사업',
+        featured: true,
+        consent: true,
+        body: '임팩트 스토리 본문 테스트입니다. 관리자에서 수정·삭제할 수 있습니다.',
+        before: 'Before 테스트',
+        intervention: 'Intervention 테스트',
+        after: 'After 테스트',
+        evidence: 'Evidence 테스트',
+        sustainability: 'Sustainability 테스트',
+        expertName: '',
+        expertOrg: '',
+        expertField: '',
+        expertLine: '',
+        expertPhoto: '',
+      },
+    ],
   }
 }
 

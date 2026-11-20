@@ -1,16 +1,20 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Link, useSearchParams } from 'react-router-dom'
-import { fetchPostsByKind } from '../services/api'
-import type { Post } from '../types/post'
+import { Link, useLocation, useSearchParams } from 'react-router-dom'
+import type { ImpactStory } from '../features/impact/impactPageTypes'
+import { StoryChangeSteps } from '../features/impact/StoryChangeSteps'
+import { storyChangeSteps, storyTeaser } from '../features/impact/storyHelpers'
+import { useImpactPage } from '../features/impact/useImpactPage'
 import { PageHero } from '../components/PageHero'
 import { Pagination } from '../components/Pagination'
 import { paginate } from '../utils/paginate'
 import { useLocale } from '../i18n/LocaleContext'
 import { pageHeroImageForPath } from '../constants/pageHeroImages'
 import { PATH } from '../i18n/routes'
+import { normalizePathKey } from '../constants/pagesContent'
 import { ListStatus } from '../components/ListStatus'
 import '../styles/story.css'
 import '../styles/page.css'
+import '../styles/impact-page.css'
 
 type StoryCat = 'all' | 'change' | 'expert'
 
@@ -26,60 +30,126 @@ function parseCat(raw: string | null): StoryCat {
   return 'all'
 }
 
-function storyCategory(post: Post): '변화의 이야기' | '전문가 이야기' | null {
-  const raw = post.meta?.khayah_story_category ?? ''
-  if (raw === '변화의 이야기' || raw === '전문가 이야기') return raw
-  return null
+function catKey(category: ImpactStory['category']): StoryCat {
+  return category === '전문가 이야기' ? 'expert' : 'change'
 }
 
-function formatYmd(iso: string): string {
-  const d = new Date(iso)
-  if (Number.isNaN(d.getTime())) return ''
-  const y = d.getFullYear()
-  const m = String(d.getMonth() + 1).padStart(2, '0')
-  const day = String(d.getDate()).padStart(2, '0')
-  return `${y}-${m}-${day}`
+function publishedStories(stories: ImpactStory[] | undefined): ImpactStory[] {
+  return (stories ?? []).filter((story) => story.consent && story.title.trim())
+}
+
+function storyIdFromPath(pathname: string): string {
+  const pathKey = normalizePathKey(pathname)
+  if (!pathKey.startsWith(`${PATH.newsStories}/`)) return ''
+  return decodeURIComponent(pathKey.slice(`${PATH.newsStories}/`.length).split('/')[0] ?? '').trim()
 }
 
 export function StoryCategoryPage() {
   const { localize, messages } = useLocale()
   const st = messages.pages.stories
-  const [params, setParams] = useSearchParams()
-  const cat = parseCat(params.get('cat'))
+  const location = useLocation()
+  const storyId = storyIdFromPath(location.pathname)
+  const [searchParams, setSearchParams] = useSearchParams()
+  const cat = parseCat(searchParams.get('cat'))
   const [listPage, setListPage] = useState(1)
-  const [posts, setPosts] = useState<Post[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(false)
+  const impact = useImpactPage()
+  const loading = impact === null
+  const stories = useMemo(() => publishedStories(impact?.stories), [impact])
+  const detail = useMemo(
+    () => (storyId ? stories.find((item) => item.id === storyId) ?? null : null),
+    [stories, storyId],
+  )
+  const items = useMemo(() => {
+    if (cat === 'all') return stories
+    const label = CAT_LABEL[cat]
+    return stories.filter((story) => story.category === label)
+  }, [stories, cat])
+  const paged = paginate(items, listPage, 12)
 
   useEffect(() => {
-    let cancelled = false
-    setLoading(true)
-    setError(false)
-    fetchPostsByKind('스토리', 1, 200)
-      .then((res) => {
-        if (!cancelled) setPosts(res.posts)
-      })
-      .catch(() => {
-        if (!cancelled) {
-          setPosts([])
-          setError(true)
-        }
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false)
-      })
-    return () => {
-      cancelled = true
+    setListPage(1)
+  }, [cat])
+
+  if (storyId) {
+    if (loading) {
+      return (
+        <div className="page-content-wrapper press-archive-page">
+          <PageHero title={st.title} backgroundImageUrl={pageHeroImageForPath(PATH.newsStories)} />
+          <div className="section">
+            <div className="section_wrapper clearfix">
+              <div className="column one">
+                <ListStatus variant="loading" message={messages.pages.archive.loading} lines={5} />
+              </div>
+            </div>
+          </div>
+        </div>
+      )
     }
-  }, [])
-
-  const items = useMemo(() => {
-    if (cat === 'all') return posts
-    const label = CAT_LABEL[cat]
-    return posts.filter((p) => storyCategory(p) === label)
-  }, [posts, cat])
-
-  const paged = paginate(items, listPage, 12)
+    if (!detail) {
+      return (
+        <div className="page-content-wrapper press-archive-page">
+          <PageHero title={st.title} backgroundImageUrl={pageHeroImageForPath(PATH.newsStories)} />
+          <div className="section">
+            <div className="section_wrapper clearfix">
+              <div className="column one">
+                <ListStatus variant="empty" message={st.empty} />
+                <p className="story-detail__back">
+                  <Link to={localize('/news/stories')}>{st.title} 목록으로</Link>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )
+    }
+    const steps = storyChangeSteps(detail)
+    const listTo = localize(`/news/stories?cat=${catKey(detail.category)}`)
+    const isExpert = detail.category === '전문가 이야기'
+    return (
+      <div className="page-content-wrapper press-archive-page">
+        <PageHero title={st.title} backgroundImageUrl={pageHeroImageForPath(PATH.newsStories)} />
+        <div className="section">
+          <div className="section_wrapper clearfix">
+            <div className="column one">
+              <article className="story-detail">
+                <div className="story-detail__hero">
+                  <div className="story-detail__photo">
+                    {detail.expertPhoto ? <img src={detail.expertPhoto} alt="" /> : <span>현장 사진</span>}
+                  </div>
+                  <div className="story-detail__intro">
+                    <span className={`impact-pill${isExpert ? ' is-expert' : ''}`}>{detail.category}</span>
+                    {detail.project ? <p className="story-detail__project">{detail.project}</p> : null}
+                    <h1 className="story-detail__title">{detail.title}</h1>
+                    {isExpert ? (
+                      <>
+                        {detail.expertLine ? <p className="impact-quote-text">“{detail.expertLine}”</p> : null}
+                        {detail.expertName || detail.expertOrg || detail.expertField ? (
+                          <div className="impact-person">
+                            {detail.expertPhoto ? <img src={detail.expertPhoto} alt="" /> : <i />}
+                            <div>
+                              <b>{detail.expertName}</b>
+                              <span>{[detail.expertOrg, detail.expertField].filter(Boolean).join(' · ')}</span>
+                            </div>
+                          </div>
+                        ) : null}
+                      </>
+                    ) : null}
+                    {detail.body?.trim() ? (
+                      <div className="story-detail__body" dangerouslySetInnerHTML={{ __html: detail.body }} />
+                    ) : null}
+                  </div>
+                </div>
+                {!isExpert ? <StoryChangeSteps steps={steps} /> : null}
+                <p className="story-detail__back">
+                  <Link to={listTo}>{detail.category} 목록으로</Link>
+                </p>
+              </article>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   const tabs: Array<{ key: StoryCat; label: string }> = [
     { key: 'all', label: st.all },
@@ -88,11 +158,10 @@ export function StoryCategoryPage() {
   ]
 
   const selectCat = (next: StoryCat) => {
-    const nextParams = new URLSearchParams(params)
+    const nextParams = new URLSearchParams(searchParams)
     if (next === 'all') nextParams.delete('cat')
     else nextParams.set('cat', next)
-    setParams(nextParams, { replace: true })
-    setListPage(1)
+    setSearchParams(nextParams, { replace: true })
   }
 
   return (
@@ -121,43 +190,32 @@ export function StoryCategoryPage() {
               </header>
 
               {loading ? <ListStatus variant="loading" message={messages.pages.archive.loading} lines={5} /> : null}
-              {error ? <ListStatus variant="error" message={st.loadError} /> : null}
-              {!loading && !error && items.length === 0 ? (
-                <ListStatus variant="empty" message={st.empty} />
-              ) : null}
-              {!loading && !error && items.length > 0 ? (
+              {!loading && items.length === 0 ? <ListStatus variant="empty" message={st.empty} /> : null}
+              {!loading && items.length > 0 ? (
                 <div className="archive-board">
                   <div className="archive-board__head" aria-hidden="true">
                     <span>{messages.pages.archive.colTitle}</span>
-                    <span>{messages.pages.archive.colDate}</span>
                     <span className="archive-board__head-action">{messages.pages.archive.colAction}</span>
                   </div>
                   <ul className="press-archive__list" aria-label={st.listAria}>
-                    {paged.items.map((p) => {
-                      const category = storyCategory(p)
-                      const ymd = formatYmd(p.publishedAt)
+                    {paged.items.map((story) => {
+                      const blurb = storyTeaser(story, 120)
                       return (
-                        <li key={p.id} className="press-archive__item">
+                        <li key={story.id} className="press-archive__item">
                           <div className="press-archive__text">
                             <p className="press-archive__headline">
-                              {category ? (
-                                <span className="press-archive__source-wrap" aria-label={category}>
-                                  <span className="press-archive__bracket">[</span>
-                                  <span className="press-archive__source">{category}</span>
-                                  <span className="press-archive__bracket">]</span>
-                                </span>
-                              ) : null}
-                              {category ? ' ' : null}
-                              <span className="press-archive__article-title">{p.title}</span>
+                              <span className="press-archive__source-wrap" aria-label={story.category}>
+                                <span className="press-archive__bracket">[</span>
+                                <span className="press-archive__source">{story.category}</span>
+                                <span className="press-archive__bracket">]</span>
+                              </span>{' '}
+                              <span className="press-archive__article-title">{story.title}</span>
                             </p>
+                            {blurb ? <p className="press-archive__summary">{blurb}</p> : null}
                           </div>
-                          <time className="press-archive__ymd" dateTime={ymd}>
-                            {ymd}
-                          </time>
                           <Link
                             className="press-archive__btn"
-                            to={localize(`/posts/${encodeURIComponent(p.slug)}`)}
-                            state={{ postKind: '스토리' }}
+                            to={localize(`/news/stories/${encodeURIComponent(story.id)}`)}
                           >
                             글 바로보기
                           </Link>
@@ -167,7 +225,7 @@ export function StoryCategoryPage() {
                   </ul>
                 </div>
               ) : null}
-              {!loading && !error && items.length > 0 ? (
+              {!loading && items.length > 0 ? (
                 <div className="story-archive__actions">
                   <Pagination
                     page={paged.page}

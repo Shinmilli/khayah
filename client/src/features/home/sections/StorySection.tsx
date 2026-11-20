@@ -4,6 +4,9 @@ import { fetchPostsByKind } from '../../../services/api'
 import type { Post } from '../../../types/post'
 import { useLocale } from '../../../i18n/LocaleContext'
 import { PostCoverThumb } from '../../../components/PostCoverThumb'
+import { useImpactPage } from '../../impact/useImpactPage'
+import type { ImpactStory } from '../../impact/impactPageTypes'
+import { storyTeaser } from '../../impact/storyHelpers'
 
 export function StorySection() {
   const { locale } = useLocale()
@@ -11,34 +14,27 @@ export function StorySection() {
   return <LegacyStorySection />
 }
 
-function storyCategory(post: Post): '변화의 이야기' | '전문가 이야기' | null {
-  const raw = post.meta?.khayah_story_category ?? ''
-  if (raw === '변화의 이야기' || raw === '전문가 이야기') return raw
-  return null
+function storyListHref(localize: (path: string) => string, category?: ImpactStory['category'] | null): string {
+  if (category === '전문가 이야기') return localize('/news/stories?cat=expert')
+  if (category === '변화의 이야기') return localize('/news/stories?cat=change')
+  return localize('/news/stories')
+}
+
+function storyDetailHref(localize: (path: string) => string, story: ImpactStory): string {
+  return localize(`/news/stories/${encodeURIComponent(story.id)}`)
 }
 
 function KoreanHomeStories() {
   const { localize } = useLocale()
-  const [posts, setPosts] = useState<Post[]>([])
-
-  useEffect(() => {
-    let cancelled = false
-    fetchPostsByKind('스토리', 1, 30)
-      .then((res) => {
-        if (!cancelled) setPosts(res.posts)
-      })
-      .catch(() => {
-        if (!cancelled) setPosts([])
-      })
-    return () => {
-      cancelled = true
-    }
-  }, [])
-
-  const featured = posts.find((post) => post.meta?.khayah_story_featured === '1')
-  const rest = posts.filter((post) => post.id !== featured?.id).slice(0, 3)
-  const featuredCategory = featured ? storyCategory(featured) : null
+  const impact = useImpactPage()
+  const published = (impact?.stories ?? []).filter((story) => story.consent && story.title.trim())
+  const featured = published.find((story) => story.featured) ?? published[0]
+  const rest = published.filter((story) => story.id !== featured?.id).slice(0, 3)
+  const featuredCategory = featured?.category ?? null
+  const featuredTeaser = featured ? storyTeaser(featured) : ''
   const emptyCards = Math.max(0, 3 - rest.length)
+  const listHref = localize('/news/stories')
+  const featuredHref = featured ? storyDetailHref(localize, featured) : storyListHref(localize, '변화의 이야기')
 
   return (
     <section className="home-stories" aria-labelledby="home-stories-title">
@@ -48,32 +44,28 @@ function KoreanHomeStories() {
           <h2 id="home-stories-title">스토리</h2>
           <p>카야가 전하는 현장 이야기</p>
         </div>
-        <Link to={localize('/news/stories')}>전체보기 →</Link>
+        <Link to={listHref}>전체보기 →</Link>
       </div>
       {featured ? (
-        <Link
-          className="home-stories__lead"
-          to={localize(`/posts/${encodeURIComponent(featured.slug)}`)}
-          state={{ postKind: '스토리' }}
-        >
+        <Link className="home-stories__lead" to={featuredHref}>
           <div className="home-stories__lead-photo">
-            <PostCoverThumb post={featured} />
+            {featured.expertPhoto ? (
+              <img src={featured.expertPhoto} alt="" />
+            ) : (
+              <div className="home-stories__slot">대표 사례 현장 사진</div>
+            )}
           </div>
           <div className="home-stories__lead-copy">
             <span className={featuredCategory === '전문가 이야기' ? 'is-expert' : 'is-change'}>
               {featuredCategory ? `대표 사례 · ${featuredCategory}` : '대표 사례'}
             </span>
             <p className="home-stories__lead-title">{featured.title}</p>
-            {featured.excerpt ? <p>{featured.excerpt}</p> : null}
-            {featuredCategory ? (
-              <p className="home-stories__more">
-                {featuredCategory} 보기 →
-              </p>
-            ) : null}
+            {featuredTeaser ? <p>{featuredTeaser}</p> : null}
+            {featuredCategory ? <p className="home-stories__more">{featuredCategory} 보기 →</p> : null}
           </div>
         </Link>
       ) : (
-        <div className="home-stories__lead">
+        <Link className="home-stories__lead" to={storyListHref(localize, '변화의 이야기')}>
           <div className="home-stories__lead-photo home-stories__slot">대표 사례 현장 사진</div>
           <div className="home-stories__lead-copy">
             <span className="is-change">대표 사례 · 변화의 이야기</span>
@@ -81,29 +73,20 @@ function KoreanHomeStories() {
             <p>[참여 전 상황, 카야의 활동, 달라진 점을 2~3문장으로 정리합니다.]</p>
             <p className="home-stories__more">변화의 이야기 보기 →</p>
           </div>
-        </div>
+        </Link>
       )}
       <div className="home-stories__grid">
-        {rest.map((post) => {
-          const category = storyCategory(post)
-          return (
-            <Link
-              key={post.id}
-              to={localize(`/posts/${encodeURIComponent(post.slug)}`)}
-              state={{ postKind: '스토리' }}
-            >
-              <div className="home-stories__thumb">
-                <PostCoverThumb post={post} />
-              </div>
-              <p>
-                {category ? (
-                  <span className={category === '전문가 이야기' ? 'is-expert' : 'is-change'}>[{category}]</span>
-                ) : null}{' '}
-                {post.title}
-              </p>
-            </Link>
-          )
-        })}
+        {rest.map((story) => (
+          <Link key={story.id} to={storyDetailHref(localize, story)}>
+            <div className="home-stories__thumb">
+              {story.expertPhoto ? <img src={story.expertPhoto} alt="" /> : <div className="home-stories__slot">썸네일</div>}
+            </div>
+            <p>
+              <span className={story.category === '전문가 이야기' ? 'is-expert' : 'is-change'}>[{story.category}]</span>{' '}
+              {story.title}
+            </p>
+          </Link>
+        ))}
         {Array.from({ length: emptyCards }, (_, index) => {
           const expert = rest.length + index === 1
           return (

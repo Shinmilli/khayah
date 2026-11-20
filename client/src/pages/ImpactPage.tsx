@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react'
 import { Link, Navigate } from 'react-router-dom'
 import { fetchPostsByKind } from '../services/api'
 import { useImpactPage } from '../features/impact/useImpactPage'
-import type { ImpactStory } from '../features/impact/impactPageTypes'
+import { StoryChangeSteps } from '../features/impact/StoryChangeSteps'
+import { storyChangeSteps } from '../features/impact/storyHelpers'
 import type { Post } from '../types/post'
 import '../styles/impact-page.css'
 
@@ -32,16 +33,6 @@ const FIELDS = ['전체', '교육', '해외봉사단', '긴급구호']
 function filled(value: string | undefined | null): boolean {
   const text = value?.trim() ?? ''
   return text !== '' && text !== '—' && text !== '-'
-}
-
-function storyRows(story: ImpactStory): Array<[string, string]> {
-  return [
-    ['Before', story.before],
-    ['Intervention', story.intervention],
-    ['After', story.after],
-    ['Evidence', story.evidence],
-    ['Sustainability', story.sustainability],
-  ].filter((row): row is [string, string] => Boolean(row[1]?.trim()))
 }
 
 export function ImpactPage() {
@@ -111,21 +102,17 @@ export function ImpactPage() {
                 <p className="impact-kicker">01 · STORIES OF CHANGE</p>
                 <h2>변화의 이야기</h2>
                 <p className="impact-lead">숫자 이면의 변화를 한 사람, 한 지역의 이야기로 전합니다.</p>
-                <p className="impact-note">스토리 게시판의 '변화의 이야기' 글 중 대표 글이 여기에 보입니다.</p>
+                <p className="impact-note">임팩트 관리 › 스토리 관리의 '변화의 이야기' 대표 글이 여기에 보입니다.</p>
                 {lead ? (
                   <article className="impact-story">
                     <div className="impact-story__photo">대표 사례 현장 사진</div>
                     <div className="impact-story__copy">
                       {lead.project ? <span className="impact-pill">{lead.project}</span> : null}
                       <h3>{lead.title}</h3>
-                      <div className="impact-story__rows">
-                        {storyRows(lead).map(([label, value]) => (
-                          <div key={label}>
-                            <b>{label}</b>
-                            <span>{value}</span>
-                          </div>
-                        ))}
-                      </div>
+                      {lead.body?.trim() ? (
+                        <div className="impact-story__body" dangerouslySetInnerHTML={{ __html: lead.body }} />
+                      ) : null}
+                      <StoryChangeSteps steps={storyChangeSteps(lead)} variant="compact" />
                     </div>
                   </article>
                 ) : (
@@ -187,7 +174,7 @@ export function ImpactPage() {
                 <p className="impact-kicker">03 · EXPERT REVIEW</p>
                 <h2>전문가 평가</h2>
                 <p className="impact-lead">사업을 함께 살펴본 전문가의 시선으로 변화를 확인합니다.</p>
-                <p className="impact-note">스토리 게시판의 '전문가 이야기' 글 중 대표 글이 여기에 보입니다.</p>
+                <p className="impact-note">임팩트 관리 › 스토리 관리의 '전문가 이야기' 대표 글이 여기에 보입니다.</p>
                 <div className="impact-cards">
                   {expertFromDoc.map((story) => (
                     <article key={story.id} className="impact-card">

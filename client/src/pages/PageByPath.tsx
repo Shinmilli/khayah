@@ -214,7 +214,7 @@ function PageByPathInner({ kindHint }: { kindHint: string }) {
 
   if (locale === 'ko' && pathKey === PATH.newsActivities) return <StoryArchivePage kind="활동소식" heading="활동소식" />
 
-  if (pathKey === PATH.newsStories) {
+  if (pathKey === PATH.newsStories || pathKey.startsWith(`${PATH.newsStories}/`)) {
     if (locale === 'ko') return <StoryCategoryPage />
     return <StoryArchivePage />
   }

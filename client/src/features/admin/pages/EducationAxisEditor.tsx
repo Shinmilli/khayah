@@ -93,11 +93,20 @@ export function EducationAxisEditor({
                 <div className="biz-bars">
                   {axis.cards.map((card, cardIndex) => {
                     const key = `${index}-card-${cardIndex}`
+                    const removeCard = () => {
+                      patchAxis(index, { cards: axis.cards.filter((_, itemIndex) => itemIndex !== cardIndex) })
+                      if (open === key) setOpen(null)
+                    }
                     return (
-                      <div key={key}>
-                        <button type="button" className="biz-bar" onClick={() => setOpen(open === key ? null : key)}>
-                          {card.title || '제목 없음'}
-                        </button>
+                      <div key={key} className="biz-bar-block">
+                        <div className="biz-bar-row">
+                          <button type="button" className="biz-bar" onClick={() => setOpen(open === key ? null : key)}>
+                            {card.title || '제목 없음'}
+                          </button>
+                          <button type="button" className="biz-x biz-x--inline" aria-label="카드 삭제" onClick={removeCard}>
+                            ×
+                          </button>
+                        </div>
                         {open === key ? (
                           <div className="admin-item">
                             <div className="admin-form-grid">
@@ -118,9 +127,6 @@ export function EducationAxisEditor({
                                 <input className="admin-input" value={card.tag} onChange={(e) => patchAxis(index, { cards: axis.cards.map((item, itemIndex) => (itemIndex === cardIndex ? { ...item, tag: e.target.value } : item)) })} />
                               </label>
                             </div>
-                            <button type="button" className="biz-x" aria-label="카드 삭제" onClick={() => patchAxis(index, { cards: axis.cards.filter((_, itemIndex) => itemIndex !== cardIndex) })}>
-                              ×
-                            </button>
                           </div>
                         ) : null}
                       </div>
@@ -136,11 +142,20 @@ export function EducationAxisEditor({
                 <div className="biz-bars">
                   {axis.cases.map((item, caseIndex) => {
                     const key = `${index}-case-${caseIndex}`
+                    const removeCase = () => {
+                      patchAxis(index, { cases: axis.cases.filter((_, rowIndex) => rowIndex !== caseIndex) })
+                      if (open === key) setOpen(null)
+                    }
                     return (
-                      <div key={key}>
-                        <button type="button" className="biz-bar" onClick={() => setOpen(open === key ? null : key)}>
-                          {item.place || '사례'}
-                        </button>
+                      <div key={key} className="biz-bar-block">
+                        <div className="biz-bar-row">
+                          <button type="button" className="biz-bar" onClick={() => setOpen(open === key ? null : key)}>
+                            {item.place || '사례'}
+                          </button>
+                          <button type="button" className="biz-x biz-x--inline" aria-label="사례 삭제" onClick={removeCase}>
+                            ×
+                          </button>
+                        </div>
                         {open === key ? (
                           <div className="admin-item">
                             <div className="admin-form-grid">
@@ -153,9 +168,6 @@ export function EducationAxisEditor({
                                 <textarea className="admin-input" rows={2} value={item.body} onChange={(e) => patchAxis(index, { cases: axis.cases.map((row, rowIndex) => (rowIndex === caseIndex ? { ...row, body: e.target.value } : row)) })} />
                               </label>
                             </div>
-                            <button type="button" className="biz-x" aria-label="사례 삭제" onClick={() => patchAxis(index, { cases: axis.cases.filter((_, rowIndex) => rowIndex !== caseIndex) })}>
-                              ×
-                            </button>
                           </div>
                         ) : null}
                       </div>

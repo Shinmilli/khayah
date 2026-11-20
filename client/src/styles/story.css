@@ -233,3 +233,260 @@
   line-height: 1.6;
 }
 
+.story-archive .archive-board__head,
+.story-archive .press-archive__item {
+  grid-template-columns: minmax(0, 1fr) 7.5rem;
+}
+
+.story-archive .archive-board__head span:nth-child(2) {
+  text-align: center;
+}
+
+.story-archive .press-archive__summary {
+  margin: 8px 0 0;
+  color: #6b7280;
+  font-size: 0.95rem;
+  font-weight: 400;
+  line-height: 1.55;
+}
+
+.story-detail {
+  margin-top: 24px;
+  max-width: 1080px;
+}
+
+.story-detail__hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  gap: 0;
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(31, 42, 68, 0.08);
+}
+
+.story-detail__photo {
+  min-height: 420px;
+  background: #ddd9d3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #485063;
+  font-size: 14px;
+}
+
+.story-detail__photo img {
+  width: 100%;
+  height: 100%;
+  min-height: 420px;
+  object-fit: cover;
+  display: block;
+}
+
+.story-detail__intro {
+  padding: 40px 36px;
+  box-sizing: border-box;
+}
+
+.story-detail__project {
+  margin: 14px 0 0;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.story-detail__title {
+  margin: 12px 0 0;
+  font-size: clamp(1.55rem, 2.4vw, 2rem);
+  line-height: 1.4;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: #1f2a44;
+  word-break: keep-all;
+}
+
+.story-detail__body {
+  margin: 18px 0 0;
+  font-size: 16px;
+  line-height: 1.8;
+  color: #485063;
+  word-break: keep-all;
+}
+
+.story-detail__body p {
+  margin: 0 0 0.85em;
+}
+
+.story-detail__body p:last-child {
+  margin-bottom: 0;
+}
+
+.story-detail__body img,
+.story-detail__body video {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.story-detail__back {
+  margin: 36px 0 0;
+}
+
+.story-detail__back a {
+  color: #b11e3b;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.story-detail__back a:hover {
+  text-decoration: underline;
+}
+
+/* Change journey — detail only (not on home) */
+.story-journey {
+  margin-top: 40px;
+  padding: 36px 32px 28px;
+  background: linear-gradient(180deg, #fbf8f1 0%, #f5f1e8 100%);
+  border-radius: 16px;
+  border: 1px solid rgba(177, 30, 59, 0.08);
+}
+
+.story-journey__head {
+  margin-bottom: 28px;
+}
+
+.story-journey__kicker {
+  margin: 0;
+  color: #b11e3b;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+}
+
+.story-journey__head h2 {
+  margin: 8px 0 0;
+  font-size: 1.45rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #1f2a44;
+}
+
+.story-journey__head > p {
+  margin: 8px 0 0;
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: #5c5650;
+  word-break: keep-all;
+}
+
+.story-journey__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.story-journey__item {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  gap: 16px;
+  align-items: stretch;
+}
+
+.story-journey__rail {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 6px;
+}
+
+.story-journey__dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #b11e3b;
+  box-shadow: 0 0 0 4px rgba(177, 30, 59, 0.14);
+  flex: 0 0 auto;
+  z-index: 1;
+}
+
+.story-journey__line {
+  flex: 1 1 auto;
+  width: 2px;
+  margin-top: 4px;
+  background: linear-gradient(180deg, rgba(177, 30, 59, 0.35), rgba(177, 30, 59, 0.08));
+  min-height: 24px;
+}
+
+.story-journey__card {
+  padding: 0 0 28px;
+}
+
+.story-journey__item:last-child .story-journey__card {
+  padding-bottom: 4px;
+}
+
+.story-journey__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 12px;
+  margin: 0;
+}
+
+.story-journey__num {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: #b11e3b;
+}
+
+.story-journey__en {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #1f2a44;
+}
+
+.story-journey__ko {
+  font-size: 13px;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.story-journey__body {
+  margin: 8px 0 0;
+  font-size: 15.5px;
+  line-height: 1.75;
+  color: #2f2b28;
+  white-space: pre-line;
+  word-break: keep-all;
+}
+
+@media (max-width: 860px) {
+  .story-detail__hero {
+    grid-template-columns: 1fr;
+  }
+
+  .story-detail__photo,
+  .story-detail__photo img {
+    min-height: 260px;
+  }
+
+  .story-detail__intro {
+    padding: 28px 22px;
+  }
+
+  .story-journey {
+    padding: 28px 20px 22px;
+  }
+}
+
+.impact-pill.is-expert {
+  color: #2e5c9a;
+  background: #eef3f9;
+}
+

@@ -3150,9 +3150,20 @@
   color: #5c5650;
   font-size: 16px;
   line-height: 1.8;
+  /* 홈 티저: 시안대로 2~3문장 분량만 보이게 */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
+  word-break: keep-all;
 }
 
 .home-stories__lead-copy > p.home-stories__more {
+  display: block;
+  -webkit-line-clamp: unset;
+  line-clamp: unset;
+  overflow: visible;
   margin: 24px 0 0;
   color: #b11e3b;
   font-weight: 700;

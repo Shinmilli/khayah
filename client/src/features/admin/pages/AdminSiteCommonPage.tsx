@@ -258,15 +258,15 @@ export function AdminSiteCommonPage() {
 
       <section id="org" className="admin-panel">
         <div className="admin-panel__head">
-          <h2 className="admin-panel__title">⑤ 기관 정보 · 푸터</h2>
+        <h2 className="admin-panel__title">⑤ 기관 정보 · 푸터</h2>
           <span className="admin-panel__foot">한 곳 수정 → 전체 반영</span>
         </div>
         <div className="admin-form-grid">
           {editLocale === 'ko' ? (
-            <label className="admin-field">
-              <span className="admin-field__label">기관명</span>
-              <input className="admin-input" value={doc.org.nameKo} onChange={(e) => setOrg('nameKo', e.target.value)} />
-            </label>
+          <label className="admin-field">
+            <span className="admin-field__label">기관명</span>
+            <input className="admin-input" value={doc.org.nameKo} onChange={(e) => setOrg('nameKo', e.target.value)} />
+          </label>
           ) : (
             <label className="admin-field">
               <span className="admin-field__label">기관명</span>
@@ -275,14 +275,14 @@ export function AdminSiteCommonPage() {
           )}
           {editLocale === 'ko' ? (
             <>
-              <label className="admin-field">
-                <span className="admin-field__label">대표자</span>
-                <input className="admin-input" value={doc.org.representative} onChange={(e) => setOrg('representative', e.target.value)} />
-              </label>
-              <label className="admin-field">
-                <span className="admin-field__label">고유번호</span>
-                <input className="admin-input" value={doc.org.registrationNo} onChange={(e) => setOrg('registrationNo', e.target.value)} />
-              </label>
+          <label className="admin-field">
+            <span className="admin-field__label">대표자</span>
+            <input className="admin-input" value={doc.org.representative} onChange={(e) => setOrg('representative', e.target.value)} />
+          </label>
+          <label className="admin-field">
+            <span className="admin-field__label">고유번호</span>
+            <input className="admin-input" value={doc.org.registrationNo} onChange={(e) => setOrg('registrationNo', e.target.value)} />
+          </label>
             </>
           ) : null}
           <label className="admin-field admin-field--full">
@@ -394,19 +394,19 @@ export function AdminSiteCommonPage() {
             >
               <span className="admin-org__grip" draggable aria-label="순서 변경" onDragStart={(e) => e.dataTransfer.setData('text/plain', row.id)}>⋮⋮</span>
               <b style={{ flex: '0 0 110px', fontSize: 13 }}>{row.labelKo || row.id}</b>
-              <input
-                className="admin-input"
+                <input
+                  className="admin-input"
                 style={{ flex: '1 1 220px', width: 'auto' }}
                 aria-label={`${row.labelKo} 주소`}
                 placeholder={row.id === 'donate' ? '해피나눔 주소 (후원 공통 설정에서 불러옴)' : ''}
                 value={row.href}
-                onChange={(e) =>
-                  patch({
-                    ...doc,
+                  onChange={(e) =>
+                    patch({
+                      ...doc,
                     clickers: doc.clickers.map((item) => (item.id === row.id ? { ...item, href: e.target.value } : item)),
-                  })
-                }
-              />
+                    })
+                  }
+                />
               <label className="admin-org__check">
                 <input
                   type="checkbox"
@@ -479,15 +479,15 @@ export function AdminSiteCommonPage() {
             />
           </label>
           {editLocale === 'en' ? (
-            <label className="admin-field admin-field--full">
+          <label className="admin-field admin-field--full">
               <span className="admin-field__label">슬로건</span>
-              <input
-                className="admin-input"
-                value={doc.logo.sloganEn}
-                maxLength={20}
-                onChange={(e) => patch({ ...doc, logo: { ...doc.logo, sloganEn: e.target.value } })}
-              />
-            </label>
+            <input
+              className="admin-input"
+              value={doc.logo.sloganEn}
+              maxLength={20}
+              onChange={(e) => patch({ ...doc, logo: { ...doc.logo, sloganEn: e.target.value } })}
+            />
+          </label>
           ) : null}
         </div>
         {editLocale === 'ko' ? (

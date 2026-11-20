@@ -1,6 +1,8 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { AdminMediaUpload } from '../components/AdminMediaUpload'
+import { AdminRichTextEditor } from '../components/AdminRichTextEditor'
+import type { AdminRichTextEditorHandle } from '../components/AdminRichTextEditor'
 import { AdminLocaleEmptyNote, AdminLocaleTabs, type AdminEditLocale } from '../components/AdminLocaleTabs'
 import { AdminSaveActions, draftStatus, takeUnpublished } from '../AdminSaveActions'
 import { adminFetchImpactPage, adminPutImpactPage, type SaveMode } from '../../../services/api'
@@ -74,14 +76,31 @@ function withVisibleSamples(doc: ImpactPageDocument): ImpactPageDocument {
             meta: '',
           },
         ],
-    stories: doc.stories?.length ? doc.stories : [blankStory()],
+    stories: doc.stories?.length
+      ? doc.stories
+      : [
+          {
+            ...blankStory(),
+            id: 's-test-1',
+            title: '스토리 test 1',
+            project: '테스트 사업',
+            featured: true,
+            consent: true,
+            body: '임팩트 스토리 본문 테스트입니다. 관리자에서 수정·삭제할 수 있습니다.',
+            before: 'Before 테스트',
+            intervention: 'Intervention 테스트',
+            after: 'After 테스트',
+            evidence: 'Evidence 테스트',
+            sustainability: 'Sustainability 테스트',
+          },
+        ],
   }
 }
 
 const SECTION_NOTE: Record<string, string> = {
-  stories: "스토리 게시판 '변화의 이야기' 대표 글 1개",
+  stories: "아래 ⑤ 스토리 관리의 '변화의 이야기' 대표 글 1개",
   education: '평가 자료 전까지 숨김',
-  experts: "스토리 게시판 '전문가 이야기' 대표 글 최대 3개",
+  experts: "아래 ⑤ 스토리 관리의 '전문가 이야기' 대표 글 최대 3개",
   overview: '숫자 카드 5개. 값은 아래 한눈에 보기에서 입력',
   offices: '아래 본부·지부 내용이 이 섹션에 나옵니다',
   programs: '진행사업 페이지 6곳 연결 카드 (고정)',
@@ -310,6 +329,20 @@ export function AdminImpactPage() {
   const [editingProjects, setEditingProjects] = useState(false)
   const [editingEvals, setEditingEvals] = useState(false)
   const [editingStoryId, setEditingStoryId] = useState<string | null>(null)
+  const storyRichRef = useRef<AdminRichTextEditorHandle | null>(null)
+
+  const withFlushedStoryBody = useCallback(
+    (current: ImpactPageDocument) => {
+      if (!editingStoryId) return current
+      const html = storyRichRef.current?.getHtml()
+      if (typeof html !== 'string') return current
+      return {
+        ...current,
+        stories: current.stories.map((item) => (item.id === editingStoryId ? { ...item, body: html } : item)),
+      }
+    },
+    [editingStoryId],
+  )
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -357,7 +390,9 @@ export function AdminImpactPage() {
     setSaving(true)
     setError('')
     try {
-      const saved = takeUnpublished(await adminPutImpactPage(doc, mode))
+      const payload = withFlushedStoryBody(doc)
+      setDoc(payload)
+      const saved = takeUnpublished(await adminPutImpactPage(payload, mode))
       setDoc(saved.doc)
       setUnpublished(saved.unpublished)
       setSavedMode(mode)
@@ -365,6 +400,28 @@ export function AdminImpactPage() {
       setSavedAt(new Date().toLocaleTimeString('ko-KR'))
     } catch (e) {
       setError(e instanceof Error ? e.message : '저장에 실패했습니다.')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  /** 서버 최신본에 스토리만 덮어써서 저장 (다른 구역 미저장 수정은 건드리지 않음) */
+  const onSaveStoriesOnly = async () => {
+    if (!doc) return
+    setSaving(true)
+    setError('')
+    try {
+      const local = withFlushedStoryBody(doc)
+      const loaded = takeUnpublished(await adminFetchImpactPage())
+      const merged = { ...loaded.doc, stories: local.stories }
+      const saved = takeUnpublished(await adminPutImpactPage(merged, 'publish'))
+      setDoc({ ...local, stories: saved.doc.stories })
+      setUnpublished(saved.unpublished)
+      setSavedMode('publish')
+      resetImpactPageCache()
+      setSavedAt(new Date().toLocaleTimeString('ko-KR'))
+    } catch (e) {
+      setError(e instanceof Error ? e.message : '스토리 저장에 실패했습니다.')
     } finally {
       setSaving(false)
     }
@@ -1080,19 +1137,28 @@ export function AdminImpactPage() {
 
       <section id="impact-stories" className="admin-panel">
         <div className="admin-panel__head">
-          <h2 className="admin-panel__title">⑤ 스토리 관리 (게시판)</h2>
-          <button
-            type="button"
-            className="admin-btn admin-btn--add"
-            onClick={() => {
-              const next = blankStory()
-              setDoc({ ...doc, stories: [...(doc.stories ?? []), next] })
-              setEditingStoryId(next.id)
-            }}
-          >
-            + 글쓰기
-          </button>
+          <h2 className="admin-panel__title">⑤ 스토리 관리</h2>
+          <div className="admin-panel__tools">
+            <button
+              type="button"
+              className="admin-btn admin-btn--add"
+              onClick={() => {
+                const next = blankStory()
+                setDoc((current) => {
+                  const base = current ? withFlushedStoryBody(current) : doc
+                  return { ...base, stories: [...(base.stories ?? []), next] }
+                })
+                setEditingStoryId(next.id)
+              }}
+            >
+              + 글쓰기
+            </button>
+            <button type="button" className="admin-btn admin-btn--primary" disabled={saving} onClick={() => void onSaveStoriesOnly()}>
+              {saving ? '저장 중…' : '스토리 저장'}
+            </button>
+          </div>
         </div>
+        <p className="admin-panel__foot">변화의 이야기·전문가 이야기는 게시글이 아니라 여기서만 등록·수정합니다. 「스토리 저장」은 이 구역만 서버에 반영하고, 다른 구역의 미저장 수정은 그대로 둡니다.</p>
         <table className="admin-sheet impact-sheet">
           <thead>
             <tr>
@@ -1113,7 +1179,14 @@ export function AdminImpactPage() {
                 <td>{row.featured ? '지정' : '지정 안 함'}</td>
                 <td>{row.consent ? '확인' : '미확인'}</td>
                 <td>
-                  <button type="button" className="biz-edit" onClick={() => setEditingStoryId((id) => (id === row.id ? null : row.id))}>
+                  <button
+                    type="button"
+                    className="biz-edit"
+                    onClick={() => {
+                      setDoc((current) => (current ? withFlushedStoryBody(current) : current))
+                      setEditingStoryId((id) => (id === row.id ? null : row.id))
+                    }}
+                  >
                     {editingStoryId === row.id ? '닫기' : '수정'}
                   </button>
                 </td>
@@ -1126,11 +1199,15 @@ export function AdminImpactPage() {
           const setStory = (partial: Partial<ImpactStory>) =>
             setDoc({ ...doc, stories: doc.stories.map((item, itemIndex) => (itemIndex === index ? { ...item, ...partial } : item)) })
           return (
-            <div key={`edit-${row.id}`} className="impact-block impact-block--edit">
-              <div className="impact-quad">
+            <div key={`edit-${row.id}`} className="impact-story-edit">
+              <p className="impact-story-edit__head">
+                <b>{row.category}</b>
+                <span>{row.title.trim() || '제목 없음'}</span>
+              </p>
+              <div className="admin-form-grid">
                 <div className="admin-field">
                   <span className="admin-field__label">카테고리</span>
-                  <div className="admin-segmented">
+                  <div className="admin-segmented admin-segmented--tight">
                     {(['변화의 이야기', '전문가 이야기'] as const).map((category) => (
                       <button key={category} type="button" className={`admin-segmented__btn${row.category === category ? ' admin-segmented__btn--active' : ''}`} onClick={() => setStory({ category })}>
                         {category}
@@ -1148,7 +1225,7 @@ export function AdminImpactPage() {
                 </label>
                 <div className="admin-field">
                   <span className="admin-field__label">대표 글로 지정</span>
-                  <div className="admin-segmented">
+                  <div className="admin-segmented admin-segmented--tight">
                     <button type="button" className={`admin-segmented__btn${row.featured ? ' admin-segmented__btn--active' : ''}`} onClick={() => setStory({ featured: true })}>
                       지정
                     </button>
@@ -1157,9 +1234,14 @@ export function AdminImpactPage() {
                     </button>
                   </div>
                 </div>
+                <div className="admin-field admin-field--full">
+                  <span className="admin-field__label">본문</span>
+                  <AdminRichTextEditor key={row.id} ref={storyRichRef} initialHtml={row.body || ''} />
+                </div>
               </div>
               {row.category === '변화의 이야기' ? (
-                <div className="impact-five">
+                <div className="impact-story-steps">
+                  <p className="admin-field__label">변화 단계 (Before → Sustainability)</p>
                   {(
                     [
                       ['before', 'Before'],
@@ -1171,12 +1253,18 @@ export function AdminImpactPage() {
                   ).map(([key, label]) => (
                     <label key={key} className="admin-field">
                       <span className="admin-field__label">{label}</span>
-                      <input className="admin-input" aria-label={`변화의 이야기 ${label}`} value={row[key] ?? ''} onChange={(e) => setStory({ [key]: e.target.value })} />
+                      <textarea
+                        className="admin-input"
+                        rows={3}
+                        aria-label={`변화의 이야기 ${label}`}
+                        value={row[key] ?? ''}
+                        onChange={(e) => setStory({ [key]: e.target.value })}
+                      />
                     </label>
                   ))}
                 </div>
               ) : (
-                <div className="impact-pair">
+                <div className="admin-form-grid">
                   <label className="admin-field">
                     <span className="admin-field__label">이름</span>
                     <input className="admin-input" value={row.expertName ?? ''} onChange={(e) => setStory({ expertName: e.target.value })} />
@@ -1193,10 +1281,6 @@ export function AdminImpactPage() {
                     <span className="admin-field__label">평가 한두 문장</span>
                     <input className="admin-input" value={row.expertLine ?? ''} onChange={(e) => setStory({ expertLine: e.target.value })} />
                   </label>
-                  <label className="admin-field admin-field--full">
-                    <span className="admin-field__label">본문</span>
-                    <textarea className="admin-input" rows={3} value={row.body} onChange={(e) => setStory({ body: e.target.value })} />
-                  </label>
                   <div className="admin-field admin-field--full">
                     <AdminMediaUpload label="전문가 사진 (선택)" variant="image" value={row.expertPhoto || null} onChange={(url) => setStory({ expertPhoto: url ?? '' })} />
                   </div>
@@ -1206,13 +1290,14 @@ export function AdminImpactPage() {
                 <input type="checkbox" checked={row.consent} onChange={(e) => setStory({ consent: e.target.checked })} />
                 사진·인터뷰 게재 동의 확인 (체크해야 공개 가능)
               </label>
-              <div className="admin-panel__tools" style={{ marginTop: 10 }}>
+              <div className="admin-panel__tools">
                 <button
                   type="button"
                   className="admin-btn admin-btn--sm"
                   onClick={() => {
                     setDoc({ ...doc, stories: doc.stories.filter((item) => item.id !== row.id) })
                     setEditingStoryId(null)
+                    storyRichRef.current = null
                   }}
                 >
                   이 글 삭제
