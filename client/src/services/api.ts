@@ -62,6 +62,28 @@ export function getAdminBearerToken(): string | null {
   return readAdminToken()
 }
 
+export type SaveMode = 'draft' | 'publish'
+
+function contentFetch(url: string, init?: RequestInit): Promise<Response> {
+  const headers = new Headers(init?.headers)
+  const token = readAdminToken()
+  if (token && !headers.has('Authorization')) headers.set('Authorization', `Bearer ${token}`)
+  return fetch(url, { ...init, headers })
+}
+
+function withSaveMode(url: string, mode: SaveMode = 'publish'): string {
+  return `${url}${url.includes('?') ? '&' : '?'}mode=${mode}`
+}
+
+function documentBody(doc: unknown): string {
+  if (doc && typeof doc === 'object' && !Array.isArray(doc)) {
+    const copy = { ...(doc as Record<string, unknown>) }
+    delete copy.unpublished
+    return JSON.stringify(copy)
+  }
+  return JSON.stringify(doc)
+}
+
 function needsAdminCredentials(url: string): boolean {
   return /\/admin\/|\/auth\/|\/uploads\/(document|image|video|delete)/.test(url)
 }
@@ -292,7 +314,7 @@ export async function adminDeletePost(id: number): Promise<void> {
 }
 
 export async function fetchFinancialReports(locale: Locale = 'ko'): Promise<FinancialReportsPublicDocument> {
-  const res = await fetch(`${API_BASE}/financial-reports?lang=${encodeURIComponent(locale)}`)
+  const res = await contentFetch(`${API_BASE}/financial-reports?lang=${encodeURIComponent(locale)}`)
   if (!res.ok) throw new Error('Failed to fetch financial reports')
   return res.json()
 }
@@ -303,11 +325,11 @@ export async function adminFetchFinancialReports(): Promise<FinancialReportsDocu
   return res.json()
 }
 
-export async function adminPutFinancialReports(doc: FinancialReportsDocument): Promise<FinancialReportsDocument> {
-  const res = await apiFetch(`${API_BASE}/admin/financial-reports`, {
+export async function adminPutFinancialReports(doc: FinancialReportsDocument, mode: SaveMode = 'publish'): Promise<FinancialReportsDocument> {
+  const res = await apiFetch(withSaveMode(`${API_BASE}/admin/financial-reports`, mode), {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(doc),
+    body: documentBody(doc),
   })
   if (!res.ok) {
     const text = await res.text().catch(() => '')
@@ -379,7 +401,7 @@ export async function adminFetchHeroBanner(): Promise<HeroBannerDocument> {
 }
 
 export async function fetchSiteCommon(): Promise<SiteCommonDocument> {
-  const res = await fetch(`${API_BASE}/site-common`)
+  const res = await contentFetch(`${API_BASE}/site-common`)
   if (!res.ok) throw new Error('Failed to fetch site common')
   return res.json()
 }
@@ -391,7 +413,7 @@ export async function adminFetchSiteCommon(): Promise<SiteCommonDocument> {
 }
 
 export async function fetchKayaPages(): Promise<KayaPagesDocument> {
-  const res = await fetch(`${API_BASE}/kaya-pages`)
+  const res = await contentFetch(`${API_BASE}/kaya-pages`)
   if (!res.ok) throw new Error('Failed to fetch kaya pages')
   return res.json()
 }
@@ -403,7 +425,7 @@ export async function adminFetchKayaPages(): Promise<KayaPagesDocument> {
 }
 
 export async function fetchBizSupport(): Promise<BizSupportDocument> {
-  const res = await fetch(`${API_BASE}/biz-support`)
+  const res = await contentFetch(`${API_BASE}/biz-support`)
   if (!res.ok) throw new Error('Failed to fetch biz support')
   return res.json()
 }
@@ -415,7 +437,7 @@ export async function adminFetchBizSupport(): Promise<BizSupportDocument> {
 }
 
 export async function fetchImpactPage(): Promise<ImpactPageDocument> {
-  const res = await fetch(`${API_BASE}/impact-page`)
+  const res = await contentFetch(`${API_BASE}/impact-page`)
   if (!res.ok) throw new Error('Failed to fetch impact page')
   return res.json()
 }
@@ -426,18 +448,18 @@ export async function adminFetchImpactPage(): Promise<ImpactPageDocument> {
   return res.json()
 }
 
-export async function adminPutImpactPage(doc: ImpactPageDocument): Promise<ImpactPageDocument> {
-  const res = await apiFetch(`${API_BASE}/admin/impact-page`, {
+export async function adminPutImpactPage(doc: ImpactPageDocument, mode: SaveMode = 'publish'): Promise<ImpactPageDocument> {
+  const res = await apiFetch(withSaveMode(`${API_BASE}/admin/impact-page`, mode), {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(doc),
+    body: documentBody(doc),
   })
   if (!res.ok) throw new Error('임팩트 설정을 저장하지 못했습니다.')
   return res.json()
 }
 
 export async function fetchProjectSets(): Promise<ProjectSetsDocument> {
-  const res = await fetch(`${API_BASE}/project-sets`)
+  const res = await contentFetch(`${API_BASE}/project-sets`)
   if (!res.ok) throw new Error('Failed to fetch project sets')
   return res.json()
 }
@@ -448,41 +470,41 @@ export async function adminFetchProjectSets(): Promise<ProjectSetsDocument> {
   return res.json()
 }
 
-export async function adminPutProjectSets(doc: ProjectSetsDocument): Promise<ProjectSetsDocument> {
-  const res = await apiFetch(`${API_BASE}/admin/project-sets`, {
+export async function adminPutProjectSets(doc: ProjectSetsDocument, mode: SaveMode = 'publish'): Promise<ProjectSetsDocument> {
+  const res = await apiFetch(withSaveMode(`${API_BASE}/admin/project-sets`, mode), {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(doc),
+    body: documentBody(doc),
   })
   if (!res.ok) throw new Error('진행사업 설정을 저장하지 못했습니다.')
   return res.json()
 }
 
-export async function adminPutBizSupport(doc: BizSupportDocument): Promise<BizSupportDocument> {
-  const res = await apiFetch(`${API_BASE}/admin/biz-support`, {
+export async function adminPutBizSupport(doc: BizSupportDocument, mode: SaveMode = 'publish'): Promise<BizSupportDocument> {
+  const res = await apiFetch(withSaveMode(`${API_BASE}/admin/biz-support`, mode), {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(doc),
+    body: documentBody(doc),
   })
   if (!res.ok) throw new Error('사업·후원 설정을 저장하지 못했습니다.')
   return res.json()
 }
 
-export async function adminPutKayaPages(doc: KayaPagesDocument): Promise<KayaPagesDocument> {
-  const res = await apiFetch(`${API_BASE}/admin/kaya-pages`, {
+export async function adminPutKayaPages(doc: KayaPagesDocument, mode: SaveMode = 'publish'): Promise<KayaPagesDocument> {
+  const res = await apiFetch(withSaveMode(`${API_BASE}/admin/kaya-pages`, mode), {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(doc),
+    body: documentBody(doc),
   })
   if (!res.ok) throw new Error('카야 페이지를 저장하지 못했습니다.')
   return res.json()
 }
 
-export async function adminPutSiteCommon(doc: SiteCommonDocument): Promise<SiteCommonDocument> {
-  const res = await apiFetch(`${API_BASE}/admin/site-common`, {
+export async function adminPutSiteCommon(doc: SiteCommonDocument, mode: SaveMode = 'publish'): Promise<SiteCommonDocument> {
+  const res = await apiFetch(withSaveMode(`${API_BASE}/admin/site-common`, mode), {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(doc),
+    body: documentBody(doc),
   })
   if (!res.ok) throw new Error('사이트 설정을 저장하지 못했습니다.')
   return res.json()
@@ -502,7 +524,7 @@ export async function adminPutHeroBanner(doc: HeroBannerDocument): Promise<HeroB
 }
 
 export async function fetchNavMenuImages(): Promise<NavMenuImagesDocument> {
-  const res = await fetch(`${API_BASE}/nav-menu-images`)
+  const res = await contentFetch(`${API_BASE}/nav-menu-images`)
   if (!res.ok) throw new Error('Failed to fetch nav menu images')
   return res.json()
 }
@@ -513,11 +535,11 @@ export async function adminFetchNavMenuImages(): Promise<NavMenuImagesDocument> 
   return res.json()
 }
 
-export async function adminPutNavMenuImages(doc: NavMenuImagesDocument): Promise<NavMenuImagesDocument> {
-  const res = await apiFetch(`${API_BASE}/admin/nav-menu-images`, {
+export async function adminPutNavMenuImages(doc: NavMenuImagesDocument, mode: SaveMode = 'publish'): Promise<NavMenuImagesDocument> {
+  const res = await apiFetch(withSaveMode(`${API_BASE}/admin/nav-menu-images`, mode), {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(doc),
+    body: documentBody(doc),
   })
   if (!res.ok) {
     const text = await res.text().catch(() => '')
@@ -527,7 +549,7 @@ export async function adminPutNavMenuImages(doc: NavMenuImagesDocument): Promise
 }
 
 export async function fetchNavVisibility(): Promise<NavVisibilityDocument> {
-  const res = await fetch(`${API_BASE}/nav-visibility`)
+  const res = await contentFetch(`${API_BASE}/nav-visibility`)
   if (!res.ok) throw new Error('Failed to fetch nav visibility')
   return res.json()
 }
@@ -560,11 +582,11 @@ export async function adminPutMaintenance(doc: MaintenanceDocument): Promise<Mai
   return res.json()
 }
 
-export async function adminPutNavVisibility(doc: NavVisibilityDocument): Promise<NavVisibilityDocument> {
-  const res = await apiFetch(`${API_BASE}/admin/nav-visibility`, {
+export async function adminPutNavVisibility(doc: NavVisibilityDocument, mode: SaveMode = 'publish'): Promise<NavVisibilityDocument> {
+  const res = await apiFetch(withSaveMode(`${API_BASE}/admin/nav-visibility`, mode), {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(doc),
+    body: documentBody(doc),
   })
   if (!res.ok) {
     const text = await res.text().catch(() => '')
@@ -574,7 +596,7 @@ export async function adminPutNavVisibility(doc: NavVisibilityDocument): Promise
 }
 
 export async function fetchPageHeroBanners(): Promise<PageHeroBannersDocument> {
-  const res = await fetch(`${API_BASE}/page-hero-banners`)
+  const res = await contentFetch(`${API_BASE}/page-hero-banners`)
   if (!res.ok) throw new Error('Failed to fetch page hero banners')
   return res.json()
 }
@@ -585,11 +607,11 @@ export async function adminFetchPageHeroBanners(): Promise<PageHeroBannersDocume
   return res.json()
 }
 
-export async function adminPutPageHeroBanners(doc: PageHeroBannersDocument): Promise<PageHeroBannersDocument> {
-  const res = await apiFetch(`${API_BASE}/admin/page-hero-banners`, {
+export async function adminPutPageHeroBanners(doc: PageHeroBannersDocument, mode: SaveMode = 'publish'): Promise<PageHeroBannersDocument> {
+  const res = await apiFetch(withSaveMode(`${API_BASE}/admin/page-hero-banners`, mode), {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(doc),
+    body: documentBody(doc),
   })
   if (!res.ok) {
     const text = await res.text().catch(() => '')
@@ -604,7 +626,7 @@ export async function fetchBusinessHubCards(
 ): Promise<BusinessHubCardsPublicDocument> {
   const params = new URLSearchParams({ lang: locale })
   if (hub) params.set('hub', hub)
-  const res = await fetch(`${API_BASE}/business-hub-cards?${params}`)
+  const res = await contentFetch(`${API_BASE}/business-hub-cards?${params}`)
   if (!res.ok) throw new Error('Failed to fetch business hub cards')
   return res.json()
 }
@@ -617,11 +639,12 @@ export async function adminFetchBusinessHubCards(): Promise<BusinessHubCardsDocu
 
 export async function adminPutBusinessHubCards(
   doc: BusinessHubCardsDocument,
+  mode: SaveMode = 'publish',
 ): Promise<BusinessHubCardsDocument> {
-  const res = await apiFetch(`${API_BASE}/admin/business-hub-cards`, {
+  const res = await apiFetch(withSaveMode(`${API_BASE}/admin/business-hub-cards`, mode), {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(doc),
+    body: documentBody(doc),
   })
   if (!res.ok) {
     const text = await res.text().catch(() => '')
@@ -670,7 +693,7 @@ export async function adminPutPopup(doc: PopupConfig): Promise<PopupConfig> {
 }
 
 export async function fetchInquiryFaq(locale: Locale = 'ko'): Promise<InquiryFaqPublicDocument> {
-  const res = await fetch(`${API_BASE}/inquiry-faq?lang=${encodeURIComponent(locale)}`)
+  const res = await contentFetch(`${API_BASE}/inquiry-faq?lang=${encodeURIComponent(locale)}`)
   if (!res.ok) throw new Error(await readApiError(res, 'FAQ를 불러오지 못했습니다.'))
   return res.json()
 }
@@ -681,11 +704,11 @@ export async function adminFetchInquiryFaq(): Promise<InquiryFaqDocument> {
   return res.json()
 }
 
-export async function adminPutInquiryFaq(doc: InquiryFaqDocument): Promise<InquiryFaqDocument> {
-  const res = await apiFetch(`${API_BASE}/admin/inquiry-faq`, {
+export async function adminPutInquiryFaq(doc: InquiryFaqDocument, mode: SaveMode = 'publish'): Promise<InquiryFaqDocument> {
+  const res = await apiFetch(withSaveMode(`${API_BASE}/admin/inquiry-faq`, mode), {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(doc),
+    body: documentBody(doc),
   })
   if (!res.ok) throw new Error(await readApiError(res, 'FAQ 저장에 실패했습니다.'))
   return res.json()

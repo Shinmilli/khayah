@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import { fetchPostsByKind } from '../../../services/api'
 import type { Post } from '../../../types/post'
 import { useLocale } from '../../../i18n/LocaleContext'
-import { useSiteCommon } from '../../site/useSiteCommon'
 import { PostCoverThumb } from '../../../components/PostCoverThumb'
 
 export function StorySection() {
@@ -20,14 +19,11 @@ function storyCategory(post: Post): '변화의 이야기' | '전문가 이야기
 
 function KoreanHomeStories() {
   const { localize } = useLocale()
-  const site = useSiteCommon()
-  const wanted = site?.homeStories?.featured?.trim() ?? ''
-  const manual = site?.homeStories?.rest === 'manual' ? (site.homeStories.manual ?? []).map((title) => title.trim()).filter(Boolean) : []
   const [posts, setPosts] = useState<Post[]>([])
 
   useEffect(() => {
     let cancelled = false
-    fetchPostsByKind('스토리', 1, wanted || manual.length ? 30 : 4)
+    fetchPostsByKind('스토리', 1, 30)
       .then((res) => {
         if (!cancelled) setPosts(res.posts)
       })
@@ -37,13 +33,12 @@ function KoreanHomeStories() {
     return () => {
       cancelled = true
     }
-  }, [wanted, manual.join('\n')])
+  }, [])
 
-  const featured = (wanted ? posts.find((post) => post.title.trim() === wanted) : null) ?? posts[0]
-  const rest = manual.length
-    ? manual.map((title) => posts.find((post) => post.title.trim() === title)).filter((post): post is Post => Boolean(post))
-    : posts.filter((post) => post.id !== featured?.id).slice(0, 3)
+  const featured = posts.find((post) => post.meta?.khayah_story_featured === '1')
+  const rest = posts.filter((post) => post.id !== featured?.id).slice(0, 3)
   const featuredCategory = featured ? storyCategory(featured) : null
+  const emptyCards = Math.max(0, 3 - rest.length)
 
   return (
     <section className="home-stories" aria-labelledby="home-stories-title">
@@ -77,31 +72,51 @@ function KoreanHomeStories() {
             ) : null}
           </div>
         </Link>
-      ) : null}
-      {rest.length > 0 ? (
-        <div className="home-stories__grid">
-          {rest.map((post) => {
-            const category = storyCategory(post)
-            return (
-              <Link
-                key={post.id}
-                to={localize(`/posts/${encodeURIComponent(post.slug)}`)}
-                state={{ postKind: '스토리' }}
-              >
-                <div className="home-stories__thumb">
-                  <PostCoverThumb post={post} />
-                </div>
-                <p>
-                  {category ? (
-                    <span className={category === '전문가 이야기' ? 'is-expert' : 'is-change'}>[{category}]</span>
-                  ) : null}{' '}
-                  {post.title}
-                </p>
-              </Link>
-            )
-          })}
+      ) : (
+        <div className="home-stories__lead">
+          <div className="home-stories__lead-photo home-stories__slot">대표 사례 현장 사진</div>
+          <div className="home-stories__lead-copy">
+            <span className="is-change">대표 사례 · 변화의 이야기</span>
+            <p className="home-stories__lead-title">[대표 사례 제목: 변화가 드러나는 한 문장]</p>
+            <p>[참여 전 상황, 카야의 활동, 달라진 점을 2~3문장으로 정리합니다.]</p>
+            <p className="home-stories__more">변화의 이야기 보기 →</p>
+          </div>
         </div>
-      ) : null}
+      )}
+      <div className="home-stories__grid">
+        {rest.map((post) => {
+          const category = storyCategory(post)
+          return (
+            <Link
+              key={post.id}
+              to={localize(`/posts/${encodeURIComponent(post.slug)}`)}
+              state={{ postKind: '스토리' }}
+            >
+              <div className="home-stories__thumb">
+                <PostCoverThumb post={post} />
+              </div>
+              <p>
+                {category ? (
+                  <span className={category === '전문가 이야기' ? 'is-expert' : 'is-change'}>[{category}]</span>
+                ) : null}{' '}
+                {post.title}
+              </p>
+            </Link>
+          )
+        })}
+        {Array.from({ length: emptyCards }, (_, index) => {
+          const expert = rest.length + index === 1
+          return (
+            <div key={`empty-${index}`} className="home-stories__card">
+              <div className="home-stories__thumb home-stories__slot">썸네일 (가로형, 글자 없는 사진)</div>
+              <p>
+                <span className={expert ? 'is-expert' : 'is-change'}>{expert ? '[전문가 이야기]' : '[변화의 이야기]'}</span>{' '}
+                {expert ? '[전문가 이름] [평가 한 문장]' : '[국가] [변화가 드러나는 제목]'}
+              </p>
+            </div>
+          )
+        })}
+      </div>
     </section>
   )
 }

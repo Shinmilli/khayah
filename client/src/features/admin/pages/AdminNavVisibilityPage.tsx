@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
-import { adminFetchNavVisibility, adminPutNavVisibility } from '../../../services/api'
+import { AdminSaveActions, draftStatus, takeUnpublished } from '../AdminSaveActions'
+import { adminFetchNavVisibility, adminPutNavVisibility, type SaveMode } from '../../../services/api'
 import {
   DEFAULT_NAV_VISIBILITY,
   mergeNavVisibility,
@@ -83,13 +84,16 @@ export function AdminNavVisibilityPage() {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [savedAt, setSavedAt] = useState('')
+  const [savedMode, setSavedMode] = useState<SaveMode | ''>('')
+  const [unpublished, setUnpublished] = useState(false)
 
   const load = useCallback(async () => {
     setLoading(true)
     setError('')
     try {
-      const data = await adminFetchNavVisibility()
-      setDoc(mergeNavVisibility(data))
+      const loaded = takeUnpublished(await adminFetchNavVisibility())
+      setDoc(mergeNavVisibility(loaded.doc))
+      setUnpublished(loaded.unpublished)
     } catch (e) {
       setError(e instanceof Error ? e.message : '불러오지 못했습니다.')
       setDoc(deepClone(DEFAULT_NAV_VISIBILITY))
@@ -110,13 +114,15 @@ export function AdminNavVisibilityPage() {
     setDoc((prev) => ({ ...prev, links: { ...prev.links, [key]: enabled } }))
   }
 
-  const save = async () => {
+  const save = async (mode: SaveMode) => {
     setSaving(true)
     setError('')
     setSavedAt('')
     try {
-      const saved = await adminPutNavVisibility(doc)
-      setDoc(mergeNavVisibility(saved))
+      const saved = takeUnpublished(await adminPutNavVisibility(doc, mode))
+      setDoc(mergeNavVisibility(saved.doc))
+      setUnpublished(saved.unpublished)
+      setSavedMode(mode)
       setSavedAt(new Date().toLocaleTimeString('ko-KR'))
     } catch (e) {
       setError(e instanceof Error ? e.message : '저장에 실패했습니다.')
@@ -145,9 +151,10 @@ export function AdminNavVisibilityPage() {
             상위 메뉴를 OFF하면 그 아래 항목도 사이트에서 보이지 않습니다.
           </p>
         </div>
-        <button type="button" className="admin-btn admin-btn--primary" disabled={saving} onClick={() => void save()}>
-          {saving ? '저장 중…' : '저장'}
-        </button>
+        <div className="admin-page__actions">
+          <a className="admin-btn" href="/" target="_blank" rel="noopener noreferrer">미리보기</a>
+          <AdminSaveActions saving={saving} onSave={(mode) => void save(mode)} />
+        </div>
       </div>
 
       {error ? (
@@ -155,11 +162,7 @@ export function AdminNavVisibilityPage() {
           {error}
         </p>
       ) : null}
-      {savedAt ? (
-        <p className="admin-panel__foot" style={{ color: '#1b6b3a' }}>
-          저장됨 ({savedAt})
-        </p>
-      ) : null}
+      {draftStatus(unpublished, savedAt, savedMode) ? <p className="admin-panel__foot">{draftStatus(unpublished, savedAt, savedMode)}</p> : null}
 
       {NAV_MENU_COLUMNS.map((col) => (
         <section key={col.id} className="admin-panel">

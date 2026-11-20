@@ -19,13 +19,18 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
     content: `
 <section class="kaya-intro">
   <div class="kaya-intro__copy">
-    <p class="kaya-kicker">WHO WE ARE · 카야는</p>
+    <p class="kaya-kicker"><span data-k="intro.kickerEn">WHO WE ARE</span> · <span data-k="intro.kickerKo">카야는</span></p>
     <h2 class="kaya-display" data-k="intro.headline" data-k-mode="html">한 사람의 성장이<br /><span class="kaya-wine">세상을 밝히는 빛</span>이<br />되도록</h2>
     <p class="kaya-lead" data-k="intro.lead">카야는 교육을 통해 사람을 키우고, 그 사람이 다시 이웃과 지역을 변화시키는 길을 함께 걷습니다.</p>
     <div class="kaya-chips">
       <span class="kaya-chip kaya-chip--on" data-k="intro.chip.0">해외 지부 2곳</span>
       <span class="kaya-chip" data-k="intro.chip.1">이사·전문위원 [00]명</span>
       <span class="kaya-chip" data-k="intro.chip.2">설립 [0000]년</span>
+      <span class="kaya-chip" data-k="intro.chip.3" hidden></span>
+      <span class="kaya-chip" data-k="intro.chip.4" hidden></span>
+      <span class="kaya-chip" data-k="intro.chip.5" hidden></span>
+      <span class="kaya-chip" data-k="intro.chip.6" hidden></span>
+      <span class="kaya-chip" data-k="intro.chip.7" hidden></span>
     </div>
   </div>
   <figure class="kaya-intro__photo">
@@ -36,15 +41,15 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
 <section class="kaya-identity" id="about">
   <div class="kaya-wrap">
   <div class="kaya-identity__intro">
-    <p class="kaya-kicker">IDENTITY · 정의와 방향</p>
-    <h2 class="kaya-display kaya-display--sub">카야가 존재하는 이유와<br /><span class="kaya-wine">나아갈 방향</span></h2>
+    <p class="kaya-kicker"><span data-k="identity.kickerEn">IDENTITY</span> · <span data-k="identity.kickerKo">정의와 방향</span></p>
+    <h2 class="kaya-display kaya-display--sub" data-k="identity.title" data-k-mode="html">카야가 존재하는 이유와<br /><span class="kaya-wine">나아갈 방향</span></h2>
   </div>
   <div class="kaya-identity__list">
     <article class="kaya-id">
       <span class="kaya-id__no">01</span>
       <div>
         <p class="kaya-id__en">DEFINITION</p>
-        <h3>정의</h3>
+        <h3 data-k="intro.id.0.name">정의</h3>
         <p class="kaya-id__point" data-k="intro.definitionPoint">카야는 사람을 키우고 섬기는 개발 NGO입니다.</p>
         <p data-k="intro.definition">카야는 올바른 배움과 인도를 통해 성장한 한 사람이 큰 변화를 이끌어 낼 수 있다고 믿습니다. 그렇게 성장한 사람들이 온 땅 곳곳에서 세상을 밝히는 빛이 되기를 소망합니다.</p>
       </div>
@@ -53,7 +58,8 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
       <span class="kaya-id__no">02</span>
       <div>
         <p class="kaya-id__en">VISION</p>
-        <h3>비전</h3>
+        <h3 data-k="intro.id.1.name">비전</h3>
+        <p class="kaya-id__point" data-k="intro.visionPoint" hidden></p>
         <p data-k="intro.vision">카야는 인종과 종교, 이념의 벽을 넘어 모든 소외된 이웃이 스스로 성장하여 가정과 사회의 변화를 이끄는 세상을 꿈꿉니다.</p>
       </div>
     </article>
@@ -61,8 +67,33 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
       <span class="kaya-id__no">03</span>
       <div>
         <p class="kaya-id__en">MISSION</p>
-        <h3>미션</h3>
+        <h3 data-k="intro.id.2.name">미션</h3>
+        <p class="kaya-id__point" data-k="intro.missionPoint" hidden></p>
         <p data-k="intro.mission">카야는 사람 중심의 사업 개발을 통해 세상의 모든 소외된 이웃이 스스로 설 수 있는 길을 함께 찾습니다.</p>
+      </div>
+    </article>
+    <article class="kaya-id" hidden>
+      <span class="kaya-id__no">04</span>
+      <div>
+        <h3 data-k="intro.id.3.name"></h3>
+        <p class="kaya-id__point" data-k="intro.id.3.point" hidden></p>
+        <p data-k="intro.id.3.body"></p>
+      </div>
+    </article>
+    <article class="kaya-id" hidden>
+      <span class="kaya-id__no">05</span>
+      <div>
+        <h3 data-k="intro.id.4.name"></h3>
+        <p class="kaya-id__point" data-k="intro.id.4.point" hidden></p>
+        <p data-k="intro.id.4.body"></p>
+      </div>
+    </article>
+    <article class="kaya-id" hidden>
+      <span class="kaya-id__no">06</span>
+      <div>
+        <h3 data-k="intro.id.5.name"></h3>
+        <p class="kaya-id__point" data-k="intro.id.5.point" hidden></p>
+        <p data-k="intro.id.5.body"></p>
       </div>
     </article>
   </div>
@@ -84,27 +115,22 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
         <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#B11E3B" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"></path></svg>
         <span data-k="intro.value.0.title">인간 존엄</span>
       </div>
-      <p class="kaya-values__desc" style="left: 30px; top: 116px; width: 220px; text-align: right" data-k="intro.value.0.desc">모든 사람이 지닌 고유한 존엄성을 존중하며, 사람을 모든 사업의 중심에 둡니다.</p>
       <div class="kaya-values__node" style="left: 492px; top: 86px">
         <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#B11E3B" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="8" r="3.2"></circle><circle cx="16.5" cy="9" r="2.6"></circle><path d="M2.5 20c1-3.5 3-5 5.5-5s4.5 1.5 5.5 5M14 15.5c3 0 5.5 1.5 6.5 4.5"></path></svg>
         <span data-k="intro.value.1.title">비차별과 협력</span>
       </div>
-      <p class="kaya-values__desc" style="left: 632px; top: 116px; width: 230px" data-k="intro.value.1.desc">인종·종교·이념의 차이를 넘어 모든 이웃을 존중하고, 지역사회와 협력합니다.</p>
       <div class="kaya-values__node" style="left: 199px; top: 299px">
         <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#B11E3B" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"></rect><path d="M9 7V5h6v2M3 12h18"></path></svg>
         <span data-k="intro.value.2.title">전문성</span>
       </div>
-      <p class="kaya-values__desc" style="left: 0; top: 326px; width: 185px; text-align: right" data-k="intro.value.2.desc">현장에서 쌓은 역량과 전문성을 바탕으로 일합니다.</p>
       <div class="kaya-values__node" style="left: 561px; top: 299px">
         <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#B11E3B" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9V16h7v-2.1A6 6 0 0 0 12 3z"></path></svg>
         <span data-k="intro.value.3.title">혁신</span>
       </div>
-      <p class="kaya-values__desc" style="left: 700px; top: 316px; width: 180px" data-k="intro.value.3.desc">현장의 목소리에 귀 기울이며, 새로운 방법으로 지속 가능한 변화를 모색합니다.</p>
       <div class="kaya-values__node" style="left: 380px; top: 430px">
         <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#B11E3B" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"></path></svg>
         <span data-k="intro.value.4.title">사회적 책임</span>
       </div>
-      <p class="kaya-values__desc" style="left: 290px; top: 572px; width: 300px; text-align: center" data-k="intro.value.4.desc">이웃을 사랑하는 참된 그리스도인의 삶을 실천합니다.</p>
     </div>
   </div>
 </section>
@@ -156,12 +182,11 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
       <p class="article-body" data-k="greet.body.5" data-k-mode="html">
         이 세상의 모든 생명은 모두 하나님의 귀한 창조물이며, 고통 받는 이들을 불쌍히 여기고 돕는 것은 이 땅 위의 모든 이들이 가슴에 품고 살아가야 하는 소명입니다. 다시 살아남을 뜻하는 단체명 카야처럼, <strong class="gm-wine">여러분의 인생에도 진정한 부흥, 카야가 휘몰아치기를 기원합니다.</strong>
       </p>
-      <p class="article-sign"><span class="article-sign-role" data-k="greet.signRole">카야(KHAYAH) 대표</span> <strong data-k="greet.signName">최순태</strong></p>
+      <p class="article-sign" data-sign><span class="article-sign-role" data-k="greet.signRole">카야(KHAYAH) 대표</span> <strong data-k="greet.signName" data-sign-name>최순태</strong><img class="article-sign-image" data-sign-image data-k="greet.signImage" data-k-mode="src" alt="" /></p>
     </article>
   <section class="gm-closing">
     <div class="gm-closing__inner">
-      <span class="gm-closing__mark" aria-hidden="true">&ldquo;</span>
-      <p class="gm-closing__text" data-k="greet.quote" data-k-mode="html">카야와 함께, 여러분의 삶에도<br />진정한 나눔, 진정한 변화가<br />함께하기를 기원합니다.</p>
+      <p class="gm-closing__text"><span class="gm-closing__mark" aria-hidden="true">&ldquo;</span><span data-k="greet.quote" data-k-mode="html">카야와 함께,<br />진정한 나눔과 변화가 이어지기를.</span><span class="gm-closing__mark gm-closing__mark--close" aria-hidden="true">&rdquo;</span></p>
       <div class="gm-closing__rule" aria-hidden="true"></div>
     </div>
   </section>
@@ -293,7 +318,7 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
           <p class="oedu-flow">인식개선 → 탐색 → 설계 → 실행<small>4단계 맞춤형 지원</small></p>
         </div>
         <div class="oedu-bxc">
-          <p class="oedu-bxt">융합 탐구 교육</p>
+          <p class="oedu-bxt" data-k="oedu.1.card.1.title">STEM 융합 탐구 교육</p>
           <p class="oedu-bxd">과학·기술·공학·수학을 연결하여 질문하고, 실험과 프로젝트 활동을 통해 탐구하며 문제해결 역량을 키웁니다.</p>
           <p class="oedu-flow">인식확산형(진로강연·박람회) → 단기 집중 체험형(캠프) → 심화탐구형(클럽) → 문제해결기획 경연형(콘테스트)<small>4단계 심화 지원</small></p>
         </div>
@@ -342,8 +367,8 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
     </div>
   </section>
   <section class="oedu-cta">
-    <p>지금 진행 중인 해외 교육 사업은 진행사업 페이지에서 볼 수 있습니다.</p>
-    <a class="oedu-pj" href="/business/overseas/education/projects"><span data-k="oedu.cta">해외 교육 진행사업 확인하기</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+    <p data-k="oedu.ctaNote">지금 진행 중인 해외 교육 사업은 진행사업 페이지에서 볼 수 있습니다.</p>
+    <a class="oedu-pj" data-k-href="oedu.ctaHref" href="/business/overseas/education/projects"><span data-k="oedu.cta">해외 교육 진행사업 확인하기</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
   </section>
   <section class="dom-more">
     <div class="dom-wrap">
@@ -370,7 +395,7 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
   <section class="voln-plan">
     <p class="dom-kicker">PLANNING · 봉사기획</p>
     <h3 data-k="vol.block.0.title">철학과 전문성을 담은 봉사기획</h3>
-    <p class="voln-tx">10년 이상 축적한 국제개발협력·교육분야 경험을 바탕으로 지역의 문제를 발굴·분석해 맞춤형 봉사활동을 기획합니다.<br />현지에 적합한 변화를 만들고, 봉사단원이 세계시민성·문제해결력·적응력·전문성 활용 역량을 키우도록 지원합니다.</p>
+    <p class="voln-tx" data-k="vol.block.0.lead" data-k-mode="html">10년 이상 축적한 국제개발협력·교육분야 경험을 바탕으로 지역의 문제를 발굴·분석해 맞춤형 봉사활동을 기획합니다.<br />현지에 적합한 변화를 만들고, 봉사단원이 세계시민성·문제해결력·적응력·전문성 활용 역량을 키우도록 지원합니다.</p>
     <div class="voln-cards">
       <div class="voln-card">
         <p class="voln-card__title" data-k="vol.panel.0.title">국제개발협력 전문성</p>
@@ -398,18 +423,18 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
     <div class="voln-wrap">
       <p class="dom-kicker">OPERATION · 운영 전 과정</p>
       <h3 data-k="vol.block.1.title">봉사단 사업 전 과정 운영 전문성</h3>
-      <p class="voln-tx">카야는 봉사단 사업의 운영 주기 전체를 이해하고, 전 과정을 운영할 수 있는 매뉴얼과 시스템을 갖추어 안정적으로 운영합니다.</p>
+      <p class="voln-tx" data-k="vol.block.1.lead">카야는 봉사단 사업의 운영 주기 전체를 이해하고, 전 과정을 운영할 수 있는 매뉴얼과 시스템을 갖추어 안정적으로 운영합니다.</p>
       <div class="voln-steps">
-        <div><b>STEP 1</b><span>홍보·모집</span></div>
-        <div><b>STEP 2</b><span>심사</span></div>
-        <div><b>STEP 3</b><span>선발</span></div>
-        <div><b>STEP 4</b><span>현지 사전조사 및 국내외 사전준비</span></div>
-        <div><b>STEP 5</b><span>국내교육 및 단원주도 활동기획</span></div>
-        <div><b>STEP 6</b><span>발대식 및 봉사단 파견</span></div>
-        <div><b>STEP 7</b><span>현장 활동 지원 및 인솔·안전 관리</span></div>
-        <div><b>STEP 8</b><span>활동 결과 모음 및 성과분석</span></div>
-        <div><b>STEP 9</b><span>성과공유회</span></div>
-        <div><b>STEP 10</b><span>후속 활동 및 지속 확산 관리</span></div>
+        <div><b>STEP 1</b><span data-k="vol.step.0">홍보·모집</span></div>
+        <div><b>STEP 2</b><span data-k="vol.step.1">심사</span></div>
+        <div><b>STEP 3</b><span data-k="vol.step.2">선발</span></div>
+        <div><b>STEP 4</b><span data-k="vol.step.3">현지 사전조사 및 국내외 사전준비</span></div>
+        <div><b>STEP 5</b><span data-k="vol.step.4">국내교육 및 단원주도 활동기획</span></div>
+        <div><b>STEP 6</b><span data-k="vol.step.5">발대식 및 봉사단 파견</span></div>
+        <div><b>STEP 7</b><span data-k="vol.step.6">현장 활동 지원 및 인솔·안전 관리</span></div>
+        <div><b>STEP 8</b><span data-k="vol.step.7">활동 결과 모음 및 성과분석</span></div>
+        <div><b>STEP 9</b><span data-k="vol.step.8">성과공유회</span></div>
+        <div><b>STEP 10</b><span data-k="vol.step.9">후속 활동 및 지속 확산 관리</span></div>
       </div>
     </div>
   </section>
@@ -419,8 +444,8 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
     <img data-k="vol.photo.2" data-k-mode="src" data-k-alt="vol.photo.2.alt" src="/images/business/volunteer-launch.jpg" alt="경기청년 기후특사단 발대식" />
   </section>
   <section class="voln-cta">
-    <p>지금 진행 중인 해외봉사단 사업은 진행사업 페이지에서 볼 수 있습니다.</p>
-    <a class="voln-pj" href="/business/overseas/volunteer/projects"><span data-k="vol.cta">해외봉사단 진행사업 확인하기</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+    <p data-k="vol.ctaNote">지금 진행 중인 해외봉사단 사업은 진행사업 페이지에서 볼 수 있습니다.</p>
+    <a class="voln-pj" data-k-href="vol.ctaHref" href="/business/overseas/volunteer/projects"><span data-k="vol.cta">해외봉사단 진행사업 확인하기</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
   </section>
   <section class="dom-more">
     <div class="dom-wrap">
@@ -472,6 +497,13 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
         <p data-k="dom.p.2.body">진로 탐색, 소셜 창업, 기후·환경 교육을 통해 국내에서 쌓은 경험과 전문성을 해외 개발협력 현장으로 연결합니다. 청소년과 청년, 외국인 노동자, 탈북 청년의 배움이 각 지역의 문화와 필요에 맞게 활용되어 지역사회에 기여하도록 지원합니다.</p>
       </div>
     </div>
+    <div class="dom-pr" hidden>
+      <span>04</span>
+      <div>
+        <h3 data-k="dom.p.3.title"></h3>
+        <p data-k="dom.p.3.body"></p>
+      </div>
+    </div>
   </section>
 </div>
 `,
@@ -488,10 +520,10 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
   <section class="dedu-programs">
     <div class="dedu-row">
       <div>
-        <p class="dedu-label">EDUCATION PROGRAM 01</p>
+        <p class="dedu-label" data-k="dedu.0.label">EDUCATION PROGRAM 01</p>
         <h3 data-k="dedu.0.title">진로 탐색과 미래역량개발 지원</h3>
         <div class="dedu-tags" data-k="dedu.0.sub" data-k-mode="chips"><span>자기이해</span><span>Life Design</span><span>직업기초역량</span><span>진로 체험·멘토링</span><span>사회·문화 체험</span></div>
-        <p>청소년과 청년이 자신을 이해하고 미래를 주도적으로 설계하도록 단계적 진로교육을 제공합니다. 자기이해에서 공동체와 직업세계에 대한 이해, 진로 탐색과 설계로 이어지는 배움을 통해 가능성을 발견하고 구체적인 실천으로 옮기도록 돕습니다.</p>
+        <p data-k="dedu.0.body">청소년과 청년이 자신을 이해하고 미래를 주도적으로 설계하도록 단계적 진로교육을 제공합니다. 자기이해에서 공동체와 직업세계에 대한 이해, 진로 탐색과 설계로 이어지는 배움을 통해 가능성을 발견하고 구체적인 실천으로 옮기도록 돕습니다.</p>
       </div>
       <figure class="dedu-photo">
         <img data-k="dedu.0.photo" data-k-mode="src" data-k-alt="dedu.0.caption" src="/images/business/domestic-edu-2.jpg" alt="Dream Seekers 캠프 발표 (진로 탐색과 미래역량개발 지원)" />
@@ -502,18 +534,18 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
         <img data-k="dedu.1.photo" data-k-mode="src" data-k-alt="dedu.1.caption" src="/images/business/domestic-edu-1.jpg" alt="자연순환유기농업 기술교육 (소셜 창업과 자립 역량 강화)" />
       </figure>
       <div>
-        <p class="dedu-label">EDUCATION PROGRAM 02</p>
+        <p class="dedu-label" data-k="dedu.1.label">EDUCATION PROGRAM 02</p>
         <h3 data-k="dedu.1.title">사회적 가치기반 소셜 창업과 자립 역량 강화</h3>
         <div class="dedu-tags" data-k="dedu.1.sub" data-k-mode="chips"><span>소셜 비즈니스 교육</span><span>국내외 창업</span><span>국제개발협력 교육</span></div>
-        <p>사회적 가치와 기업가정신을 바탕으로 외국인 노동자, 탈북 청년, 소외된 청(소)년의 창업과 자립을 돕습니다. 경험과 강점을 바탕으로 지역사회의 필요를 사업 아이디어로 발전시키며 새로운 진로와 기회를 모색합니다.</p>
+        <p data-k="dedu.1.body">사회적 가치와 기업가정신을 바탕으로 외국인 노동자, 탈북 청년, 소외된 청(소)년의 창업과 자립을 돕습니다. 경험과 강점을 바탕으로 지역사회의 필요를 사업 아이디어로 발전시키며 새로운 진로와 기회를 모색합니다.</p>
       </div>
     </div>
     <div class="dedu-row">
       <div>
-        <p class="dedu-label">EDUCATION PROGRAM 03</p>
+        <p class="dedu-label" data-k="dedu.2.label">EDUCATION PROGRAM 03</p>
         <h3 data-k="dedu.2.title">기후·환경 인식개선과 실천 확산</h3>
         <div class="dedu-tags" data-k="dedu.2.sub" data-k-mode="chips"><span>기후·환경 교육</span><span>주제별 북클럽</span><span>인식개선 콘텐츠 제작·배포</span><span>기후위기 대응 봉사단 교육·활동</span></div>
-        <p>기후위기를 이해하고 일상과 지역사회에서 실천하는 세계시민의 성장을 돕습니다. 교육과 북클럽, 콘텐츠 제작, 봉사활동을 통해 환경문제를 자신의 삶과 연결하고, 개인의 실천이 지역사회와 국제협력으로 이어지도록 지원합니다.</p>
+        <p data-k="dedu.2.body">기후위기를 이해하고 일상과 지역사회에서 실천하는 세계시민의 성장을 돕습니다. 교육과 북클럽, 콘텐츠 제작, 봉사활동을 통해 환경문제를 자신의 삶과 연결하고, 개인의 실천이 지역사회와 국제협력으로 이어지도록 지원합니다.</p>
       </div>
       <figure class="dedu-photo">
         <img data-k="dedu.2.photo" data-k-mode="src" data-k-alt="dedu.2.caption" src="/images/business/domestic-edu-3.jpg" alt="2024 경기청년 기후특사단 국내교육 (기후·환경 인식개선)" />
@@ -521,8 +553,8 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
     </div>
   </section>
   <section class="dedu-cta">
-    <p>지금 진행 중인 국내교육 사업은 진행사업 페이지에서 볼 수 있습니다.</p>
-    <a class="dedu-pj" href="/business/domestic/projects"><span data-k="dedu.cta">국내 진행사업 확인하기</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+    <p data-k="dedu.ctaNote">지금 진행 중인 국내교육 사업은 진행사업 페이지에서 볼 수 있습니다.</p>
+    <a class="dedu-pj" data-k-href="dedu.ctaHref" href="/business/domestic/projects"><span data-k="dedu.cta">국내 진행사업 확인하기</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
   </section>
   <section class="dom-more">
     <div class="dom-wrap">
@@ -608,8 +640,8 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
     </div>
   </section>
   <section class="res-cta">
-    <p>지금 진행 중인 연구사업은 진행사업 페이지에서 볼 수 있습니다.</p>
-    <a class="res-pj" href="/business/advocacy/projects"><span data-k="res.cta">연구사업 진행사업 확인하기</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+    <p data-k="res.ctaNote">지금 진행 중인 연구사업은 진행사업 페이지에서 볼 수 있습니다.</p>
+    <a class="res-pj" data-k-href="res.ctaHref" href="/business/advocacy/projects"><span data-k="res.cta">연구사업 진행사업 확인하기</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
   </section>
   <section class="dom-more">
     <div class="dom-wrap">
@@ -713,7 +745,7 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
     content: `
 <div class="sbiz sbiz--intro">
   <section class="sbiz-hero sbiz-hero--center" data-sec="soc.hero">
-    <p class="sbiz-kicker">SOCIAL BUSINESS · 소셜비즈니스</p>
+    <p class="sbiz-kicker" data-k="soc.kicker">SOCIAL BUSINESS · 소셜비즈니스</p>
     <h2 class="sbiz-title" data-k="soc.title" data-k-mode="html">현장의 경험에서 출발한 <span class="wn">소셜비즈니스</span></h2>
     <p class="sbiz-lead" data-k="soc.lead" data-k-mode="html">카야는 개발협력과 교육 현장에서 쌓은 경험을 바탕으로 소셜비즈니스를 운영합니다.<br>각 사업은 저마다의 방식으로 사회적 가치를 만듭니다.</p>
   </section>
@@ -726,17 +758,17 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
       </figure>
       <div class="sbiz-col">
         <div class="sbiz-brand">
-          <span class="sbiz-logo">카야 아카데미<br>로고</span>
+          <span class="sbiz-logo"><img data-k="soc.aca.logo" data-k-mode="src" alt="카야 아카데미 로고" /><span>카야 아카데미<br>로고</span></span>
           <div>
-            <p class="sbiz-since">KHAYAH ACADEMY · 2024~</p>
+            <p class="sbiz-since" data-k="soc.aca.since">KHAYAH ACADEMY · 2024~</p>
             <h3 class="sbiz-name" data-k="soc.aca.name">카야 아카데미</h3>
           </div>
         </div>
         <p class="sbiz-lead" data-k="soc.aca.lead">카야가 미얀마 개발협력 현장에서 개발한 교육 프로그램과 학습지로 2024년에 설립한 사회적기업입니다.</p>
         <dl class="sbiz-facts">
-          <div class="sbiz-fact"><dt>구분</dt><dd>미얀마 사회적기업</dd></div>
-          <div class="sbiz-fact"><dt>활동 지역</dt><dd>미얀마 · 키르기스스탄</dd></div>
-          <div class="sbiz-fact"><dt>하는 일</dt><dd>Pre-School 운영, 수학·영어 학습지, STEM 온라인 학습</dd></div>
+          <div class="sbiz-fact"><dt data-k="soc.aca.kindLabel">구분</dt><dd data-k="soc.aca.kind">미얀마 사회적기업</dd></div>
+          <div class="sbiz-fact"><dt data-k="soc.aca.regionLabel">활동 지역</dt><dd data-k="soc.aca.region">미얀마 · 키르기스스탄</dd></div>
+          <div class="sbiz-fact"><dt data-k="soc.aca.workLabel">하는 일</dt><dd data-k="soc.aca.work">Pre-School 운영, 수학·영어 학습지, STEM 온라인 학습</dd></div>
         </dl>
         <a class="sbiz-more" data-k="soc.aca.more" data-k-href="soc.aca.href" href="/business/social/academy">카야 아카데미 자세히 보기</a>
       </div>
@@ -749,15 +781,15 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
           <!-- 칸: C&C 로고 → /images/business/color-comfort-logo.png -->
           <span class="sbiz-logo"><img data-k="soc.cnc.logo" data-k-mode="src" src="/images/business/color-comfort-logo.png" alt="C&amp;C 로고" /></span>
           <div>
-            <p class="sbiz-since">COLOR &amp; COMFORT · 2021~</p>
+            <p class="sbiz-since" data-k="soc.cnc.since">COLOR &amp; COMFORT · 2021~</p>
             <h3 class="sbiz-name" data-k="soc.cnc.name">컬러앤컴포트</h3>
           </div>
         </div>
         <p class="sbiz-lead" data-k="soc.cnc.lead">다양한 색감과 한끝 다른 편안함을 담은 힐링 라이프스타일 브랜드입니다.</p>
         <dl class="sbiz-facts">
-          <div class="sbiz-fact"><dt>구분</dt><dd>예비사회적기업</dd></div>
-          <div class="sbiz-fact"><dt>활동 지역</dt><dd>한국</dd></div>
-          <div class="sbiz-fact"><dt>하는 일</dt><dd>양말·라이프스타일 제품 판매, 기업·단체 구매</dd></div>
+          <div class="sbiz-fact"><dt data-k="soc.cnc.kindLabel">구분</dt><dd data-k="soc.cnc.kind">예비사회적기업</dd></div>
+          <div class="sbiz-fact"><dt data-k="soc.cnc.regionLabel">활동 지역</dt><dd data-k="soc.cnc.region">한국</dd></div>
+          <div class="sbiz-fact"><dt data-k="soc.cnc.workLabel">하는 일</dt><dd data-k="soc.cnc.work">양말·라이프스타일 제품 판매, 기업·단체 구매</dd></div>
         </dl>
         <a class="sbiz-more" data-k="soc.cnc.more" data-k-href="soc.cnc.href" href="/business/social/color-and-comfort">컬러앤컴포트 자세히 보기</a>
       </div>
@@ -785,10 +817,11 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
     title: '카야 아카데미',
     content: `
 <div class="sbiz sbiz--aca">
-  <section class="sbiz-hero">
+  <section class="sbiz-hero" data-aca="intro">
     <div class="sbiz-split sbiz-split--wide">
       <div class="sbiz-col">
-        <p class="sbiz-kicker">KHAYAH ACADEMY · 2024~</p>
+        <span class="sbiz-logo"><img data-k="aca.logo" data-k-mode="src" alt="카야 아카데미 로고" /><span>카야 아카데미<br>로고</span></span>
+        <p class="sbiz-kicker" data-k="aca.kicker">KHAYAH ACADEMY · 2024~</p>
         <h2 class="sbiz-title" data-k="aca.title" data-k-mode="html">아이들의 <span class="wn">첫 배움</span>을 여는 곳</h2>
         <p class="sbiz-lead" data-k="aca.lead" data-k-mode="html">카야 아카데미는 2024년 미얀마에 설립한 카야의 사회적기업입니다.<br>개발협력 현장에서 만든 학습지와 교육 프로그램을 Pre-School과 학습지 교육으로 운영합니다.</p>
       </div>
@@ -799,76 +832,70 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
       </figure>
     </div>
   </section>
-  <section class="sbiz-band">
+  <section class="sbiz-band" data-aca="pre">
     <div class="sbiz-split sbiz-split--start">
       <div class="sbiz-col">
-        <p class="sbiz-kicker">01 · PRE-SCHOOL</p>
-        <h3 class="sbiz-sub">Pre-School</h3>
-        <p class="sbiz-lead">놀이와 기초학습으로 아이들이 즐겁게 배움을 시작하도록 합니다.</p>
+        <p class="sbiz-kicker" data-k="aca.pre.kicker">01 · PRE-SCHOOL</p>
+        <h3 class="sbiz-sub" data-k="aca.pre.title">Pre-School</h3>
+        <p class="sbiz-lead" data-k="aca.pre.lead">놀이와 기초학습으로 아이들이 즐겁게 배움을 시작하도록 합니다.</p>
         <dl class="sbiz-facts sbiz-facts--soft">
-          <div class="sbiz-fact"><dt>기관명</dt><dd>KHAYAH Academy International Early Years</dd></div>
-          <div class="sbiz-fact"><dt>위치</dt><dd>미얀마 양곤</dd></div>
-          <div class="sbiz-fact"><dt>대상</dt><dd data-k="aca.pre.target">[대상 연령 확인 필요]</dd></div>
-          <div class="sbiz-fact"><dt>교육 내용</dt><dd data-k="aca.pre.study">[영어·기초학습·놀이활동 등 확인 필요]</dd></div>
+          <div class="sbiz-fact"><dt data-k="aca.pre.nameLabel">기관명</dt><dd data-k="aca.pre.name">KHAYAH Academy International Early Years</dd></div>
+          <div class="sbiz-fact"><dt data-k="aca.pre.placeLabel">위치</dt><dd data-k="aca.pre.place">미얀마 양곤</dd></div>
+          <div class="sbiz-fact"><dt data-k="aca.pre.targetLabel">대상</dt><dd data-k="aca.pre.target">[대상 연령 확인 필요]</dd></div>
+          <div class="sbiz-fact"><dt data-k="aca.pre.studyLabel">교육 내용</dt><dd data-k="aca.pre.study">[영어·기초학습·놀이활동 등 확인 필요]</dd></div>
         </dl>
       </div>
       <div class="sbiz-photos sbiz-col">
         <figure class="sbiz-photo">
-          <!-- 칸: [사진] 교실 수업 → /images/business/overseas-edu-foundation-3.jpg -->
-          <img src="/images/business/overseas-edu-foundation-3.jpg" alt="교실 수업" />
-          <figcaption>교실 수업</figcaption>
+          <img data-k="aca.pre.photo.0" data-k-mode="src" data-k-alt="aca.pre.cap.0" src="/images/business/overseas-edu-foundation-3.jpg" alt="교실 수업" />
+          <figcaption data-k="aca.pre.cap.0">교실 수업</figcaption>
         </figure>
         <figure class="sbiz-photo">
-          <!-- 칸: [사진] 놀이 활동 → /images/business/overseas-edu-foundation-1.jpg -->
-          <img src="/images/business/overseas-edu-foundation-1.jpg" alt="놀이 활동" />
-          <figcaption>놀이 활동</figcaption>
+          <img data-k="aca.pre.photo.1" data-k-mode="src" data-k-alt="aca.pre.cap.1" src="/images/business/overseas-edu-foundation-1.jpg" alt="놀이 활동" />
+          <figcaption data-k="aca.pre.cap.1">놀이 활동</figcaption>
         </figure>
         <figure class="sbiz-photo">
-          <!-- 칸: [사진] 행사 → /images/business/volunteer-group.jpg -->
-          <img src="/images/business/volunteer-group.jpg" alt="행사" />
-          <figcaption>행사</figcaption>
+          <img data-k="aca.pre.photo.2" data-k-mode="src" data-k-alt="aca.pre.cap.2" src="/images/business/volunteer-group.jpg" alt="행사" />
+          <figcaption data-k="aca.pre.cap.2">행사</figcaption>
         </figure>
         <figure class="sbiz-photo">
-          <!-- 칸: [사진] 원 외관 → /images/business/research-social-1.jpg -->
-          <img src="/images/business/research-social-1.jpg" alt="원 외관" />
-          <figcaption>원 외관</figcaption>
+          <img data-k="aca.pre.photo.3" data-k-mode="src" data-k-alt="aca.pre.cap.3" src="/images/business/research-social-1.jpg" alt="원 외관" />
+          <figcaption data-k="aca.pre.cap.3">원 외관</figcaption>
         </figure>
       </div>
     </div>
   </section>
-  <section class="sbiz-hero">
+  <section class="sbiz-hero" data-aca="book">
     <div class="sbiz-split sbiz-split--start">
       <div class="sbiz-photos sbiz-col">
         <figure class="sbiz-photo">
-          <!-- 칸: [사진] 학습지 표지 → /images/business/overseas-edu-foundation-1.jpg -->
-          <img src="/images/business/overseas-edu-foundation-1.jpg" alt="학습지 표지" />
-          <figcaption>학습지 표지</figcaption>
+          <img data-k="aca.book.photo.0" data-k-mode="src" data-k-alt="aca.book.cap.0" src="/images/business/overseas-edu-foundation-1.jpg" alt="학습지 표지" />
+          <figcaption data-k="aca.book.cap.0">학습지 표지</figcaption>
         </figure>
         <figure class="sbiz-photo">
-          <!-- 칸: [사진] 학습지 활용 수업 → /images/business/overseas-edu-foundation-1.jpg -->
-          <img src="/images/business/overseas-edu-foundation-1.jpg" alt="학습지 활용 수업" />
-          <figcaption>학습지 활용 수업</figcaption>
+          <img data-k="aca.book.photo.1" data-k-mode="src" data-k-alt="aca.book.cap.1" src="/images/business/overseas-edu-foundation-1.jpg" alt="학습지 활용 수업" />
+          <figcaption data-k="aca.book.cap.1">학습지 활용 수업</figcaption>
         </figure>
       </div>
       <div class="sbiz-col">
-        <p class="sbiz-kicker">02 · WORKBOOKS</p>
-        <h3 class="sbiz-sub">학습지</h3>
-        <p class="sbiz-lead">미얀마 도시빈민마을에서 개발한 Self-Care 학습지를 심화한 수학·영어 학습지입니다.<br>키르기스스탄에서는 사립 중·고등학교를 대상으로 STEM 온라인 학습 플랫폼을 운영합니다.</p>
+        <p class="sbiz-kicker" data-k="aca.book.kicker">02 · WORKBOOKS</p>
+        <h3 class="sbiz-sub" data-k="aca.book.title">학습지</h3>
+        <p class="sbiz-lead" data-k="aca.book.lead" data-k-mode="html">미얀마 도시빈민마을에서 개발한 Self-Care 학습지를 심화한 수학·영어 학습지입니다.<br>키르기스스탄에서는 사립 중·고등학교를 대상으로 STEM 온라인 학습 플랫폼을 운영합니다.</p>
         <dl class="sbiz-facts">
-          <div class="sbiz-fact"><dt>과목</dt><dd>수학 · 영어 (수준별)</dd></div>
-          <div class="sbiz-fact"><dt>대상</dt><dd>아동·청소년 (수준별)</dd></div>
-          <div class="sbiz-fact"><dt>학습 방식</dt><dd>방문 학습 · 온라인 학습</dd></div>
+          <div class="sbiz-fact"><dt data-k="aca.book.subjectLabel">과목</dt><dd data-k="aca.book.subject">수학 · 영어 (수준별)</dd></div>
+          <div class="sbiz-fact"><dt data-k="aca.book.targetLabel">대상</dt><dd data-k="aca.book.target">아동·청소년 (수준별)</dd></div>
+          <div class="sbiz-fact"><dt data-k="aca.book.methodLabel">학습 방식</dt><dd data-k="aca.book.method">방문 학습 · 온라인 학습</dd></div>
         </dl>
       </div>
     </div>
   </section>
   <section class="sbiz-band sbiz-band--short">
     <div class="sbiz-inner">
-      <div class="sbiz-csr"><b>CSR</b><p data-k="aca.csr">카야 아카데미는 양곤 Dream Seekers Education Center와 만달레이 아동친화공간 운영을 지원합니다.</p></div>
+      <div class="sbiz-csr"><b data-k="aca.csrLabel">CSR</b><p data-k="aca.csr">카야 아카데미는 양곤 Dream Seekers Education Center와 만달레이 아동친화공간 운영을 지원합니다.</p></div>
       <div class="sbiz-news">
         <span>카야 아카데미 소식</span>
-        <a class="sbiz-btn sbiz-btn--line" data-k-href="aca.facebook" href="#" hidden>페이스북</a>
-        <a class="sbiz-btn sbiz-btn--line" data-k-href="aca.instagram" href="#" hidden>인스타그램</a>
+        <a class="sbiz-btn sbiz-btn--line" data-k-href="aca.facebook" href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14 8h3V4h-3c-2.8 0-4.5 1.8-4.5 4.6V11H7v4h2.5v8h4v-8h3l.5-4h-3.5V9c0-.6.4-1 1-1z"></path></svg>페이스북 바로가기</a>
+        <a class="sbiz-btn sbiz-btn--line" data-k-href="aca.instagram" href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"></circle></svg>인스타그램 바로가기</a>
       </div>
     </div>
   </section>
@@ -889,10 +916,11 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
     title: '컬러앤컴포트',
     content: `
 <div class="sbiz sbiz--cnc">
-  <section class="sbiz-hero">
+  <section class="sbiz-hero" data-cnc="intro">
     <div class="sbiz-split sbiz-split--wide">
       <div class="sbiz-col">
-        <p class="sbiz-kicker">COLOR &amp; COMFORT</p>
+        <span class="sbiz-logo"><img data-k="cnc.logo" data-k-mode="src" src="/images/business/color-comfort-logo.png" alt="컬러앤컴포트 로고" /></span>
+        <p class="sbiz-kicker" data-k="cnc.kicker">COLOR &amp; COMFORT</p>
         <h2 class="sbiz-title" data-k="cnc.title" data-k-mode="html">다채로운 색, 한끝 다른 <span class="wn">편안함</span></h2>
         <p class="sbiz-lead" data-k="cnc.lead" data-k-mode="html">컬러앤컴포트는 카야인터내셔널이 설립한 힐링 라이프스타일 브랜드입니다.<br>다양한 색감과 편안한 착용감의 양말로 일상에 작은 쉼을 전합니다.</p>
       </div>
@@ -903,41 +931,38 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
       </figure>
     </div>
   </section>
-  <section class="sbiz-band sbiz-band--soft">
+  <section class="sbiz-band sbiz-band--soft" data-cnc="story">
     <p class="sbiz-kicker sbiz-center">BRAND · 브랜드 이야기</p>
     <div class="sbiz-cells">
-      <div class="sbiz-cell"><strong>Color</strong><span>기분까지 밝혀 주는 다양한 색감</span></div>
-      <div class="sbiz-cell"><strong>Comfort</strong><span>하루 종일 편안한 착용감</span></div>
-      <div class="sbiz-cell"><strong>Value</strong><span>사회적 가치를 담아 운영하는 브랜드</span></div>
+      <div class="sbiz-cell"><strong data-k="cnc.story.0.title">Color</strong><span data-k="cnc.story.0.body">기분까지 밝혀 주는 다양한 색감</span></div>
+      <div class="sbiz-cell"><strong data-k="cnc.story.1.title">Comfort</strong><span data-k="cnc.story.1.body">하루 종일 편안한 착용감</span></div>
+      <div class="sbiz-cell"><strong data-k="cnc.story.2.title">Value</strong><span data-k="cnc.story.2.body">사회적 가치를 담아 운영하는 브랜드</span></div>
     </div>
     <p class="sbiz-note" data-k="cnc.note">컬러앤컴포트의 수익은 카야인터내셔널의 공익사업에 쓰입니다.</p>
   </section>
-  <section class="sbiz-hero sbiz-hero--flush">
+  <section class="sbiz-hero sbiz-hero--flush" data-cnc="products">
     <p class="sbiz-kicker">PRODUCTS · 제품</p>
     <div class="sbiz-photos sbiz-photos--3">
       <figure class="sbiz-photo">
-        <!-- 칸: [사진] 페이크삭스 → /images/business/research-social-4.jpg -->
-        <img src="/images/business/research-social-4.jpg" alt="페이크삭스" />
-        <figcaption>페이크삭스</figcaption>
+        <img data-k="cnc.product.0.photo" data-k-mode="src" data-k-alt="cnc.product.0" src="/images/business/research-social-4.jpg" alt="페이크삭스" />
+        <figcaption data-k="cnc.product.0">페이크삭스</figcaption>
       </figure>
       <figure class="sbiz-photo">
-        <!-- 칸: [사진] 디자인 양말 → /images/business/research-social-4.jpg -->
-        <img src="/images/business/research-social-4.jpg" alt="디자인 양말" />
-        <figcaption>디자인 양말</figcaption>
+        <img data-k="cnc.product.1.photo" data-k-mode="src" data-k-alt="cnc.product.1" src="/images/business/research-social-4.jpg" alt="디자인 양말" />
+        <figcaption data-k="cnc.product.1">디자인 양말</figcaption>
       </figure>
       <figure class="sbiz-photo">
-        <!-- 칸: [사진] 선물 패키지 → /images/business/research-social-4.jpg -->
-        <img src="/images/business/research-social-4.jpg" alt="선물 패키지" />
-        <figcaption>선물 패키지</figcaption>
+        <img data-k="cnc.product.2.photo" data-k-mode="src" data-k-alt="cnc.product.2" src="/images/business/research-social-4.jpg" alt="선물 패키지" />
+        <figcaption data-k="cnc.product.2">선물 패키지</figcaption>
       </figure>
     </div>
   </section>
-  <section class="sbiz-hero">
+  <section class="sbiz-hero" data-cnc="buy">
     <p class="sbiz-kicker">WITH US · 구매 방법</p>
     <div class="sbiz-steps">
-      <div class="sbiz-step"><b>01</b><strong>기업·행사 단체 구매</strong><span>행사 기념품, 답례품</span></div>
-      <div class="sbiz-step"><b>02</b><strong>임직원·고객 선물</strong><span>명절·연말 선물세트</span></div>
-      <div class="sbiz-step"><b>03</b><strong>판매·유통 협력</strong><span>입점, 유통 제휴</span></div>
+      <div class="sbiz-step"><b>01</b><strong data-k="cnc.step.0.title">기업·행사 단체 구매</strong><span data-k="cnc.step.0.body">행사 기념품, 답례품</span></div>
+      <div class="sbiz-step"><b>02</b><strong data-k="cnc.step.1.title">임직원·고객 선물</strong><span data-k="cnc.step.1.body">명절·연말 선물세트</span></div>
+      <div class="sbiz-step"><b>03</b><strong data-k="cnc.step.2.title">판매·유통 협력</strong><span data-k="cnc.step.2.body">입점, 유통 제휴</span></div>
     </div>
     <div class="sbiz-actions">
       <a class="sbiz-btn" data-k="cnc.storeLabel" data-k-href="cnc.store" href="https://smartstore.naver.com/colorncomfort?NaPm=ct%3Dmvsy3sck%7Cci%3Dcheckout%7Ctr%3Dds%7Ctrx%3Dnull%7Chk%3D5d38ad1506acfc1d183fc24edac1ef4f7068b1a4" target="_blank" rel="noopener">온라인 스토어 바로가기</a>
@@ -945,7 +970,7 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
     </div>
     <div class="sbiz-news">
       <span>컬러앤컴포트 소식</span>
-      <a class="sbiz-btn sbiz-btn--line" data-k-href="cnc.instagram" href="#" hidden>인스타그램</a>
+      <a class="sbiz-btn sbiz-btn--line" data-k-href="cnc.instagram" href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"></circle></svg>인스타그램 바로가기</a>
     </div>
   </section>
   <section class="dom-more">

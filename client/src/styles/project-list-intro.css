@@ -15,6 +15,10 @@
   text-align: center;
 }
 
+.pli-hero--photo-left {
+  flex-direction: row-reverse;
+}
+
 .pli-copy {
   flex: 1 1 480px;
   min-width: 0;
@@ -75,6 +79,10 @@
 .pli-band {
   background: #f4f4f2;
   padding: 40px 0;
+}
+
+.pli-band--white {
+  background: #fff;
 }
 
 .pli-band--cycle {

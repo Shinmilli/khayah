@@ -140,13 +140,13 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
 <div class="greeting-modern">
   <div class="main-grid">
     <aside class="sidebar">
-      <img class="sidebar-photo" src="/images/about/greeting-representative.png" alt="Choi Soon-tae, Representative of Khayah (KHAYAH)" width="512" height="630" />
+      <img class="sidebar-photo" src="/images/about/greeting-representative.png" alt="Soontae Choi, Representative of Khayah (KHAYAH)" width="512" height="630" />
       <p class="sidebar-kicker">Representative's Message</p>
       <h2 class="sidebar-title">With a shared heart</h2>
       <p class="sidebar-sub">For the practice of sharing and service</p>
       <div class="sidebar-rule"></div>
       <p class="sidebar-role">Representative, Khayah (KHAYAH)</p>
-      <p class="sidebar-name">Choi Soon-tae</p>
+      <p class="sidebar-name">Soontae Choi</p>
     </aside>
     <article class="article">
       <div class="article-lead">
@@ -165,7 +165,7 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
       <p class="article-body">
         Every life in this world is a precious creation of God, and caring for those who suffer and helping them is a calling every person on this earth should carry in their heart. Like the name Khayah, which means to live again, I pray that true revival — Khayah — may sweep through your life as well.
       </p>
-      <p class="article-sign"><span class="article-sign-role">Representative, Khayah (KHAYAH)</span> <strong>Choi Soon-tae</strong></p>
+      <p class="article-sign"><span class="article-sign-role">Representative, Khayah (KHAYAH)</span> <strong>Soontae Choi</strong></p>
     </article>
   </div>
   <section class="sig-section">
@@ -176,7 +176,7 @@ export const PAGES_STATIC_EN: Record<string, StaticPage> = {
       </div>
       <div class="sig-info">
         <p class="sig-role">Representative, KHAYAH International</p>
-        <p class="sig-name">Choi Soon-tae</p>
+        <p class="sig-name">Soontae Choi</p>
         <p class="sig-name-ko">최 순 태</p>
       </div>
     </div>

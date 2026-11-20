@@ -1,4 +1,5 @@
-import { readJsonDocument, writeJsonDocument } from './siteDocumentStore'
+import { readDrafted, writeDrafted, type SaveMode } from './documentDraft'
+import { readJsonDocument } from './siteDocumentStore'
 
 const DOCUMENT_KEY = 'biz-support'
 const NANUM = 'https://www.ihappynanum.com/Nanum/B/RAA98AKVRQ'
@@ -13,6 +14,23 @@ export type BizSection = {
 export type BizMenuItem = {
   key: string
   order: number
+  label: string
+  target: string
+  tabs: string
+}
+
+export type BizArchiveItem = {
+  id: string
+  name: string
+  status: string
+  memo: string
+}
+
+export type BizPanel = {
+  id: string
+  order: number
+  enabled: boolean
+  removed?: boolean
 }
 
 export type BizSupportDocument = {
@@ -21,8 +39,51 @@ export type BizSupportDocument = {
   sections: BizSection[]
   menu: BizMenuItem[]
   otherBusiness: 'manual' | 'auto'
+  otherTitle: string
+  titleLimit: string
+  lineLimit: string
+  archive: BizArchiveItem[]
+  layout: BizPanel[]
   grantsPublic: boolean
-  donate: { url: string; labelKo: string; menuLabel: string; receiptNote: string; inquiry: string; impactEnabled: boolean }
+  donate: {
+    url: string
+    labelKo: string
+    menuLabel: string
+    receiptNote: string
+    inquiry: string
+    impactEnabled: boolean
+    openBlank?: boolean
+    impactTitle?: string
+    impactScope?: 'all' | 'country'
+    impactCountry?: string
+    impactMetrics?: string
+    menuPin?: 'on' | 'off' | 'site'
+    showFloating?: boolean
+  }
+  blocks: BizPageBlock[]
+}
+
+const BLOCK_PAGES = ['common', 'social', 'academy', 'cnc'] as const
+const BLOCK_TYPES = ['intro', 'facts', 'flow', 'cards', 'timeline', 'cases', 'photos', 'image'] as const
+type BlockType = (typeof BLOCK_TYPES)[number]
+type BlockPage = (typeof BLOCK_PAGES)[number]
+export type BizPageBlock = {
+  page: BlockPage
+  id: string
+  type: BlockType
+  enabled: boolean
+  order: number
+  kicker: string
+  title: string
+  emphasis: string
+  lead: string
+  photo: string
+  photoAlt: string
+  photoSide: 'right' | 'left' | 'none'
+  cards: Array<{ value: string; unit: string; note: string; source: string }>
+  steps: Array<{ name: string; body: string }>
+  items: Array<{ title: string; body: string; href: string; year: string }>
+  photos: Array<{ src: string; alt: string }>
 }
 
 function isPlainObject(v: unknown): v is Record<string, unknown> {
@@ -52,19 +113,26 @@ const FIELDS: Record<string, string> = {
   'dom.p.1.body': '카야는 사람을 개발의 수단이 아닌 존엄한 주체로 존중합니다. 지역사회와 자연환경의 미래를 함께 고려하며 무분별한 개발을 지양하고, 사람의 성장과 생태계의 지속가능성이 상생하는 교육을 실천합니다.',
   'dom.p.2.title': '국내에서 세계로 이어지는 개발협력',
   'dom.p.2.body': '진로 탐색, 소셜 창업, 기후·환경 교육을 통해 국내에서 쌓은 경험과 전문성을 해외 개발협력 현장으로 연결합니다. 청소년과 청년, 외국인 노동자, 탈북 청년의 배움이 각 지역의 문화와 필요에 맞게 활용되어 지역사회에 기여하도록 지원합니다.',
+  'dom.p.3.title': '',
+  'dom.p.3.body': '',
   'dedu.title': '교육으로 스스로 <span class="wn">성장할 수 있는 기반</span>을 만듭니다.',
   'dedu.desc': '카야는 교육으로 개인의 성장과 공동체의 변화를 함께 만듭니다. 외국인 노동자, 탈북 청년, 청소년 등 이웃이 자신의 역량을 키우고 배움을 나누도록, 사회적 가치에 기반한 교육과 경험의 기회를 제공합니다.',
   'dedu.cta': '국내 진행사업 확인하기',
+  'dedu.ctaNote': '지금 진행 중인 국내교육 사업은 진행사업 페이지에서 볼 수 있습니다.',
+  'dedu.ctaHref': '/business/domestic/projects',
+  'dedu.0.label': 'EDUCATION PROGRAM 01',
   'dedu.0.title': '진로 탐색과 미래역량개발 지원',
   'dedu.0.sub': '자기이해 · Life Design · 직업기초역량 · 진로 체험·멘토링 · 사회·문화 체험',
   'dedu.0.body': '청소년과 청년이 자신을 이해하고 미래를 주도적으로 설계하도록 단계적 진로교육을 제공합니다. 자기이해에서 공동체와 직업세계에 대한 이해, 진로 탐색과 설계로 이어지는 배움을 통해 가능성을 발견하고 구체적인 실천으로 옮기도록 돕습니다.',
   'dedu.0.photo': '/images/business/domestic-edu-2.jpg',
   'dedu.0.caption': 'Dream Seekers 캠프 발표 (진로 탐색과 미래역량개발 지원)',
+  'dedu.1.label': 'EDUCATION PROGRAM 02',
   'dedu.1.title': '사회적 가치기반 소셜 창업과 자립 역량 강화',
   'dedu.1.sub': '소셜 비즈니스 교육 · 국내외 창업 · 국제개발협력 교육',
   'dedu.1.body': '사회적 가치와 기업가정신을 바탕으로 외국인 노동자, 탈북 청년, 소외된 청(소)년의 창업과 자립을 돕습니다. 경험과 강점을 바탕으로 지역사회의 필요를 사업 아이디어로 발전시키며 새로운 진로와 기회를 모색합니다.',
   'dedu.1.photo': '/images/business/domestic-edu-1.jpg',
   'dedu.1.caption': '자연순환유기농업 기술교육 (소셜 창업과 자립 역량 강화)',
+  'dedu.2.label': 'EDUCATION PROGRAM 03',
   'dedu.2.title': '기후·환경 인식개선과 실천 확산',
   'dedu.2.sub': '기후·환경 교육 · 주제별 북클럽 · 인식개선 콘텐츠 제작·배포 · 기후위기 대응 봉사단 교육·활동',
   'dedu.2.body': '기후위기를 이해하고 일상과 지역사회에서 실천하는 세계시민의 성장을 돕습니다. 교육과 북클럽, 콘텐츠 제작, 봉사활동을 통해 환경문제를 자신의 삶과 연결하고, 개인의 실천이 지역사회와 국제협력으로 이어지도록 지원합니다.',
@@ -75,6 +143,8 @@ const FIELDS: Record<string, string> = {
   'ovs.title': '교육으로 <span class="biz-kp__em">변화의 주체</span>를 세웁니다.',
   'ovs.lead': '현지 주민과 함께 배우고 실행하며, 지역사회가 스스로 변화의 힘을 키우도록 돕습니다.',
   'ovs.cta': '해외 진행사업 확인하기',
+  'ovs.ctaNote': '지금 진행 중인 해외사업은 진행사업 페이지에서 볼 수 있습니다.',
+  'ovs.ctaHref': '/business/overseas/projects',
   'ovs.p.0.title': '참여와 협력',
   'ovs.p.0.body': '카야는 현지 주민을 단순한 수혜자가 아닌 변화의 주체이자 협력 파트너로 존중합니다.<br />서로의 경험과 지식을 나누며 지역에 필요한 변화를 함께 만들어갑니다.',
   'ovs.p.1.title': '현지와의 동화',
@@ -86,6 +156,8 @@ const FIELDS: Record<string, string> = {
   'oedu.title': 'Learning today,<br />Leading tomorrow!',
   'oedu.desc': '카야는 교육을 통해 지역이 변화의 힘을 키우도록 돕습니다. 삶의 기초역량부터 직업훈련, 교육 환경 개선까지 현장과 함께 설계하고 실행합니다.',
   'oedu.cta': '해외 교육 진행사업 확인하기',
+  'oedu.ctaNote': '지금 진행 중인 해외 교육 사업은 진행사업 페이지에서 볼 수 있습니다.',
+  'oedu.ctaHref': '/business/overseas/education/projects',
   'oedu.0.title': '기초역량\n강화사업',
   'oedu.0.body': '스스로 배우고 삶의 과제에 대응하는 힘은 지속적인 성장의 토대입니다. 카야는 읽기·쓰기·수리력 등 기초학습과 자기이해·의사소통·문제해결 등 삶의 역량을 함께 키웁니다. 참여자가 배움을 이어가고, 자신과 공동체를 이해하며 주체적으로 살아가도록 지원합니다.',
   'oedu.0.photo.0': '/images/business/overseas-edu-foundation-1.jpg',
@@ -94,6 +166,7 @@ const FIELDS: Record<string, string> = {
   'oedu.0.cap.1': '수학·과학 기초역량',
   'oedu.0.photo.2': '/images/business/overseas-edu-foundation-3.jpg',
   'oedu.0.cap.2': 'Life Skills',
+  'oedu.1.card.1.title': 'STEM 융합 탐구 교육',
   'oedu.1.title': '미래지향\n교육',
   'oedu.1.body': '청소년과 청년이 변화하는 사회를 이해하고 자신의 미래를 주도적으로 설계하도록 돕습니다. 지역의 교육·산업 환경과 참여자의 관심을 바탕으로 진로·직업교육과 미래 분야 역량을 위한 STEM 교육을 함께 운영하며, 배운 것을 삶과 지역의 과제에 적용하는 힘을 키웁니다.',
   'oedu.1.photo.0': '/images/business/overseas-edu-future-1.jpg',
@@ -113,8 +186,20 @@ const FIELDS: Record<string, string> = {
   'vol.title': '현지 과제를 함께 푸는 <span class="wn">국제협력활동</span>',
   'vol.desc': '카야는 국내 청소년·청년과 기업 등 경험과 열정을 가진 다양한 참여자가 현지의 과제를 이해하고 주민과 함께 해결방안을 찾도록 지원합니다. 필요에 맞는 실천 모델을 제안하고 실행하며, 지역사회의 지속가능한 변화와 참여자의 성장이 함께 이뤄지도록 합니다.',
   'vol.cta': '해외봉사단 진행사업 확인하기',
+  'vol.ctaNote': '지금 진행 중인 해외봉사단 사업은 진행사업 페이지에서 볼 수 있습니다.',
+  'vol.ctaHref': '/business/overseas/volunteer/projects',
+  'vol.step.0': '홍보·모집',
+  'vol.step.1': '심사',
+  'vol.step.2': '선발',
+  'vol.step.3': '현지 사전조사 및 국내외 사전준비',
+  'vol.step.4': '국내교육 및 단원주도 활동기획',
+  'vol.step.5': '발대식 및 봉사단 파견',
+  'vol.step.6': '현장 활동 지원 및 인솔·안전 관리',
+  'vol.step.7': '활동 결과 모음 및 성과분석',
+  'vol.step.8': '성과공유회',
+  'vol.step.9': '후속 활동 및 지속 확산 관리',
   'vol.block.0.title': '철학과 전문성을 담은 봉사기획',
-  'vol.block.0.lead': '10년 이상 축적한 국제개발협력·교육분야 경험을 바탕으로 지역의 문제를 발굴·분석해 맞춤형 봉사활동을 기획합니다. 현지에 적합한 변화를 만들고, 봉사단원이 세계시민성·문제해결력·적응력·전문성 활용 역량을 키우도록 지원합니다.',
+  'vol.block.0.lead': '10년 이상 축적한 국제개발협력·교육분야 경험을 바탕으로 지역의 문제를 발굴·분석해 맞춤형 봉사활동을 기획합니다.<br />현지에 적합한 변화를 만들고, 봉사단원이 세계시민성·문제해결력·적응력·전문성 활용 역량을 키우도록 지원합니다.',
   'vol.panel.0.title': '국제개발협력 전문성',
   'vol.panel.1.title': '교육 분야 전문성',
   'vol.block.1.title': '봉사단 사업 전 과정 운영 전문성',
@@ -130,6 +215,8 @@ const FIELDS: Record<string, string> = {
   'res.title': '현장의 경험을 연구하고 교육과 개발협력의 방법을 발전시켜, 지속가능한 변화를 만드는 실천에 연결합니다.',
   'res.lead': '카야는 사람의 성장과 지역사회의 변화가 이어질 수 있도록 교육과 개발협력의 방법을 연구합니다. 현장에서 발견한 질문을 바탕으로 교육모델과 사업 운영방식을 발전시키고, 그 경험을 다시 현장과 나눕니다.',
   'res.cta': '연구사업 진행사업 확인하기',
+  'res.ctaNote': '지금 진행 중인 연구사업은 진행사업 페이지에서 볼 수 있습니다.',
+  'res.ctaHref': '/business/advocacy/projects',
   'res.p.0.title': '현장 기반의 연구',
   'res.p.0.body': '카야의 연구는 <strong>현장에서 출발</strong>합니다. 국내외 현장에서 발견한 실제적인 문제와 <strong>참여자들의 목소리</strong>를 바탕으로, 이론에 그치지 않고 <strong>현장에 즉시 적용</strong>할 수 있는 유의미한 시사점을 도출합니다.',
   'res.p.1.title': '참여와 주도성의 방법론',
@@ -147,37 +234,126 @@ const FIELDS: Record<string, string> = {
   'res.card.2.title': '진행사업',
   'res.card.2.desc': '연구로 발전시킨 모델과 방법을 국내외 현장에 적용하고, 그 경험과 성과를 다시 연구와 실천으로 잇습니다.',
   'res.card.2.href': '/business/advocacy/projects',
+  'soc.kicker': 'SOCIAL BUSINESS · 소셜비즈니스',
+  'soc.heroLabel': 'SOCIAL BUSINESS',
   'soc.title': '현장의 경험에서 출발한 <span class="wn">소셜비즈니스</span>',
   'soc.lead': '카야는 개발협력과 교육 현장에서 쌓은 경험을 바탕으로 소셜비즈니스를 운영합니다.<br>각 사업은 저마다의 방식으로 사회적 가치를 만듭니다.',
+  'soc.aca.logo': '',
   'soc.aca.photo': '/images/business/research-social-1.jpg',
   'soc.aca.caption': 'KHAYAH Academy 전경',
   'soc.aca.name': '카야 아카데미',
   'soc.aca.lead': '카야가 미얀마 개발협력 현장에서 개발한 교육 프로그램과 학습지로 2024년에 설립한 사회적기업입니다.',
+  'soc.aca.since': 'KHAYAH ACADEMY · 2024~',
+  'soc.aca.kindLabel': '구분',
+  'soc.aca.kind': '미얀마 사회적기업',
+  'soc.aca.regionLabel': '활동 지역',
+  'soc.aca.region': '미얀마 · 키르기스스탄',
+  'soc.aca.workLabel': '하는 일',
+  'soc.aca.work': 'Pre-School 운영, 수학·영어 학습지, STEM 온라인 학습',
   'soc.aca.more': '카야 아카데미 자세히 보기',
   'soc.aca.href': '/business/social/academy',
   'soc.cnc.logo': '/images/business/color-comfort-logo.png',
   'soc.cnc.name': '컬러앤컴포트',
   'soc.cnc.lead': '다양한 색감과 한끝 다른 편안함을 담은 힐링 라이프스타일 브랜드입니다.',
+  'soc.cnc.since': 'COLOR & COMFORT · 2021~',
+  'soc.cnc.kindLabel': '구분',
+  'soc.cnc.kind': '예비사회적기업',
+  'soc.cnc.regionLabel': '활동 지역',
+  'soc.cnc.region': '한국',
+  'soc.cnc.workLabel': '하는 일',
+  'soc.cnc.work': '양말·라이프스타일 제품 판매, 기업·단체 구매',
   'soc.cnc.more': '컬러앤컴포트 자세히 보기',
   'soc.cnc.href': '/business/social/color-and-comfort',
   'soc.cnc.photo': '/images/business/research-social-4.jpg',
   'soc.cnc.caption': '컬러앤컴포트 제품 연출컷',
+  'aca.kicker': 'KHAYAH ACADEMY · 2024~',
+  'aca.heroLabel': 'KHAYAH ACADEMY',
+  'aca.heroTitle': '카야 아카데미',
+  'aca.banner': '',
+  'aca.intro.mode': 'text',
+  'aca.intro.image': '',
+  'aca.pre.mode': 'text',
+  'aca.pre.image': '',
+  'aca.pre.kicker': '01 · PRE-SCHOOL',
+  'aca.pre.title': 'Pre-School',
+  'aca.book.mode': 'text',
+  'aca.book.image': '',
+  'aca.book.kicker': '02 · WORKBOOKS',
+  'aca.book.title': '학습지',
+  'aca.csrLabel': 'CSR',
   'aca.title': '아이들의 <span class="wn">첫 배움</span>을 여는 곳',
   'aca.lead': '카야 아카데미는 2024년 미얀마에 설립한 카야의 사회적기업입니다.<br>개발협력 현장에서 만든 학습지와 교육 프로그램을 Pre-School과 학습지 교육으로 운영합니다.',
+  'aca.logo': '',
   'aca.heroPhoto': '/images/business/overseas-edu-foundation-1.jpg',
   'aca.heroCaption': 'KHAYAH Academy Pre-School 교실',
   'aca.pre.lead': '놀이와 기초학습으로 아이들이 즐겁게 배움을 시작하도록 합니다.',
+  'aca.pre.nameLabel': '기관명',
+  'aca.pre.name': 'KHAYAH Academy International Early Years',
+  'aca.pre.placeLabel': '위치',
+  'aca.pre.place': '미얀마 양곤',
+  'aca.pre.targetLabel': '대상',
+  'aca.pre.studyLabel': '교육 내용',
   'aca.pre.target': '[대상 연령 확인 필요]',
   'aca.pre.study': '[영어·기초학습·놀이활동 등 확인 필요]',
+  'aca.pre.photo.0': '/images/business/overseas-edu-foundation-3.jpg',
+  'aca.pre.cap.0': '교실 수업',
+  'aca.pre.photo.1': '/images/business/overseas-edu-foundation-1.jpg',
+  'aca.pre.cap.1': '놀이 활동',
+  'aca.pre.photo.2': '/images/business/volunteer-group.jpg',
+  'aca.pre.cap.2': '행사',
+  'aca.pre.photo.3': '/images/business/research-social-1.jpg',
+  'aca.pre.cap.3': '원 외관',
   'aca.book.lead': '미얀마 도시빈민마을에서 개발한 Self-Care 학습지를 심화한 수학·영어 학습지입니다.<br>키르기스스탄에서는 사립 중·고등학교를 대상으로 STEM 온라인 학습 플랫폼을 운영합니다.',
+  'aca.book.subjectLabel': '과목',
+  'aca.book.subject': '수학 · 영어 (수준별)',
+  'aca.book.targetLabel': '대상',
+  'aca.book.target': '아동·청소년 (수준별)',
+  'aca.book.methodLabel': '학습 방식',
+  'aca.book.method': '방문 학습 · 온라인 학습',
+  'aca.book.photo.0': '/images/business/overseas-edu-foundation-1.jpg',
+  'aca.book.cap.0': '학습지 표지',
+  'aca.book.photo.1': '/images/business/overseas-edu-foundation-1.jpg',
+  'aca.book.cap.1': '학습지 활용 수업',
   'aca.csr': '카야 아카데미는 양곤 Dream Seekers Education Center와 만달레이 아동친화공간 운영을 지원합니다.',
   'aca.facebook': '',
   'aca.instagram': '',
+  'cnc.logo': '/images/business/color-comfort-logo.png',
+  'cnc.kicker': 'COLOR & COMFORT',
+  'cnc.heroLabel': 'COLOR & COMFORT',
+  'cnc.heroTitle': '컬러앤컴포트',
+  'cnc.banner': '',
+  'cnc.intro.mode': 'text',
+  'cnc.intro.image': '',
+  'cnc.story.mode': 'text',
+  'cnc.story.image': '',
+  'cnc.products.mode': 'text',
+  'cnc.products.image': '',
+  'cnc.buy.mode': 'text',
+  'cnc.buy.image': '',
+  'cnc.noteOn': '1',
   'cnc.title': '다채로운 색, 한끝 다른 <span class="wn">편안함</span>',
   'cnc.lead': '컬러앤컴포트는 카야인터내셔널이 설립한 힐링 라이프스타일 브랜드입니다.<br>다양한 색감과 편안한 착용감의 양말로 일상에 작은 쉼을 전합니다.',
   'cnc.heroPhoto': '/images/business/research-social-4.jpg',
   'cnc.heroCaption': '브랜드 대표 연출컷',
   'cnc.note': '컬러앤컴포트의 수익은 카야인터내셔널의 공익사업에 쓰입니다.',
+  'cnc.story.0.title': 'Color',
+  'cnc.story.0.body': '기분까지 밝혀 주는 다양한 색감',
+  'cnc.story.1.title': 'Comfort',
+  'cnc.story.1.body': '하루 종일 편안한 착용감',
+  'cnc.story.2.title': 'Value',
+  'cnc.story.2.body': '사회적 가치를 담아 운영하는 브랜드',
+  'cnc.product.0': '페이크삭스',
+  'cnc.product.0.photo': '/images/business/research-social-4.jpg',
+  'cnc.product.1': '디자인 양말',
+  'cnc.product.1.photo': '/images/business/research-social-4.jpg',
+  'cnc.product.2': '선물 패키지',
+  'cnc.product.2.photo': '/images/business/research-social-4.jpg',
+  'cnc.step.0.title': '기업·행사 단체 구매',
+  'cnc.step.0.body': '행사 기념품, 답례품',
+  'cnc.step.1.title': '임직원·고객 선물',
+  'cnc.step.1.body': '명절·연말 선물세트',
+  'cnc.step.2.title': '판매·유통 협력',
+  'cnc.step.2.body': '입점, 유통 제휴',
   'cnc.store': 'https://smartstore.naver.com/colorncomfort?NaPm=ct%3Dmvsy3sck%7Cci%3Dcheckout%7Ctr%3Dds%7Ctrx%3Dnull%7Chk%3D5d38ad1506acfc1d183fc24edac1ef4f7068b1a4',
   'cnc.storeLabel': '온라인 스토어 바로가기',
   'cnc.kakao': 'https://pf.kakao.com/_xiTjks',
@@ -187,41 +363,109 @@ const FIELDS: Record<string, string> = {
   'guide.lead': '후원자님의 나눔이 어디에, 어떻게 쓰이는지<br>이 페이지에서 투명하게 알려 드립니다.',
   'guide.photo': '/images/donor-guide/guide-class.jpg',
   'guide.photoAlt': '교실에서 공부하는 아이들',
+  'guide.whereKicker': 'WHERE YOUR GIFT GOES',
   'guide.whereTitle': '후원이 닿는 곳',
   'guide.whereLead': '후원금은 외부 지원만으로는 채우기 어려운 해외 교육 현장에 쓰입니다.',
+  'guide.whereSize': 'md',
+  'guide.whereColor': 'burgundy',
+  'guide.whereBg': 'beige',
   'guide.placePhoto': '/images/donor-guide/guide-place.jpg',
   'guide.placeAlt': '[샘플] 미얀마 교육 현장',
   'guide.placeTag': '지금 후원이 가장 필요한 곳 · 미얀마',
   'guide.placeTitle': '미얀마 양곤 · 만달레이',
   'guide.placeBody': '현재 카야의 후원금은 대부분 미얀마 지부의 교육 사업에 쓰이고 있습니다. 양곤 Education Center와 만달레이 지역에서 현지 지부가 직접 아이들을 만나고 있습니다.',
+  'guide.placeHref': '',
+  'guide.item.0.icon': 'house',
   'guide.item.0.title': '배움의 공간 운영',
   'guide.item.0.body': '교육센터와 아동친화공간(CFS)의 운영비, 교재와 학습 환경을 마련합니다.',
+  'guide.item.1.icon': 'book',
   'guide.item.1.title': '수준에 맞춘 학습 지원',
   'guide.item.1.body': 'Dream Seekers 독서클럽, 수준별 맞춤 학습지, 방과후 학습으로 아이마다 필요한 배움을 채웁니다.',
+  'guide.item.2.icon': 'heart',
   'guide.item.2.title': '재난 이후 회복 지원',
   'guide.item.2.body': '지진으로 일상이 흔들린 아이들이 마음의 안정을 되찾고 학업을 이어가도록 돕습니다.',
+  'guide.item.3.icon': 'person',
+  'guide.item.3.title': '',
+  'guide.item.3.body': '',
+  'guide.heroBtn2': '후원 방법 보기',
+  'guide.openKicker': 'TRANSPARENCY',
+  'guide.openTitle': '후원금, 투명하게 운영합니다',
+  'guide.open.0.title': '기부금 모금액 및 활용실적 공개',
+  'guide.open.0.body': '후원자 여러분의 소중한 기부금이 투명하게 사용될 수 있도록 연간 기부금 모금액 및 활용실적을 홈페이지에 공개합니다.',
+  'guide.open.1.title': '공익법인 결산서류 공시',
+  'guide.open.1.body': '관련 법령에 따라 공익법인 결산서류를 국세청 홈택스에 공시하여 기관의 재정 운영과 회계 정보를 투명하게 공개합니다.',
+  'guide.open.2.title': '기부금 영수증 발급',
+  'guide.open.2.body': '후원자 여러분의 소중한 나눔에 대해 기부금영수증을 발급해 드리며, 국세청 연말정산 간소화를 통해 편리하게 기부 내역을 확인하실 수 있도록 지원합니다.',
+  'guide.giveKicker': 'WAYS TO GIVE',
+  'guide.giveTitle': '나에게 맞는 후원을 선택해 주세요',
   'guide.give.0.title': '정기후원',
   'guide.give.0.body': '매월 일정 금액을 정기적으로 후원합니다. 꾸준한 후원은 현장 활동이 끊기지 않고 이어지게 합니다.',
+  'guide.give.0.meta': 'CMS 자동이체 · 신용카드 · 휴대폰 결제',
   'guide.give.1.title': '일시후원',
   'guide.give.1.body': '지정하신 금액을 1회 후원합니다. 한 번의 나눔도 현장 활동에 소중한 힘이 됩니다.',
+  'guide.give.1.meta': '계좌이체 · 신용카드 · 휴대폰 결제',
   'guide.give.2.title': '기념일후원',
   'guide.give.2.body': '생일, 첫돌, 결혼기념일 등 특별한 날에 지정하신 금액을 후원합니다.',
+  'guide.give.2.meta': '계좌이체 · 신용카드 · 휴대폰 결제',
+  'guide.giveCtaTitle': '오늘의 나눔이 내일의 배움이 됩니다',
+  'guide.giveSafe': '후원 신청은 후원 관리 서비스 \'해피나눔\' 페이지로 이동해 안전하게 진행됩니다. CMS 자동이체·신용카드·휴대폰 결제가 모두 가능하며, 기부금 영수증은 카야인터내셔널이 발급합니다.',
+  'guide.contactTitle': '후원 문의',
+  'guide.contactLead': '온라인 신청이 어려우시면 전화로 문의해 주세요.',
   'method.title': '후원 방법',
   'method.lead': '후원 신청부터 납부, 기부금 영수증까지 한 곳에서 안내해 드립니다.',
   'method.happyTitle': '카야의 후원 신청은<br>\'해피나눔\'에서 진행됩니다',
+  'method.happyP1': '카야는 후원 결제 전문 서비스 ‘해피나눔’의 시스템을 통해 안전하고 편리한 후원 신청 환경을 제공하고 있습니다. 결제 정보는 해당 시스템을 통해 안전하게 처리되며, 카야 홈페이지에는 후원자의 금융 정보가 저장되지 않습니다.',
+  'method.happyP2': '보내주신 소중한 후원이 의미 있는 변화로 이어질 수 있도록, 카야는 후원자님과 꾸준히 소통하며 함께하겠습니다.',
+  'method.happy.0.title': '모든 결제 수단 가능',
+  'method.happy.0.body': 'CMS 자동이체, 신용카드, 휴대폰 결제 등 다양한 방법으로 간편하게 후원하실 수 있습니다.',
+  'method.happy.1.title': '회원가입은 자동으로',
+  'method.happy.1.body': '후원 신청 시 입력하신 정보를 바탕으로 후원회원 등록이 함께 진행됩니다.',
+  'method.happy.2.title': '기부금 영수증 발급',
+  'method.happy.2.body': '후원금에 대한 기부금 영수증 발급이 가능하며, 국세청 연말정산 간소화 서비스(주민등록정보 제공자)를 통해서도 기부 내역을 확인하실 수 있습니다.',
+  'method.stepsTitle': '한 페이지에서 3단계로 신청하세요',
+  'method.stepsLead': '\'후원하기\' 버튼을 누르면 (사)카야인터내셔널 후원 신청서가 새 창으로 열립니다.',
   'method.step.0.title': '회원정보 입력',
   'method.step.0.photo': '/images/donor-guide/step1-member.png',
+  'method.step.0.lines': '회원명과 휴대전화는 필수입니다.\n주민등록번호를 입력하시면 기부금 내역이 국세청 연말정산 간소화 서비스에 제공됩니다.\n소식지를 받으실 주소를 입력해 주세요.',
   'method.step.1.title': '결제정보 선택',
   'method.step.1.photo': '/images/donor-guide/step2-pay.png',
+  'method.step.1.lines': '결제방법(정기·일시)과 결제수단(자동이체·신용카드·휴대폰)을 고릅니다.\n정기후원은 매월 5일·10일·15일·25일 중 결제일을 선택합니다.\n후원금은 1,000원부터 원하시는 금액을 직접 입력할 수 있습니다.',
   'method.step.2.title': '동의·전자서명 후 신청',
   'method.step.2.photo': '/images/donor-guide/step3-sign.png',
+  'method.step.2.lines': '필수 동의 2가지(개인정보 수집·이용, 자동결제)에 체크합니다.\n전자서명은 반드시 예금주 이름으로 해 주세요.\n\'신청하기\'를 누르면 접수가 완료됩니다.',
+  'method.step.3.title': '',
+  'method.step.3.photo': '',
+  'method.step.3.lines': '',
+  'method.payTitle': '후원 종류별 납부 방법',
   'method.pay.0.title': 'CMS 자동이체',
   'method.pay.0.badge': '권장',
+  'method.pay.0.lines': '후원자님의 은행 계좌에서 매월 후원금이 자동이체됩니다.\n매월 5일, 10일, 15일, 25일 중 선택하신 날에 출금됩니다.\n평생계좌는 자동이체에 사용할 수 없습니다.\n등록 시 승인 문자가 발송되며, 잔액이 부족한 경우 당월에 한해 재출금이 시도됩니다.',
   'method.pay.1.title': '신용카드',
   'method.pay.1.badge': '권장',
+  'method.pay.1.lines': '신용카드 또는 체크카드로 후원금이 결제됩니다.\n신청 시 당월분이 승인 결제되며, 익월부터 약정일에 매월 자동결제됩니다.\n카드 유효기간 만료·재발급 시 후원이 중단될 수 있으니 변경 사항을 알려 주세요.',
+  'method.pay.2.title': '휴대폰 결제',
+  'method.pay.2.badge': '소액 결제',
+  'method.pay.2.lines': '통신사를 통해 소액결제되며, 신청 시 실시간 승인됩니다.\n익월부터 해당일에 매월 자동결제되고 승인 문자가 발송됩니다.\n알뜰폰은 이용하실 수 없습니다. (KT / SK / LG 3사만 가능)',
+  'method.payOtherTitle': '기타 후원',
+  'method.payOtherBody': '기업후원, 물품후원, 자원봉사, 재능기부 등은 카야로 직접 문의해 주세요.',
+  'method.accountTitle': '후원 계좌 (일시·기념일후원 계좌이체)',
+  'method.holder': '(사)카야인터내셔널',
+  'method.accounts': '우리\t1005-403-029492\n농협\t301-1122-4444-01\n국민\t584101-01-286346\n신한\t100-034-744590',
+  'method.accountNote': '계좌이체 후 기부금 영수증이 필요하시면 대표번호 또는 이메일로 성함과 연락처를 알려 주세요.',
   'method.receiptTitle': '후원회원이 되시면',
+  'method.receiptCard': '기부금 영수증 발급',
+  'method.receipt.0.title': '소식지·연례보고서',
+  'method.receipt.0.body': '정기적인 사업 보고와 함께 후원금 사용 내역을 확인하실 수 있습니다.',
+  'method.receipt.1.title': '기부금 영수증 발급',
+  'method.receipt.1.body': '후원금에 대한 기부금 영수증 발급이 가능하며, 국세청 연말정산 간소화 서비스(주민등록정보 제공자)에서도 확인하실 수 있습니다.',
+  'method.receipt.2.title': '활동·모임 참여',
+  'method.receipt.2.body': '카야 후원자님과 함께하는 활동과 모임에 참여하실 수 있습니다.',
   'method.contactTitle': '정보 변경과 후원 문의',
   'method.contactBody': '주소·연락처·결제 정보가 바뀌면 꼭 알려 주세요. 카야의 소식과 기부금 영수증을 정확히 전해 드릴 수 있습니다. 온라인 신청이 어려우시면 전화로도 신청을 도와드립니다.',
+  'method.recommendTitle': '후원 추천하기',
+  'method.recommendBody': '주변 분들에게도 나눔의 기쁨을 전해 주세요. 링크를 복사해 카카오톡이나 문자로 보낼 수 있습니다.',
+  'method.ctaTitle': '오늘의 나눔이 내일의 배움이 됩니다',
+  'method.ctaLead': '버튼을 누르면 카야 후원 전자 신청 페이지로 이동합니다.',
 }
 
 const SECTIONS: BizSection[] = [
@@ -241,11 +485,14 @@ const SECTIONS: BizSection[] = [
   ['guide.impact', 'guide', 3, false],
   ['guide.open', 'guide', 4],
   ['guide.give', 'guide', 5],
+  ['guide.contact', 'guide', 6],
   ['method.happy', 'method', 1],
   ['method.steps', 'method', 2],
   ['method.pay', 'method', 3],
+  ['method.account', 'method', 4],
   ['method.receipt', 'method', 4],
   ['method.contact', 'method', 5],
+  ['method.cta', 'method', 7],
 ].map(([id, page, order, enabled]) => ({
   id: String(id),
   page: String(page),
@@ -254,22 +501,34 @@ const SECTIONS: BizSection[] = [
 }))
 
 const MENU: BizMenuItem[] = [
-  ['domestic', 1],
-  ['domesticEducation', 1],
-  ['domesticProjects', 2],
-  ['overseas', 2],
-  ['overseasEducation', 1],
-  ['overseasVolunteer', 2],
-  ['overseasProjects', 3],
-  ['advocacy', 3],
-  ['researchProjects', 1],
-  ['researchSocial', 4],
-  ['socialAcademy', 1],
-  ['socialComfort', 2],
-].map(([key, order]) => ({ key: String(key), order: Number(order) }))
+  ['domestic', 1, '국내사업', '국내사업 소개', '국내사업 소개 · 국내교육 소개 · 국내 진행사업'],
+  ['domesticEducation', 1, '국내 · 교육', '국내교육 소개', ''],
+  ['domesticProjects', 2, '국내 진행사업', '국내 진행사업', ''],
+  ['overseas', 2, '해외사업', '해외사업 소개', '해외사업 소개 · 해외 교육 · 해외봉사단 · 해외 진행사업'],
+  ['overseasEducation', 1, '해외 · 교육', '해외 교육 소개', ''],
+  ['overseasVolunteer', 2, '해외봉사단', '해외봉사단 소개', ''],
+  ['overseasProjects', 3, '해외 진행사업', '해외 진행사업', ''],
+  ['advocacy', 3, '연구사업', '연구사업 소개', '연구사업 소개 · 연구사업 진행사업'],
+  ['researchProjects', 1, '연구사업 진행사업', '연구사업 진행사업', ''],
+  ['researchSocial', 4, '소셜비즈니스', '/business/social', '소셜비즈니스 소개 · 카야 아카데미 · 컬러앤컴포트'],
+  ['socialAcademy', 1, '카야 아카데미', '카야 아카데미', ''],
+  ['socialComfort', 2, '컬러앤컴포트', '컬러앤컴포트', ''],
+].map(([key, order, label, target, tabs]) => ({
+  key: String(key),
+  order: Number(order),
+  label: String(label),
+  target: String(target),
+  tabs: String(tabs),
+}))
+
+const ARCHIVE: BizArchiveItem[] = [
+  { id: 'projects-board', name: '진행사업 게시판', status: '비공개 (원문 보존)', memo: '게시판 → 진행사업 페이지형으로 전환. 기존 글 원문 그대로 보존' },
+  { id: 'grants', name: '지원사업 게시판', status: '비공개', memo: '메뉴·링크에서 숨김' },
+  { id: 'merged-pages', name: '국내사업 > 교육 / 연구사업 > 교육연구 하위 페이지', status: '삭제', memo: '상위 페이지로 통합' },
+]
 
 const ITEM_IDS = [
-  'dom.p.0', 'dom.p.1', 'dom.p.2',
+  'dom.p.0', 'dom.p.1', 'dom.p.2', 'dom.p.3',
   'dedu.0', 'dedu.1', 'dedu.2',
   'ovs.p.0', 'ovs.p.1', 'ovs.p.2', 'ovs.p.3',
   'res.p.0', 'res.p.1', 'res.p.2', 'res.p.3',
@@ -295,16 +554,73 @@ export function defaultBizSupportDocument(): BizSupportDocument {
     sections: [...SECTIONS, ...itemSections()],
     menu: MENU.map((row) => ({ ...row })),
     otherBusiness: 'manual',
+    otherTitle: 'MORE · 다른 사업 보기',
+    titleLimit: '20자',
+    lineLimit: '3줄',
+    archive: ARCHIVE.map((row) => ({ ...row })),
+    layout: [],
     grantsPublic: false,
     donate: {
       url: NANUM,
       labelKo: '지금 바로 후원하기 ♥',
       menuLabel: '후원하기',
-      receiptNote: '',
+      receiptNote: '카야인터내셔널이 발급합니다. 신청 시 주민등록번호를 입력하시면 연말정산 간소화 서비스에서 바로 확인하실 수 있습니다.',
       inquiry: '',
       impactEnabled: false,
+      openBlank: true,
+      impactTitle: '후원으로 함께 만든 변화',
+      impactScope: 'all',
+      impactCountry: '미얀마',
+      impactMetrics: 'people,children,partners,teachers',
+      menuPin: 'on',
+      showFloating: true,
     },
+    blocks: [],
   }
+}
+
+function bizBlocks(value: unknown): BizPageBlock[] {
+  const rows = Array.isArray(value) ? value : []
+  return rows.filter(isPlainObject).slice(0, 24).flatMap((row, index) => {
+    const page = BLOCK_PAGES.includes(row.page as BlockPage) ? (row.page as BlockPage) : null
+    const type = BLOCK_TYPES.includes(row.type as BlockType) ? (row.type as BlockType) : null
+    const id = text(row.id, '', 40)
+    if (!page || !type || !id) return []
+    return [{
+      page,
+      id,
+      type,
+      enabled: flag(row.enabled, true),
+      order: Math.round(num(row.order, index)),
+      kicker: text(row.kicker, '', 120),
+      title: text(row.title, '', 120),
+      emphasis: text(row.emphasis, '', 40),
+      lead: text(row.lead, '', 800),
+      photo: text(row.photo, '', 400),
+      photoAlt: text(row.photoAlt, '', 200),
+      photoSide: row.photoSide === 'left' || row.photoSide === 'none' ? row.photoSide : 'right',
+      cards: (Array.isArray(row.cards) ? row.cards : []).filter(isPlainObject).slice(0, 4).map((card) => ({
+        value: text(card.value, '', 40),
+        unit: text(card.unit, '', 20),
+        note: text(card.note, '', 80),
+        source: text(card.source, '', 80),
+      })),
+      steps: (Array.isArray(row.steps) ? row.steps : []).filter(isPlainObject).slice(0, 6).map((step) => ({
+        name: text(step.name, '', 40),
+        body: text(step.body, '', 200),
+      })),
+      items: (Array.isArray(row.items) ? row.items : []).filter(isPlainObject).slice(0, 8).map((item) => ({
+        title: text(item.title, '', 80),
+        body: text(item.body, '', 300),
+        href: text(item.href, '', 200),
+        year: text(item.year, '', 20),
+      })),
+      photos: (Array.isArray(row.photos) ? row.photos : []).filter(isPlainObject).slice(0, 3).map((photo) => ({
+        src: text(photo.src, '', 400),
+        alt: text(photo.alt, '', 200),
+      })),
+    }]
+  })
 }
 
 function normalize(body: unknown): BizSupportDocument {
@@ -313,6 +629,10 @@ function normalize(body: unknown): BizSupportDocument {
   const incoming = isPlainObject(body.fields) ? body.fields : {}
   const fields: Record<string, string> = {}
   for (const key of Object.keys(FIELDS)) fields[key] = text(incoming[key], FIELDS[key])
+  if (!String(incoming['method.receipt.1.title'] ?? '').trim() && String(incoming['method.receiptCard'] ?? '').trim()) {
+    fields['method.receipt.1.title'] = text(incoming['method.receiptCard'], FIELDS['method.receipt.1.title'])
+  }
+  fields['method.receiptCard'] = fields['method.receipt.1.title'] || fields['method.receiptCard']
   const sectionRows = Array.isArray(body.sections) ? body.sections : base.sections
   const known = new Map(base.sections.map((row) => [row.id, row]))
   const sections = base.sections.map((row) => {
@@ -326,27 +646,58 @@ function normalize(body: unknown): BizSupportDocument {
     }
   })
   const menuRows = Array.isArray(body.menu) ? body.menu : base.menu
-  const menu = base.menu.map((row) => {
-    const found = menuRows.find((item) => isPlainObject(item) && item.key === row.key)
-    const item = isPlainObject(found) ? found : row
-    return { key: row.key, order: Math.round(num(item.order, row.order)) }
+  const menu = menuRows.filter(isPlainObject).map((item, index) => {
+    const key = text(item.key, '', 40)
+    const baseRow = base.menu.find((row) => row.key === key)
+    return {
+      key: key || baseRow?.key || `menu-${index + 1}`,
+      order: Math.round(num(item.order, baseRow?.order ?? index + 1)),
+      label: text(item.label, baseRow?.label ?? '', 40),
+      target: text(item.target, baseRow?.target ?? '', 80),
+      tabs: text(item.tabs, baseRow?.tabs ?? '', 200),
+    }
   })
+  const archiveRows = Array.isArray(body.archive) ? body.archive : base.archive
+  const archive = archiveRows.filter(isPlainObject).slice(0, 20).map((item, index) => ({
+    id: text(item.id, `archive-${index + 1}`, 40) || `archive-${index + 1}`,
+    name: text(item.name, '', 80),
+    status: text(item.status, '', 40),
+    memo: text(item.memo, '', 200),
+  }))
   const donate = isPlainObject(body.donate) ? body.donate : {}
   return {
     version: 1,
     fields,
     sections,
-    menu,
+    menu: menu.length ? menu : base.menu.map((row) => ({ ...row })),
     otherBusiness: body.otherBusiness === 'auto' ? 'auto' : 'manual',
+    otherTitle: text(body.otherTitle, base.otherTitle, 80),
+    titleLimit: text(body.titleLimit, base.titleLimit, 20),
+    lineLimit: text(body.lineLimit, base.lineLimit, 20),
+    archive,
+    layout: (Array.isArray(body.layout) ? body.layout : []).filter(isPlainObject).slice(0, 120).map((item, index) => ({
+      id: text(item.id, '', 80),
+      order: Math.round(num(item.order, index)),
+      enabled: flag(item.enabled, true),
+      removed: flag(item.removed, false),
+    })).filter((item) => item.id),
     grantsPublic: flag(body.grantsPublic, false),
     donate: {
       url: text(donate.url, NANUM, 400),
       labelKo: text(donate.labelKo, base.donate.labelKo, 40),
       menuLabel: text(donate.menuLabel, base.donate.menuLabel, 20),
-      receiptNote: text(donate.receiptNote, '', 400),
+      receiptNote: text(donate.receiptNote, base.donate.receiptNote ?? '', 400) || (base.donate.receiptNote ?? ''),
       inquiry: text(donate.inquiry, '', 200),
       impactEnabled: flag(donate.impactEnabled, false),
+      openBlank: flag(donate.openBlank, true),
+      impactTitle: text(donate.impactTitle, base.donate.impactTitle ?? '후원으로 함께 만든 변화', 80),
+      impactScope: donate.impactScope === 'country' ? 'country' : 'all',
+      impactCountry: text(donate.impactCountry, base.donate.impactCountry ?? '미얀마', 40),
+      impactMetrics: text(donate.impactMetrics, base.donate.impactMetrics ?? 'people,children,partners,teachers', 120),
+      menuPin: donate.menuPin === 'off' ? 'off' : donate.menuPin === 'site' ? 'site' : 'on',
+      showFloating: flag(donate.showFloating, true),
     },
+    blocks: bizBlocks(body.blocks),
   }
 }
 
@@ -360,11 +711,15 @@ export async function readBizSupportDocument(): Promise<BizSupportDocument> {
   }
 }
 
-export async function writeBizSupportDocument(body: unknown): Promise<void> {
+export function readBizSupportState(preferDraft: boolean) {
+  return readDrafted(DOCUMENT_KEY, readBizSupportDocument, preferDraft)
+}
+
+export async function writeBizSupportDocument(body: unknown, mode: SaveMode = 'publish'): Promise<void> {
   if (!isPlainObject(body) || body.version !== 1) {
     const err = new Error('Invalid biz support payload')
     ;(err as Error & { status?: number }).status = 400
     throw err
   }
-  await writeJsonDocument(DOCUMENT_KEY, normalize(body))
+  await writeDrafted(DOCUMENT_KEY, normalize(body), mode)
 }

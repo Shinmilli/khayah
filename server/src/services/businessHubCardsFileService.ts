@@ -1,4 +1,5 @@
-import { readJsonDocument, writeJsonDocument } from './siteDocumentStore'
+import { readDrafted, writeDrafted, type SaveMode } from './documentDraft'
+import { readJsonDocument } from './siteDocumentStore'
 
 const DOCUMENT_KEY = 'business-hub-cards'
 
@@ -136,11 +137,16 @@ export async function readBusinessHubCardsDocument(): Promise<BusinessHubCardsDo
   return normalizeDocument(parsed)
 }
 
+export function readBusinessHubCardsState(preferDraft: boolean) {
+  return readDrafted(DOCUMENT_KEY, readBusinessHubCardsDocument, preferDraft)
+}
+
 export async function readBusinessHubCardsForLocale(
   locale: BusinessLocale,
   hub?: BusinessHub | null,
+  preferDraft = false,
 ): Promise<BusinessHubCardPublic[]> {
-  const doc = await readBusinessHubCardsDocument()
+  const { doc } = await readBusinessHubCardsState(preferDraft)
   return doc.cards
     .filter((card) => card.enabled && (!hub || card.hub === hub) && card.locales[locale].title.trim())
     .sort((a, b) => a.order - b.order)
@@ -156,12 +162,11 @@ export async function readBusinessHubCardsForLocale(
     }))
 }
 
-export async function writeBusinessHubCardsDocument(body: unknown): Promise<void> {
+export async function writeBusinessHubCardsDocument(body: unknown, mode: SaveMode = 'publish'): Promise<void> {
   if (!validateDocument(body)) {
     const err = new Error('Invalid business hub cards payload')
     ;(err as Error & { status?: number }).status = 400
     throw err
   }
-  const cleaned = normalizeDocument(body)
-  await writeJsonDocument(DOCUMENT_KEY, cleaned)
+  await writeDrafted(DOCUMENT_KEY, normalizeDocument(body), mode)
 }

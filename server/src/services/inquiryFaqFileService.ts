@@ -1,5 +1,6 @@
 import seedDocument from '../seed/inquiry-faq.default.json'
-import { readJsonDocument, writeJsonDocument } from './siteDocumentStore'
+import { readDrafted, writeDrafted, type SaveMode } from './documentDraft'
+import { readJsonDocument } from './siteDocumentStore'
 
 const DOCUMENT_KEY = 'inquiry-faq'
 
@@ -92,12 +93,19 @@ export async function readInquiryFaqDocument(): Promise<InquiryFaqDocumentV2> {
   throw new Error('Invalid FAQ document')
 }
 
-export async function readInquiryFaqForLocale(locale: InquiryLocale): Promise<InquiryFaqLocaleContent> {
-  const doc = await readInquiryFaqDocument()
+export function readInquiryFaqState(preferDraft: boolean) {
+  return readDrafted(DOCUMENT_KEY, readInquiryFaqDocument, preferDraft)
+}
+
+export async function readInquiryFaqForLocale(
+  locale: InquiryLocale,
+  preferDraft = false,
+): Promise<InquiryFaqLocaleContent> {
+  const { doc } = await readInquiryFaqState(preferDraft)
   return doc.locales[locale]
 }
 
-export async function writeInquiryFaqDocument(body: unknown): Promise<void> {
+export async function writeInquiryFaqDocument(body: unknown, mode: SaveMode = 'publish'): Promise<void> {
   if (!validateDocumentV2(body)) {
     const err = new Error('Invalid FAQ payload')
     ;(err as Error & { status?: number }).status = 400
@@ -126,5 +134,5 @@ export async function writeInquiryFaqDocument(body: unknown): Promise<void> {
       },
     },
   }
-  await writeJsonDocument(DOCUMENT_KEY, cleaned)
+  await writeDrafted(DOCUMENT_KEY, cleaned, mode)
 }

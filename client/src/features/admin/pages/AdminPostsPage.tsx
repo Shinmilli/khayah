@@ -1273,6 +1273,7 @@ export function AdminPostsPage() {
   const [editorMode, setEditorMode] = useState<'new' | 'edit'>('new')
   const [editingId, setEditingId] = useState<number | null>(null)
   const [rows, setRows] = useState<AdminPost[]>([])
+  const [featuredStories, setFeaturedStories] = useState<AdminPost[]>([])
   const [listPage, setListPage] = useState(1)
   const [query, setQuery] = useState('')
   const [total, setTotal] = useState(0)
@@ -1300,10 +1301,17 @@ export function AdminPostsPage() {
         const res = await adminFetchPostsByKind(filterType, 1, 100, query)
         setRows(res.posts)
         setTotal(res.total)
+        setFeaturedStories([])
       } else {
         const res = await adminFetchPostsByKind(filterType, page, ADMIN_POSTS_PER_PAGE, query)
         setRows(res.posts)
         setTotal(res.total)
+        if (filterType === '스토리') {
+          const all = await adminFetchPostsByKind('스토리', 1, 200)
+          setFeaturedStories(all.posts.filter((post) => post.meta?.khayah_story_featured === '1'))
+        } else {
+          setFeaturedStories([])
+        }
       }
     } catch (e) {
       setError(e instanceof Error ? e.message : '목록을 불러오지 못했습니다.')
@@ -1402,6 +1410,55 @@ export function AdminPostsPage() {
           <>선택한 유형의 글만 아래 목록에 표시됩니다. 새 글 작성 화면에서도 동일한 UI로 유형을 고릅니다.</>
         }
       />
+
+      {filterType === '스토리' ? (
+        <section className="admin-panel" aria-labelledby="story-featured-heading">
+          <h2 id="story-featured-heading" className="admin-panel__title">대표 스토리</h2>
+          <p className="admin-panel__foot">
+            대표로 지정한 글만 모았습니다. 아래 목록에는 스토리 전체가 나오고, 여기에는 그 중 대표 글이 다시 보입니다. 홈의 큰 칸은 공개된 대표 글 중 가장 최근 1건이고, 그 아래 3칸은 대표 글을 뺀 최신 3건입니다.
+          </p>
+          {featuredStories.length === 0 ? (
+            <p className="admin-table__empty">대표로 지정한 스토리가 없습니다.</p>
+          ) : (
+            <div className="admin-table-wrap">
+              <table className="admin-table">
+                <thead>
+                  <tr>
+                    <th scope="col">구분</th>
+                    <th scope="col">제목</th>
+                    <th scope="col">홈</th>
+                    <th scope="col">수정일</th>
+                    <th scope="col">관리</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {featuredStories.map((row) => {
+                    const homeLead = featuredStories.find((post) => post.status !== 'draft')
+                    return (
+                      <tr key={row.id}>
+                        <td>{row.meta?.khayah_story_category || '스토리'}</td>
+                        <td>
+                          {row.status === 'draft' ? '임시저장 ' : ''}
+                          {row.title}
+                        </td>
+                        <td>{homeLead?.id === row.id ? '대표 칸' : ''}</td>
+                        <td>{new Date(row.publishedAt).toISOString().slice(0, 10)}</td>
+                        <td>
+                          <div className="admin-row-actions">
+                            <button type="button" className="admin-btn admin-btn--sm admin-btn--ghost" onClick={() => openEdit(row.id)}>
+                              수정
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </section>
+      ) : null}
 
       <section className="admin-panel" aria-labelledby="posts-list-heading">
         <h2 id="posts-list-heading" className="admin-panel__title">

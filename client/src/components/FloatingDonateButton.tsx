@@ -98,6 +98,8 @@ export function FloatingDonateButton() {
     return () => io.disconnect()
   }, [isHome, location.pathname])
 
+  if (locale === 'ko' && biz?.donate.showFloating === false) return null
+
   return (
     <div
       className={`site-floating-fab${showFab ? ' is-visible' : ''}`}

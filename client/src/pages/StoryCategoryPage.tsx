@@ -9,8 +9,8 @@ import { useLocale } from '../i18n/LocaleContext'
 import { pageHeroImageForPath } from '../constants/pageHeroImages'
 import { PATH } from '../i18n/routes'
 import { ListStatus } from '../components/ListStatus'
-import { PostCoverThumb } from '../components/PostCoverThumb'
 import '../styles/story.css'
+import '../styles/page.css'
 
 type StoryCat = 'all' | 'change' | 'expert'
 
@@ -32,13 +32,13 @@ function storyCategory(post: Post): '변화의 이야기' | '전문가 이야기
   return null
 }
 
-function formatDotDate(iso: string): string {
+function formatYmd(iso: string): string {
   const d = new Date(iso)
   if (Number.isNaN(d.getTime())) return ''
   const y = d.getFullYear()
   const m = String(d.getMonth() + 1).padStart(2, '0')
   const day = String(d.getDate()).padStart(2, '0')
-  return `${y}. ${m}. ${day}.`
+  return `${y}-${m}-${day}`
 }
 
 export function StoryCategoryPage() {
@@ -96,7 +96,7 @@ export function StoryCategoryPage() {
   }
 
   return (
-    <div className="page-content-wrapper">
+    <div className="page-content-wrapper press-archive-page">
       <PageHero title={st.title} backgroundImageUrl={pageHeroImageForPath(PATH.newsStories)} />
       <div className="section">
         <div className="section_wrapper clearfix">
@@ -120,53 +120,53 @@ export function StoryCategoryPage() {
                 </nav>
               </header>
 
-              {loading ? <ListStatus variant="loading" message={messages.pages.archive.loading} lines={0} /> : null}
-              <section className="story-archive__grid" aria-label={st.listAria} aria-busy={loading || undefined}>
-                {error ? <ListStatus variant="error" message={st.loadError} /> : null}
-                {!loading && !error && items.length === 0 ? (
-                  <ListStatus variant="empty" message={st.empty} />
-                ) : null}
-                {!loading && !error
-                  ? paged.items.map((p) => {
+              {loading ? <ListStatus variant="loading" message={messages.pages.archive.loading} lines={5} /> : null}
+              {error ? <ListStatus variant="error" message={st.loadError} /> : null}
+              {!loading && !error && items.length === 0 ? (
+                <ListStatus variant="empty" message={st.empty} />
+              ) : null}
+              {!loading && !error && items.length > 0 ? (
+                <div className="archive-board">
+                  <div className="archive-board__head" aria-hidden="true">
+                    <span>{messages.pages.archive.colTitle}</span>
+                    <span>{messages.pages.archive.colDate}</span>
+                    <span className="archive-board__head-action">{messages.pages.archive.colAction}</span>
+                  </div>
+                  <ul className="press-archive__list" aria-label={st.listAria}>
+                    {paged.items.map((p) => {
                       const category = storyCategory(p)
+                      const ymd = formatYmd(p.publishedAt)
                       return (
-                        <article key={p.id} className="story-archive__item">
-                          <div className="story-list-card">
-                            <div className="story-list-card__thumb">
-                              <PostCoverThumb post={p} />
-                            </div>
-                            <div className="story-list-card__body">
-                              <h3 className="story-list-card__title">
-                                <Link
-                                  to={localize(`/posts/${encodeURIComponent(p.slug)}`)}
-                                  state={{ postKind: '스토리' }}
-                                >
-                                  <span className="story-list-card__title-text">
-                                    {category ? (
-                                      <span
-                                        className={`story-cat${category === '전문가 이야기' ? ' is-expert' : ' is-change'}`}
-                                      >
-                                        [{category}]
-                                      </span>
-                                    ) : null}
-                                    {category ? ' ' : null}
-                                    {p.title}
-                                  </span>
-                                </Link>
-                              </h3>
-                              <p className="story-list-card__excerpt">{p.excerpt || ''}</p>
-                              <div className="story-list-card__meta">
-                                <time className="story-list-card__date" dateTime={p.publishedAt}>
-                                  {formatDotDate(p.publishedAt)}
-                                </time>
-                              </div>
-                            </div>
+                        <li key={p.id} className="press-archive__item">
+                          <div className="press-archive__text">
+                            <p className="press-archive__headline">
+                              {category ? (
+                                <span className="press-archive__source-wrap" aria-label={category}>
+                                  <span className="press-archive__bracket">[</span>
+                                  <span className="press-archive__source">{category}</span>
+                                  <span className="press-archive__bracket">]</span>
+                                </span>
+                              ) : null}
+                              {category ? ' ' : null}
+                              <span className="press-archive__article-title">{p.title}</span>
+                            </p>
                           </div>
-                        </article>
+                          <time className="press-archive__ymd" dateTime={ymd}>
+                            {ymd}
+                          </time>
+                          <Link
+                            className="press-archive__btn"
+                            to={localize(`/posts/${encodeURIComponent(p.slug)}`)}
+                            state={{ postKind: '스토리' }}
+                          >
+                            글 바로보기
+                          </Link>
+                        </li>
                       )
-                    })
-                  : null}
-              </section>
+                    })}
+                  </ul>
+                </div>
+              ) : null}
               {!loading && !error && items.length > 0 ? (
                 <div className="story-archive__actions">
                   <Pagination

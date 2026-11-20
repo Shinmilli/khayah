@@ -5,9 +5,11 @@ type AdminViewSwitchProps = {
   /** 공개 사이트 헤더 위에 고정한다. */
   fixed?: boolean
   notice?: ReactNode
+  /** 모바일에서만 보이는 메뉴 버튼 */
+  menu?: ReactNode
 }
 
-export function AdminViewSwitch({ active, fixed = false, notice }: AdminViewSwitchProps) {
+export function AdminViewSwitch({ active, fixed = false, notice, menu }: AdminViewSwitchProps) {
   const navRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
@@ -35,6 +37,7 @@ export function AdminViewSwitch({ active, fixed = false, notice }: AdminViewSwit
       className={`admin-view-switch${fixed ? ' admin-view-switch--fixed' : ''}${notice ? ' admin-view-switch--with-notice' : ''}`}
       aria-label="화면 전환"
     >
+      {menu}
       <a href="/" aria-current={active === 'site' ? 'page' : undefined}>
         홈페이지
       </a>

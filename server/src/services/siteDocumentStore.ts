@@ -56,3 +56,19 @@ export async function writeJsonDocument(key: string, body: unknown): Promise<voi
     update: { body },
   })
 }
+
+export async function readJsonDocumentOptional(key: string): Promise<unknown | null> {
+  try {
+    return await readJsonDocument(key)
+  } catch (e) {
+    const status = (e as Error & { status?: number }).status
+    if (status === 404) return null
+    throw e
+  }
+}
+
+export async function deleteJsonDocument(key: string): Promise<void> {
+  const db = requirePrisma()
+  await ensureTable()
+  await db.siteDocument.deleteMany({ where: { key } })
+}

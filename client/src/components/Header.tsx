@@ -225,7 +225,14 @@ export function Header() {
     locale === 'ko'
       ? biz?.donate.menuLabel?.trim() || site?.headerDonate.labelKo || messages.home.hero.donate
       : messages.home.hero.donate
-  const hideHeaderDonate = locale === 'ko' && site ? !site.headerDonate.pinned && !atTop : false
+  const hideHeaderDonate =
+    locale === 'ko' && biz?.donate.menuPin === 'off'
+      ? true
+      : locale === 'ko' && biz?.donate.menuPin === 'on'
+        ? false
+        : locale === 'ko' && site
+          ? !site.headerDonate.pinned && !atTop
+          : false
 
   const renderLinkList = (links: NavMenuLinkDef[]) => (
     <div className="site-header__submenu-list">

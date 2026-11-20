@@ -1,12 +1,72 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { AdminMediaUpload } from '../components/AdminMediaUpload'
-import { adminFetchImpactPage, adminPutImpactPage } from '../../../services/api'
+import { AdminSaveActions, draftStatus, takeUnpublished } from '../AdminSaveActions'
+import { adminFetchImpactPage, adminPutImpactPage, type SaveMode } from '../../../services/api'
 import { resetImpactPageCache } from '../../impact/useImpactPage'
 import { IMPACT_SECTION_LABEL, type ImpactPageDocument } from '../../impact/impactPageTypes'
 
 function newId(prefix: string): string {
   return `${prefix}-${typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID().slice(0, 8) : Date.now()}`
+}
+
+const SAMPLE_YEAR_ROWS = [
+  { name: '경기청년 기후특사단', real: '[000]', total: '[000]', child: '측정 전', youth: '[000]', teacher: '0' },
+  { name: 'SEEM 방과후학습', real: '[000]', total: '[000]', child: '[000]', youth: '측정 전', teacher: '[00]' },
+  { name: '중복 제외 전체 참여자 (본부 입력)', real: '[0,000]', total: '', child: '', youth: '', teacher: '' },
+]
+
+function blankStory() {
+  return {
+    id: newId('s'),
+    category: '변화의 이야기' as const,
+    title: '',
+    project: '',
+    featured: true,
+    consent: false,
+    body: '',
+    before: '',
+    intervention: '',
+    after: '',
+    evidence: '',
+    sustainability: '',
+    expertName: '',
+    expertOrg: '',
+    expertField: '',
+    expertLine: '',
+    expertPhoto: '',
+  }
+}
+
+function withVisibleSamples(doc: ImpactPageDocument): ImpactPageDocument {
+  return {
+    ...doc,
+    projects: doc.projects?.length
+      ? doc.projects
+      : [
+          { id: 'p-climate', name: '경기청년 기후특사단', base: '한국 본부', field: '해외봉사단', period: '2024~', status: '진행' },
+          { id: 'p-seem', name: 'SEEM 방과후학습', base: '키르기스스탄 지부', field: '교육', period: '2026~', status: '진행' },
+          { id: 'p-quake', name: '만달레이 대지진 긴급구호', base: '미얀마 지부', field: '긴급구호', period: '2025.04~08', status: '종료' },
+          { id: 'p-labor', name: '외국인 노동자 기술·창업 교육', base: '한국 본부', field: '국내 (지난 사업)', period: '2018~2020', status: '종료' },
+        ],
+    years: doc.years?.length
+      ? doc.years
+      : ['2024', '2025', '2026'].map((year) => ({ year, rows: SAMPLE_YEAR_ROWS.map((row) => ({ ...row })) })),
+    evals: doc.evals?.length
+      ? doc.evals
+      : [
+          {
+            id: 'e-seem',
+            program: 'SEEM 방과후학습',
+            axis: '배우는 힘',
+            mode: '사전 · 사후',
+            value: '사전 [00]% · 사후 [00]%',
+            itemName: '사전 / 사후 / 향상 비율 등 직접 입력',
+            meta: '',
+          },
+        ],
+    stories: doc.stories?.length ? doc.stories : [blankStory()],
+  }
 }
 
 const SECTION_NOTE: Record<string, string> = {
@@ -35,13 +95,20 @@ export function AdminImpactPage() {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [savedAt, setSavedAt] = useState('')
+  const [savedMode, setSavedMode] = useState<SaveMode | ''>('')
+  const [unpublished, setUnpublished] = useState(false)
   const [yearOn, setYearOn] = useState(0)
 
   const load = useCallback(async () => {
     setLoading(true)
     setError('')
     try {
-      setDoc(await adminFetchImpactPage())
+      const loaded = takeUnpublished(await adminFetchImpactPage())
+      const next = withVisibleSamples(loaded.doc)
+      setUnpublished(loaded.unpublished)
+      setDoc(next)
+      const yearIndex = next.years.findIndex((year) => year.year === '2025')
+      setYearOn(yearIndex >= 0 ? yearIndex : 0)
     } catch (e) {
       setError(e instanceof Error ? e.message : '불러오지 못했습니다.')
     } finally {
@@ -69,13 +136,15 @@ export function AdminImpactPage() {
     }
   }, [ready, location.hash])
 
-  const onSave = async () => {
+  const onSave = async (mode: SaveMode) => {
     if (!doc) return
     setSaving(true)
     setError('')
     try {
-      const saved = await adminPutImpactPage(doc)
-      setDoc(saved)
+      const saved = takeUnpublished(await adminPutImpactPage(doc, mode))
+      setDoc(saved.doc)
+      setUnpublished(saved.unpublished)
+      setSavedMode(mode)
       resetImpactPageCache()
       setSavedAt(new Date().toLocaleTimeString('ko-KR'))
     } catch (e) {
@@ -101,7 +170,7 @@ export function AdminImpactPage() {
           <h1 className="admin-page__title">임팩트 관리</h1>
         </div>
         <div className="admin-page__actions">
-          <span className="admin-panel__foot">{savedAt ? `저장됨 ${savedAt}` : '최종 갱신 저장 시 자동'}</span>
+          <a className="admin-btn" href="/business/impact" target="_blank" rel="noopener noreferrer">미리보기</a>
           <button
             type="button"
             className="admin-btn"
@@ -144,17 +213,16 @@ export function AdminImpactPage() {
               }}
             />
           </label>
-          <button type="button" className="admin-btn admin-btn--primary" disabled={saving} onClick={() => void onSave()}>
-            {saving ? '저장 중…' : '저장'}
-          </button>
+          <AdminSaveActions saving={saving} onSave={(mode) => void onSave(mode)} />
         </div>
       </div>
       {error ? <p className="admin-banner admin-banner--error">{error}</p> : null}
+      {draftStatus(unpublished, savedAt, savedMode) ? <p className="admin-panel__foot">{draftStatus(unpublished, savedAt, savedMode)}</p> : null}
 
       <section id="impact-screen" className="admin-panel">
         <div className="admin-panel__head">
           <h2 className="admin-panel__title">① 화면 설정</h2>
-          <label className="admin-onoff" title="끄면 메인 숫자 섹션, 메뉴, 연결 버튼도 함께 숨깁니다">
+          <label className="admin-onoff" title="끄면 한눈에 보는 카야 페이지와 그곳으로 가는 링크만 숨깁니다. 메인 숫자 섹션은 그대로 둡니다.">
             <span>페이지 공개</span>
             <span className={`admin-onoff__state${doc.public ? ' is-on' : ''}`} aria-hidden>
               {doc.public ? 'ON' : 'OFF'}
@@ -164,7 +232,7 @@ export function AdminImpactPage() {
               role="switch"
               checked={doc.public}
               onChange={(e) => setDoc({ ...doc, public: e.target.checked })}
-              aria-label="페이지 공개. 끄면 메인 숫자 섹션, 메뉴, 연결 버튼도 함께 숨깁니다"
+              aria-label="페이지 공개. 끄면 한눈에 보는 카야 페이지와 그곳으로 가는 링크만 숨깁니다"
             />
             <span className="admin-onoff__track" aria-hidden>
               <span className="admin-onoff__thumb" />
@@ -398,34 +466,50 @@ export function AdminImpactPage() {
       <section id="impact-years" className="admin-panel">
         <div className="admin-panel__head">
           <h2 className="admin-panel__title">③ 연도별 실적</h2>
-          <button type="button" className="admin-btn" onClick={() => setDoc({ ...doc, years: [...(doc.years ?? []), { year: String(new Date().getFullYear()), rows: [] }] })}>+ 연도</button>
-        </div>
-        {(doc.years ?? []).length ? (
-          <div className="admin-segmented" role="tablist" aria-label="연도">
-            {doc.years.map((year, index) => (
-              <button key={`${year.year}-${index}`} type="button" className={`admin-segmented__btn${index === Math.min(yearOn, doc.years.length - 1) ? ' admin-segmented__btn--active' : ''}`} onClick={() => setYearOn(index)}>{year.year || '연도'}</button>
-            ))}
+          <div className="admin-panel__tools">
+            <div className="admin-segmented" role="tablist" aria-label="연도">
+              {(doc.years ?? []).map((year, index) => (
+                <button key={`${year.year}-${index}`} type="button" className={`admin-segmented__btn${index === Math.min(yearOn, doc.years.length - 1) ? ' admin-segmented__btn--active' : ''}`} onClick={() => setYearOn(index)}>{year.year || '연도'}</button>
+              ))}
+            </div>
+            <button type="button" className="admin-btn" onClick={() => setDoc({ ...doc, years: [...(doc.years ?? []), { year: String(new Date().getFullYear()), rows: [] }] })}>+ 연도</button>
           </div>
-        ) : null}
+        </div>
         {(doc.years ?? []).map((year, yearIndex) => yearIndex !== Math.min(yearOn, doc.years.length - 1) ? null : (
-          <div key={`${year.year}-${yearIndex}`} className="admin-item">
-            <label className="admin-field">
-              <span className="admin-field__label">연도</span>
-              <input className="admin-input" value={year.year} onChange={(e) => setDoc({ ...doc, years: doc.years.map((item, index) => (index === yearIndex ? { ...item, year: e.target.value } : item)) })} />
-            </label>
-            <button type="button" className="admin-btn admin-btn--sm" onClick={() => setDoc({ ...doc, years: doc.years.map((item, index) => (index === yearIndex ? { ...item, rows: [...item.rows, { name: '', real: '', total: '', child: '', youth: '', teacher: '' }] } : item)) })}>+ 행</button>
+          <div key={`${year.year}-${yearIndex}`}>
+            <div className="admin-panel__tools" style={{ marginBottom: 12 }}>
+              <label className="admin-field" style={{ flex: '0 1 160px' }}>
+                <span className="admin-field__label">연도</span>
+                <input className="admin-input" value={year.year} onChange={(e) => setDoc({ ...doc, years: doc.years.map((item, index) => (index === yearIndex ? { ...item, year: e.target.value } : item)) })} />
+              </label>
+              <button type="button" className="admin-btn admin-btn--sm" onClick={() => setDoc({ ...doc, years: doc.years.map((item, index) => (index === yearIndex ? { ...item, rows: [...item.rows, { name: '', real: '', total: '', child: '', youth: '', teacher: '' }] } : item)) })}>+ 행</button>
+            </div>
             <table className="admin-sheet">
               <thead><tr><th>사업</th><th>실인원</th><th>연인원</th><th>아동·청소년</th><th>청년</th><th>교사</th></tr></thead>
               <tbody>
-                {year.rows.map((row, rowIndex) => (
-                  <tr key={rowIndex}>
-                    {(['name', 'real', 'total', 'child', 'youth', 'teacher'] as const).map((key) => (
-                      <td key={key}>
-                        <input className="admin-input" value={row[key]} aria-label={key} onChange={(e) => setDoc({ ...doc, years: doc.years.map((item, index) => index === yearIndex ? { ...item, rows: item.rows.map((line, lineIndex) => lineIndex === rowIndex ? { ...line, [key]: e.target.value } : line) } : item) })} />
+                {year.rows.map((row, rowIndex) => {
+                  const totalRow = row.name.includes('중복 제외')
+                  const setCell = (key: 'name' | 'real' | 'total' | 'child' | 'youth' | 'teacher', value: string) =>
+                    setDoc({ ...doc, years: doc.years.map((item, index) => index === yearIndex ? { ...item, rows: item.rows.map((line, lineIndex) => lineIndex === rowIndex ? { ...line, [key]: value } : line) } : item) })
+                  return (
+                    <tr key={rowIndex}>
+                      <td>
+                        <input className="admin-input" value={row.name} aria-label="사업" onChange={(e) => setCell('name', e.target.value)} />
                       </td>
-                    ))}
-                  </tr>
-                ))}
+                      {totalRow ? (
+                        <td colSpan={5}>
+                          <input className="admin-input" value={row.real} aria-label="전체 참여자" onChange={(e) => setCell('real', e.target.value)} />
+                        </td>
+                      ) : (
+                        (['real', 'total', 'child', 'youth', 'teacher'] as const).map((key) => (
+                          <td key={key}>
+                            <input className="admin-input" value={row[key]} aria-label={key} onChange={(e) => setCell(key, e.target.value)} />
+                          </td>
+                        ))
+                      )}
+                    </tr>
+                  )
+                })}
               </tbody>
             </table>
           </div>
@@ -438,27 +522,31 @@ export function AdminImpactPage() {
           <button type="button" className="admin-btn" onClick={() => setDoc({ ...doc, evals: [...(doc.evals ?? []), { id: newId('e'), program: '', axis: '배우는 힘', mode: '사전 · 사후', value: '', itemName: '', meta: '' }] })}>+ 평가 추가</button>
         </div>
         {(doc.evals ?? []).map((row, index) => (
-          <div key={row.id} className="admin-form-grid">
-            <label className="admin-field"><span className="admin-field__label">연결 사업</span><input className="admin-input" value={row.program} onChange={(e) => setDoc({ ...doc, evals: doc.evals.map((item, itemIndex) => itemIndex === index ? { ...item, program: e.target.value } : item) })} /></label>
-            <div className="admin-field">
-              <span className="admin-field__label">교육 축</span>
-              <div className="admin-segmented">
-                {(['배우는 힘', '살아가는 힘', '선택하는 힘'] as const).map((axis) => (
-                  <button key={axis} type="button" className={`admin-segmented__btn${row.axis === axis ? ' admin-segmented__btn--active' : ''}`} onClick={() => setDoc({ ...doc, evals: doc.evals.map((item, itemIndex) => itemIndex === index ? { ...item, axis } : item) })}>{axis}</button>
-                ))}
+          <div key={row.id} className="impact-block">
+            <div className="impact-quad">
+              <label className="admin-field"><span className="admin-field__label">연결 사업</span><input className="admin-input" value={row.program} onChange={(e) => setDoc({ ...doc, evals: doc.evals.map((item, itemIndex) => itemIndex === index ? { ...item, program: e.target.value } : item) })} /></label>
+              <div className="admin-field">
+                <span className="admin-field__label">교육 축</span>
+                <div className="admin-segmented">
+                  {(['배우는 힘', '살아가는 힘', '선택하는 힘'] as const).map((axis) => (
+                    <button key={axis} type="button" className={`admin-segmented__btn${row.axis === axis ? ' admin-segmented__btn--active' : ''}`} onClick={() => setDoc({ ...doc, evals: doc.evals.map((item, itemIndex) => itemIndex === index ? { ...item, axis } : item) })}>{axis}</button>
+                  ))}
+                </div>
               </div>
-            </div>
-            <div className="admin-field">
-              <span className="admin-field__label">표시 방식</span>
-              <div className="admin-segmented">
-                {(['사전 · 사후', '단일 수치(%)', '향상률(%p)'] as const).map((mode) => (
-                  <button key={mode} type="button" className={`admin-segmented__btn${row.mode === mode ? ' admin-segmented__btn--active' : ''}`} onClick={() => setDoc({ ...doc, evals: doc.evals.map((item, itemIndex) => itemIndex === index ? { ...item, mode } : item) })}>{mode}</button>
-                ))}
+              <div className="admin-field">
+                <span className="admin-field__label">표시 방식</span>
+                <div className="admin-segmented">
+                  {(['사전 · 사후', '단일 수치(%)', '향상률(%p)'] as const).map((mode) => (
+                    <button key={mode} type="button" className={`admin-segmented__btn${row.mode === mode ? ' admin-segmented__btn--active' : ''}`} onClick={() => setDoc({ ...doc, evals: doc.evals.map((item, itemIndex) => itemIndex === index ? { ...item, mode } : item) })}>{mode}</button>
+                  ))}
+                </div>
               </div>
+              <label className="admin-field"><span className="admin-field__label">값 · 단위</span><input className="admin-input" value={row.value} onChange={(e) => setDoc({ ...doc, evals: doc.evals.map((item, itemIndex) => itemIndex === index ? { ...item, value: e.target.value } : item) })} /></label>
             </div>
-            <label className="admin-field"><span className="admin-field__label">값 · 단위</span><input className="admin-input" value={row.value} onChange={(e) => setDoc({ ...doc, evals: doc.evals.map((item, itemIndex) => itemIndex === index ? { ...item, value: e.target.value } : item) })} /></label>
-            <label className="admin-field"><span className="admin-field__label">항목 이름 (화면 표시)</span><input className="admin-input" value={row.itemName} onChange={(e) => setDoc({ ...doc, evals: doc.evals.map((item, itemIndex) => itemIndex === index ? { ...item, itemName: e.target.value } : item) })} /></label>
-            <label className="admin-field"><span className="admin-field__label">대상 · 시점 · 응답률 · 도구</span><input className="admin-input" value={row.meta} onChange={(e) => setDoc({ ...doc, evals: doc.evals.map((item, itemIndex) => itemIndex === index ? { ...item, meta: e.target.value } : item) })} /></label>
+            <div className="impact-pair">
+              <label className="admin-field"><span className="admin-field__label">항목 이름 (화면 표시)</span><input className="admin-input" value={row.itemName} onChange={(e) => setDoc({ ...doc, evals: doc.evals.map((item, itemIndex) => itemIndex === index ? { ...item, itemName: e.target.value } : item) })} /></label>
+              <label className="admin-field"><span className="admin-field__label">대상 · 시점 · 응답률 · 도구</span><input className="admin-input" value={row.meta} onChange={(e) => setDoc({ ...doc, evals: doc.evals.map((item, itemIndex) => itemIndex === index ? { ...item, meta: e.target.value } : item) })} /></label>
+            </div>
           </div>
         ))}
       </section>
@@ -471,8 +559,8 @@ export function AdminImpactPage() {
         {(doc.stories ?? []).map((row, index) => {
           const setStory = (partial: Partial<typeof row>) => setDoc({ ...doc, stories: doc.stories.map((item, itemIndex) => (itemIndex === index ? { ...item, ...partial } : item)) })
           return (
-            <div key={row.id} style={{ marginTop: index ? 18 : 0 }}>
-              <div className="admin-form-grid">
+            <div key={row.id} className="impact-block">
+              <div className="impact-quad">
                 <div className="admin-field">
                   <span className="admin-field__label">카테고리</span>
                   <div className="admin-segmented">
@@ -492,7 +580,7 @@ export function AdminImpactPage() {
                 </div>
               </div>
               {row.category === '변화의 이야기' ? (
-                <div className="admin-form-grid" style={{ marginTop: 12 }}>
+                <div className="impact-five">
                   {([
                     ['before', 'Before'],
                     ['intervention', 'Intervention'],
@@ -501,19 +589,21 @@ export function AdminImpactPage() {
                     ['sustainability', 'Sustainability'],
                   ] as const).map(([key, label]) => (
                     <label key={key} className="admin-field">
-                      <span className="admin-field__label">변화의 이야기 · {label}</span>
-                      <input className="admin-input" value={row[key] ?? ''} onChange={(e) => setStory({ [key]: e.target.value })} />
+                      <span className="admin-field__label">{label}</span>
+                      <input className="admin-input" aria-label={`변화의 이야기 ${label}`} value={row[key] ?? ''} onChange={(e) => setStory({ [key]: e.target.value })} />
                     </label>
                   ))}
                 </div>
               ) : (
-                <div className="admin-form-grid" style={{ marginTop: 12 }}>
-                  <label className="admin-field"><span className="admin-field__label">전문가 이름</span><input className="admin-input" value={row.expertName ?? ''} onChange={(e) => setStory({ expertName: e.target.value })} /></label>
+                <div className="impact-pair">
+                  <label className="admin-field"><span className="admin-field__label">이름</span><input className="admin-input" value={row.expertName ?? ''} onChange={(e) => setStory({ expertName: e.target.value })} /></label>
                   <label className="admin-field"><span className="admin-field__label">소속</span><input className="admin-input" value={row.expertOrg ?? ''} onChange={(e) => setStory({ expertOrg: e.target.value })} /></label>
                   <label className="admin-field"><span className="admin-field__label">전문 분야</span><input className="admin-input" value={row.expertField ?? ''} onChange={(e) => setStory({ expertField: e.target.value })} /></label>
                   <label className="admin-field"><span className="admin-field__label">평가 한두 문장</span><input className="admin-input" value={row.expertLine ?? ''} onChange={(e) => setStory({ expertLine: e.target.value })} /></label>
                   <label className="admin-field admin-field--full"><span className="admin-field__label">본문</span><textarea className="admin-input" rows={3} value={row.body} onChange={(e) => setStory({ body: e.target.value })} /></label>
-                  <AdminMediaUpload label="전문가 사진 (선택)" variant="image" value={row.expertPhoto || null} onChange={(url) => setStory({ expertPhoto: url ?? '' })} />
+                  <div className="admin-field admin-field--full">
+                    <AdminMediaUpload label="전문가 사진 (선택)" variant="image" value={row.expertPhoto || null} onChange={(url) => setStory({ expertPhoto: url ?? '' })} />
+                  </div>
                 </div>
               )}
               <label style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 14, fontSize: 14, fontWeight: 700, minHeight: 44 }}>

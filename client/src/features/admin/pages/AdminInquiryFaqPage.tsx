@@ -5,7 +5,8 @@ import {
   type InquiryFaqEditLocale,
   type InquiryFaqItem,
 } from '../../../types/inquiryFaq'
-import { adminFetchInquiryFaq, adminPutInquiryFaq } from '../../../services/api'
+import { AdminSaveActions, draftStatus, takeUnpublished } from '../AdminSaveActions'
+import { adminFetchInquiryFaq, adminPutInquiryFaq, type SaveMode } from '../../../services/api'
 
 function deepClone<T>(v: T): T {
   return JSON.parse(JSON.stringify(v)) as T
@@ -27,6 +28,8 @@ export function AdminInquiryFaqPage() {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [savedAt, setSavedAt] = useState('')
+  const [savedMode, setSavedMode] = useState<SaveMode | ''>('')
+  const [unpublished, setUnpublished] = useState(false)
 
   const items = useMemo(() => doc.locales[editLocale].items, [doc, editLocale])
 
@@ -34,8 +37,9 @@ export function AdminInquiryFaqPage() {
     setLoading(true)
     setError('')
     try {
-      const data = await adminFetchInquiryFaq()
-      setDoc(data)
+      const loaded = takeUnpublished(await adminFetchInquiryFaq())
+      setDoc(loaded.doc)
+      setUnpublished(loaded.unpublished)
     } catch (e) {
       setError(e instanceof Error ? e.message : '불러오지 못했습니다.')
       setDoc(deepClone(DEFAULT_INQUIRY_FAQ))
@@ -110,13 +114,15 @@ export function AdminInquiryFaqPage() {
     }))
   }
 
-  const onSave = async () => {
+  const onSave = async (mode: SaveMode) => {
     setSaving(true)
     setError('')
     setSavedAt('')
     try {
-      const saved = await adminPutInquiryFaq(doc)
-      setDoc(saved)
+      const saved = takeUnpublished(await adminPutInquiryFaq(doc, mode))
+      setDoc(saved.doc)
+      setUnpublished(saved.unpublished)
+      setSavedMode(mode)
       setSavedAt(new Date().toLocaleTimeString('ko-KR'))
     } catch (e) {
       setError(e instanceof Error ? e.message : '저장에 실패했습니다.')
@@ -142,9 +148,10 @@ export function AdminInquiryFaqPage() {
             문의 페이지 FAQ 아코디언 문구를 한·영으로 관리합니다. 공개/순서는 언어 공통입니다.
           </p>
         </div>
-        <button type="button" className="admin-btn admin-btn--primary" disabled={saving} onClick={() => void onSave()}>
-          {saving ? '저장 중…' : '저장'}
-        </button>
+        <div className="admin-page__actions">
+          <a className="admin-btn" href="/news/inquiry" target="_blank" rel="noopener noreferrer">미리보기</a>
+          <AdminSaveActions saving={saving} onSave={(mode) => void onSave(mode)} />
+        </div>
       </div>
 
       <div className="admin-locale-tabs" role="tablist" aria-label="FAQ 편집 언어">
@@ -163,7 +170,7 @@ export function AdminInquiryFaqPage() {
       </div>
 
       {error ? <p className="admin-panel__foot" style={{ color: '#b00020' }}>{error}</p> : null}
-      {savedAt ? <p className="admin-panel__foot" style={{ color: '#1b6b3a' }}>저장됨 ({savedAt})</p> : null}
+      {draftStatus(unpublished, savedAt, savedMode) ? <p className="admin-panel__foot">{draftStatus(unpublished, savedAt, savedMode)}</p> : null}
 
       <section className="admin-panel">
         <div className="admin-page__head admin-page__head--inline">

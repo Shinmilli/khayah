@@ -571,6 +571,12 @@
   background: #eceae6;
 }
 
+.oedu-replace {
+  width: 100%;
+  display: block;
+  border-radius: 12px;
+}
+
 .oedu-cta {
   padding-top: 72px;
   padding-bottom: 80px;

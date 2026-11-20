@@ -1,9 +1,12 @@
 import type { Request, Response } from 'express'
-import { readSiteCommonDocument, writeSiteCommonDocument } from '../services/siteCommonFileService'
+import { adminCanSeeDraft, isAdminPath, saveModeOf } from '../services/documentDraft'
+import { readSiteCommonState, writeSiteCommonDocument } from '../services/siteCommonFileService'
 
-export async function getSiteCommon(_req: Request, res: Response) {
+export async function getSiteCommon(req: Request, res: Response) {
   try {
-    res.json(await readSiteCommonDocument())
+    const adminPath = isAdminPath(req)
+    const { doc, unpublished } = await readSiteCommonState(adminPath || (await adminCanSeeDraft(req)))
+    res.json(adminPath ? { ...doc, unpublished } : doc)
   } catch (e) {
     console.error(e)
     res.status(500).json({ error: 'Failed to load site common' })
@@ -12,8 +15,9 @@ export async function getSiteCommon(_req: Request, res: Response) {
 
 export async function putAdminSiteCommon(req: Request, res: Response) {
   try {
-    await writeSiteCommonDocument(req.body)
-    res.json(await readSiteCommonDocument())
+    await writeSiteCommonDocument(req.body, saveModeOf(req))
+    const { doc, unpublished } = await readSiteCommonState(true)
+    res.json({ ...doc, unpublished })
   } catch (e) {
     const status = (e as Error & { status?: number })?.status
     if (status === 400) {

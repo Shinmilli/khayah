@@ -1,4 +1,5 @@
-import { readJsonDocument, writeJsonDocument } from './siteDocumentStore'
+import { readDrafted, writeDrafted, type SaveMode } from './documentDraft'
+import { readJsonDocument } from './siteDocumentStore'
 
 const DOCUMENT_KEY = 'nav-visibility'
 
@@ -92,12 +93,15 @@ export async function readNavVisibilityDocument(): Promise<NavVisibilityDocument
   return normalizeNavVisibilityDocument(parsed)
 }
 
-export async function writeNavVisibilityDocument(body: unknown): Promise<void> {
+export function readNavVisibilityState(preferDraft: boolean) {
+  return readDrafted(DOCUMENT_KEY, readNavVisibilityDocument, preferDraft)
+}
+
+export async function writeNavVisibilityDocument(body: unknown, mode: SaveMode = 'publish'): Promise<void> {
   if (!isPlainObject(body) || body.version !== 1) {
     const err = new Error('Invalid nav visibility payload')
     ;(err as Error & { status?: number }).status = 400
     throw err
   }
-  const cleaned = normalizeNavVisibilityDocument(body)
-  await writeJsonDocument(DOCUMENT_KEY, cleaned)
+  await writeDrafted(DOCUMENT_KEY, normalizeNavVisibilityDocument(body), mode)
 }

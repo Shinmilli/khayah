@@ -1,3 +1,6 @@
+import type { PageBlock } from '../biz/pageBlockTypes'
+import type { BizPanel } from '../biz/bizSupportTypes'
+
 export type ProjectSetSlide = {
   src: string
   alt: string
@@ -54,6 +57,21 @@ export type ProjectPageKey = (typeof PROJECT_PAGE_KEYS)[number]
 
 export type ProjectPageCard = { value: string; unit: string; note: string; source: string }
 export type ProjectPageFlow = { name: string; body: string }
+export type EducationCard = { title: string; subtitle: string; body: string; tag: string }
+export type EducationCase = { place: string; body: string }
+export type EducationPhoto = { src: string; alt: string }
+export type EducationAxis = {
+  label: string
+  phrase: string
+  title: string
+  body: string
+  cards: EducationCard[]
+  cases: EducationCase[]
+  photos: EducationPhoto[]
+  enabled: boolean
+  mode: 'text' | 'image'
+  image: string
+}
 
 export type ProjectPageHeader = {
   title: string
@@ -62,6 +80,18 @@ export type ProjectPageHeader = {
   photoAlt: string
   cards: ProjectPageCard[]
   flow: ProjectPageFlow[]
+  heroLabel: string
+  introKicker: string
+  introKickerKo: string
+  introTitle: string
+  emphasis: string
+  lead: string
+  align: 'left' | 'center'
+  photoSide: 'right' | 'left' | 'none'
+  band: 'white' | 'gray'
+  blocks: PageBlock[]
+  axes: EducationAxis[]
+  panels?: BizPanel[]
 }
 
 /** 관리자에 저장하는 사업 1건. 공개 화면은 빈 진행 박스·수치를 그리지 않는다. */

@@ -1,6 +1,7 @@
 import { normalizeStoredMediaUrl } from '../utils/normalizeStoredMediaUrl'
 import { deleteRemovedStoredMedia } from '../utils/storedMedia'
-import { readJsonDocument, writeJsonDocument } from './siteDocumentStore'
+import { readDrafted, writeDrafted, type SaveMode } from './documentDraft'
+import { readJsonDocument } from './siteDocumentStore'
 
 const DOCUMENT_KEY = 'page-hero-banners'
 
@@ -79,14 +80,18 @@ export async function readPageHeroBannersDocument(): Promise<PageHeroBannersDocu
   return normalizePageHeroBannersDocument(parsed)
 }
 
-export async function writePageHeroBannersDocument(body: unknown): Promise<void> {
+export function readPageHeroBannersState(preferDraft: boolean) {
+  return readDrafted(DOCUMENT_KEY, readPageHeroBannersDocument, preferDraft)
+}
+
+export async function writePageHeroBannersDocument(body: unknown, mode: SaveMode = 'publish'): Promise<void> {
   if (!validatePageHeroBannersDocument(body)) {
     const err = new Error('Invalid page hero banners payload')
     ;(err as Error & { status?: number }).status = 400
     throw err
   }
   const cleaned = normalizePageHeroBannersDocument(body)
-  const previous = await readPageHeroBannersDocument()
-  await writeJsonDocument(DOCUMENT_KEY, cleaned)
-  await deleteRemovedStoredMedia(previous, cleaned)
+  await writeDrafted(DOCUMENT_KEY, cleaned, mode, async (previous) => {
+    if (previous != null) await deleteRemovedStoredMedia(previous, cleaned)
+  })
 }

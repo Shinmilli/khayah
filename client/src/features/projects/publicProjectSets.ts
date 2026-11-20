@@ -1,3 +1,4 @@
+import type { PageBlock } from '../biz/pageBlockTypes'
 import type { ProjectField, ProjectPageKey, ProjectSet, ProjectSetRecord, ProjectSetsDocument } from './projectSetTypes'
 
 export type ProjectListKind = 'domestic' | 'overseas' | 'overseas-education' | 'volunteer' | 'research'
@@ -63,6 +64,17 @@ export function publicSetsFor(doc: ProjectSetsDocument, kind: ProjectListKind): 
   photo: string
   cards: Array<{ value: string; unit: string; note: string; source: string }>
   flow: Array<{ name: string; body: string }>
+  heroLabel: string
+  introKicker: string
+  introKickerKo: string
+  introTitle: string
+  emphasis: string
+  lead: string
+  align: 'left' | 'center'
+  photoSide: 'right' | 'left' | 'none'
+  band: 'white' | 'gray'
+  blocks: PageBlock[]
+  panels: NonNullable<ProjectSetsDocument['pages'][ProjectPageKey]['panels']>
 } {
   const page = doc.pages[PAGE_KEY[kind]]
   const items = doc.items
@@ -84,5 +96,16 @@ export function publicSetsFor(doc: ProjectSetsDocument, kind: ProjectListKind): 
     photo: page?.photo?.trim() || '',
     cards: (page?.cards ?? []).filter((card) => card.value.trim()),
     flow: (page?.flow ?? []).filter((step) => step.name.trim()),
+    heroLabel: page?.heroLabel?.trim() || '',
+    introKicker: page?.introKicker?.trim() || '',
+    introKickerKo: page?.introKickerKo?.trim() || '',
+    introTitle: page?.introTitle?.trim() || '',
+    emphasis: page?.emphasis?.trim() || '',
+    lead: page?.lead?.trim() || '',
+    align: page?.align === 'left' ? 'left' : 'center',
+    photoSide: page?.photoSide === 'left' || page?.photoSide === 'none' ? page.photoSide : 'right',
+    band: page?.band === 'white' ? 'white' : 'gray',
+    blocks: page?.blocks ?? [],
+    panels: page?.panels ?? [],
   }
 }

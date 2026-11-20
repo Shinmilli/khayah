@@ -24,6 +24,7 @@ export function AdminOrgPanel({
   setField,
   locale,
   onSave,
+  onDraft,
   saving,
 }: {
   doc: KayaPagesDocument
@@ -31,6 +32,7 @@ export function AdminOrgPanel({
   setField: (key: string, value: string) => void
   locale: 'ko' | 'en'
   onSave: () => void
+  onDraft: () => void
   saving: boolean
 }) {
   const [filter, setFilter] = useState<'all' | KayaMember['group']>('all')
@@ -280,9 +282,14 @@ export function AdminOrgPanel({
                 <input type="checkbox" checked={selected.enabled} onChange={(e) => setMember(selected.id, { enabled: e.target.checked })} />
                 홈페이지에 표시
               </label>
-              <button type="button" className="admin-btn admin-btn--primary" disabled={saving} onClick={onSave}>
-                {saving ? '저장 중…' : '저장'}
-              </button>
+              <div className="admin-page__actions">
+                <button type="button" className="admin-btn" disabled={saving} onClick={onDraft}>
+                  {saving ? '저장 중…' : '임시저장'}
+                </button>
+                <button type="button" className="admin-btn admin-btn--primary" disabled={saving} onClick={onSave}>
+                  {saving ? '저장 중…' : '게시'}
+                </button>
+              </div>
             </div>
           ) : (
             <p className="admin-org__note">수정할 인원을 선택하거나 인원을 추가해 주세요.</p>

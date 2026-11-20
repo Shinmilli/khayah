@@ -16,6 +16,7 @@ export const KHAYAH_LOCATION_PAGE_HTML = `
   <div class="khayah-location-map-wrap">
     <iframe
       class="khayah-location-map"
+      data-k-map="loc.address"
       title="카야인터내셔널 사무실 위치 (구글 지도)"
       src="${MAP_EMBED_SRC}"
       loading="lazy"
@@ -25,7 +26,7 @@ export const KHAYAH_LOCATION_PAGE_HTML = `
   </div>
   <div class="khayah-location-body">
     <header class="khayah-location-brand">
-      <h2 class="khayah-location-brand__name">카야인터내셔널</h2>
+      <h2 class="khayah-location-brand__name" data-k="loc.name">카야인터내셔널</h2>
       <div class="khayah-location-brand__rule" aria-hidden="true"></div>
     </header>
     <div class="khayah-location-columns">
@@ -34,30 +35,30 @@ export const KHAYAH_LOCATION_PAGE_HTML = `
         <ul class="khayah-location-list">
           <li>
             ${iconHouse}
-            <span class="khayah-location-list__text">경기도 성남시 분당구 이매동 81-3 (방아로 38) 3층</span>
+            <span class="khayah-location-list__text" data-k="loc.address">경기도 성남시 분당구 이매동 81-3 (방아로 38) 3층</span>
           </li>
           <li>
             ${iconPhone}
-            <span class="khayah-location-list__text"><a href="tel:07051212198">070.5121.2198</a></span>
+            <span class="khayah-location-list__text"><a href="tel:07051212198" data-k="loc.phone" data-k-mode="tel">070.5121.2198</a></span>
           </li>
           <li>
             ${iconFax}
-            <span class="khayah-location-list__text">070.8650.3639</span>
+            <span class="khayah-location-list__text" data-k="loc.fax">070.8650.3639</span>
           </li>
           <li>
             ${iconMail}
-            <span class="khayah-location-list__text"><a href="mailto:khayahinternational@gmail.com">khayahinternational@gmail.com</a></span>
+            <span class="khayah-location-list__text"><a href="mailto:khayahinternational@gmail.com" data-k="loc.email" data-k-mode="mail">khayahinternational@gmail.com</a></span>
           </li>
         </ul>
       </section>
       <section class="khayah-location-block khayah-location-block--accounts" aria-labelledby="khayah-loc-acc-heading">
         <h3 id="khayah-loc-acc-heading" class="khayah-location-block__title">후원계좌</h3>
-        <p class="khayah-location-accounts__holder">예금주 <strong>(사)카야인터내셔널</strong></p>
+        <p class="khayah-location-accounts__holder">예금주 <strong data-k="loc.holder">(사)카야인터내셔널</strong></p>
         <ul class="khayah-location-list khayah-location-list--accounts">
-          <li>${iconHeart}<span class="khayah-location-list__text"><strong>우리</strong> 1005-403-029492</span></li>
-          <li>${iconHeart}<span class="khayah-location-list__text"><strong>농협</strong> 301-1122-4444-01</span></li>
-          <li>${iconHeart}<span class="khayah-location-list__text"><strong>국민</strong> 584101-01-286346</span></li>
-          <li>${iconHeart}<span class="khayah-location-list__text"><strong>신한</strong> 100-034-744590</span></li>
+          <li>${iconHeart}<span class="khayah-location-list__text" data-k="loc.account.0">우리 1005-403-029492</span></li>
+          <li>${iconHeart}<span class="khayah-location-list__text" data-k="loc.account.1">농협 301-1122-4444-01</span></li>
+          <li>${iconHeart}<span class="khayah-location-list__text" data-k="loc.account.2">국민 584101-01-286346</span></li>
+          <li>${iconHeart}<span class="khayah-location-list__text" data-k="loc.account.3">신한 100-034-744590</span></li>
         </ul>
       </section>
     </div>

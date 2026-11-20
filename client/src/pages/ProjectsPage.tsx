@@ -1,8 +1,10 @@
-import { useEffect, useMemo, useState } from 'react'
+import { Fragment, useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { BusinessSectionNav } from '../components/BusinessSectionNav'
 import { ProjectSetList } from '../components/ProjectSetList'
 import { ProjectListIntro } from '../components/ProjectListIntro'
+import { PageBlocks } from '../features/biz/PageBlocks'
+import { useBizSupport } from '../features/biz/useBizSupport'
 import { PageHero } from '../components/PageHero'
 import { Pagination } from '../components/Pagination'
 import { fetchPostsByKindAndRegion } from '../services/api'
@@ -55,6 +57,7 @@ export function ProjectsPage({
   const params = useParams()
   const { locale, localize, messages } = useLocale()
   const projectSets = useProjectSets()
+  const biz = useBizSupport()
   const pj = messages.pages.projects
   const regionLabels: Record<Region, string> = {
     전체: pj.regions.all,
@@ -149,9 +152,38 @@ export function ProjectsPage({
   }, [region, pj.loadError])
 
   const paged = paginate(rows, listPage, 6)
-
-  return (
-    <div className="projects-page">
+  const koBiz = locale === 'ko' && Boolean(projectList)
+  const middleId = projectList === 'research' ? 'flow' : projectList === 'overseas-education' ? null : 'cards'
+  const coreIds = ['photo', 'intro', ...(middleId ? [middleId] : [])]
+  const savedPanels = live?.panels ?? []
+  const arranged = koBiz && savedPanels.some((row) => {
+    const index = coreIds.indexOf(row.id)
+    return index >= 0 && (row.removed === true || row.enabled === false || row.order !== index)
+  })
+  const ordered = coreIds
+    .map((id) => {
+      const row = savedPanels.find((item) => item.id === id)
+      return { id, order: row?.order ?? coreIds.indexOf(id), enabled: row?.enabled !== false, removed: row?.removed === true }
+    })
+    .filter((row) => !row.removed)
+    .sort((a, b) => a.order - b.order)
+  const introFields = live
+    ? {
+        kicker: live.introKicker,
+        kickerKo: live.introKickerKo,
+        title: live.introTitle,
+        emphasis: live.emphasis,
+        lead: live.lead,
+        align: live.align,
+        photoSide: live.photoSide,
+        band: live.band,
+      }
+    : undefined
+  const introNode = (part: 'all' | 'intro' | 'facts' | 'flow') =>
+    koBiz && projectList ? (
+      <ProjectListIntro kind={projectList} cards={live?.cards} flow={live?.flow} intro={introFields} part={part} />
+    ) : null
+  const heroNode = (
       <PageHero
         title={title}
         backgroundImageUrl={live?.photo || pageHeroImageForPath(heroPath)}
@@ -166,17 +198,20 @@ export function ProjectsPage({
             : 'banner'
         }
         eyebrow={
-          locale === 'ko' && projectList === 'domestic'
-            ? 'DOMESTIC PROGRAMS'
-            : locale === 'ko' && projectList === 'overseas-education'
-              ? 'OVERSEAS · EDUCATION'
-              : locale === 'ko' && projectList === 'volunteer'
-                ? 'OVERSEAS · VOLUNTEERS'
-                : locale === 'ko' && projectList === 'overseas'
-                  ? 'OVERSEAS PROGRAMS'
-                  : locale === 'ko' && projectList === 'research'
-                    ? 'RESEARCH'
-                    : undefined
+          locale === 'ko' && projectList
+            ? live?.heroLabel ||
+              (projectList === 'domestic'
+                ? 'DOMESTIC PROGRAMS'
+                : projectList === 'overseas-education'
+                  ? 'OVERSEAS · EDUCATION'
+                  : projectList === 'volunteer'
+                    ? 'OVERSEAS · VOLUNTEERS'
+                    : projectList === 'overseas'
+                      ? 'OVERSEAS PROGRAMS'
+                      : projectList === 'research'
+                        ? 'RESEARCH'
+                        : undefined)
+            : undefined
         }
         showScrollHint={
           !(
@@ -189,8 +224,27 @@ export function ProjectsPage({
           )
         }
       />
-      <BusinessSectionNav />
-      {locale === 'ko' && projectList ? <ProjectListIntro kind={projectList} cards={live?.cards} flow={live?.flow} /> : null}
+  )
+
+  return (
+    <div className="projects-page">
+      {arranged ? (
+        <>
+          {ordered.some((row) => row.id === 'photo' && row.enabled) ? null : <BusinessSectionNav />}
+          {ordered.map((row) => {
+            if (!row.enabled) return null
+            if (row.id === 'photo') return <Fragment key="photo">{heroNode}<BusinessSectionNav /></Fragment>
+            if (row.id === 'intro') return <Fragment key="intro">{introNode('intro')}</Fragment>
+            return <Fragment key={row.id}>{introNode(row.id === 'flow' ? 'flow' : 'facts')}</Fragment>
+          })}
+        </>
+      ) : (
+        <>
+          {heroNode}
+          <BusinessSectionNav />
+          {introNode('all')}
+        </>
+      )}
       {catalog ? (
         <ProjectSetList
           items={catalog.items}
@@ -198,6 +252,9 @@ export function ProjectsPage({
           recentFromYear={catalog.recentFromYear}
           fields={'fields' in catalog ? catalog.fields : undefined}
         />
+      ) : null}
+      {locale === 'ko' && projectList ? (
+        <PageBlocks blocks={[...(live?.blocks ?? []), ...(biz?.blocks ?? []).filter((block) => block.page === 'common')]} />
       ) : null}
       {locale === 'ko' && projectList === 'research' ? (
         <section className="dom-more dom-more--after">

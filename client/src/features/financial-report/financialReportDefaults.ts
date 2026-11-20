@@ -2,10 +2,10 @@ import type { FinancialReportSegmentV2 } from './financialReportTypes'
 
 /** 관리자 ‘연도 추가’ 시 채워 넣는 수입 항목 템플릿 — 비율은 기본 10·20·30·40(합계 100) */
 export const DEFAULT_INCOME_SEGMENTS: FinancialReportSegmentV2[] = [
-  { id: 'misc', labels: { ko: '기타수입', en: 'Other income' }, percent: 10, color: '#2a9d8f' },
-  { id: 'brought_forward', labels: { ko: '전기이월금', en: 'Brought forward' }, percent: 20, color: '#e9c46a' },
-  { id: 'subsidy', labels: { ko: '보조금', en: 'Subsidies' }, percent: 30, color: '#6c7a89' },
-  { id: 'donation', labels: { ko: '기부금', en: 'Donations' }, percent: 40, color: '#8b1538' },
+  { id: 'misc', labels: { ko: '기타수입', en: 'Other income' }, percent: 10, color: '#9c7c84' },
+  { id: 'brought_forward', labels: { ko: '전기이월금', en: 'Brought forward' }, percent: 20, color: '#d9cdb4' },
+  { id: 'subsidy', labels: { ko: '보조금', en: 'Subsidies' }, percent: 30, color: '#2f2b28' },
+  { id: 'donation', labels: { ko: '기부금', en: 'Donations' }, percent: 40, color: '#b11e3b' },
 ]
 
 /** 지출 항목 템플릿 — 비율은 기본 10·20·30·40(합계 100) */

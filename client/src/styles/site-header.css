@@ -39,7 +39,7 @@
   align-items: center;
   align-self: stretch;
   /* 로고 직후 네비: 오른쪽 끝이 아니라 로고 옆 왼쪽 정렬 */
-  gap: clamp(22px, 3.2vw, 48px);
+  gap: clamp(8px, 1vw, 14px);
   min-width: 0;
   flex: 1;
 }
@@ -130,33 +130,37 @@
 .site-header__logo {
   position: relative;
   display: block;
-  width: 240px;
+  width: min(300px, 36vw);
   height: 36px;
   flex-shrink: 0;
   line-height: 1;
   text-decoration: none;
   color: inherit;
   overflow: hidden;
+  isolation: isolate;
 }
 
 .site-header__logo-face {
   position: absolute;
   left: 0;
   top: 0;
+  right: 0;
   height: 36px;
   display: flex;
   align-items: center;
   white-space: nowrap;
   opacity: 0;
+  pointer-events: none;
   animation: site-logo-rot var(--logo-rot, 6s) infinite;
 }
 
 .site-header__logo-face--slogan {
   animation-delay: var(--logo-rot-delay, 3s);
   color: #b11e3b;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 800;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
+  z-index: 1;
 }
 
 .site-header__logo img,
@@ -176,26 +180,22 @@
   opacity: 1;
 }
 
+/* 로고·문구가 한 화면에 겹치지 않도록, 한쪽이 완전히 사라진 뒤에만 다른 쪽이 등장 */
 @keyframes site-logo-rot {
-  0% {
+  0%,
+  3% {
     opacity: 0;
-    transform: translateY(55%);
+    transform: translateY(36%);
   }
-  8% {
+  10%,
+  38% {
     opacity: 1;
     transform: translateY(0);
   }
-  42% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  50% {
-    opacity: 0;
-    transform: translateY(-55%);
-  }
+  45%,
   100% {
     opacity: 0;
-    transform: translateY(-55%);
+    transform: translateY(-36%);
   }
 }
 
@@ -218,7 +218,7 @@
   height: 100%;
   min-height: 0;
   /* 로고 옆·왼쪽 정렬 네비: 첫 메뉴와 로고 사이 공간 */
-  padding-left: clamp(14px, 2.2vw, 32px);
+  padding-left: 0;
   box-sizing: border-box;
 }
 
@@ -617,11 +617,16 @@
 
 @media (min-width: 1025px) {
   .site-header__logo {
+    width: 310px;
     height: 44px;
   }
 
   .site-header__logo-face {
     height: 100%;
+  }
+
+  .site-header__logo-face--slogan {
+    font-size: 16px;
   }
 
   .site-header__logo img,

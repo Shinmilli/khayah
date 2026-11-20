@@ -55,6 +55,7 @@ const navGroups: readonly AdminNavGroup[] = [
               { to: '/admin/app/page-banners', label: '페이지 배너', roles: ['super', 'content'] },
               { to: '/admin/app/nav-menu-images', label: '메뉴 이미지', roles: ['super', 'content'] },
               { to: '/admin/app/popup', label: '팝업', roles: ['super', 'content'] },
+              { to: '/admin/app/business-hub-cards', label: '국내·해외 카드', roles: ['super', 'content'] },
             ],
           },
         ],
@@ -84,6 +85,7 @@ const navGroups: readonly AdminNavGroup[] = [
       { to: '/admin/app/history', label: '연혁', roles: ['super', 'content'] },
       { to: '/admin/app/kaya?tab=org', label: '조직도·이사회·전문위원', roles: ['super', 'content'] },
       { to: '/admin/app/kaya?tab=trans', label: '투명경영', roles: ['super', 'content'] },
+      { to: '/admin/app/kaya?tab=location', label: '오시는 길', roles: ['super', 'content'] },
       { to: '/admin/app/financial-reports', label: '재정보고', roles: ['super', 'content'] },
     ],
   },
@@ -91,13 +93,8 @@ const navGroups: readonly AdminNavGroup[] = [
     label: '사업',
     items: [
       { to: '/admin/app/biz-support?tab=common', label: '사업 공통 설정', roles: ['super', 'content'] },
-      { to: '/admin/app/biz-support?tab=intro&page=dom', label: '국내사업 소개', roles: ['super', 'content'] },
-      { to: '/admin/app/biz-support?tab=intro&page=dedu', label: '국내교육 소개', roles: ['super', 'content'] },
-      { to: '/admin/app/biz-support?tab=intro&page=ovs', label: '해외사업 소개', roles: ['super', 'content'] },
-      { to: '/admin/app/biz-support?tab=intro&page=oedu', label: '해외 교육 소개', roles: ['super', 'content'] },
-      { to: '/admin/app/biz-support?tab=intro&page=vol', label: '해외봉사단 소개', roles: ['super', 'content'] },
-      { to: '/admin/app/biz-support?tab=intro&page=res', label: '연구사업 소개', roles: ['super', 'content'] },
-      { to: '/admin/app/projects?tab=sets', label: '진행사업 관리', roles: ['super', 'content'] },
+      { to: '/admin/app/biz-support?tab=intro', label: '사업 소개 페이지 6장 (공통)', roles: ['super', 'content'] },
+      { to: '/admin/app/projects?tab=sets', label: '진행사업 관리 (국내·해외·연구 공통)', roles: ['super', 'content'] },
       { to: '/admin/app/projects?tab=domestic', label: '국내 진행사업', roles: ['super', 'content'] },
       { to: '/admin/app/projects?tab=overseas', label: '해외 진행사업', roles: ['super', 'content'] },
       { to: '/admin/app/projects?tab=education', label: '해외 교육 진행사업', roles: ['super', 'content'] },
@@ -106,7 +103,6 @@ const navGroups: readonly AdminNavGroup[] = [
       { to: '/admin/app/biz-support?tab=social', label: '소셜비즈니스 소개', roles: ['super', 'content'] },
       { to: '/admin/app/biz-support?tab=academy', label: '카야 아카데미', roles: ['super', 'content'] },
       { to: '/admin/app/biz-support?tab=cnc', label: '컬러앤컴포트', roles: ['super', 'content'] },
-      { to: '/admin/app/business-hub-cards', label: '국내·해외 카드', roles: ['super', 'content'] },
     ],
   },
   {
@@ -184,6 +180,7 @@ export function AdminAppShell() {
       }))
       .filter((group) => (group.items?.length ?? 0) > 0 || (group.sections?.length ?? 0) > 0)
   }, [me])
+  const [menuOpen, setMenuOpen] = useState(false)
   const [groupOpen, setGroupOpen] = useState<Record<string, boolean>>(() =>
     Object.fromEntries(navGroups.map((group) => [group.label, true])),
   )
@@ -225,6 +222,45 @@ export function AdminAppShell() {
     })
   }, [location.pathname, location.search, location.hash])
 
+  useEffect(() => {
+    setMenuOpen(false)
+  }, [location.pathname, location.search, location.hash])
+
+  useEffect(() => {
+    const shell = document.querySelector('.admin-shell')
+    const bar = document.querySelector('.admin-shell > .admin-view-switch')
+    if (!(shell instanceof HTMLElement) || !(bar instanceof HTMLElement)) return
+    const apply = () => {
+      const height = bar.offsetHeight
+      if (height > 0) shell.style.setProperty('--admin-switch-height', `${height}px`)
+    }
+    apply()
+    const observer = new ResizeObserver(apply)
+    observer.observe(bar)
+    return () => {
+      observer.disconnect()
+      shell.style.removeProperty('--admin-switch-height')
+    }
+  }, [maintenanceOn, loading])
+
+  useEffect(() => {
+    if (!menuOpen) return
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setMenuOpen(false)
+    }
+    const onResize = () => {
+      if (window.innerWidth > 900) setMenuOpen(false)
+    }
+    document.body.classList.add('admin-menu-open')
+    window.addEventListener('keydown', onKey)
+    window.addEventListener('resize', onResize)
+    return () => {
+      document.body.classList.remove('admin-menu-open')
+      window.removeEventListener('keydown', onKey)
+      window.removeEventListener('resize', onResize)
+    }
+  }, [menuOpen])
+
   if (loading) {
     return (
       <div className="admin-app admin-app--boot">
@@ -239,9 +275,29 @@ export function AdminAppShell() {
 
   return (
     <div className="admin-shell">
-      <AdminViewSwitch active="admin" notice={maintenanceOn ? <MaintenanceModeNotice /> : null} />
+      <AdminViewSwitch
+        active="admin"
+        notice={maintenanceOn ? <MaintenanceModeNotice /> : null}
+        menu={
+          <button
+            type="button"
+            className={`admin-app__menu${menuOpen ? ' is-open' : ''}`}
+            aria-expanded={menuOpen}
+            aria-controls={`${navId}-drawer`}
+            onClick={() => setMenuOpen((open) => !open)}
+          >
+            <span className="admin-app__menu-icon" aria-hidden>
+              <span />
+              <span />
+              <span />
+            </span>
+            메뉴
+          </button>
+        }
+      />
       <div className="admin-app">
-      <aside className="admin-app__sidebar" aria-label="관리자 메뉴">
+      {menuOpen ? <button type="button" className="admin-app__backdrop" aria-label="메뉴 닫기" onClick={() => setMenuOpen(false)} /> : null}
+      <aside id={`${navId}-drawer`} className={`admin-app__sidebar${menuOpen ? ' is-open' : ''}`} aria-label="관리자 메뉴">
         <div className="admin-app__brand">
           <span className="admin-app__brand-name">KHAYAH 관리자</span>
           <span className="admin-app__badge">{ADMIN_ROLE_LABEL[me.role]}</span>

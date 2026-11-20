@@ -2,21 +2,24 @@ import { useCallback, useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { AdminOrgPanel } from './AdminOrgPanel'
 import { AdminKayaSectionForms } from './AdminKayaSectionForms'
-import { adminFetchKayaPages, adminFetchPageHeroBanners, adminPutKayaPages, adminPutPageHeroBanners } from '../../../services/api'
+import { AdminSaveActions, draftStatus, takeUnpublished } from '../AdminSaveActions'
+import { adminFetchFinancialReports, adminFetchKayaPages, adminFetchPageHeroBanners, adminPutFinancialReports, adminPutKayaPages, adminPutPageHeroBanners, type SaveMode } from '../../../services/api'
+import type { FinancialReportsDocument } from '../../financial-report/financialReportTypes'
 import type { PageHeroBannersDocument } from '../../page-hero/pageHeroBannerTypes'
 import { resetKayaPagesCache } from '../../kaya/useKayaPages'
 import type { KayaPagesDocument } from '../../kaya/kayaPagesTypes'
 
-type TabId = 'intro' | 'greet' | 'org' | 'trans'
+type TabId = 'intro' | 'greet' | 'org' | 'trans' | 'location'
 
 const TABS: Array<{ id: TabId; label: string }> = [
   { id: 'intro', label: '카야 소개·CI' },
   { id: 'greet', label: '인사말' },
   { id: 'org', label: '조직도·이사회·전문위원' },
   { id: 'trans', label: '투명경영' },
+  { id: 'location', label: '오시는 길' },
 ]
 
-const KAYA_TABS: TabId[] = ['intro', 'greet', 'org', 'trans']
+const KAYA_TABS: TabId[] = ['intro', 'greet', 'org', 'trans', 'location']
 
 function kayaTab(raw: string | null): TabId {
   return KAYA_TABS.includes(raw as TabId) ? (raw as TabId) : 'intro'
@@ -30,19 +33,26 @@ export function AdminKayaPagesPage() {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [savedAt, setSavedAt] = useState('')
+  const [savedMode, setSavedMode] = useState<SaveMode | ''>('')
+  const [unpublished, setUnpublished] = useState(false)
   const [orgLocale, setOrgLocale] = useState<'ko' | 'en'>('ko')
   const [hero, setHero] = useState<PageHeroBannersDocument | null>(null)
+  const [finance, setFinance] = useState<FinancialReportsDocument | null>(null)
 
   const load = useCallback(async () => {
     setLoading(true)
     setError('')
     try {
-      const [pages, banners] = await Promise.all([
+      const [pages, banners, reports] = await Promise.all([
         adminFetchKayaPages(),
         adminFetchPageHeroBanners().catch(() => null),
+        adminFetchFinancialReports().catch(() => null),
       ])
-      setDoc(pages)
-      setHero(banners)
+      const loaded = takeUnpublished(pages)
+      setDoc(loaded.doc)
+      setUnpublished(loaded.unpublished)
+      setHero(banners ? takeUnpublished(banners).doc : null)
+      setFinance(reports ? takeUnpublished(reports).doc : null)
     } catch (e) {
       setError(e instanceof Error ? e.message : '불러오지 못했습니다.')
     } finally {
@@ -58,15 +68,18 @@ export function AdminKayaPagesPage() {
     setDoc((prev) => (prev ? { ...prev, fields: { ...prev.fields, [key]: value } } : prev))
   }
 
-  const onSave = async () => {
+  const onSave = async (mode: SaveMode) => {
     if (!doc) return
     setSaving(true)
     setError('')
     setSavedAt('')
     try {
-      const saved = await adminPutKayaPages(doc)
-      setDoc(saved)
-      if (hero) setHero(await adminPutPageHeroBanners(hero))
+      const saved = takeUnpublished(await adminPutKayaPages(doc, mode))
+      setDoc(saved.doc)
+      setUnpublished(saved.unpublished)
+      setSavedMode(mode)
+      if (hero) setHero(takeUnpublished(await adminPutPageHeroBanners(hero, mode)).doc)
+      if (tab === 'trans' && finance) setFinance(takeUnpublished(await adminPutFinancialReports(finance, mode)).doc)
       resetKayaPagesCache()
       setSavedAt(new Date().toLocaleTimeString('ko-KR'))
     } catch (e) {
@@ -100,16 +113,14 @@ export function AdminKayaPagesPage() {
               <button type="button" className={orgLocale === 'en' ? 'is-on' : undefined} onClick={() => setOrgLocale('en')}>영문</button>
             </div>
           ) : null}
-          <a className="admin-btn" href={tab === 'greet' ? '/about/greeting' : tab === 'org' ? '/about/org-chart' : tab === 'trans' ? '/about/transparency' : '/about/khayah'} target="_blank" rel="noopener noreferrer">미리보기</a>
-          <button type="button" className="admin-btn admin-btn--primary" disabled={saving} onClick={() => void onSave()}>
-            {saving ? '저장 중…' : '저장'}
-          </button>
+          <a className="admin-btn" href={tab === 'greet' ? '/about/greeting' : tab === 'org' ? '/about/org-chart' : tab === 'trans' ? '/about/transparency' : tab === 'location' ? '/about/location' : '/about/khayah'} target="_blank" rel="noopener noreferrer">미리보기</a>
+          <AdminSaveActions saving={saving} onSave={(mode) => void onSave(mode)} />
         </div>
       </div>
       {error ? <p className="admin-banner admin-banner--error">{error}</p> : null}
-      {savedAt ? <p className="admin-panel__foot">저장됨 ({savedAt})</p> : null}
+      {draftStatus(unpublished, savedAt, savedMode) ? <p className="admin-panel__foot">{draftStatus(unpublished, savedAt, savedMode)}</p> : null}
 
-      {tab === 'intro' || tab === 'greet' || tab === 'trans' ? (
+      {tab === 'intro' || tab === 'greet' || tab === 'trans' || tab === 'location' ? (
         <AdminKayaSectionForms
           tab={tab}
           doc={doc}
@@ -117,6 +128,8 @@ export function AdminKayaPagesPage() {
           setDoc={(next) => setDoc(next)}
           heroImage={hero?.images.khayah ?? ''}
           onHeroImage={(url) => setHero((prev) => (prev ? { ...prev, images: { ...prev.images, khayah: url } } : prev))}
+          finance={finance}
+          setFinance={setFinance}
         />
       ) : null}
 
@@ -127,7 +140,8 @@ export function AdminKayaPagesPage() {
           setField={setField}
           locale={orgLocale}
           saving={saving}
-          onSave={() => void onSave()}
+          onSave={() => void onSave('publish')}
+          onDraft={() => void onSave('draft')}
         />
       ) : null}
     </div>

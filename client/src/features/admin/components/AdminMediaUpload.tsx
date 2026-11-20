@@ -10,6 +10,12 @@ export type AdminMediaUploadProps = {
   layout?: 'default' | 'wide' | 'portrait' | 'slot'
   slotTitle?: string
   slotRatio?: string
+  /** 사진을 칸 안에 채우지 않고, 점선 칸과 안내 문구만 보여 준다. */
+  quiet?: boolean
+  /** 이미 파일이 있으면 큰 올리기 칸을 숨기고 교체만 둔다. */
+  compact?: boolean
+  /** 파일만 비우는 버튼을 숨긴다. 목록에서 항목 삭제를 따로 둘 때 쓴다. */
+  hideRemove?: boolean
   value: string | null
   onChange: (url: string | null) => void
   disabled?: boolean
@@ -22,6 +28,9 @@ export function AdminMediaUpload({
   layout = 'default',
   slotTitle,
   slotRatio,
+  quiet = false,
+  compact = false,
+  hideRemove = false,
   value,
   onChange,
   disabled = false,
@@ -85,7 +94,13 @@ export function AdminMediaUpload({
 
   if (layout === 'slot') {
     return (
-      <div className={`admin-slot${slotRatio === '4 : 5' ? ' admin-slot--narrow' : ''}${slotRatio === 'logo' ? ' admin-slot--logo' : ''}${slotRatio === '1920×640' ? ' admin-slot--wide' : ''}`}>
+      <div className={`admin-slot${quiet ? ' admin-slot--quiet' : ''}${slotRatio === '4 : 5' ? ' admin-slot--narrow' : ''}${slotRatio === '2.2 : 1' ? ' admin-slot--pc' : ''}${slotRatio === 'logo' ? ' admin-slot--logo' : ''}${slotRatio === '1920×640' ? ' admin-slot--wide' : ''}${slotRatio === 'quiet-tall' ? ' admin-slot--tall' : ''}`}>
+        {!quiet && (slotTitle || slotRatio) ? (
+          <p className="admin-slot__cap">
+            {slotTitle ? <b>{slotTitle}</b> : null}
+            {slotRatio ? <span>{slotRatio}</span> : null}
+          </p>
+        ) : null}
         <div
           className={`admin-slot__box${dragOver ? ' is-active' : ''}${uploading ? ' is-busy' : ''}`}
           onDragEnter={(e) => {
@@ -106,7 +121,8 @@ export function AdminMediaUpload({
           <input ref={inputRef} type="file" accept={accept} className="admin-media-upload__input" onChange={onInputChange} aria-label={label} disabled={disabled || uploading} />
           {value && variant === 'image' ? <img src={value} alt="" /> : null}
           <span>{uploading ? '업로드 중…' : slotTitle || label}</span>
-          {slotRatio ? <b>{slotRatio}</b> : null}
+          {slotRatio && !quiet ? <b>{slotRatio}</b> : null}
+          {quiet && !value && hint ? <span className="admin-slot__note">{hint}</span> : null}
           <button type="button" className="admin-btn admin-btn--sm" disabled={disabled || uploading} onClick={() => inputRef.current?.click()}>
             {value ? '교체' : '올리기'}
           </button>
@@ -116,9 +132,16 @@ export function AdminMediaUpload({
     )
   }
 
+  const clearFile = () => {
+    if (inputRef.current) inputRef.current.value = ''
+    onChange(null)
+    setLastOk(null)
+    setLocalErr(null)
+  }
+
   return (
-    <div className="admin-field admin-field--full">
-      <span className="admin-field__label">{label}</span>
+    <div className={`admin-field${compact ? ' admin-media-upload--compact' : ' admin-field--full'}`}>
+      {compact ? null : <span className="admin-field__label">{label}</span>}
       {hint ? <p className="admin-media-upload__hint">{hint}</p> : null}
 
       {value ? (
@@ -131,26 +154,40 @@ export function AdminMediaUpload({
             <img src={value} alt="" className="admin-media-upload__thumb" />
           ) : previewHref ? (
             <a href={previewHref} target="_blank" rel="noopener noreferrer" className="admin-media-upload__file-link">
-              PDF 미리보기 · 새 창에서 열기
+              올린 PDF 열기
             </a>
           ) : (
             <span className="admin-media-upload__file-link">PDF 등록됨</span>
           )}
-          <button
-            type="button"
-            className="admin-btn admin-btn--sm admin-btn--danger-ghost admin-media-upload__remove"
-            disabled={disabled || uploading}
-            onClick={() => {
-              onChange(null)
-              setLastOk(null)
-              setLocalErr(null)
-            }}
-          >
-            제거
-          </button>
+          <div className="admin-media-upload__actions">
+            <button type="button" className="admin-btn admin-btn--sm" disabled={disabled || uploading} onClick={() => inputRef.current?.click()}>
+              {uploading ? '올리는 중…' : '교체'}
+            </button>
+            {hideRemove ? null : (
+              <button
+                type="button"
+                className="admin-btn admin-btn--sm admin-btn--danger-ghost"
+                disabled={disabled || uploading}
+                onClick={clearFile}
+              >
+                이 파일 삭제
+              </button>
+            )}
+          </div>
         </div>
       ) : null}
 
+      <input
+        ref={inputRef}
+        id={inputId}
+        type="file"
+        accept={accept}
+        className="admin-media-upload__input"
+        onChange={onInputChange}
+        aria-label={label}
+        disabled={disabled || uploading}
+      />
+      {value ? null : (
       <div
         className={`admin-media-upload__drop${dragOver ? ' is-active' : ''}${uploading ? ' is-busy' : ''}${disabled ? ' is-disabled' : ''}${layout === 'wide' ? ' admin-media-upload__drop--wide' : ''}${layout === 'portrait' ? ' admin-media-upload__drop--portrait' : ''}`}
         onDragEnter={(e) => {
@@ -168,16 +205,6 @@ export function AdminMediaUpload({
         }}
         onDrop={onDrop}
       >
-        <input
-          ref={inputRef}
-          id={inputId}
-          type="file"
-          accept={accept}
-          className="admin-media-upload__input"
-          onChange={onInputChange}
-          aria-label={label}
-          disabled={disabled || uploading}
-        />
         <div className="admin-media-upload__body">
           {uploading ? (
             <span className="admin-media-upload__status">업로드 중…</span>
@@ -198,6 +225,7 @@ export function AdminMediaUpload({
           )}
         </div>
       </div>
+      )}
 
       {localErr ? (
         <p className="admin-media-upload__err" role="alert">

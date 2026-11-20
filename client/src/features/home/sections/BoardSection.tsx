@@ -5,6 +5,7 @@ import { fetchYoutubeLatest } from '../../../services/api'
 import type { YoutubeLatestVideo } from '../../../types/youtube'
 import { useLocale } from '../../../i18n/LocaleContext'
 import { useSiteCommon } from '../../site/useSiteCommon'
+import { youtubePosterUrl } from '../../../utils/postMedia'
 
 const BLOG_CARD_IMAGE = '/images/home/board-blog.jpg'
 const INSTAGRAM_CARD_IMAGE = '/images/home/board-instagram.jpg'
@@ -84,8 +85,25 @@ function KoreanFieldRecords() {
   const blogImage = channels?.blog.image.trim() || BLOG_CARD_IMAGE
   const instaHref = channels?.instagram.href.trim() || INSTAGRAM_URL
   const instaImage = channels?.instagram.image.trim() || INSTAGRAM_CARD_IMAGE
-  const youtubeHref = channels?.youtube.href.trim() || PROMO_YOUTUBE_CHANNEL_URL
-  const youtubeImage = channels?.youtube.image.trim() || '/images/business/volunteer-field.jpg'
+  const storedYoutubeImage = channels?.youtube.image.trim() || ''
+  const storedYoutubeHref = channels?.youtube.href.trim() || ''
+  const [latest, setLatest] = useState<YoutubeLatestVideo | null>(null)
+
+  useEffect(() => {
+    if (storedYoutubeImage) return
+    let cancelled = false
+    fetchYoutubeLatest()
+      .then((data) => {
+        if (!cancelled) setLatest(data)
+      })
+      .catch(() => {})
+    return () => {
+      cancelled = true
+    }
+  }, [storedYoutubeImage])
+
+  const youtubeImage = storedYoutubeImage || (latest ? youtubePosterUrl(latest.videoId) : '')
+  const youtubeHref = storedYoutubeHref || (latest ? `https://www.youtube.com/watch?v=${latest.videoId}` : PROMO_YOUTUBE_CHANNEL_URL)
   return (
     <section className="home-follow" aria-labelledby="home-follow-title">
       <p className="home-follow__kicker">FOLLOW</p>
@@ -103,7 +121,7 @@ function KoreanFieldRecords() {
           <p>현장의 순간을 인스타그램에서 확인하세요.</p>
         </a>
         <a href={youtubeHref} target="_blank" rel="noopener noreferrer">
-          <img src={youtubeImage} alt="" />
+          {youtubeImage ? <img src={youtubeImage} alt={latest?.title || ''} /> : <span className="home-follow__photo" aria-hidden="true" />}
           <p className="home-follow__name">유튜브 ↗</p>
           <p>활동 영상을 유튜브에서 만나보세요.</p>
         </a>

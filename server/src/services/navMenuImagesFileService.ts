@@ -1,6 +1,7 @@
 import { normalizeStoredMediaUrl } from '../utils/normalizeStoredMediaUrl'
 import { deleteRemovedStoredMedia } from '../utils/storedMedia'
-import { readJsonDocument, writeJsonDocument } from './siteDocumentStore'
+import { readDrafted, writeDrafted, type SaveMode } from './documentDraft'
+import { readJsonDocument } from './siteDocumentStore'
 
 const DOCUMENT_KEY = 'nav-menu-images'
 
@@ -56,14 +57,18 @@ export async function readNavMenuImagesDocument(): Promise<NavMenuImagesDocument
   return normalizeNavMenuImagesDocument(parsed)
 }
 
-export async function writeNavMenuImagesDocument(body: unknown): Promise<void> {
+export function readNavMenuImagesState(preferDraft: boolean) {
+  return readDrafted(DOCUMENT_KEY, readNavMenuImagesDocument, preferDraft)
+}
+
+export async function writeNavMenuImagesDocument(body: unknown, mode: SaveMode = 'publish'): Promise<void> {
   if (!validateNavMenuImagesDocument(body)) {
     const err = new Error('Invalid nav menu images payload')
     ;(err as Error & { status?: number }).status = 400
     throw err
   }
   const cleaned = normalizeNavMenuImagesDocument(body)
-  const previous = await readNavMenuImagesDocument()
-  await writeJsonDocument(DOCUMENT_KEY, cleaned)
-  await deleteRemovedStoredMedia(previous, cleaned)
+  await writeDrafted(DOCUMENT_KEY, cleaned, mode, async (previous) => {
+    if (previous != null) await deleteRemovedStoredMedia(previous, cleaned)
+  })
 }

@@ -1,9 +1,12 @@
 import type { Request, Response } from 'express'
-import { readBizSupportDocument, writeBizSupportDocument } from '../services/bizSupportFileService'
+import { readBizSupportState, writeBizSupportDocument } from '../services/bizSupportFileService'
+import { adminCanSeeDraft, isAdminPath, saveModeOf } from '../services/documentDraft'
 
-export async function getBizSupport(_req: Request, res: Response) {
+export async function getBizSupport(req: Request, res: Response) {
   try {
-    res.json(await readBizSupportDocument())
+    const adminPath = isAdminPath(req)
+    const { doc, unpublished } = await readBizSupportState(adminPath || (await adminCanSeeDraft(req)))
+    res.json(adminPath ? { ...doc, unpublished } : doc)
   } catch (e) {
     console.error(e)
     res.status(500).json({ error: 'Failed to load biz support' })
@@ -12,8 +15,9 @@ export async function getBizSupport(_req: Request, res: Response) {
 
 export async function putAdminBizSupport(req: Request, res: Response) {
   try {
-    await writeBizSupportDocument(req.body)
-    res.json(await readBizSupportDocument())
+    await writeBizSupportDocument(req.body, saveModeOf(req))
+    const { doc, unpublished } = await readBizSupportState(true)
+    res.json({ ...doc, unpublished })
   } catch (e) {
     const status = (e as Error & { status?: number })?.status
     if (status === 400) {

@@ -11,6 +11,8 @@ import { useLocale } from '../i18n/LocaleContext'
 import { useKayaPages } from '../features/kaya/useKayaPages'
 import { donateHref, useBizSupport } from '../features/biz/useBizSupport'
 import { pdfOpenHref } from '../utils/pdfAttachments'
+import { complianceItems, disclosureItems, principleItems } from '../features/kaya/transparencyLists'
+import { transSectionOrder } from '../features/kaya/kayaSectionOrder'
 import { toCloudinaryWebpUrl } from '../utils/cloudinaryWebp'
 import '../styles/financial-report.css'
 
@@ -83,7 +85,7 @@ function FrRing({
   )
 }
 
-type PdfModalKind = 'donation' | 'publicInterest'
+type PdfMissing = { title: string; body: string }
 
 const MAX_VISIBLE_YEARS = 5
 
@@ -191,7 +193,7 @@ export function FinancialReportPage() {
     [years, year, yearWindowStart, maxYearWindowStart],
   )
 
-  const [pdfModalKind, setPdfModalKind] = useState<PdfModalKind | null>(null)
+  const [pdfMissing, setPdfMissing] = useState<PdfMissing | null>(null)
   const [statementsOpen, setStatementsOpen] = useState(false)
 
   useEffect(() => {
@@ -214,25 +216,22 @@ export function FinancialReportPage() {
   }, [report?.year, nav.links.financialReport, messages.pages])
 
   useEffect(() => {
-    if (!pdfModalKind) return
+    if (!pdfMissing) return
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setPdfModalKind(null)
+      if (e.key === 'Escape') setPdfMissing(null)
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [pdfModalKind])
+  }, [pdfMissing])
 
-  const openYearPdf = useCallback(
-    (url: string | null | undefined, filename: string, kind: PdfModalKind) => {
-      const raw = url?.trim()
-      if (raw) {
-        window.open(pdfOpenHref(raw, filename), '_blank', 'noopener,noreferrer')
-        return
-      }
-      setPdfModalKind(kind)
-    },
-    [],
-  )
+  const openYearPdf = useCallback((url: string | null | undefined, filename: string, missing: PdfMissing) => {
+    const raw = url?.trim()
+    if (raw) {
+      window.open(pdfOpenHref(raw, filename), '_blank', 'noopener,noreferrer')
+      return
+    }
+    setPdfMissing(missing)
+  }, [])
 
   if (loading) {
     return (
@@ -347,21 +346,67 @@ export function FinancialReportPage() {
     </div>
   ) : null
 
+  const transMoving = transSectionOrder(kaya?.fields['trans.sectionOrder'])
+  const transOn = (id: string) => kaya?.fields[`trans.${id}On`] !== '0'
+  const discloseInline = transOn('hero') && transMoving[0] === 'disclose' && transOn('disclose')
+  const discloseBox = report && settings?.showActionButtons ? (
+    <div className="fr-disclose">
+      <p>DISCLOSURE · 공시 자료</p>
+      {disclosureItems(kaya?.fields ?? {})
+        .filter((item) => item.label.trim() && (item.kind !== 'link' || item.href.trim()))
+        .map((item, index) => {
+          const no = String(index + 1).padStart(2, '0')
+          if (item.kind === 'link') {
+            return (
+              <a key={item.id} className="fr-disclose__row" href={item.href} target="_blank" rel="noopener noreferrer">
+                <span>{no}</span>
+                <span>{item.label}</span>
+                <span aria-hidden="true">→</span>
+              </a>
+            )
+          }
+          const url =
+            item.kind === 'publicInterest'
+              ? report.publicInterestDisclosurePdfUrl
+              : item.kind === 'donation'
+                ? report.donationDisclosurePdfUrl
+                : item.files.find((file) => file.year === report.year)?.url
+          return (
+            <button
+              key={item.id}
+              type="button"
+              className="fr-disclose__row"
+              onClick={() =>
+                openYearPdf(url, `${report.year}년 ${item.label}.pdf`, {
+                  title: `${item.label} PDF`,
+                  body: `${report.year}년 ${item.label} PDF가 없습니다.`,
+                })
+              }
+            >
+              <span>{no}</span>
+              <span>{item.label}</span>
+              <span>PDF</span>
+            </button>
+          )
+        })}
+    </div>
+  ) : null
+
   return (
     <div className={`financial-report-page${locale === 'ko' ? ' financial-report-page--ko' : ''}`}>
-      <PageHero
+      {locale === 'ko' && !transOn('hero') ? null : <PageHero
         title={nav.links.financialReport}
         backgroundImageUrl={pageHeroImageForPath(PATH.aboutFinancialReport)}
         showScrollHint={false}
         layout={locale === 'ko' ? 'kaya' : 'banner'}
         eyebrow={locale === 'ko' ? 'TRANSPARENCY' : undefined}
-      />
+      />}
       <KhayahSectionNav />
 
       <div className="financial-report__inner">
         {locale === 'ko' ? (
           <>
-            <section className="fr-intro">
+            <section className="fr-intro" style={{ order: 0 }} hidden={!transOn('hero')}>
               <div className="fr-intro__copy">
                 <p className="fr-kicker">TRANSPARENCY · 투명경영</p>
                 <h2
@@ -384,48 +429,14 @@ export function FinancialReportPage() {
                   <span>{ko('trans.chip.2', '재무 공개')}</span>
                 </div>
               </div>
-              {settings.showActionButtons ? (
-                <div className="fr-disclose">
-                  <p>DISCLOSURE · 공시 자료</p>
-                  <button
-                    type="button"
-                    className="fr-disclose__row"
-                    onClick={() =>
-                      openYearPdf(
-                        report.publicInterestDisclosurePdfUrl,
-                        `${report.year}년 공익법인 결산서류 공시.pdf`,
-                        'publicInterest',
-                      )
-                    }
-                  >
-                    <span>01</span>
-                    <span>{ko('trans.action.0', fr.actionHometax)}</span>
-                    <span>PDF</span>
-                  </button>
-                  <button
-                    type="button"
-                    className="fr-disclose__row"
-                    onClick={() =>
-                      openYearPdf(report.donationDisclosurePdfUrl, `${report.year}년 기부금 공시.pdf`, 'donation')
-                    }
-                  >
-                    <span>02</span>
-                    <span>{ko('trans.action.1', fr.actionDonation)}</span>
-                    <span>PDF</span>
-                  </button>
-                  <a className="fr-disclose__row" href={ACRC_URL} target="_blank" rel="noopener noreferrer">
-                    <span>03</span>
-                    <span>{ko('trans.action.2', fr.actionAcrc)}</span>
-                    <span aria-hidden="true">→</span>
-                  </a>
-                </div>
-              ) : null}
+              {discloseInline ? discloseBox : null}
             </section>
+            {transOn('disclose') && !discloseInline ? <section style={{ order: transMoving.indexOf('disclose') + 1 }}>{discloseBox}</section> : null}
           </>
         ) : null}
         {locale === 'ko' ? (
           <>
-            <section className="fr-principles">
+            <section className="fr-principles" hidden={!transOn('principles')} style={{ order: transMoving.indexOf('principles') + 1 }}>
               <div className="fr-principles__copy">
                 <p className="fr-kicker">ACCOUNTABILITY · 투명경영 원칙</p>
                 <h2
@@ -435,29 +446,18 @@ export function FinancialReportPage() {
                 />
               </div>
               <div className="fr-principle-grid">
-                <article>
-                  <span>01</span>
-                  <h3>{ko('trans.principle.0.title', '내부 감사')}</h3>
-                  <p>{ko('trans.principle.0.body', '예산과 결산은 이사회의 심의와 의결을 거치며, 감사가 법인의 재무와 업무 집행을 정기적으로 점검합니다.')}</p>
-                </article>
-                <article>
-                  <span>02</span>
-                  <h3>{ko('trans.principle.1.title', '외부 감사')}</h3>
-                  <p>{ko('trans.principle.1.body', '외부 회계 전문가의 회계감사를 통해 재무 처리의 정확성과 적정성을 검증합니다.')}</p>
-                </article>
-                <article>
-                  <span>03</span>
-                  <h3>{ko('trans.principle.2.title', '재무 공개')}</h3>
-                  <p>
-                    {ko(
-                      'trans.principle.2.body',
-                      '국세청 공익법인 결산서류 공시와 기부금 모금액 및 활용실적 공개를 매년 이행하고, 연도별 재무보고를 홈페이지에 게시합니다.',
-                    )}
-                  </p>
-                </article>
+                {principleItems(kaya?.fields ?? {})
+                  .filter((item) => item.title.trim() || item.body.trim())
+                  .map((item, index) => (
+                    <article key={`${item.title}-${index}`}>
+                      <span>{String(index + 1).padStart(2, '0')}</span>
+                      <h3>{item.title}</h3>
+                      <p>{item.body}</p>
+                    </article>
+                  ))}
               </div>
             </section>
-            <section className="fr-compliance">
+            <section className="fr-compliance" hidden={!transOn('compliance')} style={{ order: transMoving.indexOf('compliance') + 1 }}>
               <p className="fr-kicker">COMPLIANCE · 공시·준수 현황</p>
               <h2
                 dangerouslySetInnerHTML={{
@@ -468,12 +468,14 @@ export function FinancialReportPage() {
                 }}
               />
               <dl>
-                <div><dt>{ko('trans.compliance.0.dt', '홈페이지 공개')}</dt><dd>{ko('trans.compliance.0.dd', '기관 소개, 이사회·전문위원 명단, 사업 소개, 연도별 재무보고')}</dd></div>
-                <div><dt>{ko('trans.compliance.1.dt', '국세청 공시')}</dt><dd>{ko('trans.compliance.1.dd', '공익법인 결산서류 등 공시 (매년)')}</dd></div>
-                <div><dt>{ko('trans.compliance.2.dt', '기부금 공개')}</dt><dd>{ko('trans.compliance.2.dd', '기부금 모금액 및 활용실적 공개 (매년)')}</dd></div>
-                <div><dt>{ko('trans.compliance.3.dt', '기부금영수증')}</dt><dd>{ko('trans.compliance.3.dd', '연말정산 간소화 자료 제출 및 후원자 요청 시 발급')}</dd></div>
-                <div><dt>{ko('trans.compliance.4.dt', '후원자 소통')}</dt><dd>{ko('trans.compliance.4.dd', '전화·이메일·온라인 문의 창구 운영')}</dd></div>
-                <div><dt>{ko('trans.compliance.5.dt', '공익신고')}</dt><dd>{ko('trans.compliance.5.dd', '국민권익위원회 신고 창구 연결')}</dd></div>
+                {complianceItems(kaya?.fields ?? {})
+                  .filter((item) => item.dt.trim() || item.dd.trim())
+                  .map((item, index) => (
+                    <div key={`${item.dt}-${index}`}>
+                      <dt>{item.dt}</dt>
+                      <dd>{item.dd}</dd>
+                    </div>
+                  ))}
               </dl>
             </section>
           </>
@@ -526,7 +528,7 @@ export function FinancialReportPage() {
         )}
 
         {locale === 'ko' ? (
-          <section className="fr-finance">
+          <section className="fr-finance" hidden={!transOn('reports')} style={{ order: transMoving.indexOf('reports') + 1 }}>
             <div className="fr-finance__head">
               <div>
                 <p className="fr-kicker">FINANCIAL REPORT · 연도별 재무보고</p>
@@ -622,7 +624,7 @@ export function FinancialReportPage() {
                 openYearPdf(
                   report.publicInterestDisclosurePdfUrl,
                   `${report.year}년 공익법인 결산서류 공시.pdf`,
-                  'publicInterest',
+                  { title: fr.pdfModalTitlePublicInterest, body: fr.pdfModalBodyPublicInterest },
                 )
               }
             >
@@ -635,11 +637,10 @@ export function FinancialReportPage() {
               type="button"
               className="financial-report__action financial-report__action--yellow"
               onClick={() =>
-                openYearPdf(
-                  report.donationDisclosurePdfUrl,
-                  `${report.year}년 기부금 공시.pdf`,
-                  'donation',
-                )
+                openYearPdf(report.donationDisclosurePdfUrl, `${report.year}년 기부금 공시.pdf`, {
+                  title: fr.pdfModalTitle,
+                  body: fr.pdfModalBody,
+                })
               }
             >
               <span>{fr.actionDonation}</span>
@@ -668,10 +669,11 @@ export function FinancialReportPage() {
           </div>
         ) : null}
         {locale === 'ko' ? (
-          <section className="fr-support">
+          <section className="fr-support" hidden={!transOn('banner')} style={{ order: 100 }}>
             <div>
               <p className="fr-kicker">SUPPORT</p>
               <h2>{ko('trans.supportTitle', '투명하게 운영되는 나눔에 함께해 주세요')}</h2>
+              {ko('trans.supportBody', '') ? <p className="fr-support__body">{ko('trans.supportBody', '')}</p> : null}
             </div>
             <a href={donateHref(biz)} target="_blank" rel="noopener noreferrer">
               {ko('trans.supportButton', '후원하러 가기')}
@@ -680,11 +682,11 @@ export function FinancialReportPage() {
         ) : null}
       </div>
 
-      {pdfModalKind && (
+      {pdfMissing && (
         <div
           className="financial-report__modal-backdrop"
           role="presentation"
-          onClick={() => setPdfModalKind(null)}
+          onClick={() => setPdfMissing(null)}
         >
           <div
             className="financial-report__modal"
@@ -693,14 +695,10 @@ export function FinancialReportPage() {
             aria-labelledby="fr-pdf-modal-title"
             onClick={(e) => e.stopPropagation()}
           >
-            <h2 id="fr-pdf-modal-title">
-              {pdfModalKind === 'publicInterest' ? fr.pdfModalTitlePublicInterest : fr.pdfModalTitle}
-            </h2>
-            <p>
-              {pdfModalKind === 'publicInterest' ? fr.pdfModalBodyPublicInterest : fr.pdfModalBody}
-            </p>
+            <h2 id="fr-pdf-modal-title">{pdfMissing.title}</h2>
+            <p>{pdfMissing.body}</p>
             <div className="financial-report__modal-actions">
-              <button type="button" className="financial-report__modal-btn" onClick={() => setPdfModalKind(null)}>
+              <button type="button" className="financial-report__modal-btn" onClick={() => setPdfMissing(null)}>
                 {fr.pdfModalClose}
               </button>
             </div>

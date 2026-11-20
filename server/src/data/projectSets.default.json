@@ -4,31 +4,36 @@
       "title": "",
       "eyebrow": "PROGRAMS · 국내 진행사업",
       "photo": "",
-      "photoAlt": ""
+      "photoAlt": "",
+      "align": "center"
     },
     "overseas": {
       "title": "",
       "eyebrow": "PROGRAMS · 해외 진행사업",
       "photo": "",
-      "photoAlt": ""
+      "photoAlt": "",
+      "align": "left"
     },
     "education": {
       "title": "",
       "eyebrow": "PROGRAMS · 해외 교육 진행사업",
       "photo": "",
-      "photoAlt": ""
+      "photoAlt": "",
+      "align": "center"
     },
     "volunteer": {
       "title": "",
       "eyebrow": "PROGRAMS · 해외봉사단 진행사업",
       "photo": "",
-      "photoAlt": ""
+      "photoAlt": "",
+      "align": "left"
     },
     "research": {
       "title": "",
       "eyebrow": "PROGRAMS · 연구사업 진행사업",
       "photo": "",
-      "photoAlt": ""
+      "photoAlt": "",
+      "align": "left"
     }
   },
   "items": [

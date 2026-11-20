@@ -2,11 +2,11 @@ import { Link } from 'react-router-dom'
 import { useLocale } from '../../../i18n/LocaleContext'
 import { useImpactPage } from '../../impact/useImpactPage'
 
-/** 메인 숫자 섹션. 임팩트 페이지 공개가 꺼져 있거나 메인 표시가 꺼져 있으면 숨긴다. */
+/** 메인 숫자 섹션. 메인 표시가 꺼져 있을 때만 숨긴다. 페이지 공개가 꺼져 있으면 연결 링크만 뺀다. */
 export function HomeNumbersSection() {
   const { locale } = useLocale()
   const impact = useImpactPage()
-  const shown = Boolean(impact?.public) && impact?.homePublic !== false
+  const shown = impact?.homePublic !== false
   if (locale !== 'ko' || !impact || !shown) return null
 
   const cards = impact.homeNumbers

@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { AdminMediaUpload } from '../components/AdminMediaUpload'
-import { adminFetchSiteCommon, adminPutSiteCommon } from '../../../services/api'
+import { AdminSaveActions, draftStatus, takeUnpublished } from '../AdminSaveActions'
+import { adminFetchSiteCommon, adminPutSiteCommon, type SaveMode } from '../../../services/api'
 import { resetSiteCommonCache } from '../../site/useSiteCommon'
 import type { SiteCommonDocument, SiteFooterLink, SitePartner, SiteSlogan } from '../../site/siteCommonTypes'
 
@@ -55,12 +56,16 @@ export function AdminSiteCommonPage() {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [savedAt, setSavedAt] = useState('')
+  const [savedMode, setSavedMode] = useState<SaveMode | ''>('')
+  const [unpublished, setUnpublished] = useState(false)
 
   const load = useCallback(async () => {
     setLoading(true)
     setError('')
     try {
-      setDoc(await adminFetchSiteCommon())
+      const loaded = takeUnpublished(await adminFetchSiteCommon())
+      setDoc(loaded.doc)
+      setUnpublished(loaded.unpublished)
     } catch (e) {
       setError(e instanceof Error ? e.message : '불러오지 못했습니다.')
     } finally {
@@ -90,14 +95,16 @@ export function AdminSiteCommonPage() {
 
   const patch = (next: SiteCommonDocument) => setDoc(next)
 
-  const onSave = async () => {
+  const onSave = async (mode: SaveMode) => {
     if (!doc) return
     setSaving(true)
     setError('')
     setSavedAt('')
     try {
-      const saved = await adminPutSiteCommon(doc)
-      setDoc(saved)
+      const saved = takeUnpublished(await adminPutSiteCommon(doc, mode))
+      setDoc(saved.doc)
+      setUnpublished(saved.unpublished)
+      setSavedMode(mode)
       resetSiteCommonCache()
       setSavedAt(new Date().toLocaleTimeString('ko-KR'))
     } catch (e) {
@@ -157,45 +164,17 @@ export function AdminSiteCommonPage() {
         </div>
         <div className="admin-page__actions">
           <a className="admin-btn" href="/" target="_blank" rel="noopener noreferrer">미리보기</a>
-          <button type="button" className="admin-btn admin-btn--primary" disabled={saving} onClick={() => void onSave()}>
-            {saving ? '저장 중…' : '저장'}
-          </button>
+          <AdminSaveActions saving={saving} onSave={(mode) => void onSave(mode)} />
         </div>
       </div>
       {error ? <p className="admin-banner admin-banner--error">{error}</p> : null}
-      {savedAt ? <p className="admin-panel__foot">저장됨 ({savedAt})</p> : null}
+      {draftStatus(unpublished, savedAt, savedMode) ? <p className="admin-panel__foot">{draftStatus(unpublished, savedAt, savedMode)}</p> : null}
 
       <section id="stories" className="admin-panel">
         <h2 className="admin-panel__title">③ 스토리 · 현장의 기록</h2>
-        <div className="admin-form-grid">
-          <label className="admin-field">
-            <span className="admin-field__label">대표 사례 글</span>
-            <input className="admin-input" value={stories.featured} onChange={(e) => patch({ ...doc, homeStories: { ...stories, featured: e.target.value } })} />
-          </label>
-          <div className="admin-field">
-            <span className="admin-field__label">나머지 카드</span>
-            <div className="admin-segmented">
-              <button type="button" className={`admin-segmented__btn${stories.rest === 'auto' ? ' admin-segmented__btn--active' : ''}`} onClick={() => patch({ ...doc, homeStories: { ...stories, rest: 'auto' } })}>최신 글 3개 자동</button>
-              <button type="button" className={`admin-segmented__btn${stories.rest === 'manual' ? ' admin-segmented__btn--active' : ''}`} onClick={() => patch({ ...doc, homeStories: { ...stories, rest: 'manual' } })}>직접 선택</button>
-            </div>
-          </div>
-          {stories.rest === 'manual'
-            ? [0, 1, 2].map((index) => (
-                <label key={index} className="admin-field">
-                  <span className="admin-field__label">카드 {index + 1} 글 제목</span>
-                  <input
-                    className="admin-input"
-                    value={stories.manual?.[index] ?? ''}
-                    onChange={(e) => {
-                      const manual = [stories.manual?.[0] ?? '', stories.manual?.[1] ?? '', stories.manual?.[2] ?? '']
-                      manual[index] = e.target.value
-                      patch({ ...doc, homeStories: { ...stories, manual } })
-                    }}
-                  />
-                </label>
-              ))
-            : null}
-        </div>
+        <p className="admin-panel__foot">
+          홈 스토리는 대표로 지정한 글 1건과, 그 글을 뺀 최신 글 3건입니다. 대표 지정은 게시글 관리의 스토리 글에서 합니다.
+        </p>
         {(['blog', 'instagram', 'youtube'] as const).map((key) => (
           <div key={key} className="admin-item">
             <b style={{ flex: '0 0 110px', fontSize: 13 }}>{key === 'blog' ? '네이버 블로그' : key === 'instagram' ? '인스타그램' : '유튜브'}</b>

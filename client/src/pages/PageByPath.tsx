@@ -4,6 +4,7 @@ import { fetchPageBySlug, fetchPostBySlug } from '../services/api'
 import { PostDetail, crumbsForKind, crumbsForPost, heroTitleForKind } from '../components/PostDetail'
 import { getStaticPage, normalizePathKey, pathToSlug } from '../constants/pagesContent'
 import { useLocale } from '../i18n/LocaleContext'
+import { useKayaPages } from '../features/kaya/useKayaPages'
 import type { Page } from '../types/page'
 import type { Post } from '../types/post'
 import { NewsArchivePage } from './NewsArchivePage'
@@ -32,6 +33,8 @@ import { pageHeroImageForPath, pageHeroImageForPostKind } from '../constants/pag
 import { isKhayahSectionPathKey } from '../features/khayah-about/khayahAboutHubTabs'
 import { ListStatus } from '../components/ListStatus'
 import { BusinessHubCards } from '../features/business/BusinessHubCards'
+import { PageBlocks } from '../features/biz/PageBlocks'
+import { OverseasEducationPrograms } from '../features/projects/OverseasEducationPrograms'
 import { KayaBoundHtml } from '../features/kaya/KayaBoundHtml'
 import { BizBoundHtml } from '../features/biz/BizBoundHtml'
 import { useBizSupport } from '../features/biz/useBizSupport'
@@ -96,6 +99,7 @@ function PageByPathInner({ kindHint }: { kindHint: string }) {
   const location = useLocation()
   const { locale, localize, messages } = useLocale()
   const biz = useBizSupport()
+  const kaya = useKayaPages()
   const pathKey = normalizePathKey(location.pathname)
 
   const isNewsArchive =
@@ -291,10 +295,22 @@ function PageByPathInner({ kindHint }: { kindHint: string }) {
       locale === 'ko' && (pathKey === PATH.supportGuide || pathKey === PATH.supportMethod)
     return (
       <div className="page-content-wrapper">
-        {koreanSupportPage ? null : (
+        {koreanSupportPage || (locale === 'ko' && pathKey === PATH.aboutGreeting && kaya?.fields['greet.heroOn'] === '0') ? null : (
           <PageHero
-            title={staticPage.title}
-            backgroundImageUrl={pageHeroImageForPath(pathKey)}
+            title={
+              locale === 'ko' && pathKey === PATH.businessSocialAcademy && biz?.fields['aca.heroTitle']?.trim()
+                ? biz.fields['aca.heroTitle'].trim()
+                : locale === 'ko' && pathKey === PATH.businessSocialComfort && biz?.fields['cnc.heroTitle']?.trim()
+                  ? biz.fields['cnc.heroTitle'].trim()
+                  : staticPage.title
+            }
+            backgroundImageUrl={
+              locale === 'ko' && pathKey === PATH.businessSocialAcademy && biz?.fields['aca.banner']?.trim()
+                ? biz.fields['aca.banner'].trim()
+                : locale === 'ko' && pathKey === PATH.businessSocialComfort && biz?.fields['cnc.banner']?.trim()
+                  ? biz.fields['cnc.banner'].trim()
+                  : pageHeroImageForPath(pathKey)
+            }
             showScrollHint={
               pathKey !== PATH.aboutLocation &&
               !(
@@ -343,11 +359,11 @@ function PageByPathInner({ kindHint }: { kindHint: string }) {
                           : locale === 'ko' && pathKey === PATH.businessAdvocacy
                             ? 'RESEARCH'
                             : locale === 'ko' && pathKey === PATH.businessSocial
-                              ? 'SOCIAL BUSINESS'
+                              ? biz?.fields['soc.heroLabel'] || 'SOCIAL BUSINESS'
                               : locale === 'ko' && pathKey === PATH.businessSocialAcademy
-                                ? 'KHAYAH ACADEMY'
+                                ? biz?.fields['aca.heroLabel'] || 'KHAYAH ACADEMY'
                                 : locale === 'ko' && pathKey === PATH.businessSocialComfort
-                                  ? 'COLOR & COMFORT'
+                                  ? biz?.fields['cnc.heroLabel'] || 'COLOR & COMFORT'
                                   : undefined
             }
           />
@@ -368,6 +384,15 @@ function PageByPathInner({ kindHint }: { kindHint: string }) {
                   dangerouslySetInnerHTML={{ __html: staticPage.content }}
                 />
               )}
+              {pathKey === PATH.businessOverseasEducation ? <OverseasEducationPrograms /> : null}
+              {locale === 'ko' && (pathKey === PATH.businessSocial || pathKey === PATH.businessSocialAcademy || pathKey === PATH.businessSocialComfort) ? (
+                <PageBlocks
+                  blocks={[
+                    ...(biz?.blocks ?? []).filter((block) => block.page === (pathKey === PATH.businessSocial ? 'social' : pathKey === PATH.businessSocialAcademy ? 'academy' : 'cnc')),
+                    ...(biz?.blocks ?? []).filter((block) => block.page === 'common'),
+                  ]}
+                />
+              ) : null}
               {pathKey === PATH.businessOverseas ? <BusinessHubCards hub="overseas" /> : null}
               {pathKey === PATH.businessDomestic ? <BusinessHubCards hub="domestic" /> : null}
               {storyCta ? (

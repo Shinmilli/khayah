@@ -1,9 +1,12 @@
 import type { Request, Response } from 'express'
-import { readProjectSetsDocument, writeProjectSetsDocument } from '../services/projectSetsFileService'
+import { adminCanSeeDraft, isAdminPath, saveModeOf } from '../services/documentDraft'
+import { readProjectSetsState, writeProjectSetsDocument } from '../services/projectSetsFileService'
 
-export async function getProjectSets(_req: Request, res: Response) {
+export async function getProjectSets(req: Request, res: Response) {
   try {
-    res.json(await readProjectSetsDocument())
+    const adminPath = isAdminPath(req)
+    const { doc, unpublished } = await readProjectSetsState(adminPath || (await adminCanSeeDraft(req)))
+    res.json(adminPath ? { ...doc, unpublished } : doc)
   } catch (e) {
     console.error(e)
     res.status(500).json({ error: 'Failed to load project sets' })
@@ -12,8 +15,9 @@ export async function getProjectSets(_req: Request, res: Response) {
 
 export async function putAdminProjectSets(req: Request, res: Response) {
   try {
-    await writeProjectSetsDocument(req.body)
-    res.json(await readProjectSetsDocument())
+    await writeProjectSetsDocument(req.body, saveModeOf(req))
+    const { doc, unpublished } = await readProjectSetsState(true)
+    res.json({ ...doc, unpublished })
   } catch (e) {
     const status = (e as Error & { status?: number })?.status
     if (status === 400) {

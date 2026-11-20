@@ -248,6 +248,26 @@
   padding: 104px 24px 112px;
 }
 
+.kaya-intro--gray {
+  background: #fbf8f1;
+}
+
+.kaya-intro--center {
+  text-align: center;
+}
+
+.kaya-intro--center .kaya-chips {
+  justify-content: center;
+}
+
+.kaya-intro--photo-left {
+  flex-direction: row-reverse;
+}
+
+.kaya-intro__photo[hidden] {
+  display: none;
+}
+
 .kaya-intro__copy {
   flex: 1 1 440px;
   min-width: 0;
@@ -764,6 +784,29 @@
 
 .khayah-about-hub__html {
   margin: 0;
+}
+
+.kaya-section-image {
+  width: min(1120px, calc(100% - 48px));
+  margin: 48px auto;
+}
+
+.kaya-section-image img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.kaya-section-image.kaya-intro--gray {
+  width: 100%;
+  margin: 0;
+  padding: 48px 24px;
+  box-sizing: border-box;
+}
+
+.kaya-section-image.kaya-intro--gray img {
+  width: min(1120px, 100%);
+  margin: 0 auto;
 }
 
 @media (max-width: 900px) {

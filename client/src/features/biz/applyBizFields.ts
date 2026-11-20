@@ -1,4 +1,5 @@
 import type { BizSupportDocument } from './bizSupportTypes'
+import { rankedSupportSections } from './supportSections'
 import { donateHref } from './useBizSupport'
 
 function sectionOf(doc: BizSupportDocument, id: string | null) {
@@ -52,17 +53,98 @@ export function applyBizFields(root: HTMLElement, doc: BizSupportDocument, accou
             return span
           }),
       )
+    } else if (mode === 'lines') {
+      const lines = value
+        .split(/\n/)
+        .map((line) => line.trim())
+        .filter(Boolean)
+      if (!lines.length) return
+      el.replaceChildren(
+        ...lines.map((line) => {
+          const item = document.createElement('li')
+          item.textContent = line
+          return item
+        }),
+      )
     } else {
       el.textContent = value
+    }
+    if (el.classList.contains('sup-rec')) {
+      const muted = el.getAttribute('data-k-badge') === 'muted' || /소액/.test(value)
+      el.classList.toggle('sup-rec--muted', muted)
+      el.hidden = !value.trim()
     }
     const altKey = el.getAttribute('data-k-alt')
     if (altKey && doc.fields[altKey] && el instanceof HTMLImageElement) el.alt = doc.fields[altKey]
   })
 
+  ;(['data-aca', 'data-cnc'] as const).forEach((attr) => {
+    const prefix = attr === 'data-aca' ? 'aca' : 'cnc'
+    root.querySelectorAll<HTMLElement>(`[${attr}]`).forEach((section) => {
+      const id = section.getAttribute(attr)
+      if (!id) return
+      const image = section.querySelector<HTMLImageElement>(':scope > .aca-replace')
+      const src = doc.fields[`${prefix}.${id}.image`]?.trim() ?? ''
+      const replace = doc.fields[`${prefix}.${id}.mode`] === 'image' && src
+      if (replace) {
+        const img = image ?? document.createElement('img')
+        img.className = 'aca-replace'
+        img.src = src
+        img.alt = ''
+        if (!image) section.appendChild(img)
+        ;[...section.children].forEach((child) => {
+          if (child !== img) (child as HTMLElement).hidden = true
+        })
+        return
+      }
+      image?.remove()
+      ;[...section.children].forEach((child) => {
+        ;(child as HTMLElement).hidden = false
+      })
+    })
+  })
+  root.querySelectorAll<HTMLElement>('.sbiz-fact').forEach((row) => {
+    const value = row.querySelector('dd')?.textContent?.trim() ?? ''
+    row.hidden = !value
+  })
+  root.querySelectorAll<HTMLElement>('.sbiz-cell').forEach((cell) => {
+    cell.hidden = !(cell.textContent ?? '').trim()
+  })
+  root.querySelectorAll<HTMLElement>('.sbiz-photos--3 .sbiz-photo').forEach((figure) => {
+    figure.hidden = !(figure.querySelector('figcaption')?.textContent ?? '').trim()
+  })
+  root.querySelectorAll<HTMLElement>('.sbiz-step').forEach((step) => {
+    const title = step.querySelector('strong')?.textContent?.trim() ?? ''
+    const body = step.querySelector('span')?.textContent?.trim() ?? ''
+    step.hidden = !title && !body
+  })
+  root.querySelectorAll<HTMLElement>('.sbiz-note').forEach((note) => {
+    note.hidden = !(note.textContent ?? '').trim() || doc.fields['cnc.noteOn'] === '0'
+  })
+
+  root.querySelectorAll<HTMLElement>('.dom-pr, .dedu-row').forEach((el) => {
+    const title = el.querySelector('h3')?.textContent?.trim() ?? ''
+    el.hidden = !title
+  })
+  root.querySelectorAll<HTMLElement>('.voln-steps > div').forEach((el) => {
+    const name = el.querySelector('span')?.textContent?.trim() ?? ''
+    el.hidden = !name
+  })
+
   root.querySelectorAll<HTMLAnchorElement>('[data-k-href]').forEach((el) => {
     const key = el.getAttribute('data-k-href')
-    const href = key ? (doc.fields[key] ?? '').trim() : ''
+    if (!key || !(key in doc.fields)) return
+    const href = (doc.fields[key] ?? '').trim()
     if (!href || href === '#') {
+      const hrefKey = el.getAttribute('data-k-href')
+      if (hrefKey === 'aca.facebook' || hrefKey === 'aca.instagram' || hrefKey === 'cnc.instagram') {
+        el.hidden = true
+        return
+      }
+      if (el.classList.contains('sbiz-btn')) {
+        el.hidden = false
+        return
+      }
       el.hidden = true
       return
     }
@@ -73,10 +155,62 @@ export function applyBizFields(root: HTMLElement, doc: BizSupportDocument, accou
   const url = donateHref(doc)
   root.querySelectorAll<HTMLAnchorElement>('a[href*="ihappynanum.com"]').forEach((el) => {
     el.href = url
+    if (doc.donate.openBlank === false) {
+      el.removeAttribute('target')
+      el.removeAttribute('rel')
+    } else {
+      el.target = '_blank'
+      el.rel = 'noopener'
+    }
   })
   root.querySelectorAll<HTMLElement>('[data-k="donate.label"]').forEach((el) => {
     if (doc.donate.labelKo) el.textContent = doc.donate.labelKo
   })
+  const receiptNote =
+    doc.donate.receiptNote?.trim() ||
+    '카야인터내셔널이 발급합니다. 신청 시 주민등록번호를 입력하시면 연말정산 간소화 서비스에서 바로 확인하실 수 있습니다.'
+  root.querySelectorAll<HTMLElement>('[data-k="donate.receiptNote"]').forEach((el) => {
+    el.textContent = receiptNote
+    el.hidden = !receiptNote
+  })
+
+  const where = root.querySelector<HTMLElement>('[data-sec="guide.where"]')
+  if (where) {
+    const title = where.querySelector<HTMLElement>('.sup-h2')
+    const size = doc.fields['guide.whereSize'] || 'md'
+    const color = doc.fields['guide.whereColor'] || 'burgundy'
+    const bg = doc.fields['guide.whereBg'] || 'beige'
+    where.classList.toggle('sup-band--white', bg === 'white')
+    if (title) {
+      title.style.fontSize = size === 'lg' ? '2rem' : size === 'sm' ? '1.35rem' : ''
+      title.style.color = color === 'ink' ? '#b11e3b' : color === 'gray' ? '#4b5563' : ''
+    }
+  }
+
+  const ICONS: Record<string, string> = {
+    house: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B11E3B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"></path><path d="M5 10v10h14V10"></path><path d="M10 20v-5h4v5"></path></svg>',
+    book: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B11E3B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h6a2 2 0 012 2v12a2 2 0 00-2-2H4z"></path><path d="M20 5h-6a2 2 0 00-2 2v12a2 2 0 012-2h6z"></path></svg>',
+    heart: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B11E3B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.4-7-10a4 4 0 017-2.6A4 4 0 0119 11c0 5.6-7 10-7 10z"></path></svg>',
+    person: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B11E3B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"></circle><path d="M5 20a7 7 0 0114 0"></path></svg>',
+  }
+  root.querySelectorAll<HTMLElement>('[data-icon]').forEach((el) => {
+    const key = el.getAttribute('data-icon')
+    if (!key) return
+    const icon = doc.fields[key] || 'house'
+    if (ICONS[icon]) el.innerHTML = ICONS[icon]
+  })
+  root.querySelectorAll<HTMLElement>('.sup-item[data-item]').forEach((el) => {
+    const id = el.getAttribute('data-item')
+    if (!id) return
+    const title = doc.fields[`${id}.title`]?.trim() ?? ''
+    el.hidden = !title
+  })
+
+  const impactTitle = doc.donate.impactTitle?.trim()
+  if (impactTitle) {
+    const el = root.querySelector<HTMLElement>('#sup-impact, [data-sec="guide.impact"] .sup-h2')
+    if (el) el.textContent = impactTitle
+  }
 
   const parents = new Set<Element>()
   root.querySelectorAll('[data-item]').forEach((el) => {
@@ -89,25 +223,47 @@ export function applyBizFields(root: HTMLElement, doc: BizSupportDocument, accou
     if (el.parentElement) secParents.add(el.parentElement)
   })
   secParents.forEach((parent) => reorder(parent, ':scope > [data-sec]', doc))
-  const impact = root.querySelector<HTMLElement>('[data-sec="guide.impact"]')
-  if (impact) impact.hidden = !doc.donate.impactEnabled
+  root.querySelectorAll<HTMLElement>('.sup--guide, .sup--method').forEach((page) => layoutSupport(page, doc))
 
+  const methodAccounts = doc.fields['method.accounts']?.trim() ?? ''
+  const source = methodAccounts || accounts
   const grid = root.querySelector('.sup-account-grid')
-  if (!grid || !accounts.trim()) return
-  const lines = accounts
+  if (!grid || !source.trim()) return
+  const lines = source
     .split('\n')
     .map((line) => line.trim())
     .filter((line) => line && !line.startsWith('예금주'))
   if (!lines.length) return
   grid.innerHTML = lines
     .map((line) => {
-      const parts = line.split(/\s+/)
-      const bank = parts.shift() ?? ''
-      const number = parts.join(' ')
+      const tabbed = line.includes('\t')
+      const bank = tabbed ? line.split('\t')[0] : line.split(/\s+/)[0] ?? ''
+      const number = tabbed ? line.split('\t').slice(1).join('\t') : line.split(/\s+/).slice(1).join(' ')
       return `<div class="sup-account"><b>${bank.replace(/&/g, '&amp;').replace(/</g, '&lt;')}</b><span>${number.replace(/&/g, '&amp;').replace(/</g, '&lt;')}</span></div>`
     })
     .join('')
-  const holder = accounts.split('\n').find((line) => line.trim().startsWith('예금주'))
-  const holderEl = root.querySelector('.sup-accounts .sup-head span')
-  if (holder && holderEl) holderEl.textContent = holder.trim()
+}
+
+function layoutSupport(root: HTMLElement, doc: BizSupportDocument) {
+  const page = root.classList.contains('sup--guide') ? 'guide' : root.classList.contains('sup--method') ? 'method' : null
+  if (!page) return
+  const ranked = rankedSupportSections(page, doc.sections)
+  if (page === 'method') {
+    const pay = root.querySelector<HTMLElement>('[data-sec="method.pay"]')
+    const account = root.querySelector<HTMLElement>('[data-sec="method.account"]')
+    const wrap = pay?.querySelector('.sup-wrap')
+    const nest = ranked.findIndex((row) => row.id === 'method.account') === ranked.findIndex((row) => row.id === 'method.pay') + 1
+    if (account && wrap) {
+      if (nest && account.parentElement !== wrap) wrap.appendChild(account)
+      if (!nest && account.parentElement !== root) root.appendChild(account)
+    }
+  }
+  ranked.forEach((row, index) => {
+    const el = root.querySelector<HTMLElement>(`[data-sec="${row.id}"]`)
+    if (!el) return
+    if (el.parentElement === root) el.style.order = String(index + 1)
+    el.hidden = !row.enabled
+  })
+  const impact = root.querySelector<HTMLElement>('[data-sec="guide.impact"]')
+  if (impact) impact.hidden = impact.hidden || !doc.donate.impactEnabled
 }

@@ -267,6 +267,16 @@
   color: #2f2b28;
 }
 
+.page-content-wrapper .page-body .greeting-modern .article-sign-image {
+  height: 42px;
+  width: auto;
+  object-fit: contain;
+}
+
+.page-content-wrapper .page-body .greeting-modern .article-sign [hidden] {
+  display: none;
+}
+
 .page-content-wrapper .page-body .greeting-modern .article-sign-role {
   margin-right: 0;
   font-size: 14px;
@@ -297,12 +307,19 @@
 }
 
 .greeting-modern .gm-closing__mark {
-  display: block;
-  font-size: 56px;
-  line-height: 0.6;
-  color: #e58a9e;
+  display: inline;
+  color: #fff;
+  font-size: 0.72em;
   font-weight: 800;
-  margin-bottom: 26px;
+  line-height: 0;
+  vertical-align: 0.42em;
+  margin-right: 0.15em;
+}
+
+.greeting-modern .gm-closing__mark--close {
+  margin-right: 0;
+  margin-left: 0.12em;
+  vertical-align: -0.05em;
 }
 
 .page-content-wrapper .page-body .greeting-modern .gm-closing__text {

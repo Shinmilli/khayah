@@ -4,6 +4,8 @@ export type FinancialReportSegmentLabels = { ko: string; en: string }
 export type FinancialReportSegmentV2 = {
   id: string
   labels: FinancialReportSegmentLabels
+  /** 원 단위. 있으면 저장 시 비율은 금액 합계로 다시 계산한다. */
+  amount?: number
   percent: number
   color: string
 }

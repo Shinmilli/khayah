@@ -8,7 +8,8 @@ import {
   type PageHeroBannerKey,
   type PageHeroBannersDocument,
 } from '../../page-hero/pageHeroBannerTypes'
-import { adminFetchPageHeroBanners, adminPutPageHeroBanners } from '../../../services/api'
+import { AdminSaveActions, draftStatus, takeUnpublished } from '../AdminSaveActions'
+import { adminFetchPageHeroBanners, adminPutPageHeroBanners, type SaveMode } from '../../../services/api'
 
 function deepClone<T>(v: T): T {
   return JSON.parse(JSON.stringify(v)) as T
@@ -20,15 +21,18 @@ export function AdminPageBannersPage() {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [savedAt, setSavedAt] = useState('')
+  const [savedMode, setSavedMode] = useState<SaveMode | ''>('')
+  const [unpublished, setUnpublished] = useState(false)
 
   const load = useCallback(async () => {
     setLoading(true)
     setError('')
     try {
-      const data = await adminFetchPageHeroBanners()
+      const loaded = takeUnpublished(await adminFetchPageHeroBanners())
+      setUnpublished(loaded.unpublished)
       setDoc({
         version: 1,
-        images: { ...DEFAULT_PAGE_HERO_BANNERS.images, ...data.images },
+        images: { ...DEFAULT_PAGE_HERO_BANNERS.images, ...loaded.doc.images },
       })
     } catch (e) {
       setError(e instanceof Error ? e.message : '불러오지 못했습니다.')
@@ -49,13 +53,15 @@ export function AdminPageBannersPage() {
     }))
   }
 
-  const save = async () => {
+  const save = async (mode: SaveMode) => {
     setSaving(true)
     setError('')
     try {
-      const saved = await adminPutPageHeroBanners(doc)
-      setDoc(saved)
-      setSavedAt(new Date().toLocaleTimeString())
+      const saved = takeUnpublished(await adminPutPageHeroBanners(doc, mode))
+      setDoc(saved.doc)
+      setUnpublished(saved.unpublished)
+      setSavedMode(mode)
+      setSavedAt(new Date().toLocaleTimeString('ko-KR'))
     } catch (e) {
       setError(e instanceof Error ? e.message : '저장에 실패했습니다.')
     } finally {
@@ -72,17 +78,14 @@ export function AdminPageBannersPage() {
             상단 메뉴 네 구역(카야·사업·후원·소식)의 상세 페이지 히어로 배너입니다. 비우면 사이트 기본 배너가 사용됩니다.
           </p>
         </div>
-        <button type="button" className="admin-btn admin-btn--primary" onClick={() => void save()} disabled={saving || loading}>
-          {saving ? '저장 중…' : '저장'}
-        </button>
+        <div className="admin-page__actions">
+          <a className="admin-btn" href="/about/khayah" target="_blank" rel="noopener noreferrer">미리보기</a>
+          <AdminSaveActions saving={saving || loading} onSave={(mode) => void save(mode)} />
+        </div>
       </div>
 
       {error ? <p className="admin-banner admin-banner--error">{error}</p> : null}
-      {savedAt ? (
-        <p className="admin-panel__foot" role="status">
-          저장됨 ({savedAt})
-        </p>
-      ) : null}
+      {draftStatus(unpublished, savedAt, savedMode) ? <p className="admin-panel__foot">{draftStatus(unpublished, savedAt, savedMode)}</p> : null}
 
       <section className="admin-page-banners" aria-label="구역별 페이지 배너">
         {PAGE_HERO_BANNER_KEYS.map((key) => (

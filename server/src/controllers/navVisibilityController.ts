@@ -1,12 +1,10 @@
 import type { Request, Response } from 'express'
-import {
-  readNavVisibilityDocument,
-  writeNavVisibilityDocument,
-} from '../services/navVisibilityFileService'
+import { adminCanSeeDraft, saveModeOf } from '../services/documentDraft'
+import { readNavVisibilityState, writeNavVisibilityDocument } from '../services/navVisibilityFileService'
 
-export async function getNavVisibility(_req: Request, res: Response) {
+export async function getNavVisibility(req: Request, res: Response) {
   try {
-    const doc = await readNavVisibilityDocument()
+    const { doc } = await readNavVisibilityState(await adminCanSeeDraft(req))
     res.json(doc)
   } catch (e) {
     console.error(e)
@@ -16,8 +14,8 @@ export async function getNavVisibility(_req: Request, res: Response) {
 
 export async function getAdminNavVisibility(_req: Request, res: Response) {
   try {
-    const doc = await readNavVisibilityDocument()
-    res.json(doc)
+    const { doc, unpublished } = await readNavVisibilityState(true)
+    res.json({ ...doc, unpublished })
   } catch (e) {
     console.error(e)
     res.status(500).json({ error: 'Failed to load nav visibility' })
@@ -26,9 +24,9 @@ export async function getAdminNavVisibility(_req: Request, res: Response) {
 
 export async function putAdminNavVisibility(req: Request, res: Response) {
   try {
-    await writeNavVisibilityDocument(req.body)
-    const doc = await readNavVisibilityDocument()
-    res.json(doc)
+    await writeNavVisibilityDocument(req.body, saveModeOf(req))
+    const { doc, unpublished } = await readNavVisibilityState(true)
+    res.json({ ...doc, unpublished })
   } catch (e) {
     const status = (e as Error & { status?: number })?.status
     if (status === 400) {

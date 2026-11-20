@@ -1,4 +1,5 @@
-import { readJsonDocument, writeJsonDocument } from './siteDocumentStore'
+import { readDrafted, writeDrafted, type SaveMode } from './documentDraft'
+import { readJsonDocument } from './siteDocumentStore'
 
 const DOCUMENT_KEY = 'kaya-pages'
 
@@ -32,6 +33,8 @@ function text(v: unknown, fallback: string, max = 4000): string {
   return typeof v === 'string' ? v.trim().slice(0, max) : fallback
 }
 
+const LONG_FIELDS = new Set(['trans.actionsJson', 'trans.principlesJson', 'trans.complianceJson'])
+
 function flag(v: unknown, fallback: boolean): boolean {
   return typeof v === 'boolean' ? v : fallback
 }
@@ -47,9 +50,60 @@ const DEFAULT_FIELDS: Record<string, string> = {
   'intro.caption': '키르기스스탄 STEM 교육',
   'intro.headline': '한 사람의 성장이<br /><span class="kaya-wine">세상을 밝히는 빛</span>이<br />되도록',
   'intro.lead': '카야는 교육을 통해 사람을 키우고, 그 사람이 다시 이웃과 지역을 변화시키는 길을 함께 걷습니다.',
+  'intro.kickerEn': 'WHO WE ARE',
+  'intro.kickerKo': '카야는',
+  'intro.bg': 'white',
+  'intro.align': 'left',
+  'intro.photoSide': 'right',
+  'intro.heroLabel': 'ABOUT KHAYAH',
+  'intro.heroTitle': '카야 소개·CI',
+  'intro.heroOn': '1',
+  'intro.mode': 'text',
+  'intro.on': '1',
+  'intro.sectionImage': '',
+  'intro.sectionImageMobile': '',
+  'intro.sectionAlt': '',
+  'identity.mode': 'text',
+  'identity.on': '1',
+  'identity.sectionImage': '',
+  'identity.sectionImageMobile': '',
+  'identity.sectionAlt': '',
+  'values.mode': 'text',
+  'values.on': '1',
+  'values.sectionImage': '',
+  'values.sectionImageMobile': '',
+  'values.sectionAlt': '',
+  'ci.mode': 'image',
+  'ci.on': '1',
+  'ci.sectionImage': '',
+  'ci.sectionImageMobile': '',
+  'ci.sectionAlt': '',
+  'kaya.sectionOrder': 'intro,identity,values,ci',
   'intro.chip.0': '해외 지부 2곳',
   'intro.chip.1': '이사·전문위원 [00]명',
   'intro.chip.2': '설립 [0000]년',
+  'intro.chip.3': '',
+  'intro.chip.4': '',
+  'intro.chip.5': '',
+  'intro.chip.6': '',
+  'intro.chip.7': '',
+  'identity.kickerEn': 'IDENTITY',
+  'identity.kickerKo': '정의와 방향',
+  'identity.title': '카야가 존재하는 이유와<br /><span class="kaya-wine">나아갈 방향</span>',
+  'intro.id.0.name': '정의',
+  'intro.id.1.name': '비전',
+  'intro.id.2.name': '미션',
+  'intro.id.3.name': '',
+  'intro.id.4.name': '',
+  'intro.id.5.name': '',
+  'intro.visionPoint': '',
+  'intro.missionPoint': '',
+  'intro.id.3.point': '',
+  'intro.id.4.point': '',
+  'intro.id.5.point': '',
+  'intro.id.3.body': '',
+  'intro.id.4.body': '',
+  'intro.id.5.body': '',
   'intro.definitionPoint': '카야는 사람을 키우고 섬기는 개발 NGO입니다.',
   'intro.definition':
     '카야는 올바른 배움과 인도를 통해 성장한 한 사람이 큰 변화를 이끌어 낼 수 있다고 믿습니다. 그렇게 성장한 사람들이 온 땅 곳곳에서 세상을 밝히는 빛이 되기를 소망합니다.',
@@ -89,8 +143,9 @@ const DEFAULT_FIELDS: Record<string, string> = {
     '이 세상의 모든 생명은 모두 하나님의 귀한 창조물이며, 고통 받는 이들을 불쌍히 여기고 돕는 것은 이 땅 위의 모든 이들이 가슴에 품고 살아가야 하는 소명입니다. 다시 살아남을 뜻하는 단체명 카야처럼, <strong class="gm-wine">여러분의 인생에도 진정한 부흥, 카야가 휘몰아치기를 기원합니다.</strong>',
   'greet.signRole': '카야(KHAYAH) 대표',
   'greet.signName': '최순태',
-  'greet.quote':
-    '카야와 함께, 여러분의 삶에도<br>진정한 나눔, 진정한 변화가<br>함께하기를 기원합니다.<span class="sig-quote-mark sig-quote-mark--close">&rdquo;</span>',
+  'greet.signMode': 'name',
+  'greet.signImage': '',
+  'greet.quote': '카야와 함께,<br>진정한 나눔과 변화가 이어지기를.',
   'greet.sigNameKo': '최 순 태',
   'org.title': '각자의 전문성이 모여<br /><span class="kaya-wine">하나의 변화를 만듭니다.</span>',
   'org.lead':
@@ -107,6 +162,7 @@ const DEFAULT_FIELDS: Record<string, string> = {
   'trans.action.0': '공익법인 결산서류 등 공시',
   'trans.action.1': '기부금 모금액 및 활용실적 공시',
   'trans.action.2': '공익위반사항 제보',
+  'trans.actionsJson': '',
   'trans.principlesTitle': '감사와 공시로 재정의 <span>투명성</span>을 지킵니다.',
   'trans.principle.0.title': '내부 감사',
   'trans.principle.0.body': '예산과 결산은 이사회의 심의와 의결을 거치며, 감사가 법인의 재무와 업무 집행을 정기적으로 점검합니다.',
@@ -115,6 +171,7 @@ const DEFAULT_FIELDS: Record<string, string> = {
   'trans.principle.2.title': '재무 공개',
   'trans.principle.2.body':
     '국세청 공익법인 결산서류 공시와 기부금 모금액 및 활용실적 공개를 매년 이행하고, 연도별 재무보고를 홈페이지에 게시합니다.',
+  'trans.principlesJson': '',
   'trans.complianceTitle': '법령에 따른 공시와 정보 제공, 후원자 소통을 성실히 이행합니다.',
   'trans.compliance.0.dt': '홈페이지 공개',
   'trans.compliance.0.dd': '기관 소개, 이사회·전문위원 명단, 사업 소개, 연도별 재무보고',
@@ -128,8 +185,20 @@ const DEFAULT_FIELDS: Record<string, string> = {
   'trans.compliance.4.dd': '전화·이메일·온라인 문의 창구 운영',
   'trans.compliance.5.dt': '공익신고',
   'trans.compliance.5.dd': '국민권익위원회 신고 창구 연결',
+  'trans.complianceJson': '',
   'trans.supportTitle': '투명하게 운영되는 나눔에 함께해 주세요',
+  'trans.supportBody': '',
   'trans.supportButton': '후원하러 가기',
+  'loc.name': '카야인터내셔널',
+  'loc.address': '경기도 성남시 분당구 이매동 81-3 (방아로 38) 3층',
+  'loc.phone': '070.5121.2198',
+  'loc.fax': '070.8650.3639',
+  'loc.email': 'khayahinternational@gmail.com',
+  'loc.holder': '(사)카야인터내셔널',
+  'loc.account.0': '우리 1005-403-029492',
+  'loc.account.1': '농협 301-1122-4444-01',
+  'loc.account.2': '국민 584101-01-286346',
+  'loc.account.3': '신한 100-034-744590',
 }
 
 const DEFAULT_MEMBERS: KayaMember[] = [
@@ -182,7 +251,7 @@ function normalize(body: unknown): KayaPagesDocument {
   const incoming = isPlainObject(body.fields) ? body.fields : {}
   const fields: Record<string, string> = {}
   for (const key of Object.keys(DEFAULT_FIELDS)) {
-    fields[key] = text(incoming[key], DEFAULT_FIELDS[key])
+    fields[key] = text(incoming[key], DEFAULT_FIELDS[key], LONG_FIELDS.has(key) ? 20000 : 4000)
   }
   const rows = Array.isArray(body.members) ? body.members : base.members
   const members = rows.slice(0, 80).map((row, i) => {
@@ -218,11 +287,15 @@ export async function readKayaPagesDocument(): Promise<KayaPagesDocument> {
   }
 }
 
-export async function writeKayaPagesDocument(body: unknown): Promise<void> {
+export function readKayaPagesState(preferDraft: boolean) {
+  return readDrafted(DOCUMENT_KEY, readKayaPagesDocument, preferDraft)
+}
+
+export async function writeKayaPagesDocument(body: unknown, mode: SaveMode = 'publish'): Promise<void> {
   if (!isPlainObject(body) || body.version !== 1) {
     const err = new Error('Invalid kaya pages payload')
     ;(err as Error & { status?: number }).status = 400
     throw err
   }
-  await writeJsonDocument(DOCUMENT_KEY, normalize(body))
+  await writeDrafted(DOCUMENT_KEY, normalize(body), mode)
 }

@@ -29,6 +29,11 @@ const AXES = [
 
 const FIELDS = ['전체', '교육', '해외봉사단', '긴급구호']
 
+function filled(value: string | undefined | null): boolean {
+  const text = value?.trim() ?? ''
+  return text !== '' && text !== '—' && text !== '-'
+}
+
 function storyRows(story: ImpactStory): Array<[string, string]> {
   return [
     ['Before', story.before],
@@ -42,7 +47,7 @@ function storyRows(story: ImpactStory): Array<[string, string]> {
 export function ImpactPage() {
   const doc = useImpactPage()
   const [posts, setPosts] = useState<Post[]>([])
-  const [period, setPeriod] = useState('누적')
+  const [tableYear, setTableYear] = useState('')
   const [field, setField] = useState('전체')
 
   useEffect(() => {
@@ -61,9 +66,14 @@ export function ImpactPage() {
 
   const changeFromDoc = (doc.stories ?? []).filter((story) => story.category === '변화의 이야기' && story.featured && story.consent)
   const expertFromDoc = (doc.stories ?? []).filter((story) => story.category === '전문가 이야기' && story.featured && story.consent).slice(0, 3)
-  const years = doc.years ?? []
-  const year = years.find((item) => item.year === period)
+  const years = (doc.years ?? [])
+    .map((item) => ({ ...item, rows: item.rows.filter((row) => filled(row.name)) }))
+    .filter((item) => filled(item.year) && item.rows.length > 0)
+    .sort((a, b) => Number(b.year) - Number(a.year))
+  const activeYearName = years.some((item) => item.year === tableYear) ? tableYear : (years[0]?.year ?? '')
+  const year = years.find((item) => item.year === activeYearName)
   const yearRows = (year?.rows ?? []).filter((row) => field === '전체' || row.name.includes(field))
+  const projects = (doc.projects ?? []).filter((row) => filled(row.name))
 
   return (
     <div className="impact-page">
@@ -221,35 +231,65 @@ export function ImpactPage() {
                 <p className="impact-kicker">04 · IMPACT OVERVIEW</p>
                 <h2>한눈에 보기</h2>
                 <p className="impact-lead">{doc.overviewNote || '2016년 설립 이후 지금까지 카야와 함께한 사람과 기관입니다.'}</p>
-                <div className="impact-filters">
-                  <div role="group" aria-label="기간 선택">
-                    {['누적', ...years.map((item) => item.year).filter(Boolean)].map((item) => (
-                      <button key={item} type="button" className={period === item ? 'is-on' : ''} onClick={() => setPeriod(item)}>{item}</button>
-                    ))}
-                  </div>
-                  <div role="group" aria-label="사업 선택">
-                    {FIELDS.map((item) => (
-                      <button key={item} type="button" className={field === item ? 'is-on' : ''} onClick={() => setField(item)}>{item}</button>
-                    ))}
-                  </div>
-                </div>
                 <div className="impact-numbers">
-                  {period === '누적'
-                    ? doc.overview.map((card) => (
-                        <article key={card.label} className="impact-number">
-                          <p className="impact-card__kicker">{card.label}</p>
-                          <b>{card.value}{card.unit}</b>
-                          <p>{card.note}</p>
-                        </article>
-                      ))
-                    : yearRows.map((row) => (
-                        <article key={row.name} className="impact-number">
-                          <p className="impact-card__kicker">{row.name}</p>
-                          <b>{row.real || row.total}</b>
-                          <p>{[row.child && `아동·청소년 ${row.child}`, row.youth && `청년 ${row.youth}`, row.teacher && `교사 ${row.teacher}`].filter(Boolean).join(' · ')}</p>
-                        </article>
-                      ))}
+                  {doc.overview.map((card) => (
+                    <article key={card.label} className="impact-number">
+                      <p className="impact-card__kicker">{card.label}</p>
+                      <b>{card.value}{card.unit}</b>
+                      <p>{card.note}</p>
+                    </article>
+                  ))}
                 </div>
+                {years.length > 0 ? (
+                  <>
+                    <h3 className="impact-subhead">연도별 실적</h3>
+                    <div className="impact-filters">
+                      <div role="group" aria-label="연도 선택">
+                        {years.map((item) => (
+                          <button key={item.year} type="button" className={item.year === activeYearName ? 'is-on' : ''} onClick={() => setTableYear(item.year)}>{item.year}</button>
+                        ))}
+                      </div>
+                      <div role="group" aria-label="사업 선택">
+                        {FIELDS.map((item) => (
+                          <button key={item} type="button" className={field === item ? 'is-on' : ''} onClick={() => setField(item)}>{item}</button>
+                        ))}
+                      </div>
+                    </div>
+                    {yearRows.length > 0 ? (
+                      <div className="impact-sheet">
+                        <p className="impact-sheet__title">{activeYearName}년 실적</p>
+                        <div className="impact-sheet__scroll">
+                          <table className="impact-table">
+                            <thead>
+                              <tr>
+                                <th>사업</th>
+                                <th className="impact-table__num">실인원</th>
+                                <th className="impact-table__num">연인원</th>
+                                <th className="impact-table__num">아동·청소년</th>
+                                <th className="impact-table__num">청년</th>
+                                <th className="impact-table__num">교사</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {yearRows.map((row) => (
+                                <tr key={row.name}>
+                                  <td className="impact-table__name">{row.name}</td>
+                                  {([row.real, row.total, row.child, row.youth, row.teacher] as const).map((value, index) => (
+                                    <td key={index} className={`impact-table__num${filled(value) ? '' : ' is-empty'}`}>
+                                      {filled(value) ? value : '—'}
+                                    </td>
+                                  ))}
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="impact-note impact-note--block">이 조건에 해당하는 실적이 없습니다.</p>
+                    )}
+                  </>
+                ) : null}
               </div>
             </section>
           )
@@ -261,8 +301,48 @@ export function ImpactPage() {
                 <p className="impact-kicker">05 · OUR OFFICES</p>
                 <h2>본부와 지부</h2>
                 <p className="impact-lead">한국 본부와 미얀마·키르기스스탄 지부가 각 지역에 맞는 사업을 운영합니다.</p>
+                {projects.length > 0 ? (
+                  <>
+                    <h3 className="impact-subhead">사업 현황</h3>
+                    <div className="impact-sheet">
+                      <div className="impact-sheet__scroll">
+                        <table className="impact-table">
+                          <thead>
+                            <tr>
+                              <th>사업명</th>
+                              <th>거점</th>
+                              <th>분야</th>
+                              <th>기간</th>
+                              <th>상태</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {projects.map((row) => (
+                              <tr key={row.id}>
+                                <td className="impact-table__name">{row.name}</td>
+                                <td>{filled(row.base) ? row.base : '—'}</td>
+                                <td>{filled(row.field) ? row.field : '—'}</td>
+                                <td>{filled(row.period) ? row.period : '—'}</td>
+                                <td>
+                                  {filled(row.status) ? (
+                                    <span className={`impact-status${row.status === '진행' ? ' impact-status--on' : ' impact-status--off'}`}>{row.status}</span>
+                                  ) : (
+                                    '—'
+                                  )}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </>
+                ) : null}
                 <div className="impact-cards">
-                  {doc.offices.map((office) => (
+                  {doc.offices.map((office) => {
+                    const people = filled(office.people) ? office.people : ''
+                    const partners = filled(office.partners) ? office.partners : ''
+                    return (
                     <article key={office.name} className="impact-office">
                       <div className="impact-office__photo">
                         {office.photo ? <img src={office.photo} alt={office.photoAlt} /> : `${office.name} 현장 사진`}
@@ -273,21 +353,28 @@ export function ImpactPage() {
                           {office.status ? <span>{office.status}</span> : null}
                         </div>
                         <h3>{office.name}</h3>
-                        <p>{office.body}</p>
-                        <div className="impact-office__stats">
-                          <div>
-                            <p>참여 아동·청소년·청년</p>
-                            <b>{office.people || '—'} 명</b>
+                        {filled(office.body) ? <p>{office.body}</p> : null}
+                        {people || partners ? (
+                          <div className="impact-office__stats">
+                            {people ? (
+                              <div>
+                                <p>참여 아동·청소년·청년</p>
+                                <b>{people} 명</b>
+                              </div>
+                            ) : null}
+                            {partners ? (
+                              <div>
+                                <p>협력기관</p>
+                                <b>{partners} 곳</b>
+                              </div>
+                            ) : null}
                           </div>
-                          <div>
-                            <p>협력기관</p>
-                            <b>{office.partners || '—'} 곳</b>
-                          </div>
-                        </div>
-                        <p>주요 사업: {office.programs}</p>
+                        ) : null}
+                        {filled(office.programs) ? <p>주요 사업: {office.programs}</p> : null}
                       </div>
                     </article>
-                  ))}
+                    )
+                  })}
                 </div>
                 <p className="impact-note">해외봉사단 파견국과 국가별 활동은 해외봉사단 진행사업에서 볼 수 있습니다.</p>
                 <p className="impact-note">국가마다 사업 내용이 달라 국가별 숫자는 단순 비교하지 않습니다.</p>

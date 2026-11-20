@@ -101,7 +101,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 40px 56px;
-  align-items: center;
+  align-items: flex-start;
 }
 
 .pset-copy {

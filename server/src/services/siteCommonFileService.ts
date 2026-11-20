@@ -1,4 +1,5 @@
-import { readJsonDocument, writeJsonDocument } from './siteDocumentStore'
+import { readDrafted, writeDrafted, type SaveMode } from './documentDraft'
+import { readJsonDocument } from './siteDocumentStore'
 
 const DOCUMENT_KEY = 'site-common'
 const NANUM = 'https://www.ihappynanum.com/Nanum/B/RAA98AKVRQ'
@@ -278,11 +279,15 @@ export async function readSiteCommonDocument(): Promise<SiteCommonDocument> {
   }
 }
 
-export async function writeSiteCommonDocument(body: unknown): Promise<void> {
+export function readSiteCommonState(preferDraft: boolean) {
+  return readDrafted(DOCUMENT_KEY, readSiteCommonDocument, preferDraft)
+}
+
+export async function writeSiteCommonDocument(body: unknown, mode: SaveMode = 'publish'): Promise<void> {
   if (!isPlainObject(body) || body.version !== 1) {
     const err = new Error('Invalid site common payload')
     ;(err as Error & { status?: number }).status = 400
     throw err
   }
-  await writeJsonDocument(DOCUMENT_KEY, normalize(body))
+  await writeDrafted(DOCUMENT_KEY, normalize(body), mode)
 }

@@ -1,4 +1,5 @@
-import { readJsonDocument, writeJsonDocument } from './siteDocumentStore'
+import { readDrafted, writeDrafted, type SaveMode } from './documentDraft'
+import { readJsonDocument } from './siteDocumentStore'
 
 const DOCUMENT_KEY = 'impact-page'
 
@@ -261,11 +262,15 @@ export async function readImpactPageDocument(): Promise<ImpactPageDocument> {
   }
 }
 
-export async function writeImpactPageDocument(body: unknown): Promise<void> {
+export function readImpactPageState(preferDraft: boolean) {
+  return readDrafted(DOCUMENT_KEY, readImpactPageDocument, preferDraft)
+}
+
+export async function writeImpactPageDocument(body: unknown, mode: SaveMode = 'publish'): Promise<void> {
   if (!isPlainObject(body) || body.version !== 1) {
     const err = new Error('Invalid impact page payload')
     ;(err as Error & { status?: number }).status = 400
     throw err
   }
-  await writeJsonDocument(DOCUMENT_KEY, normalizeImpactPage(body))
+  await writeDrafted(DOCUMENT_KEY, normalizeImpactPage(body), mode)
 }

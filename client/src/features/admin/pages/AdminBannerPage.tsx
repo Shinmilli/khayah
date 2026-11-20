@@ -204,7 +204,7 @@ export function AdminBannerPage() {
               >
                 ⋮⋮
               </span>
-              <AdminMediaUpload layout="slot" slotTitle="PC 이미지" slotRatio="2.2 : 1" label="PC 이미지" variant="image" value={slide.image?.trim() ? slide.image : null} onChange={(url) => updateSlide(slide.id, { image: url ?? '' })} />
+              <AdminMediaUpload layout="slot" slotTitle="PC" slotRatio="2.2 : 1" label="PC 이미지" variant="image" value={slide.image?.trim() ? slide.image : null} onChange={(url) => updateSlide(slide.id, { image: url ?? '' })} />
               <AdminMediaUpload layout="slot" slotTitle="모바일" slotRatio="4 : 5" label="모바일 이미지" variant="image" value={slide.mobileImage?.trim() ? slide.mobileImage : null} onChange={(url) => updateSlide(slide.id, { mobileImage: url ?? '' })} />
               <div className="admin-slide__fields">
                 <div className="admin-form-grid">
@@ -249,6 +249,9 @@ export function AdminBannerPage() {
                         <span className="admin-field__label">버튼 {index + 1} 링크</span>
                         <input className="admin-input" value={button.href} onChange={(e) => updateSlide(slide.id, { buttons: buttons.map((item, itemIndex) => itemIndex === index ? { ...item, href: e.target.value } : item) })} />
                       </label>
+                      <div className="admin-field" style={{ alignSelf: 'end' }}>
+                        <button type="button" className="admin-btn admin-btn--danger-ghost" onClick={() => updateSlide(slide.id, { buttons: buttons.filter((_, itemIndex) => itemIndex !== index) })}>버튼 {index + 1} 삭제</button>
+                      </div>
                     </div>
                   ))}
                   <label className="admin-field">
@@ -260,7 +263,7 @@ export function AdminBannerPage() {
                   {buttons.length < 2 ? (
                     <button type="button" className="admin-btn" onClick={() => updateSlide(slide.id, { buttons: [...buttons, { label: '', href: '' }] })}>+ 버튼 추가</button>
                   ) : null}
-                  <button type="button" className="admin-btn admin-btn--danger-ghost" onClick={() => removeSlide(slide)} disabled={doc.slides.length <= 1}>삭제</button>
+                  <button type="button" className="admin-btn admin-btn--danger-ghost" onClick={() => removeSlide(slide)} disabled={doc.slides.length <= 1}>슬라이드 삭제</button>
                 </div>
               </div>
             </div>

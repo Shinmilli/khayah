@@ -1,6 +1,7 @@
 import { normalizeStoredMediaUrl } from '../utils/normalizeStoredMediaUrl'
 import { deleteRemovedStoredMedia } from '../utils/storedMedia'
-import { readJsonDocument, writeJsonDocument } from './siteDocumentStore'
+import { readDrafted, writeDrafted, type SaveMode } from './documentDraft'
+import { readJsonDocument } from './siteDocumentStore'
 
 const DOCUMENT_KEY = 'financial-reports'
 
@@ -10,6 +11,7 @@ export type FinancialReportSegmentV2 = {
   id: string
   percent: number
   color: string
+  amount?: number
   labels: FinancialReportSegmentLabels
 }
 
@@ -208,19 +210,26 @@ export async function readFinancialReportsDocument(): Promise<FinancialReportsDo
   throw new Error('Invalid financial reports document')
 }
 
-export async function readFinancialReportsForLocale(locale: FinancialLocale): Promise<FinancialReportsPublicDocument> {
-  const doc = await readFinancialReportsDocument()
+export function readFinancialReportsState(preferDraft: boolean) {
+  return readDrafted(DOCUMENT_KEY, readFinancialReportsDocument, preferDraft)
+}
+
+export async function readFinancialReportsForLocale(
+  locale: FinancialLocale,
+  preferDraft = false,
+): Promise<FinancialReportsPublicDocument> {
+  const { doc } = await readFinancialReportsState(preferDraft)
   return toPublicDocument(doc, locale)
 }
 
-export async function writeFinancialReportsDocument(body: unknown): Promise<void> {
+export async function writeFinancialReportsDocument(body: unknown, mode: SaveMode = 'publish'): Promise<void> {
   if (!validateDocumentV2(body)) {
     const err = new Error('Invalid financial reports payload')
     ;(err as Error & { status?: number }).status = 400
     throw err
   }
   const cleaned = normalizeDocumentMedia(body)
-  const previous = await readFinancialReportsDocument()
-  await writeJsonDocument(DOCUMENT_KEY, cleaned)
-  await deleteRemovedStoredMedia(previous, cleaned)
+  await writeDrafted(DOCUMENT_KEY, cleaned, mode, async (previous) => {
+    if (previous != null) await deleteRemovedStoredMedia(previous, cleaned)
+  })
 }

@@ -10,7 +10,8 @@ import type {
   FinancialReportsDocument,
 } from '../../financial-report/financialReportTypes'
 import { AdminMediaUpload } from '../components/AdminMediaUpload'
-import { adminFetchFinancialReports, adminPutFinancialReports } from '../../../services/api'
+import { AdminSaveActions, draftStatus, takeUnpublished } from '../AdminSaveActions'
+import { adminFetchFinancialReports, adminPutFinancialReports, type SaveMode } from '../../../services/api'
 
 const EDIT_LOCALES: { id: FinancialReportEditLocale; label: string }[] = [
   { id: 'ko', label: '한국어' },
@@ -19,6 +20,49 @@ const EDIT_LOCALES: { id: FinancialReportEditLocale; label: string }[] = [
 
 function deepClone<T>(v: T): T {
   return JSON.parse(JSON.stringify(v)) as T
+}
+
+function percentsFromAmounts(rows: FinancialReportSegmentV2[]): FinancialReportSegmentV2[] {
+  if (rows.some((row) => typeof row.amount !== 'number')) return rows
+  const total = rows.reduce((sum, row) => sum + (row.amount || 0), 0)
+  if (total <= 0) return rows
+  return rows.map((row) => ({
+    ...row,
+    percent: Math.round(((row.amount || 0) / total) * 10000) / 100,
+  }))
+}
+
+function amountsReadyForPercent(rows: FinancialReportSegmentV2[], totalWon: number): FinancialReportSegmentV2[] {
+  return rows.map((row) => {
+    if (typeof row.amount === 'number' && Number.isFinite(row.amount)) return row
+    if (totalWon > 0 && Number.isFinite(row.percent)) return { ...row, amount: Math.round((row.percent / 100) * totalWon) }
+    return { ...row, amount: 0 }
+  })
+}
+
+function trimPercent(percent: number): string {
+  if (!Number.isFinite(percent)) return '0'
+  return String(Math.round(percent * 100) / 100)
+}
+
+function groupedWon(value: number): string {
+  return Math.round(value).toLocaleString('ko-KR')
+}
+
+function amountFromInput(raw: string): number | undefined {
+  const digits = raw.replace(/\D/g, '')
+  if (!digits) return undefined
+  return Number(digits)
+}
+
+function visibleAmount(row: FinancialReportSegmentV2, totalWon: number): string {
+  if (typeof row.amount === 'number' && Number.isFinite(row.amount)) return groupedWon(row.amount)
+  if (totalWon > 0 && Number.isFinite(row.percent)) return groupedWon((row.percent / 100) * totalWon)
+  return ''
+}
+
+function hexColor(value: string): string {
+  return /^#[0-9a-fA-F]{6}$/.test(value) ? value : '#6c7a89'
 }
 
 function newSegmentId(): string {
@@ -71,11 +115,13 @@ function AdminOnOffToggle({
 function SegmentTableEditor({
   title,
   rows,
+  totalWon,
   editLocale,
   onChange,
 }: {
   title: string
   rows: FinancialReportSegmentV2[]
+  totalWon: number
   editLocale: FinancialReportEditLocale
   onChange: (next: FinancialReportSegmentV2[]) => void
 }) {
@@ -88,6 +134,10 @@ function SegmentTableEditor({
       const { label: _drop, ...rest } = patch
       return { ...r, ...rest }
     })
+    if (typeof patch.amount === 'number') {
+      onChange(percentsFromAmounts(amountsReadyForPercent(next, totalWon)))
+      return
+    }
     onChange(next)
   }
   const removeRow = (idx: number) => {
@@ -114,11 +164,19 @@ function SegmentTableEditor({
         </button>
       </div>
       <div className="admin-table-wrap">
-        <table className="admin-table">
+        <table className="admin-table admin-table--segments">
+          <colgroup>
+            <col className="admin-seg-col--name" />
+            <col className="admin-seg-col--amount" />
+            <col className="admin-seg-col--percent" />
+            <col className="admin-seg-col--color" />
+            <col className="admin-seg-col--delete" />
+          </colgroup>
           <thead>
             <tr>
               <th scope="col">항목명</th>
-              <th scope="col">비율(%)</th>
+              <th scope="col">금액(원)</th>
+              <th scope="col">비율</th>
               <th scope="col">색</th>
               <th scope="col">삭제</th>
             </tr>
@@ -135,20 +193,23 @@ function SegmentTableEditor({
                   />
                 </td>
                 <td>
-                  <input
-                    className="admin-input"
-                    type="number"
-                    step="0.01"
-                    value={Number.isFinite(row.percent) ? row.percent : 0}
-                    onChange={(e) => updateRow(idx, { percent: parseFloat(e.target.value) || 0 })}
-                    aria-label={`${title} 비율`}
-                  />
+                  <div className="admin-won">
+                    <input
+                      className="admin-input"
+                      inputMode="numeric"
+                      value={visibleAmount(row, totalWon)}
+                      onChange={(e) => updateRow(idx, { amount: amountFromInput(e.target.value) })}
+                      aria-label={`${title} 금액`}
+                    />
+                    <span>원</span>
+                  </div>
                 </td>
+                <td>{trimPercent(row.percent)}%</td>
                 <td>
                   <input
-                    className="admin-input"
-                    type="text"
-                    value={row.color}
+                    className="admin-seg-color"
+                    type="color"
+                    value={hexColor(row.color)}
                     onChange={(e) => updateRow(idx, { color: e.target.value })}
                     aria-label={`${title} 색상`}
                   />
@@ -168,6 +229,7 @@ function SegmentTableEditor({
           </tbody>
         </table>
       </div>
+      <p className="admin-panel__foot">금액을 바꾸면 비율은 항목 금액 합계로 바로 계산됩니다.</p>
     </div>
   )
 }
@@ -179,15 +241,19 @@ export function AdminFinancialReportsPage() {
   const [loading, setLoading] = useState(true)
   const [loadErr, setLoadErr] = useState<string | null>(null)
   const [saveErr, setSaveErr] = useState<string | null>(null)
-  const [savedOk, setSavedOk] = useState(false)
+  const [savedAt, setSavedAt] = useState('')
+  const [savedMode, setSavedMode] = useState<SaveMode | ''>('')
+  const [unpublished, setUnpublished] = useState(false)
   const [saving, setSaving] = useState(false)
 
   const load = useCallback(async () => {
     setLoading(true)
     setLoadErr(null)
     try {
-      const d = await adminFetchFinancialReports()
+      const loaded = takeUnpublished(await adminFetchFinancialReports())
+      const d = loaded.doc
       setDoc(deepClone(d))
+      setUnpublished(loaded.unpublished)
       const ys = [...d.reports.map((r) => r.year)].sort((a, b) => b - a)
       setSelectedYear((cur) => (cur !== null && ys.includes(cur) ? cur : ys[0] ?? null))
     } catch (e) {
@@ -241,7 +307,7 @@ export function AdminFinancialReportsPage() {
     setSelectedYear(ys[0] ?? null)
   }
 
-  const onSave = async () => {
+  const onSave = async (mode: SaveMode) => {
     if (!doc) return
     const years = doc.reports.map((r) => r.year)
     if (new Set(years).size !== years.length) {
@@ -250,16 +316,17 @@ export function AdminFinancialReportsPage() {
     }
     setSaving(true)
     setSaveErr(null)
-    setSavedOk(false)
+    setSavedAt('')
     try {
       const sorted = {
         ...doc,
         reports: [...doc.reports].sort((a, b) => b.year - a.year),
       }
-      const saved = await adminPutFinancialReports(sorted)
-      setDoc(deepClone(saved))
-      setSavedOk(true)
-      window.setTimeout(() => setSavedOk(false), 2400)
+      const saved = takeUnpublished(await adminPutFinancialReports(sorted, mode))
+      setDoc(deepClone(saved.doc))
+      setUnpublished(saved.unpublished)
+      setSavedMode(mode)
+      setSavedAt(new Date().toLocaleTimeString('ko-KR'))
     } catch (e) {
       setSaveErr(e instanceof Error ? e.message : '저장 실패')
     } finally {
@@ -299,9 +366,10 @@ export function AdminFinancialReportsPage() {
             <code>GET /api/financial-reports</code>로 불러옵니다.
           </p>
         </div>
-        <button type="button" className="admin-btn admin-btn--primary" disabled={saving} onClick={() => void onSave()}>
-          {saving ? '저장 중…' : '저장'}
-        </button>
+        <div className="admin-page__actions">
+          <a className="admin-btn" href="/about/transparency" target="_blank" rel="noopener noreferrer">미리보기</a>
+          <AdminSaveActions saving={saving} onSave={(mode) => void onSave(mode)} />
+        </div>
       </div>
 
       {saveErr ? (
@@ -309,11 +377,7 @@ export function AdminFinancialReportsPage() {
           {saveErr}
         </p>
       ) : null}
-      {savedOk ? (
-        <p className="admin-panel__foot" style={{ color: '#1b6b3a', marginBottom: '1rem' }}>
-          저장되었습니다.
-        </p>
-      ) : null}
+      {draftStatus(unpublished, savedAt, savedMode) ? <p className="admin-panel__foot">{draftStatus(unpublished, savedAt, savedMode)}</p> : null}
 
       <div className="admin-locale-tabs" role="tablist" aria-label="재정보고 라벨 편집 언어">
         {EDIT_LOCALES.map((loc) => (
@@ -409,12 +473,14 @@ export function AdminFinancialReportsPage() {
             <SegmentTableEditor
               title="수입 구성 (도넛)"
               editLocale={editLocale}
+              totalWon={selected.incomeTotalWon}
               rows={selected.incomeSegments}
               onChange={(incomeSegments) => updateSelected({ incomeSegments })}
             />
             <SegmentTableEditor
               title="지출 구성 (도넛)"
               editLocale={editLocale}
+              totalWon={selected.expenseTotalWon}
               rows={selected.expenseSegments}
               onChange={(expenseSegments) => updateSelected({ expenseSegments })}
             />

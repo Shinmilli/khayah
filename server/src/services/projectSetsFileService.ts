@@ -1,5 +1,6 @@
 import defaults from '../data/projectSets.default.json'
-import { readJsonDocument, writeJsonDocument } from './siteDocumentStore'
+import { readDrafted, writeDrafted, type SaveMode } from './documentDraft'
+import { readJsonDocument } from './siteDocumentStore'
 
 const DOCUMENT_KEY = 'project-sets'
 const CATEGORIES = ['국내', '해외', '연구'] as const
@@ -16,6 +17,29 @@ export type ProjectPageHeader = {
   photoAlt: string
   cards: Array<{ value: string; unit: string; note: string; source: string }>
   flow: Array<{ name: string; body: string }>
+  heroLabel: string
+  introKicker: string
+  introKickerKo: string
+  introTitle: string
+  emphasis: string
+  lead: string
+  align: 'left' | 'center'
+  photoSide: 'right' | 'left' | 'none'
+  band: 'white' | 'gray'
+  blocks: PageBlock[]
+  panels: Array<{ id: string; order: number; enabled: boolean; removed: boolean }>
+  axes: Array<{
+    label: string
+    phrase: string
+    title: string
+    body: string
+    cards: Array<{ title: string; subtitle: string; body: string; tag: string }>
+    cases: Array<{ place: string; body: string }>
+    photos: Array<{ src: string; alt: string }>
+    enabled: boolean
+    mode: 'text' | 'image'
+    image: string
+  }>
 }
 
 export type ProjectSetRecord = {
@@ -82,6 +106,74 @@ function defaultDocument(): ProjectSetsDocument {
   return defaults as ProjectSetsDocument
 }
 
+const BLOCK_TYPES = ['intro', 'facts', 'flow', 'cards', 'timeline', 'cases', 'photos', 'image'] as const
+type BlockType = (typeof BLOCK_TYPES)[number]
+type PageBlock = {
+  id: string
+  type: BlockType
+  enabled: boolean
+  order: number
+  kicker: string
+  title: string
+  emphasis: string
+  lead: string
+  photo: string
+  photoAlt: string
+  photoSide: 'right' | 'left' | 'none'
+  cards: Array<{ value: string; unit: string; note: string; source: string }>
+  steps: Array<{ name: string; body: string }>
+  items: Array<{ title: string; body: string; href: string; year: string }>
+  photos: Array<{ src: string; alt: string }>
+}
+
+function pageBlocks(value: unknown): PageBlock[] {
+  const rows = Array.isArray(value) ? value : []
+  return rows.filter(isPlainObject).slice(0, 8).flatMap((row, index) => {
+    const type = BLOCK_TYPES.includes(row.type as BlockType) ? (row.type as BlockType) : null
+    const id = text(row.id, '', 40)
+    if (!type || !id) return []
+    return [{
+      id,
+      type,
+      enabled: flag(row.enabled, true),
+      order: Math.round(Number(row.order) || index),
+      kicker: text(row.kicker, '', 120),
+      title: text(row.title, '', 120),
+      emphasis: text(row.emphasis, '', 40),
+      lead: text(row.lead, '', 800),
+      photo: text(row.photo, '', 400),
+      photoAlt: text(row.photoAlt, '', 200),
+      photoSide: row.photoSide === 'left' || row.photoSide === 'none' ? row.photoSide : 'right',
+      cards: (Array.isArray(row.cards) ? row.cards : []).filter(isPlainObject).slice(0, 4).map((card) => ({
+        value: text(card.value, '', 40),
+        unit: text(card.unit, '', 20),
+        note: text(card.note, '', 80),
+        source: text(card.source, '', 80),
+      })),
+      steps: (Array.isArray(row.steps) ? row.steps : []).filter(isPlainObject).slice(0, 6).map((step) => ({
+        name: text(step.name, '', 40),
+        body: text(step.body, '', 200),
+      })),
+      items: (Array.isArray(row.items) ? row.items : []).filter(isPlainObject).slice(0, 8).map((item) => ({
+        title: text(item.title, '', 80),
+        body: text(item.body, '', 300),
+        href: text(item.href, '', 200),
+        year: text(item.year, '', 20),
+      })),
+      photos: (Array.isArray(row.photos) ? row.photos : []).filter(isPlainObject).slice(0, 3).map((photo) => ({
+        src: text(photo.src, '', 400),
+        alt: text(photo.alt, '', 200),
+      })),
+    }]
+  })
+}
+
+function introAlign(row: Record<string, unknown>, fallback: ProjectPageHeader): 'left' | 'center' {
+  const blank = [row.introKicker, row.introTitle, row.emphasis, row.lead].every((value) => typeof value !== 'string' || !value.trim())
+  if (blank) return fallback.align === 'left' ? 'left' : 'center'
+  return row.align === 'left' ? 'left' : 'center'
+}
+
 function pageHeader(value: unknown, fallback: ProjectPageHeader): ProjectPageHeader {
   const row = isPlainObject(value) ? value : {}
   const cards = (Array.isArray(row.cards) ? row.cards : fallback.cards ?? [])
@@ -100,6 +192,41 @@ function pageHeader(value: unknown, fallback: ProjectPageHeader): ProjectPageHea
       name: text(step.name, '', 40),
       body: text(step.body, '', 200),
     }))
+  const axes = (Array.isArray(row.axes) ? row.axes : fallback.axes ?? [])
+    .filter(isPlainObject)
+    .slice(0, 3)
+    .map((axis) => ({
+      label: text(axis.label, '', 80),
+      phrase: text(axis.phrase, '', 120),
+      title: text(axis.title, '', 80),
+      body: text(axis.body, '', 800),
+      cards: (Array.isArray(axis.cards) ? axis.cards : [])
+        .filter(isPlainObject)
+        .slice(0, 8)
+        .map((card) => ({
+          title: text(card.title, '', 80),
+          subtitle: text(card.subtitle, '', 80),
+          body: text(card.body, '', 400),
+          tag: text(card.tag, '', 120),
+        })),
+      cases: (Array.isArray(axis.cases) ? axis.cases : [])
+        .filter(isPlainObject)
+        .slice(0, 8)
+        .map((item) => ({
+          place: text(item.place, '', 80),
+          body: text(item.body, '', 300),
+        })),
+      photos: (Array.isArray(axis.photos) ? axis.photos : [])
+        .filter(isPlainObject)
+        .slice(0, 3)
+        .map((photo) => ({
+          src: text(photo.src, '', 400),
+          alt: text(photo.alt, '', 200),
+        })),
+      enabled: flag(axis.enabled, true),
+      mode: axis.mode === 'image' ? 'image' as const : 'text' as const,
+      image: text(axis.image, '', 400),
+    }))
   return {
     title: text(row.title, fallback.title, 80),
     eyebrow: text(row.eyebrow, fallback.eyebrow, 120),
@@ -107,6 +234,27 @@ function pageHeader(value: unknown, fallback: ProjectPageHeader): ProjectPageHea
     photoAlt: text(row.photoAlt, fallback.photoAlt, 200),
     cards,
     flow,
+    heroLabel: text(row.heroLabel, fallback.heroLabel, 80),
+    introKicker: text(row.introKicker, fallback.introKicker, 120),
+    introKickerKo: text(row.introKickerKo, fallback.introKickerKo, 80),
+    introTitle: text(row.introTitle, fallback.introTitle, 120),
+    emphasis: text(row.emphasis, fallback.emphasis, 40),
+    lead: text(row.lead, fallback.lead, 400),
+    align: introAlign(row, fallback),
+    photoSide: row.photoSide === 'left' || row.photoSide === 'none' || row.photoSide === 'right' ? row.photoSide : fallback.photoSide === 'left' || fallback.photoSide === 'none' ? fallback.photoSide : 'right',
+    band: row.band === 'white' ? 'white' : fallback.band === 'white' ? 'white' : 'gray',
+    blocks: pageBlocks(row.blocks ?? fallback.blocks),
+    panels: (Array.isArray(row.panels) ? row.panels : fallback.panels ?? [])
+      .filter(isPlainObject)
+      .slice(0, 12)
+      .map((item, index) => ({
+        id: text(item.id, '', 40),
+        order: typeof item.order === 'number' && Number.isFinite(item.order) ? Math.round(item.order) : index,
+        enabled: flag(item.enabled, true),
+        removed: flag(item.removed, false),
+      }))
+      .filter((item) => item.id),
+    axes,
   }
 }
 
@@ -196,11 +344,15 @@ export async function readProjectSetsDocument(): Promise<ProjectSetsDocument> {
   }
 }
 
-export async function writeProjectSetsDocument(body: unknown): Promise<void> {
+export function readProjectSetsState(preferDraft: boolean) {
+  return readDrafted(DOCUMENT_KEY, readProjectSetsDocument, preferDraft)
+}
+
+export async function writeProjectSetsDocument(body: unknown, mode: SaveMode = 'publish'): Promise<void> {
   if (!isPlainObject(body) || body.version !== 1) {
     const err = new Error('Invalid project sets payload')
     ;(err as Error & { status?: number }).status = 400
     throw err
   }
-  await writeJsonDocument(DOCUMENT_KEY, normalize(body))
+  await writeDrafted(DOCUMENT_KEY, normalize(body), mode)
 }

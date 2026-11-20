@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, type ReactNode } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { PageHero } from '../components/PageHero'
 import { KhayahSectionNav } from '../components/KhayahSectionNav'
@@ -12,16 +12,31 @@ import {
 import { KHAYAH_CI_PAGE_HTML } from '../constants/khayahCiHtml'
 import { KHAYAH_CI_PAGE_HTML as KHAYAH_CI_PAGE_HTML_EN } from '../constants/khayahCiHtml.en'
 import { KayaBoundHtml } from '../features/kaya/KayaBoundHtml'
+import { kayaSectionOrder, type KayaSectionId } from '../features/kaya/kayaSectionOrder'
+import { useKayaPages } from '../features/kaya/useKayaPages'
 import { useImpactPage } from '../features/impact/useImpactPage'
 import '../styles/khayah-about-hub.css'
 import '../styles/khayah-ci.css'
 import '../styles/page.css'
+
+const SECTION_ANCHOR: Partial<Record<KayaSectionId, string>> = {
+  identity: 'about',
+  values: 'value',
+  ci: 'ci',
+}
+
+function sliceSection(html: string, selector: string): string {
+  if (typeof DOMParser === 'undefined') return ''
+  return new DOMParser().parseFromString(html, 'text/html').querySelector(selector)?.outerHTML ?? ''
+}
 
 export function KhayahAboutHubPage() {
   const location = useLocation()
   const navigate = useNavigate()
   const { locale, localize, messages } = useLocale()
   const impact = useImpactPage()
+  const kaya = useKayaPages()
+  const kayaFields = kaya?.fields
   const hub = messages.pages.aboutHub
   const aboutPath = localize('/about/khayah')
 
@@ -70,25 +85,55 @@ export function KhayahAboutHubPage() {
   const ciHtml = locale === 'en' ? KHAYAH_CI_PAGE_HTML_EN : KHAYAH_CI_PAGE_HTML
   const introView = activeTab === 'intro' || activeTab === 'ci'
 
+  const introParts = useMemo(() => {
+    if (locale !== 'ko') return null
+    const intro = sliceSection(introHtml, '.kaya-intro')
+    const identity = sliceSection(introHtml, '.kaya-identity')
+    const values = sliceSection(introHtml, '.kaya-values')
+    if (!intro || !identity || !values) return null
+    return { intro, identity, values, ci: ciHtml }
+  }, [locale, introHtml, ciHtml])
+  const koIntro = locale === 'ko' && activeTab !== 'org'
+  const heroHidden = koIntro && kayaFields?.['intro.heroOn'] === '0'
+  const heroEyebrow = locale !== 'ko' ? undefined : activeTab === 'org' ? 'ORGANIZATION' : kayaFields?.['intro.heroLabel']?.trim() || 'ABOUT KHAYAH'
+  const heroTitle =
+    activeTab === 'org'
+      ? messages.nav.links.org
+      : koIntro
+        ? kayaFields?.['intro.heroTitle']?.trim() || messages.nav.links.aboutKhayah
+        : messages.nav.links.aboutKhayah
+  const introBlocks = introParts
+    ? kayaSectionOrder(kayaFields?.['kaya.sectionOrder']).flatMap((id) => {
+        const nodes: ReactNode[] = []
+        if (id === 'ci') nodes.push(<KhayahNumbers key="kaya-numbers" publicImpact={Boolean(impact?.public)} />)
+        if (kayaFields?.[`${id}.on`] === '0') return nodes
+        nodes.push(kayaSectionBlock(id, introParts[id], kayaFields))
+        return nodes
+      })
+    : null
+
   const crumbs = useMemo(() => {
     const about = { label: messages.nav.top.khayah, to: '/about/khayah' }
-    const intro = { label: messages.nav.links.aboutKhayah, to: '/about/khayah' }
+    const introLabel = locale === 'ko' ? kayaFields?.['intro.heroTitle']?.trim() || messages.nav.links.aboutKhayah : messages.nav.links.aboutKhayah
+    const intro = { label: introLabel, to: '/about/khayah' }
     if (activeTab === 'org') {
       return [about, { label: messages.nav.links.org, to: '/about/khayah?tab=org' }]
     }
     return [about, intro]
-  }, [activeTab, messages.nav])
+  }, [activeTab, locale, kayaFields, messages.nav])
 
   return (
     <div className="khayah-about-hub">
-      <PageHero
-        title={activeTab === 'org' ? messages.nav.links.org : messages.nav.links.aboutKhayah}
-        crumbs={crumbs}
-        backgroundImageUrl={pageHeroImageForPath(PATH.aboutKhayah)}
-        showScrollHint={false}
-        layout={locale === 'ko' ? 'kaya' : 'banner'}
-        eyebrow={locale === 'ko' ? (activeTab === 'org' ? 'ORGANIZATION' : 'ABOUT KHAYAH') : undefined}
-      />
+      {heroHidden ? null : (
+        <PageHero
+          title={heroTitle}
+          crumbs={crumbs}
+          backgroundImageUrl={pageHeroImageForPath(PATH.aboutKhayah)}
+          showScrollHint={false}
+          layout={locale === 'ko' ? 'kaya' : 'banner'}
+          eyebrow={heroEyebrow}
+        />
+      )}
 
       <KhayahSectionNav />
 
@@ -96,45 +141,15 @@ export function KhayahAboutHubPage() {
         <div className="khayah-about-hub__panel">
           {introView &&
             (locale === 'ko' ? (
-              <>
-                <KayaBoundHtml className="the_content_wrapper page-body khayah-about-hub__html" html={introHtml} />
-                <section className="kaya-numbers" aria-labelledby="kaya-numbers-title">
-                  <div className="kaya-numbers__wrap">
-                    <div className="kaya-numbers__head">
-                      <div>
-                        <p className="kaya-numbers__kicker">KHAYAH IN NUMBERS</p>
-                        <h2 id="kaya-numbers-title">카야가 함께 걸어온 길</h2>
-                        <p>한 사람의 성장을 믿으며 10년 동안 이어온 걸음을 전합니다.</p>
-                      </div>
-                      {impact?.public ? <a href="/business/impact">한눈에 보는 카야 →</a> : null}
-                    </div>
-                    <div className="kaya-numbers__grid">
-                      <article>
-                        <p>함께 걸어온 시간</p>
-                        <p><b>10<span>년</span></b></p>
-                        <p>2016년 5월 설립</p>
-                      </article>
-                      <article>
-                        <p>함께한 사람들</p>
-                        <p><b>[0,000]<span>명</span></b></p>
-                        <p>국내외 사업에 직접 참여한 사람들</p>
-                      </article>
-                      <article>
-                        <p>함께한 나라</p>
-                        <p><b>[0]<span>개국</span></b></p>
-                        <p>한국 본부 · 미얀마 · 키르기스스탄 지부</p>
-                      </article>
-                      <article>
-                        <p>함께한 협력기관</p>
-                        <p><b>[00]<span>곳</span></b></p>
-                        <p>정부 · 학교 · 현지 NGO · 기업</p>
-                      </article>
-                    </div>
-                    <p className="kaya-numbers__note">2026년 ○월 기준 · 설립 이후 누적</p>
-                  </div>
-                </section>
-                <KayaBoundHtml className="the_content_wrapper page-body khayah-about-hub__html khayah-about-hub__ci" html={ciHtml} />
-              </>
+              introBlocks ? (
+                <>{introBlocks}</>
+              ) : (
+                <>
+                  <KayaBoundHtml className="the_content_wrapper page-body khayah-about-hub__html" html={introHtml} />
+                  <KhayahNumbers publicImpact={Boolean(impact?.public)} />
+                  <KayaBoundHtml className="the_content_wrapper page-body khayah-about-hub__html khayah-about-hub__ci" html={ciHtml} />
+                </>
+              )
             ) : (
               <>
                 <div
@@ -159,5 +174,72 @@ export function KhayahAboutHubPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+function kayaSectionBlock(id: KayaSectionId, html: string, fields: Record<string, string> | undefined) {
+  const src = fields?.[`${id}.mode`] === 'image' ? fields[`${id}.sectionImage`]?.trim() : ''
+  if (src) {
+    const mobile = fields?.[`${id}.sectionImageMobile`]?.trim()
+    const alt = fields?.[`${id}.sectionAlt`] ?? ''
+    return (
+      <section
+        key={id}
+        id={SECTION_ANCHOR[id]}
+        className={`kaya-section-image${id === 'intro' && fields?.['intro.bg'] === 'gray' ? ' kaya-intro--gray' : ''}`}
+      >
+        <picture>
+          {mobile ? <source media="(max-width: 720px)" srcSet={mobile} /> : null}
+          <img src={src} alt={alt} />
+        </picture>
+      </section>
+    )
+  }
+  return (
+    <KayaBoundHtml
+      key={id}
+      className={`the_content_wrapper page-body khayah-about-hub__html${id === 'ci' ? ' khayah-about-hub__ci' : ''}`}
+      html={html}
+    />
+  )
+}
+
+function KhayahNumbers({ publicImpact }: { publicImpact: boolean }) {
+  return (
+    <section className="kaya-numbers" aria-labelledby="kaya-numbers-title">
+      <div className="kaya-numbers__wrap">
+        <div className="kaya-numbers__head">
+          <div>
+            <p className="kaya-numbers__kicker">KHAYAH IN NUMBERS</p>
+            <h2 id="kaya-numbers-title">카야가 함께 걸어온 길</h2>
+            <p>한 사람의 성장을 믿으며 10년 동안 이어온 걸음을 전합니다.</p>
+          </div>
+          {publicImpact ? <a href="/business/impact">한눈에 보는 카야 →</a> : null}
+        </div>
+        <div className="kaya-numbers__grid">
+          <article>
+            <p>함께 걸어온 시간</p>
+            <p><b>10<span>년</span></b></p>
+            <p>2016년 5월 설립</p>
+          </article>
+          <article>
+            <p>함께한 사람들</p>
+            <p><b>[0,000]<span>명</span></b></p>
+            <p>국내외 사업에 직접 참여한 사람들</p>
+          </article>
+          <article>
+            <p>함께한 나라</p>
+            <p><b>[0]<span>개국</span></b></p>
+            <p>한국 본부 · 미얀마 · 키르기스스탄 지부</p>
+          </article>
+          <article>
+            <p>함께한 협력기관</p>
+            <p><b>[00]<span>곳</span></b></p>
+            <p>정부 · 학교 · 현지 NGO · 기업</p>
+          </article>
+        </div>
+        <p className="kaya-numbers__note">2026년 ○월 기준 · 설립 이후 누적</p>
+      </div>
+    </section>
   )
 }

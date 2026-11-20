@@ -7,7 +7,8 @@ import {
   type NavMenuImageKey,
   type NavMenuImagesDocument,
 } from '../../nav/navMenuImagesTypes'
-import { adminFetchNavMenuImages, adminPutNavMenuImages } from '../../../services/api'
+import { AdminSaveActions, draftStatus, takeUnpublished } from '../AdminSaveActions'
+import { adminFetchNavMenuImages, adminPutNavMenuImages, type SaveMode } from '../../../services/api'
 
 function deepClone<T>(v: T): T {
   return JSON.parse(JSON.stringify(v)) as T
@@ -19,13 +20,16 @@ export function AdminNavMenuImagesPage() {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [savedAt, setSavedAt] = useState('')
+  const [savedMode, setSavedMode] = useState<SaveMode | ''>('')
+  const [unpublished, setUnpublished] = useState(false)
 
   const load = useCallback(async () => {
     setLoading(true)
     setError('')
     try {
-      const data = await adminFetchNavMenuImages()
-      setDoc(data)
+      const loaded = takeUnpublished(await adminFetchNavMenuImages())
+      setDoc(loaded.doc)
+      setUnpublished(loaded.unpublished)
     } catch (e) {
       setError(e instanceof Error ? e.message : '불러오지 못했습니다.')
       setDoc(deepClone(DEFAULT_NAV_MENU_IMAGES))
@@ -45,13 +49,15 @@ export function AdminNavMenuImagesPage() {
     }))
   }
 
-  const save = async () => {
+  const save = async (mode: SaveMode) => {
     setSaving(true)
     setError('')
     try {
-      const saved = await adminPutNavMenuImages(doc)
-      setDoc(saved)
-      setSavedAt(new Date().toLocaleTimeString())
+      const saved = takeUnpublished(await adminPutNavMenuImages(doc, mode))
+      setDoc(saved.doc)
+      setUnpublished(saved.unpublished)
+      setSavedMode(mode)
+      setSavedAt(new Date().toLocaleTimeString('ko-KR'))
     } catch (e) {
       setError(e instanceof Error ? e.message : '저장에 실패했습니다.')
     } finally {
@@ -69,17 +75,14 @@ export function AdminNavMenuImagesPage() {
             칸이 사라집니다.
           </p>
         </div>
-        <button type="button" className="admin-btn admin-btn--primary" onClick={() => void save()} disabled={saving || loading}>
-          {saving ? '저장 중…' : '저장'}
-        </button>
+        <div className="admin-page__actions">
+          <a className="admin-btn" href="/" target="_blank" rel="noopener noreferrer">미리보기</a>
+          <AdminSaveActions saving={saving || loading} onSave={(mode) => void save(mode)} />
+        </div>
       </div>
 
       {error ? <p className="admin-banner admin-banner--error">{error}</p> : null}
-      {savedAt ? (
-        <p className="admin-panel__foot" role="status">
-          저장됨 ({savedAt})
-        </p>
-      ) : null}
+      {draftStatus(unpublished, savedAt, savedMode) ? <p className="admin-panel__foot">{draftStatus(unpublished, savedAt, savedMode)}</p> : null}
 
       <section className="admin-nav-images" aria-label="메뉴별 이미지">
         {NAV_MENU_IMAGE_KEYS.map((key) => (

@@ -10,7 +10,9 @@ import {
   type BusinessHubEditLocale,
   type BusinessHubIcon,
 } from '../../business/businessHubCardsTypes'
-import { adminFetchBusinessHubCards, adminPutBusinessHubCards } from '../../../services/api'
+import { AdminSaveActions, draftStatus, takeUnpublished } from '../AdminSaveActions'
+import { adminFetchBusinessHubCards, adminPutBusinessHubCards, type SaveMode } from '../../../services/api'
+import { BizHead } from '../biz/BizChrome'
 
 function deepClone<T>(v: T): T {
   return JSON.parse(JSON.stringify(v)) as T
@@ -42,6 +44,8 @@ export function AdminBusinessHubCardsPage() {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [savedAt, setSavedAt] = useState('')
+  const [savedMode, setSavedMode] = useState<SaveMode | ''>('')
+  const [unpublished, setUnpublished] = useState(false)
 
   const cardsByHub = useMemo(() => {
     const grouped: Record<BusinessHub, BusinessHubCard[]> = { overseas: [], domestic: [] }
@@ -57,8 +61,9 @@ export function AdminBusinessHubCardsPage() {
     setLoading(true)
     setError('')
     try {
-      const data = await adminFetchBusinessHubCards()
-      setDoc(data)
+      const loaded = takeUnpublished(await adminFetchBusinessHubCards())
+      setDoc(loaded.doc)
+      setUnpublished(loaded.unpublished)
     } catch (e) {
       setError(e instanceof Error ? e.message : '불러오지 못했습니다.')
       setDoc(deepClone(DEFAULT_BUSINESS_HUB_CARDS))
@@ -117,7 +122,7 @@ export function AdminBusinessHubCardsPage() {
     setDoc((prev) => ({ ...prev, cards: prev.cards.filter((card) => card.id !== id) }))
   }
 
-  const onSave = async () => {
+  const onSave = async (mode: SaveMode) => {
     setSaving(true)
     setError('')
     setSavedAt('')
@@ -143,8 +148,10 @@ export function AdminBusinessHubCardsPage() {
           },
         })),
       }
-      const saved = await adminPutBusinessHubCards(payload)
-      setDoc(saved)
+      const saved = takeUnpublished(await adminPutBusinessHubCards(payload, mode))
+      setDoc(saved.doc)
+      setUnpublished(saved.unpublished)
+      setSavedMode(mode)
       setSavedAt(new Date().toLocaleTimeString('ko-KR'))
     } catch (e) {
       setError(e instanceof Error ? e.message : '저장에 실패했습니다.')
@@ -162,18 +169,20 @@ export function AdminBusinessHubCardsPage() {
   }
 
   return (
-    <div className="admin-page">
+    <div className="admin-page biz-mock">
       <div className="admin-page__head">
         <div>
+          <p className="admin-page__desc">사업 › 국내·해외 카드</p>
           <h1 className="admin-page__title">국내·해외 사업 카드</h1>
           <p className="admin-page__desc">
             국내사업·해외사업 페이지 하단 카드(교육, 해외봉사단, 진행사업 등)의 문구와 공개 여부를 한·영으로
             관리합니다. OFF하면 해당 페이지에서 카드가 숨겨집니다. 상단 메뉴 표시는 「메뉴 표시」에서 따로 설정합니다.
           </p>
         </div>
-        <button type="button" className="admin-btn admin-btn--primary" disabled={saving} onClick={() => void onSave()}>
-          {saving ? '저장 중…' : '저장'}
-        </button>
+        <div className="admin-page__actions">
+          <a className="admin-btn" href="/business/domestic" target="_blank" rel="noopener noreferrer">미리보기</a>
+          <AdminSaveActions saving={saving} onSave={(mode) => void onSave(mode)} />
+        </div>
       </div>
 
       <div className="admin-locale-tabs" role="tablist" aria-label="카드 편집 언어">
@@ -196,20 +205,15 @@ export function AdminBusinessHubCardsPage() {
           {error}
         </p>
       ) : null}
-      {savedAt ? (
-        <p className="admin-panel__foot" style={{ color: '#1b6b3a' }}>
-          저장됨 ({savedAt})
-        </p>
-      ) : null}
+      {draftStatus(unpublished, savedAt, savedMode) ? <p className="admin-panel__foot">{draftStatus(unpublished, savedAt, savedMode)}</p> : null}
 
       {(['overseas', 'domestic'] as const).map((hub) => (
         <section key={hub} className="admin-panel">
-          <div className="admin-page__head admin-page__head--inline">
-            <h2 className="admin-panel__title">{HUB_LABEL[hub]}</h2>
-            <button type="button" className="admin-btn admin-btn--sm admin-btn--ghost" onClick={() => addCard(hub)}>
-              카드 추가
+          <BizHead title={HUB_LABEL[hub]}>
+            <button type="button" className="biz-add" onClick={() => addCard(hub)}>
+              + 카드 추가
             </button>
-          </div>
+          </BizHead>
 
           <div className="admin-form-grid">
             {cardsByHub[hub].length === 0 ? (
