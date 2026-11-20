@@ -752,10 +752,8 @@ export function SupportSettings({
           <textarea
             className="admin-input"
             rows={4}
-            value={
-              donate.receiptNote ??
-              '카야인터내셔널이 발급합니다. 신청 시 주민등록번호를 입력하시면 연말정산 간소화 서비스에서 바로 확인하실 수 있습니다.'
-            }
+            value={donate.receiptNote ?? ''}
+            placeholder="비우면 안내 문구를 숨깁니다"
             onChange={(e) => patch({ receiptNote: e.target.value })}
           />
         </section>

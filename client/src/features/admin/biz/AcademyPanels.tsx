@@ -320,18 +320,18 @@ export function AcademyBody({ title, values, setField }: { title: string; values
           </label>
           <label className="admin-field">
             <span className="admin-field__label">페이스북 주소</span>
-            <input className="admin-input" placeholder="카야 아카데미 페이스북 주소 입력" value={values['aca.facebook'] ?? ''} onChange={(e) => setField('aca.facebook', e.target.value)} />
+            <input className="admin-input" placeholder="https://facebook.com/…" value={values['aca.facebook'] ?? ''} onChange={(e) => setField('aca.facebook', e.target.value)} />
           </label>
           <label className="admin-field">
             <span className="admin-field__label">인스타그램 주소</span>
-            <input className="admin-input" placeholder="카야 아카데미 인스타그램 주소 입력" value={values['aca.instagram'] ?? ''} onChange={(e) => setField('aca.instagram', e.target.value)} />
+            <input className="admin-input" placeholder="https://instagram.com/…" value={values['aca.instagram'] ?? ''} onChange={(e) => setField('aca.instagram', e.target.value)} />
           </label>
           <label className="admin-field">
             <span className="admin-field__label">틱톡 주소</span>
-            <input className="admin-input" placeholder="카야 아카데미 틱톡 주소 입력" value={values['aca.tiktok'] ?? ''} onChange={(e) => setField('aca.tiktok', e.target.value)} />
+            <input className="admin-input" placeholder="https://tiktok.com/@…" value={values['aca.tiktok'] ?? ''} onChange={(e) => setField('aca.tiktok', e.target.value)} />
           </label>
         </div>
-        <p className="admin-panel__foot">CSR 박스 아래에 페이스북·인스타그램·틱톡 바로가기 버튼이 새 창으로 열립니다. 주소가 비면 그 버튼은 숨깁니다.</p>
+        <p className="admin-panel__foot">CSR 박스 아래에 페이스북·인스타그램·틱톡 바로가기 버튼이 새 창으로 열립니다. https:// 없이 도메인만 넣어도 됩니다. 주소가 비면 그 버튼은 숨깁니다.</p>
       </>
     )
   }

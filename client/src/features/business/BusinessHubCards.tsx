@@ -13,10 +13,7 @@ import {
   type BusinessHub,
   type BusinessHubCardPublic,
 } from './businessHubCardsTypes'
-
-function isExternalHref(href: string): boolean {
-  return /^https?:\/\//i.test(href) || href.startsWith('mailto:')
-}
+import { isExternalHref, normalizeHref } from '../../utils/hrefs'
 
 export function BusinessHubCards({ hub }: { hub: BusinessHub }) {
   const { locale, localize, messages } = useLocale()
@@ -167,7 +164,7 @@ export function BusinessHubCards({ hub }: { hub: BusinessHub }) {
           <div className={listClass} data-count={cards.length}>
             {shown.map((card) => {
               const icon = isBusinessHubIcon(card.icon) ? card.icon : 'education'
-              const href = card.href.trim()
+              const href = normalizeHref(card.href)
               const to = href && !isExternalHref(href) ? localize(href) : href
               return (
                 <div key={card.id} className={cardClass}>

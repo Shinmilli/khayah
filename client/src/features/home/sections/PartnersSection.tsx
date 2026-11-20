@@ -1,5 +1,6 @@
 import { useLocale } from '../../../i18n/LocaleContext'
 import { useSiteCommon } from '../../site/useSiteCommon'
+import { normalizeHref } from '../../../utils/hrefs'
 
 export const PARTNER_LOGOS: { src: string; alt: string }[] = [
   { src: '/images/Home/parteners/partner-1.png', alt: '협력기관 로고 1' },

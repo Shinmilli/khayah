@@ -132,7 +132,7 @@ export const DONOR_GUIDE_PAGE_HTML = `
           <p data-k="guide.open.2.body">후원자 여러분의 소중한 나눔에 대해 기부금영수증을 발급해 드리며, 국세청 연말정산 간소화를 통해 편리하게 기부 내역을 확인하실 수 있도록 지원합니다.</p>
         </div>
       </div>
-      <p class="sup-note" data-k="donate.receiptNote">카야인터내셔널이 발급합니다. 신청 시 주민등록번호를 입력하시면 연말정산 간소화 서비스에서 바로 확인하실 수 있습니다.</p>
+      <p class="sup-note" data-k="donate.receiptNote" hidden></p>
     </div>
   </section>
 
@@ -176,13 +176,13 @@ export const DONOR_GUIDE_PAGE_HTML = `
 
   <div class="sup-wrap" data-sec="guide.contact">
     <section class="sup-contact" aria-label="후원 문의">
-      <div>
+      <div class="sup-contact__copy">
         <h2 data-k="guide.contactTitle">후원 문의</h2>
         <p data-k="guide.contactLead">온라인 신청이 어려우시면 전화로 문의해 주세요.</p>
       </div>
       <div class="sup-actions">
-        <a class="sup-contact" href="tel:07051212198"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B11E3B" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h3l2 5-2 1a12 12 0 006 6l1-2 5 2v3a2 2 0 01-2 2A16 16 0 014 6a2 2 0 012-2z"></path></svg><span>070-5121-2198</span></a>
-        <a class="sup-contact" href="mailto:khayahinternational@gmail.com"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B11E3B" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 7l9 6 9-6"></path></svg><span>khayahinternational@gmail.com</span></a>
+        <a class="sup-contact" href="tel:07051212198"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B11E3B" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h3l2 5-2 1a12 12 0 006 6l1-2 5 2v3a2 2 0 01-2 2A16 16 0 014 6a2 2 0 012-2z"></path></svg><span>070-5121-2198</span></a>
+        <a class="sup-contact" href="mailto:khayahinternational@gmail.com"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B11E3B" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 7l9 6 9-6"></path></svg><span>khayahinternational@gmail.com</span></a>
       </div>
     </section>
   </div>

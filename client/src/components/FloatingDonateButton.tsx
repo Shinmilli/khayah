@@ -6,6 +6,7 @@ import { useLocale } from '../i18n/LocaleContext'
 import { splitLocalePath } from '../i18n/locale'
 import { useSiteCommon } from '../features/site/useSiteCommon'
 import type { SiteClicker } from '../features/site/siteCommonTypes'
+import { normalizeHref } from '../utils/hrefs'
 
 const HERO_ID = 'home-hero-banner'
 
@@ -114,7 +115,7 @@ export function FloatingDonateButton() {
             return (
               <a
                 key={item.id}
-                href={item.href}
+                href={normalizeHref(item.href)}
                 className={social.className}
                 target="_blank"
                 rel="noopener noreferrer"

@@ -14,6 +14,7 @@ import { pdfOpenHref } from '../utils/pdfAttachments'
 import { complianceItems, disclosureItems, principleItems } from '../features/kaya/transparencyLists'
 import { transSectionOrder } from '../features/kaya/kayaSectionOrder'
 import { toCloudinaryWebpUrl } from '../utils/cloudinaryWebp'
+import { normalizeHref } from '../utils/hrefs'
 import '../styles/financial-report.css'
 
 const ACRC_URL = 'https://www.acrc.go.kr/'

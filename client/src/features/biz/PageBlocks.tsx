@@ -1,5 +1,6 @@
 import { Fragment } from 'react'
 import { blockHasContent, type PageBlock } from './pageBlockTypes'
+import { isExternalHref, normalizeHref } from '../../utils/hrefs'
 import '../../styles/page-blocks.css'
 
 function Title({ text, emphasis }: { text: string; emphasis: string }) {

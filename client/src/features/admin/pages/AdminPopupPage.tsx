@@ -235,14 +235,14 @@ export function AdminPopupPage() {
               onChange={(e) => updateSelected({ linkUrl: e.currentTarget.value })}
             />
             <p className="admin-upload__hint">
-              http:// 또는 https:// 로 시작하는 전체 주소만 적용됩니다. 비우면 이미지 클릭 이동이 없습니다.
+              외부 주소만 됩니다. `/`로 시작하는 내부 경로는 적용되지 않습니다. https:// 없이 도메인만 넣어도 됩니다. 비우면 이미지 클릭 이동이 없습니다.
             </p>
           </label>
 
           <div className="admin-field admin-field--full">
             <span className="admin-field__label">버튼 링크 (선택)</span>
             <p className="admin-upload__hint">
-              원하면 팝업 하단에 링크 버튼을 추가할 수 있습니다. URL은 http:// 또는 https:// 로 시작하는 전체 주소만
+              원하면 팝업 하단에 링크 버튼을 추가할 수 있습니다. 외부 주소만 되며, https:// 없이 넣어도 됩니다.
               적용됩니다. 버튼 URL을 비우면 위의「클릭 시 이동 URL」을 사용합니다.
             </p>
             <div className="admin-popup-cta-section">

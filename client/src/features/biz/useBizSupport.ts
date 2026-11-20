@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { fetchBizSupport } from '../../services/api'
 import { NANUM_DONATE_URL } from '../../constants/nanumDonate'
+import { normalizeHref } from '../../utils/hrefs'
 import type { BizSupportDocument } from './bizSupportTypes'
 
 let cache: BizSupportDocument | null = null

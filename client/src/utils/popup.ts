@@ -52,13 +52,14 @@ function uid(): string {
   return `p_${Math.random().toString(36).slice(2, 10)}${Date.now().toString(36).slice(-4)}`
 }
 
-/** 팝업 링크는 http:// 또는 https:// 로 시작하는 전체 URL만 허용 (사이트 내부 경로·상대 경로 불가) */
+/** 팝업은 외부만 허용. `/…` 내부 경로는 거부. 그 외는 https:// 보정 */
 export function resolvePopupExternalUrl(raw: string | undefined | null): string {
   const s = raw?.trim() ?? ''
-  if (!s) return ''
+  if (!s || s.startsWith('/') || s.startsWith('#') || /^(mailto:|tel:|sms:)/i.test(s)) return ''
+  const candidate = /^https?:\/\//i.test(s) ? s : s.startsWith('//') ? `https:${s}` : `https://${s}`
   try {
-    const u = new URL(s)
-    if (u.protocol === 'http:' || u.protocol === 'https:') return s
+    const u = new URL(candidate)
+    if (u.protocol === 'http:' || u.protocol === 'https:') return candidate
   } catch {
     /* invalid */
   }

@@ -6,6 +6,7 @@ import type { HeroBannerPublicSlide } from '../heroBannerTypes'
 import { useLocale } from '../../../i18n/LocaleContext'
 import { fetchHeroBanner } from '../../../services/api'
 import { toCloudinaryWebpUrl } from '../../../utils/cloudinaryWebp'
+import { isExternalHref, normalizeHref } from '../../../utils/hrefs'
 
 const BIZ_ICONS = ['home', 'public', 'menu_book', 'groups'] as const
 

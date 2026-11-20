@@ -18,6 +18,7 @@ import { API_BASE } from '../../../constants'
 import { PdfFirstPagePreview } from '../../../components/PdfFirstPagePreview'
 import { Pagination } from '../../../components/Pagination'
 import { coverIsBlank, parsePdfAttachments, pdfOpenHref, type PdfAttachment } from '../../../utils/pdfAttachments'
+import { normalizeHref } from '../../../utils/hrefs'
 import {
   formatNewsletterYearMeta,
   normalizeNewsletterIssueKey,
@@ -1514,7 +1515,7 @@ export function AdminPostsPage() {
                       <div className="admin-press-item__meta">
                         <span className="admin-press-item__date">{pdate}</span>
                         {purl ? (
-                          <a className="admin-press-item__link" href={purl} target="_blank" rel="noreferrer">
+                          <a className="admin-press-item__link" href={normalizeHref(purl)} target="_blank" rel="noreferrer">
                             {purl.length > 56 ? `${purl.slice(0, 54)}…` : purl}
                           </a>
                         ) : (

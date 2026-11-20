@@ -6,6 +6,7 @@ import type { YoutubeLatestVideo } from '../../../types/youtube'
 import { useLocale } from '../../../i18n/LocaleContext'
 import { useSiteCommon } from '../../site/useSiteCommon'
 import { youtubePosterUrl } from '../../../utils/postMedia'
+import { normalizeHref } from '../../../utils/hrefs'
 
 const BLOG_CARD_IMAGE = '/images/home/board-blog.jpg'
 const INSTAGRAM_CARD_IMAGE = '/images/home/board-instagram.jpg'

@@ -5,6 +5,7 @@ import { useLocale } from '../i18n/LocaleContext'
 import type { FooterTopLinkKey } from '../i18n/messages/ko'
 import { cleanEmail, parsePhoneFax } from '../features/site/orgContact'
 import { useSiteCommon } from '../features/site/useSiteCommon'
+import { isExternalHref, normalizeHref } from '../utils/hrefs'
 
 type TopLinkItem = (typeof FOOTER_TOP_LINKS)[number]
 
@@ -171,8 +172,8 @@ export function Footer() {
             <div className="footer-links-bar__row">
               {koLinks
                 ? koLinks.map((row, i) => {
-                    const href = row.href.trim()
-                    const external = /^https?:/i.test(href)
+                    const href = normalizeHref(row.href)
+                    const external = isExternalHref(href)
                     return (
                       <Fragment key={row.id}>
                         {i > 0 && (

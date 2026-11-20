@@ -351,18 +351,22 @@
   text-align: left;
 }
 
-.page-content-wrapper .page-body .sup-contact {
+/* 시안 SupportGuide: 흰 배경 · 상단 1px 선 · T/E 가로 · padding 40px */
+.page-content-wrapper .page-body section.sup-contact {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
   gap: 16px;
+  margin: 0;
   padding: 40px 0;
   border-top: 1px solid #ece8e4;
+  border-radius: 0;
+  background: #fff;
 }
 
-.page-content-wrapper .page-body .sup-contact a {
-  color: var(--sup-ink);
+.page-content-wrapper .page-body section.sup-contact a {
+  color: #2f2b28;
   font-size: 16px;
   font-weight: 700;
   text-decoration: none;
@@ -766,6 +770,14 @@
   padding: 96px 0;
 }
 
+.page-content-wrapper .page-body .sup--guide .sup-block#give {
+  padding-bottom: 48px;
+}
+
+.page-content-wrapper .page-body .sup--guide [data-sec="guide.contact"] {
+  padding-top: 0;
+}
+
 .page-content-wrapper .page-body .sup--guide .sup-block .sup-cards {
   gap: 20px;
   margin-top: 40px;
@@ -790,33 +802,57 @@
   font-size: 14px;
 }
 
-#Content.type-readable .page-content-wrapper .page-body .sup--guide .sup-contact h2 {
+#Content.type-readable .page-content-wrapper .page-body .sup--guide section.sup-contact h2 {
+  margin: 0;
   font-size: 18px;
-  line-height: 1.4;
+  font-weight: 800;
+  line-height: 1.35;
+  color: #2f2b28;
 }
 
-#Content.type-readable .page-content-wrapper .page-body .sup--guide .sup-contact p {
+#Content.type-readable .page-content-wrapper .page-body .sup--guide section.sup-contact p {
+  margin: 0;
   font-size: 14px;
+  color: #5c5650;
 }
 
-.page-content-wrapper .page-body .sup--guide .sup-contact .sup-actions {
+.page-content-wrapper .page-body .sup--guide section.sup-contact .sup-contact__copy {
   display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.page-content-wrapper .page-body .sup--guide section.sup-contact .sup-actions {
+  display: flex;
+  flex-direction: row;
   flex-wrap: wrap;
   align-items: center;
   gap: 28px;
 }
 
-.page-content-wrapper .page-body .sup--guide .sup-contact a.sup-contact {
+.page-content-wrapper .page-body .sup--guide section.sup-contact a.sup-contact,
+.page-content-wrapper .page-body .sup--guide section.sup-contact a[href^='tel'],
+.page-content-wrapper .page-body .sup--guide section.sup-contact a[href^='mailto'] {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+  width: auto;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
   font-size: 16px;
   font-weight: 700;
-  color: var(--sup-ink);
+  line-height: 1.4;
+  color: #2f2b28;
   text-decoration: none;
+  box-shadow: none;
 }
 
-.page-content-wrapper .page-body .sup--guide .sup-contact a.sup-contact svg {
+.page-content-wrapper .page-body .sup--guide section.sup-contact a.sup-contact svg {
+  display: block;
   flex: 0 0 auto;
 }
 

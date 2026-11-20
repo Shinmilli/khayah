@@ -2,6 +2,7 @@ import type { BizSupportDocument } from './bizSupportTypes'
 import { rankedSupportSections } from './supportSections'
 import { donateHref } from './useBizSupport'
 import { fillTextWithBreaks, normalizeHtmlBreaks } from '../../utils/lineBreaks'
+import { isExternalHref, normalizeHref } from '../../utils/hrefs'
 
 function sectionOf(doc: BizSupportDocument, id: string | null) {
   if (!id) return undefined
@@ -137,11 +138,11 @@ export function applyBizFields(root: HTMLElement, doc: BizSupportDocument, accou
     el.hidden = !name
   })
 
-  const socialHrefKeys = new Set(['aca.facebook', 'aca.instagram', 'aca.tiktok', 'cnc.instagram'])
+  const socialHrefKeys = new Set(['aca.facebook', 'aca.instagram', 'aca.tiktok', 'cnc.instagram', 'cnc.store', 'cnc.kakao'])
   root.querySelectorAll<HTMLAnchorElement>('[data-k-href]').forEach((el) => {
     const key = el.getAttribute('data-k-href')
     if (!key) return
-    const href = (doc.fields[key] ?? '').trim()
+    const href = normalizeHref(doc.fields[key] ?? '')
     if (!href || href === '#') {
       if (socialHrefKeys.has(key)) {
         el.hidden = true
@@ -157,9 +158,12 @@ export function applyBizFields(root: HTMLElement, doc: BizSupportDocument, accou
     }
     el.hidden = false
     el.href = href
-    if (socialHrefKeys.has(key)) {
+    if (socialHrefKeys.has(key) || isExternalHref(href)) {
       el.target = '_blank'
       el.rel = 'noopener'
+    } else {
+      el.removeAttribute('target')
+      el.removeAttribute('rel')
     }
   })
 
@@ -177,9 +181,12 @@ export function applyBizFields(root: HTMLElement, doc: BizSupportDocument, accou
   root.querySelectorAll<HTMLElement>('[data-k="donate.label"]').forEach((el) => {
     if (doc.donate.labelKo) el.textContent = doc.donate.labelKo
   })
+  const receiptRaw = doc.donate.receiptNote?.trim() ?? ''
   const receiptNote =
-    doc.donate.receiptNote?.trim() ||
+    receiptRaw ===
     '카야인터내셔널이 발급합니다. 신청 시 주민등록번호를 입력하시면 연말정산 간소화 서비스에서 바로 확인하실 수 있습니다.'
+      ? ''
+      : receiptRaw
   root.querySelectorAll<HTMLElement>('[data-k="donate.receiptNote"]').forEach((el) => {
     el.textContent = receiptNote
     el.hidden = !receiptNote

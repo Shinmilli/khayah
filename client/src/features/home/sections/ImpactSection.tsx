@@ -15,12 +15,9 @@ import { fetchImpactStats } from '../../../services/api'
 import { useLocale } from '../../../i18n/LocaleContext'
 import { ImpactStack } from './ImpactStack'
 import { toCloudinaryWebpUrl } from '../../../utils/cloudinaryWebp'
+import { isExternalHref, normalizeHref } from '../../../utils/hrefs'
 
 const impactCache = new Map<string, ImpactStatsPublicView>()
-
-function isExternalHref(href: string): boolean {
-  return /^https?:\/\//i.test(href) || href.startsWith('mailto:')
-}
 
 function primaryCardStyle(card: ImpactPrimaryCardView): CSSProperties {
   const c = card.colors
@@ -210,7 +207,7 @@ function PrimaryImpactCard({
   const donut = normalizeImpactDonut(card.donut)
   const labelLines = donut.labelLines.map((line) => line.trim()).filter(Boolean)
   const percentText = formatImpactPercent(donut.percent)
-  const href = card.ctaHref.trim()
+  const href = normalizeHref(card.ctaHref)
   const ctaLabel = card.ctaLabel.trim()
   const showDonut = card.showDonut !== false
 
@@ -254,7 +251,7 @@ function PrimaryImpactCard({
             {ctaLabel}
           </a>
         ) : (
-          <Link className="impact-card__cta" to={localize(href.startsWith('/') ? href : `/${href}`)}>
+          <Link className="impact-card__cta" to={localize(href)}>
             {ctaLabel}
           </Link>
         )

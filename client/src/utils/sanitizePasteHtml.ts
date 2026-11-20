@@ -1,5 +1,7 @@
 /** 붙여넣기용: 허용 태그만 남기고 style/class 등 제거 (일반 블로그 CMS 방식) */
 
+import { isExternalHref, normalizeHref } from './hrefs'
+
 const ALLOWED = new Set([
   'P',
   'BR',
@@ -75,10 +77,12 @@ function isSafeUrl(raw: string, kind: 'href' | 'src'): boolean {
   const t = raw.trim()
   if (!t) return false
   if (kind === 'href') {
-    if (t.startsWith('#') || t.startsWith('/')) return true
+    const href = normalizeHref(t)
+    if (!href || href === '#') return href === '#'
+    if (href.startsWith('/') || href.startsWith('#')) return true
     try {
-      const u = new URL(t, 'https://example.invalid')
-      return u.protocol === 'http:' || u.protocol === 'https:' || u.protocol === 'mailto:'
+      const u = new URL(href)
+      return u.protocol === 'http:' || u.protocol === 'https:' || u.protocol === 'mailto:' || u.protocol === 'tel:'
     } catch {
       return false
     }
@@ -264,8 +268,9 @@ function sanitizeNode(node: Node): Node[] {
       for (const child of Array.from(el.childNodes)) out.push(...sanitizeNode(child))
       return out
     }
-    created.setAttribute('href', href.trim())
-    if (el.getAttribute('target') === '_blank') {
+    const nextHref = normalizeHref(href)
+    created.setAttribute('href', nextHref)
+    if (el.getAttribute('target') === '_blank' || isExternalHref(nextHref)) {
       created.setAttribute('target', '_blank')
       created.setAttribute('rel', 'noopener noreferrer')
     }

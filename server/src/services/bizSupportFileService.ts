@@ -565,7 +565,7 @@ export function defaultBizSupportDocument(): BizSupportDocument {
       url: NANUM,
       labelKo: '지금 바로 후원하기 ♥',
       menuLabel: '후원하기',
-      receiptNote: '카야인터내셔널이 발급합니다. 신청 시 주민등록번호를 입력하시면 연말정산 간소화 서비스에서 바로 확인하실 수 있습니다.',
+      receiptNote: '',
       inquiry: '',
       impactEnabled: false,
       openBlank: true,

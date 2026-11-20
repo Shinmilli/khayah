@@ -180,6 +180,15 @@ body.admin-route {
   padding: 28px 16px;
   box-sizing: border-box;
   overflow: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.admin-app__sidebar::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+  background: transparent;
 }
 
 .admin-app__brand {
@@ -227,13 +236,16 @@ body.admin-route {
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
-  scrollbar-width: thin;
+  /* 스크롤은 되고 흰/회색 스크롤바는 숨김 (모바일·데스크톱 공통) */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 .admin-app__nav::-webkit-scrollbar {
   width: 0;
   height: 0;
   display: none;
+  background: transparent;
 }
 
 .admin-app__nav-group {
@@ -4263,7 +4275,10 @@ textarea.admin-input {
   min-width: 160px;
 }
 
-.sup-contact {
+/* 관리자 미리보기만 — 공개 후원 문의 a.sup-contact 에 회색 배경이 새지 않게 */
+.admin-page .sup-contact,
+.sup-admin .sup-contact,
+.biz-mock .sup-contact {
   padding: 14px 16px;
   border-radius: 10px;
   background: #f7f5f2;
@@ -4272,21 +4287,29 @@ textarea.admin-input {
   font-size: 14px;
 }
 
-.sup-contact p {
+.admin-page .sup-contact p,
+.sup-admin .sup-contact p,
+.biz-mock .sup-contact p {
   margin: 0;
 }
 
-.sup-contact__row {
+.admin-page .sup-contact__row,
+.sup-admin .sup-contact__row,
+.biz-mock .sup-contact__row {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.sup-contact__row + .sup-contact__row {
+.admin-page .sup-contact__row + .sup-contact__row,
+.sup-admin .sup-contact__row + .sup-contact__row,
+.biz-mock .sup-contact__row + .sup-contact__row {
   margin-top: 4px;
 }
 
-.sup-contact__row svg {
+.admin-page .sup-contact__row svg,
+.sup-admin .sup-contact__row svg,
+.biz-mock .sup-contact__row svg {
   flex: 0 0 auto;
   color: #b11e3b;
 }
