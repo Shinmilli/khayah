@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { AdminMediaUpload } from '../components/AdminMediaUpload'
+import { AdminLocaleEmptyNote, AdminLocaleTabs, type AdminEditLocale } from '../components/AdminLocaleTabs'
 import { AdminSaveActions, draftStatus, takeUnpublished } from '../AdminSaveActions'
 import { adminFetchImpactPage, adminPutImpactPage, type SaveMode } from '../../../services/api'
 import { resetImpactPageCache } from '../../impact/useImpactPage'
@@ -97,6 +98,7 @@ export function AdminImpactPage() {
   const [savedAt, setSavedAt] = useState('')
   const [savedMode, setSavedMode] = useState<SaveMode | ''>('')
   const [unpublished, setUnpublished] = useState(false)
+  const [editLocale, setEditLocale] = useState<AdminEditLocale>('ko')
   const [yearOn, setYearOn] = useState(0)
 
   const load = useCallback(async () => {
@@ -170,7 +172,8 @@ export function AdminImpactPage() {
           <h1 className="admin-page__title">임팩트 관리</h1>
         </div>
         <div className="admin-page__actions">
-          <a className="admin-btn" href="/business/impact" target="_blank" rel="noopener noreferrer">미리보기</a>
+          <AdminLocaleTabs value={editLocale} onChange={setEditLocale} />
+          <a className="admin-btn" href={editLocale === 'en' ? '/en/business/impact' : '/business/impact'} target="_blank" rel="noopener noreferrer">미리보기</a>
           <button
             type="button"
             className="admin-btn"
@@ -218,6 +221,7 @@ export function AdminImpactPage() {
       </div>
       {error ? <p className="admin-banner admin-banner--error">{error}</p> : null}
       {draftStatus(unpublished, savedAt, savedMode) ? <p className="admin-panel__foot">{draftStatus(unpublished, savedAt, savedMode)}</p> : null}
+      <AdminLocaleEmptyNote locale={editLocale} />
 
       <section id="impact-screen" className="admin-panel">
         <div className="admin-panel__head">

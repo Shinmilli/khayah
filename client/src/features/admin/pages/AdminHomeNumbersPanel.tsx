@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { adminFetchImpactPage, adminPutImpactPage } from '../../../services/api'
 import { resetImpactPageCache } from '../../impact/useImpactPage'
 import type { ImpactNumber, ImpactPageDocument } from '../../impact/impactPageTypes'
+import { AdminLocaleEmptyNote, AdminLocaleTabs, type AdminEditLocale } from '../components/AdminLocaleTabs'
 
 function moveCard(list: ImpactNumber[], idIndex: number, beforeIndex: number | null): ImpactNumber[] {
   if (beforeIndex === idIndex) return list
@@ -17,6 +18,7 @@ export function AdminHomeNumbersPanel() {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [savedAt, setSavedAt] = useState('')
+  const [editLocale, setEditLocale] = useState<AdminEditLocale>('ko')
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -62,6 +64,7 @@ export function AdminHomeNumbersPanel() {
   const shown = doc.homePublic ?? doc.public
   const setCard = (index: number, partial: Partial<ImpactNumber>) =>
     setDoc({ ...doc, homeNumbers: doc.homeNumbers.map((row, rowIndex) => (rowIndex === index ? { ...row, ...partial } : row)) })
+  const en = editLocale === 'en'
 
   return (
     <>
@@ -71,7 +74,8 @@ export function AdminHomeNumbersPanel() {
           <h1 className="admin-page__title">② 숫자 섹션</h1>
         </div>
         <div className="admin-page__actions">
-          <a className="admin-btn" href="/" target="_blank" rel="noopener noreferrer">미리보기</a>
+          <AdminLocaleTabs value={editLocale} onChange={setEditLocale} />
+          <a className="admin-btn" href={en ? '/en' : '/'} target="_blank" rel="noopener noreferrer">미리보기</a>
           <button type="button" className="admin-btn admin-btn--primary" disabled={saving} onClick={() => void onSave()}>
             {saving ? '저장 중…' : '저장'}
           </button>
@@ -79,6 +83,7 @@ export function AdminHomeNumbersPanel() {
       </div>
       {error ? <p className="admin-banner admin-banner--error">{error}</p> : null}
       {savedAt ? <p className="admin-panel__foot">저장됨 ({savedAt})</p> : null}
+      <AdminLocaleEmptyNote locale={editLocale} />
 
       <section className="admin-panel">
         <div className="admin-panel__head">
@@ -103,15 +108,27 @@ export function AdminHomeNumbersPanel() {
         <div className="admin-form-grid">
           <label className="admin-field">
             <span className="admin-field__label">섹션 제목</span>
-            <input className="admin-input" value={doc.homeTitle} onChange={(e) => setDoc({ ...doc, homeTitle: e.target.value })} />
+            <input
+              className="admin-input"
+              value={en ? doc.homeTitleEn ?? '' : doc.homeTitle}
+              onChange={(e) => setDoc(en ? { ...doc, homeTitleEn: e.target.value } : { ...doc, homeTitle: e.target.value })}
+            />
           </label>
           <label className="admin-field">
             <span className="admin-field__label">부제</span>
-            <input className="admin-input" value={doc.homeLead} onChange={(e) => setDoc({ ...doc, homeLead: e.target.value })} />
+            <input
+              className="admin-input"
+              value={en ? doc.homeLeadEn ?? '' : doc.homeLead}
+              onChange={(e) => setDoc(en ? { ...doc, homeLeadEn: e.target.value } : { ...doc, homeLead: e.target.value })}
+            />
           </label>
           <label className="admin-field">
             <span className="admin-field__label">기준일</span>
-            <input className="admin-input" value={doc.homeNote} onChange={(e) => setDoc({ ...doc, homeNote: e.target.value })} />
+            <input
+              className="admin-input"
+              value={en ? doc.homeNoteEn ?? '' : doc.homeNote}
+              onChange={(e) => setDoc(en ? { ...doc, homeNoteEn: e.target.value } : { ...doc, homeNote: e.target.value })}
+            />
           </label>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 14 }}>
@@ -140,17 +157,19 @@ export function AdminHomeNumbersPanel() {
                   ⋮⋮
                 </span>
                 <b style={{ flex: '0 0 60px', fontSize: 13 }}>카드 {index + 1}</b>
-                <div className="admin-segmented admin-segmented--tight" role="group" aria-label={`카드 ${index + 1} 입력 방식`}>
-                  <button type="button" className={`admin-segmented__btn${source === 'manual' ? ' admin-segmented__btn--active' : ''}`} onClick={() => setCard(index, { source: 'manual' })}>직접 입력</button>
-                  <button
-                    type="button"
-                    className={`admin-segmented__btn${source === 'impact' ? ' admin-segmented__btn--active' : ''}`}
-                    onClick={() => setCard(index, { source: 'impact', impactKey: row.impactKey || doc.overview[0]?.label || '' })}
-                  >
-                    임팩트 데이터에서 선택
-                  </button>
-                </div>
-                {source === 'impact' ? (
+                {!en ? (
+                  <div className="admin-segmented admin-segmented--tight" role="group" aria-label={`카드 ${index + 1} 입력 방식`}>
+                    <button type="button" className={`admin-segmented__btn${source === 'manual' ? ' admin-segmented__btn--active' : ''}`} onClick={() => setCard(index, { source: 'manual' })}>직접 입력</button>
+                    <button
+                      type="button"
+                      className={`admin-segmented__btn${source === 'impact' ? ' admin-segmented__btn--active' : ''}`}
+                      onClick={() => setCard(index, { source: 'impact', impactKey: row.impactKey || doc.overview[0]?.label || '' })}
+                    >
+                      임팩트 데이터에서 선택
+                    </button>
+                  </div>
+                ) : null}
+                {source === 'impact' && !en ? (
                   <select
                     className="admin-input"
                     style={{ flex: '1 1 200px', width: 'auto' }}
@@ -164,15 +183,36 @@ export function AdminHomeNumbersPanel() {
                   </select>
                 ) : (
                   <>
-                    <input className="admin-input" style={{ flex: '1 1 180px', width: 'auto' }} aria-label="문구" value={row.label} onChange={(e) => setCard(index, { label: e.target.value })} />
-                    <input className="admin-input" style={{ flex: '0 1 100px', width: 'auto' }} aria-label="숫자" value={row.value} onChange={(e) => setCard(index, { value: e.target.value })} />
-                    <input className="admin-input" style={{ flex: '0 1 72px', width: 'auto' }} aria-label="단위" value={row.unit} onChange={(e) => setCard(index, { unit: e.target.value })} />
+                    <input
+                      className="admin-input"
+                      style={{ flex: '1 1 180px', width: 'auto' }}
+                      aria-label="문구"
+                      value={en ? row.labelEn ?? '' : row.label}
+                      onChange={(e) => setCard(index, en ? { labelEn: e.target.value } : { label: e.target.value })}
+                    />
+                    {!en ? (
+                      <>
+                        <input className="admin-input" style={{ flex: '0 1 100px', width: 'auto' }} aria-label="숫자" value={row.value} onChange={(e) => setCard(index, { value: e.target.value })} />
+                        <input className="admin-input" style={{ flex: '0 1 72px', width: 'auto' }} aria-label="단위" value={row.unit} onChange={(e) => setCard(index, { unit: e.target.value })} />
+                      </>
+                    ) : (
+                      <input
+                        className="admin-input"
+                        style={{ flex: '1 1 180px', width: 'auto' }}
+                        aria-label="설명"
+                        value={row.noteEn ?? ''}
+                        onChange={(e) => setCard(index, { noteEn: e.target.value })}
+                        placeholder="설명 (영문)"
+                      />
+                    )}
                   </>
                 )}
-                <label className="admin-org__check">
-                  <input type="checkbox" checked={row.enabled !== false} onChange={(e) => setCard(index, { enabled: e.target.checked })} />
-                  표시
-                </label>
+                {!en ? (
+                  <label className="admin-org__check">
+                    <input type="checkbox" checked={row.enabled !== false} onChange={(e) => setCard(index, { enabled: e.target.checked })} />
+                    표시
+                  </label>
+                ) : null}
               </div>
             )
           })}

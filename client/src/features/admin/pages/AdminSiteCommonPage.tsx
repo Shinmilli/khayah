@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { AdminMediaUpload } from '../components/AdminMediaUpload'
+import { AdminLocaleEmptyNote, AdminLocaleTabs, type AdminEditLocale } from '../components/AdminLocaleTabs'
 import { AdminSaveActions, draftStatus, takeUnpublished } from '../AdminSaveActions'
 import { adminFetchSiteCommon, adminPutSiteCommon, type SaveMode } from '../../../services/api'
 import { resetSiteCommonCache } from '../../site/useSiteCommon'
@@ -58,6 +59,7 @@ export function AdminSiteCommonPage() {
   const [savedAt, setSavedAt] = useState('')
   const [savedMode, setSavedMode] = useState<SaveMode | ''>('')
   const [unpublished, setUnpublished] = useState(false)
+  const [editLocale, setEditLocale] = useState<AdminEditLocale>('ko')
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -163,12 +165,14 @@ export function AdminSiteCommonPage() {
           <h1 className="admin-page__title">사이트 공통 관리</h1>
         </div>
         <div className="admin-page__actions">
-          <a className="admin-btn" href="/" target="_blank" rel="noopener noreferrer">미리보기</a>
+          <AdminLocaleTabs value={editLocale} onChange={setEditLocale} />
+          <a className="admin-btn" href={editLocale === 'en' ? '/en' : '/'} target="_blank" rel="noopener noreferrer">미리보기</a>
           <AdminSaveActions saving={saving} onSave={(mode) => void onSave(mode)} />
         </div>
       </div>
       {error ? <p className="admin-banner admin-banner--error">{error}</p> : null}
       {draftStatus(unpublished, savedAt, savedMode) ? <p className="admin-panel__foot">{draftStatus(unpublished, savedAt, savedMode)}</p> : null}
+      <AdminLocaleEmptyNote locale={editLocale} />
 
       <section id="stories" className="admin-panel">
         <h2 className="admin-panel__title">③ 스토리 · 현장의 기록</h2>
@@ -223,14 +227,17 @@ export function AdminSiteCommonPage() {
               <span className="admin-org__grip" draggable aria-label="순서 변경" onDragStart={(e) => e.dataTransfer.setData('text/plain', row.id)}>⋮⋮</span>
               <AdminMediaUpload layout="slot" slotTitle="로고" slotRatio="logo" label="로고" variant="image" value={row.logo || null} onChange={(url) => setPartner(row.id, { logo: url ?? '' })} />
               <div className="admin-form-grid" style={{ flex: '1 1 360px' }}>
-                <label className="admin-field">
-                  <span className="admin-field__label">기관명 (국문)</span>
-                  <input className="admin-input" value={row.nameKo} onChange={(e) => setPartner(row.id, { nameKo: e.target.value })} />
-                </label>
-                <label className="admin-field">
-                  <span className="admin-field__label">기관명 (영문)</span>
-                  <input className="admin-input" value={row.nameEn} onChange={(e) => setPartner(row.id, { nameEn: e.target.value })} />
-                </label>
+                {editLocale === 'ko' ? (
+                  <label className="admin-field">
+                    <span className="admin-field__label">기관명</span>
+                    <input className="admin-input" value={row.nameKo} onChange={(e) => setPartner(row.id, { nameKo: e.target.value })} />
+                  </label>
+                ) : (
+                  <label className="admin-field">
+                    <span className="admin-field__label">기관명</span>
+                    <input className="admin-input" value={row.nameEn} onChange={(e) => setPartner(row.id, { nameEn: e.target.value })} />
+                  </label>
+                )}
                 <label className="admin-field">
                   <span className="admin-field__label">유형 · 국가</span>
                   <input className="admin-input" value={row.kind} onChange={(e) => setPartner(row.id, { kind: e.target.value })} />
@@ -254,25 +261,36 @@ export function AdminSiteCommonPage() {
           <span className="admin-panel__foot">한 곳 수정 → 전체 반영</span>
         </div>
         <div className="admin-form-grid">
-          <label className="admin-field">
-            <span className="admin-field__label">기관명</span>
-            <input className="admin-input" value={doc.org.nameKo} onChange={(e) => setOrg('nameKo', e.target.value)} />
-          </label>
-          <label className="admin-field">
-            <span className="admin-field__label">대표자</span>
-            <input className="admin-input" value={doc.org.representative} onChange={(e) => setOrg('representative', e.target.value)} />
-          </label>
-          <label className="admin-field">
-            <span className="admin-field__label">고유번호</span>
-            <input className="admin-input" value={doc.org.registrationNo} onChange={(e) => setOrg('registrationNo', e.target.value)} />
-          </label>
+          {editLocale === 'ko' ? (
+            <label className="admin-field">
+              <span className="admin-field__label">기관명</span>
+              <input className="admin-input" value={doc.org.nameKo} onChange={(e) => setOrg('nameKo', e.target.value)} />
+            </label>
+          ) : (
+            <label className="admin-field">
+              <span className="admin-field__label">기관명</span>
+              <input className="admin-input" value={doc.org.nameEn} onChange={(e) => setOrg('nameEn', e.target.value)} />
+            </label>
+          )}
+          {editLocale === 'ko' ? (
+            <>
+              <label className="admin-field">
+                <span className="admin-field__label">대표자</span>
+                <input className="admin-input" value={doc.org.representative} onChange={(e) => setOrg('representative', e.target.value)} />
+              </label>
+              <label className="admin-field">
+                <span className="admin-field__label">고유번호</span>
+                <input className="admin-input" value={doc.org.registrationNo} onChange={(e) => setOrg('registrationNo', e.target.value)} />
+              </label>
+            </>
+          ) : null}
           <label className="admin-field admin-field--full">
-            <span className="admin-field__label">주소 (국문)</span>
-            <input className="admin-input" value={doc.org.addressKo} onChange={(e) => setOrg('addressKo', e.target.value)} />
-          </label>
-          <label className="admin-field admin-field--full">
-            <span className="admin-field__label">주소 (영문)</span>
-            <input className="admin-input" value={doc.org.addressEn} onChange={(e) => setOrg('addressEn', e.target.value)} />
+            <span className="admin-field__label">주소</span>
+            <input
+              className="admin-input"
+              value={editLocale === 'en' ? doc.org.addressEn : doc.org.addressKo}
+              onChange={(e) => setOrg(editLocale === 'en' ? 'addressEn' : 'addressKo', e.target.value)}
+            />
           </label>
           <label className="admin-field">
             <span className="admin-field__label">전화 · 팩스</span>
@@ -293,7 +311,7 @@ export function AdminSiteCommonPage() {
             {doc.footerLinks
               .slice()
               .sort((a, b) => a.order - b.order)
-              .map((row) => row.labelKo || '이름 없음')
+              .map((row) => (editLocale === 'en' ? row.labelEn : row.labelKo) || '이름 없음')
               .join(' · ')}
           </span>
         </div>
@@ -312,8 +330,13 @@ export function AdminSiteCommonPage() {
               }}
             >
               <span className="admin-org__grip" draggable aria-label="순서 변경" onDragStart={(e) => e.dataTransfer.setData('text/plain', row.id)}>⋮⋮</span>
-              <input className="admin-input" style={{ flex: '1 1 140px', width: 'auto' }} aria-label="문구" value={row.labelKo} onChange={(e) => setLink(row.id, { labelKo: e.target.value })} />
-              <input className="admin-input" style={{ flex: '1 1 140px', width: 'auto' }} aria-label="문구 영문" value={row.labelEn} onChange={(e) => setLink(row.id, { labelEn: e.target.value })} />
+              <input
+                className="admin-input"
+                style={{ flex: '1 1 140px', width: 'auto' }}
+                aria-label="문구"
+                value={editLocale === 'en' ? row.labelEn : row.labelKo}
+                onChange={(e) => setLink(row.id, editLocale === 'en' ? { labelEn: e.target.value } : { labelKo: e.target.value })}
+              />
               <input className="admin-input" style={{ flex: '1 1 180px', width: 'auto' }} aria-label="링크" value={row.href} onChange={(e) => setLink(row.id, { href: e.target.value })} />
               <label className="admin-org__check">
                 <input type="checkbox" checked={row.enabled} onChange={(e) => setLink(row.id, { enabled: e.target.checked })} />
@@ -409,16 +432,15 @@ export function AdminSiteCommonPage() {
         <summary className="admin-fold__summary">상단 로고 · 슬로건 순환</summary>
         <div className="admin-form-grid">
           <AdminMediaUpload
-            label="로고 이미지 (국문)"
+            label="로고 이미지"
             variant="image"
-            value={doc.logo.imageKo || null}
-            onChange={(url) => patch({ ...doc, logo: { ...doc.logo, imageKo: url ?? '' } })}
-          />
-          <AdminMediaUpload
-            label="로고 이미지 (영문)"
-            variant="image"
-            value={doc.logo.imageEn || null}
-            onChange={(url) => patch({ ...doc, logo: { ...doc.logo, imageEn: url ?? '' } })}
+            value={(editLocale === 'en' ? doc.logo.imageEn : doc.logo.imageKo) || null}
+            onChange={(url) =>
+              patch({
+                ...doc,
+                logo: editLocale === 'en' ? { ...doc.logo, imageEn: url ?? '' } : { ...doc.logo, imageKo: url ?? '' },
+              })
+            }
           />
           <div className="admin-field">
             <span className="admin-field__label">순환</span>
@@ -441,16 +463,20 @@ export function AdminSiteCommonPage() {
               }
             />
           </label>
-          <label className="admin-field admin-field--full">
-            <span className="admin-field__label">영문 슬로건</span>
-            <input
-              className="admin-input"
-              value={doc.logo.sloganEn}
-              maxLength={20}
-              onChange={(e) => patch({ ...doc, logo: { ...doc.logo, sloganEn: e.target.value } })}
-            />
-          </label>
+          {editLocale === 'en' ? (
+            <label className="admin-field admin-field--full">
+              <span className="admin-field__label">슬로건</span>
+              <input
+                className="admin-input"
+                value={doc.logo.sloganEn}
+                maxLength={20}
+                onChange={(e) => patch({ ...doc, logo: { ...doc.logo, sloganEn: e.target.value } })}
+              />
+            </label>
+          ) : null}
         </div>
+        {editLocale === 'ko' ? (
+          <>
         <h3 className="admin-subpanel__title">순환 문구</h3>
         <p className="admin-fieldset__hint">약 20자</p>
         {doc.logo.slogansKo
@@ -495,6 +521,8 @@ export function AdminSiteCommonPage() {
         >
           문구 추가
         </button>
+          </>
+        ) : null}
       </details>
     </div>
   )

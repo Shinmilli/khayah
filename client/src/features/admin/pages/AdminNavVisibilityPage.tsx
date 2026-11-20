@@ -1,6 +1,9 @@
 import { useCallback, useEffect, useState } from 'react'
+import { AdminLocaleEmptyNote, AdminLocaleTabs, type AdminEditLocale } from '../components/AdminLocaleTabs'
 import { AdminSaveActions, draftStatus, takeUnpublished } from '../AdminSaveActions'
 import { adminFetchNavVisibility, adminPutNavVisibility, type SaveMode } from '../../../services/api'
+import { enMessages } from '../../../i18n/messages/en'
+import { koMessages } from '../../../i18n/messages/ko'
 import {
   DEFAULT_NAV_VISIBILITY,
   mergeNavVisibility,
@@ -46,31 +49,43 @@ function OnOffToggle({
   )
 }
 
+function linkLabel(key: NavVisibilityLinkKey, locale: AdminEditLocale): string {
+  if (locale === 'en') return enMessages.nav.links[key] || NAV_LINK_LABELS[key]
+  return koMessages.nav.links[key] || NAV_LINK_LABELS[key]
+}
+
+function topLabel(key: NavVisibilityTopKey, locale: AdminEditLocale): string {
+  if (locale === 'en') return enMessages.nav.top[key] || NAV_TOP_LABELS[key]
+  return koMessages.nav.top[key] || NAV_TOP_LABELS[key]
+}
+
 function LinkRows({
   links,
   doc,
   depth,
   onToggle,
+  locale,
 }: {
   links: NavMenuLinkDef[]
   doc: NavVisibilityDocument
   depth: number
   onToggle: (key: NavVisibilityLinkKey, enabled: boolean) => void
+  locale: AdminEditLocale
 }) {
   return (
     <>
       {links.map((link) => (
         <div key={link.key}>
           <div className={`admin-nav-vis__row${depth > 0 ? ' admin-nav-vis__row--child' : ''}`}>
-            <span className="admin-nav-vis__label">{NAV_LINK_LABELS[link.key]}</span>
+            <span className="admin-nav-vis__label">{linkLabel(link.key, locale)}</span>
             <OnOffToggle
               enabled={doc.links[link.key]}
-              label={NAV_LINK_LABELS[link.key]}
+              label={linkLabel(link.key, locale)}
               onChange={(enabled) => onToggle(link.key, enabled)}
             />
           </div>
           {link.children?.length ? (
-            <LinkRows links={link.children} doc={doc} depth={depth + 1} onToggle={onToggle} />
+            <LinkRows links={link.children} doc={doc} depth={depth + 1} onToggle={onToggle} locale={locale} />
           ) : null}
         </div>
       ))}
@@ -86,6 +101,7 @@ export function AdminNavVisibilityPage() {
   const [savedAt, setSavedAt] = useState('')
   const [savedMode, setSavedMode] = useState<SaveMode | ''>('')
   const [unpublished, setUnpublished] = useState(false)
+  const [editLocale, setEditLocale] = useState<AdminEditLocale>('ko')
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -152,7 +168,8 @@ export function AdminNavVisibilityPage() {
           </p>
         </div>
         <div className="admin-page__actions">
-          <a className="admin-btn" href="/" target="_blank" rel="noopener noreferrer">미리보기</a>
+          <AdminLocaleTabs value={editLocale} onChange={setEditLocale} />
+          <a className="admin-btn" href={editLocale === 'en' ? '/en' : '/'} target="_blank" rel="noopener noreferrer">미리보기</a>
           <AdminSaveActions saving={saving} onSave={(mode) => void save(mode)} />
         </div>
       </div>
@@ -163,21 +180,25 @@ export function AdminNavVisibilityPage() {
         </p>
       ) : null}
       {draftStatus(unpublished, savedAt, savedMode) ? <p className="admin-panel__foot">{draftStatus(unpublished, savedAt, savedMode)}</p> : null}
+      <AdminLocaleEmptyNote locale={editLocale} />
+      {editLocale === 'en' ? (
+        <p className="admin-panel__foot">메뉴 표시 ON/OFF는 언어와 공통입니다. 영문 탭에서는 사이트에 보이는 영문 메뉴명을 확인합니다.</p>
+      ) : null}
 
       {NAV_MENU_COLUMNS.map((col) => (
         <section key={col.id} className="admin-panel">
           <div className="admin-nav-vis__row admin-nav-vis__row--top">
             <h2 className="admin-panel__title" style={{ margin: 0 }}>
-              {NAV_TOP_LABELS[col.topKey]}
+              {topLabel(col.topKey, editLocale)}
             </h2>
             <OnOffToggle
               enabled={doc.top[col.topKey]}
-              label={NAV_TOP_LABELS[col.topKey]}
+              label={topLabel(col.topKey, editLocale)}
               onChange={(enabled) => setTop(col.topKey, enabled)}
             />
           </div>
           <p className="admin-fieldset__hint">하위 메뉴</p>
-          <LinkRows links={col.links} doc={doc} depth={0} onToggle={setLink} />
+          <LinkRows links={col.links} doc={doc} depth={0} onToggle={setLink} locale={editLocale} />
         </section>
       ))}
     </div>

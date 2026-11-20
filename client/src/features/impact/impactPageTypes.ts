@@ -1,9 +1,11 @@
 export type ImpactSection = { id: string; order: number; enabled: boolean }
 export type ImpactNumber = {
   label: string
+  labelEn?: string
   value: string
   unit: string
   note: string
+  noteEn?: string
   source?: 'manual' | 'impact'
   impactKey?: string
   enabled?: boolean
@@ -74,8 +76,11 @@ export type ImpactPageDocument = {
   featuredLabel: string
   sections: ImpactSection[]
   homeTitle: string
+  homeTitleEn?: string
   homeLead: string
+  homeLeadEn?: string
   homeNote: string
+  homeNoteEn?: string
   /** 메인 숫자 섹션만의 표시. 없으면 페이지 공개 여부를 따른다. */
   homePublic?: boolean
   homeNumbers: ImpactNumber[]

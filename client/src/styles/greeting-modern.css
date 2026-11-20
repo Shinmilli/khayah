@@ -324,6 +324,12 @@
   color: #fff;
 }
 
+.page-content-wrapper .page-body .greeting-modern .gm-closing__text .sig-quote-mark,
+.page-content-wrapper .page-body .greeting-modern .gm-closing__text .gm-closing__mark,
+.page-content-wrapper .page-body .greeting-modern .gm-closing__text .gm-closing__mark--close {
+  display: none !important;
+}
+
 .greeting-modern .gm-closing__rule {
   width: 48px;
   height: 2px;

@@ -55,8 +55,8 @@ function ColorField({
 }
 
 const EDIT_LOCALES: { id: ImpactEditLocale; label: string }[] = [
-  { id: 'ko', label: '한국어' },
-  { id: 'en', label: 'English' },
+  { id: 'ko', label: '국문' },
+  { id: 'en', label: '영문' },
 ]
 
 const PRIMARY_COLOR_FIELDS: { key: keyof ImpactPrimaryCardColors; label: string }[] = [

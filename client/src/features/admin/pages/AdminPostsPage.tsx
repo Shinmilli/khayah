@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { AdminLocaleEmptyNote, AdminLocaleTabs, type AdminEditLocale } from '../components/AdminLocaleTabs'
 import { AdminRichTextEditor } from '../components/AdminRichTextEditor'
 import type { AdminRichTextEditorHandle } from '../components/AdminRichTextEditor'
 import {
@@ -1268,6 +1269,7 @@ function PostEditorForm({
 }
 
 export function AdminPostsPage() {
+  const [editLocale, setEditLocale] = useState<AdminEditLocale>('ko')
   const [filterType, setFilterType] = useState<ContentType>('공지사항')
   const [view, setView] = useState<View>('list')
   const [editorMode, setEditorMode] = useState<'new' | 'edit'>('new')
@@ -1394,10 +1396,17 @@ export function AdminPostsPage() {
             히어로 배너는 <strong>메인 배너 관리</strong>(콘텐츠 관리 하위)에서 다룹니다.
           </p>
         </div>
-        <button type="button" className="admin-btn admin-btn--primary" onClick={openNew}>
-          새 글 작성
-        </button>
+        <div className="admin-page__actions">
+          <AdminLocaleTabs value={editLocale} onChange={setEditLocale} />
+          <button type="button" className="admin-btn admin-btn--primary" onClick={openNew}>
+            새 글 작성
+          </button>
+        </div>
       </div>
+      <AdminLocaleEmptyNote locale={editLocale} />
+      {editLocale === 'en' ? (
+        <p className="admin-panel__foot">게시글은 현재 국문 본문만 저장됩니다. 영문 글이 필요하면 별도 글로 등록해 주세요.</p>
+      ) : null}
 
       <PostTypeSegmentedSection
         headingId="posts-filter-heading"

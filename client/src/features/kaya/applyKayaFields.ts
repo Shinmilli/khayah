@@ -18,7 +18,15 @@ export function applyKayaFields(root: HTMLElement, doc: KayaPagesDocument) {
     if (mode === 'src') {
       if (value && el instanceof HTMLImageElement) el.src = value
     } else if (mode === 'html') {
-      el.innerHTML = value
+      const html =
+        key === 'greet.quote'
+          ? value
+              .replace(/<span[^>]*(?:quote-mark|closing__mark)[^>]*>[\s\S]*?<\/span>/gi, '')
+              .replace(/&(?:[lr]dquo|#822[01]|#x201[cd]);/gi, '')
+              .replace(/[“”„‟「」]/g, '')
+              .trim()
+          : value
+      el.innerHTML = html
     } else if (mode === 'tel' || mode === 'mail') {
       el.textContent = value
       if (el instanceof HTMLAnchorElement) {

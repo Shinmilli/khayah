@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { AdminMediaUpload } from '../components/AdminMediaUpload'
+import { AdminLocaleEmptyNote, AdminLocaleTabs, type AdminEditLocale } from '../components/AdminLocaleTabs'
 import {
   DEFAULT_NAV_MENU_IMAGES,
   NAV_MENU_IMAGE_KEYS,
@@ -22,6 +23,7 @@ export function AdminNavMenuImagesPage() {
   const [savedAt, setSavedAt] = useState('')
   const [savedMode, setSavedMode] = useState<SaveMode | ''>('')
   const [unpublished, setUnpublished] = useState(false)
+  const [editLocale, setEditLocale] = useState<AdminEditLocale>('ko')
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -76,13 +78,18 @@ export function AdminNavMenuImagesPage() {
           </p>
         </div>
         <div className="admin-page__actions">
-          <a className="admin-btn" href="/" target="_blank" rel="noopener noreferrer">미리보기</a>
+          <AdminLocaleTabs value={editLocale} onChange={setEditLocale} />
+          <a className="admin-btn" href={editLocale === 'en' ? '/en' : '/'} target="_blank" rel="noopener noreferrer">미리보기</a>
           <AdminSaveActions saving={saving || loading} onSave={(mode) => void save(mode)} />
         </div>
       </div>
 
       {error ? <p className="admin-banner admin-banner--error">{error}</p> : null}
       {draftStatus(unpublished, savedAt, savedMode) ? <p className="admin-panel__foot">{draftStatus(unpublished, savedAt, savedMode)}</p> : null}
+      <AdminLocaleEmptyNote locale={editLocale} />
+      {editLocale === 'en' ? (
+        <p className="admin-panel__foot">메뉴 이미지는 국문·영문 화면이 함께 씁니다.</p>
+      ) : null}
 
       <section className="admin-nav-images" aria-label="메뉴별 이미지">
         {NAV_MENU_IMAGE_KEYS.map((key) => (

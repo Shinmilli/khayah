@@ -13,6 +13,7 @@ export type BizMenuItem = {
   key: string
   order: number
   label?: string
+  labelEn?: string
   target?: string
   tabs?: string
 }

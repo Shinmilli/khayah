@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState, type ReactNode } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { AdminMediaUpload } from '../components/AdminMediaUpload'
+import { AdminLocaleEmptyNote, AdminLocaleTabs, type AdminEditLocale } from '../components/AdminLocaleTabs'
 import { AdminSaveActions, draftStatus, takeUnpublished } from '../AdminSaveActions'
 import { adminFetchBizSupport, adminFetchBusinessHubCards, adminPutBizSupport, adminPutBusinessHubCards, type SaveMode } from '../../../services/api'
 import type { BusinessHubCardsDocument } from '../../business/businessHubCardsTypes'
@@ -684,6 +685,7 @@ export function AdminBizSupportPage() {
   const [savedAt, setSavedAt] = useState('')
   const [savedMode, setSavedMode] = useState<SaveMode | ''>('')
   const [unpublished, setUnpublished] = useState(false)
+  const [editLocale, setEditLocale] = useState<AdminEditLocale>('ko')
   const [hubDoc, setHubDoc] = useState<BusinessHubCardsDocument | null>(null)
 
   const load = useCallback(async () => {
@@ -720,7 +722,7 @@ export function AdminBizSupportPage() {
     setDoc((prev) => (prev ? { ...prev, fields } : prev))
   }
 
-  const patchMenu = (key: string, patch: { label?: string; target?: string; tabs?: string }) => {
+  const patchMenu = (key: string, patch: { label?: string; labelEn?: string; target?: string; tabs?: string }) => {
     setDoc((prev) => (prev ? { ...prev, menu: prev.menu.map((item) => (item.key === key ? { ...item, ...patch } : item)) } : prev))
   }
 
@@ -870,12 +872,21 @@ export function AdminBizSupportPage() {
           <h1 className="admin-page__title">{pageTitle}</h1>
         </div>
         <div className="admin-page__actions">
-          <a className="admin-btn" href={previewHref(tab, intro.id)} target="_blank" rel="noopener noreferrer">미리보기</a>
+          <AdminLocaleTabs value={editLocale} onChange={setEditLocale} />
+          <a
+            className="admin-btn"
+            href={`${editLocale === 'en' ? '/en' : ''}${previewHref(tab, intro.id)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            미리보기
+          </a>
           <AdminSaveActions saving={saving} onSave={(mode) => void onSave(mode)} />
         </div>
       </div>
       {error ? <p className="admin-banner admin-banner--error">{error}</p> : null}
       {draftStatus(unpublished, savedAt, savedMode) ? <p className="admin-panel__foot">{draftStatus(unpublished, savedAt, savedMode)}</p> : null}
+      <AdminLocaleEmptyNote locale={editLocale} />
       {tab === 'common' ? (
         <div className="biz-stack">
           {commonRanked.some((row) => row.id === 'common:menu') ? <section className="admin-panel" style={{ order: commonOrder('common:menu') }}>
@@ -888,7 +899,17 @@ export function AdminBizSupportPage() {
                   <div className="admin-form-grid">
                     <label className="admin-field">
                       <span className="admin-field__label">메뉴명</span>
-                      <input className="admin-input" value={row.label || MENU_LABEL[row.key] || ''} onChange={(e) => patchMenu(row.key, { label: e.target.value })} />
+                      <input
+                        className="admin-input"
+                        value={
+                          editLocale === 'en'
+                            ? row.labelEn || ''
+                            : row.label || MENU_LABEL[row.key] || ''
+                        }
+                        onChange={(e) =>
+                          patchMenu(row.key, editLocale === 'en' ? { labelEn: e.target.value } : { label: e.target.value })
+                        }
+                      />
                     </label>
                     <label className="admin-field">
                       <span className="admin-field__label">연결 페이지</span>

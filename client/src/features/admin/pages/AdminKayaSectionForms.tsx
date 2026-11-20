@@ -176,6 +176,7 @@ export function AdminKayaSectionForms({
   onHeroImage,
   finance,
   setFinance,
+  editLocale = 'ko',
 }: {
   tab: TabId
   doc: KayaPagesDocument
@@ -185,14 +186,23 @@ export function AdminKayaSectionForms({
   onHeroImage: (url: string) => void
   finance: FinancialReportsDocument | null
   setFinance: (next: FinancialReportsDocument) => void
+  editLocale?: 'ko' | 'en'
 }) {
   const fields = doc.fields
-  const text = (key: string) => fields[key] ?? ''
+  const localeKey = (key: string) => {
+    if (editLocale !== 'en') return key
+    if (key.endsWith('En') || key.endsWith('Ko') || key.endsWith('On') || key.endsWith('Order') || key.endsWith('Mode') || key.endsWith('Side') || key === 'intro.bg' || key === 'intro.align') {
+      return key
+    }
+    return `${key}.en`
+  }
+  const text = (key: string) => fields[localeKey(key)] ?? ''
+  const setLocaleField = (key: string, value: string) => setField(localeKey(key), value)
 
-  if (tab === 'intro') return <IntroForm text={text} setField={setField} doc={doc} setDoc={setDoc} heroImage={heroImage} onHeroImage={onHeroImage} />
-  if (tab === 'greet') return <GreetForm text={text} setField={setField} setDoc={setDoc} doc={doc} heroImage={heroImage} onHeroImage={onHeroImage} />
-  if (tab === 'location') return <LocationForm text={text} setField={setField} />
-  return <TransForm text={text} setField={setField} doc={doc} setDoc={setDoc} heroImage={heroImage} onHeroImage={onHeroImage} finance={finance} setFinance={setFinance} />
+  if (tab === 'intro') return <IntroForm text={text} setField={setLocaleField} doc={doc} setDoc={setDoc} heroImage={heroImage} onHeroImage={onHeroImage} />
+  if (tab === 'greet') return <GreetForm text={text} setField={setLocaleField} setDoc={setDoc} doc={doc} heroImage={heroImage} onHeroImage={onHeroImage} />
+  if (tab === 'location') return <LocationForm text={text} setField={setLocaleField} />
+  return <TransForm text={text} setField={setLocaleField} doc={doc} setDoc={setDoc} heroImage={heroImage} onHeroImage={onHeroImage} finance={finance} setFinance={setFinance} />
 }
 
 function HeroUpload({ heroImage, onHeroImage }: { heroImage: string; onHeroImage: (url: string) => void }) {

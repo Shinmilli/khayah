@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { AdminMediaUpload } from '../components/AdminMediaUpload'
+import { AdminLocaleEmptyNote, AdminLocaleTabs, type AdminEditLocale } from '../components/AdminLocaleTabs'
 import {
   DEFAULT_PAGE_HERO_BANNERS,
   PAGE_HERO_BANNER_HINTS,
@@ -23,6 +24,7 @@ export function AdminPageBannersPage() {
   const [savedAt, setSavedAt] = useState('')
   const [savedMode, setSavedMode] = useState<SaveMode | ''>('')
   const [unpublished, setUnpublished] = useState(false)
+  const [editLocale, setEditLocale] = useState<AdminEditLocale>('ko')
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -79,13 +81,18 @@ export function AdminPageBannersPage() {
           </p>
         </div>
         <div className="admin-page__actions">
-          <a className="admin-btn" href="/about/khayah" target="_blank" rel="noopener noreferrer">미리보기</a>
+          <AdminLocaleTabs value={editLocale} onChange={setEditLocale} />
+          <a className="admin-btn" href={editLocale === 'en' ? '/en/about/khayah' : '/about/khayah'} target="_blank" rel="noopener noreferrer">미리보기</a>
           <AdminSaveActions saving={saving || loading} onSave={(mode) => void save(mode)} />
         </div>
       </div>
 
       {error ? <p className="admin-banner admin-banner--error">{error}</p> : null}
       {draftStatus(unpublished, savedAt, savedMode) ? <p className="admin-panel__foot">{draftStatus(unpublished, savedAt, savedMode)}</p> : null}
+      <AdminLocaleEmptyNote locale={editLocale} />
+      {editLocale === 'en' ? (
+        <p className="admin-panel__foot">페이지 배너 이미지는 국문·영문 화면이 함께 씁니다.</p>
+      ) : null}
 
       <section className="admin-page-banners" aria-label="구역별 페이지 배너">
         {PAGE_HERO_BANNER_KEYS.map((key) => (

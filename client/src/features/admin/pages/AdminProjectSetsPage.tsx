@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { AdminMediaUpload } from '../components/AdminMediaUpload'
+import { AdminLocaleEmptyNote, AdminLocaleTabs, type AdminEditLocale } from '../components/AdminLocaleTabs'
 import { AdminSaveActions, draftStatus, takeUnpublished } from '../AdminSaveActions'
 import { adminFetchProjectSets, adminPutProjectSets, type SaveMode } from '../../../services/api'
 import { resetProjectSetsCache } from '../../projects/useProjectSets'
@@ -117,6 +118,7 @@ export function AdminProjectSetsPage() {
   const [savedAt, setSavedAt] = useState('')
   const [savedMode, setSavedMode] = useState<SaveMode | ''>('')
   const [unpublished, setUnpublished] = useState(false)
+  const [editLocale, setEditLocale] = useState<AdminEditLocale>('ko')
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -207,13 +209,34 @@ export function AdminProjectSetsPage() {
           <h1 className="admin-page__title">{TABS.find((item) => item.id === tab)?.title}</h1>
         </div>
         <div className="admin-page__actions">
-          <a className="admin-btn" href={tab === 'domestic' ? '/business/domestic/projects' : tab === 'overseas' ? '/business/overseas/projects' : tab === 'education' ? '/business/overseas/education/projects' : tab === 'volunteer' ? '/business/overseas/volunteer/projects' : tab === 'research' ? '/business/advocacy/projects' : '/business/domestic/projects'} target="_blank" rel="noopener noreferrer">미리보기</a>
+          <AdminLocaleTabs value={editLocale} onChange={setEditLocale} />
+          <a
+            className="admin-btn"
+            href={`${editLocale === 'en' ? '/en' : ''}${
+              tab === 'domestic'
+                ? '/business/domestic/projects'
+                : tab === 'overseas'
+                  ? '/business/overseas/projects'
+                  : tab === 'education'
+                    ? '/business/overseas/education/projects'
+                    : tab === 'volunteer'
+                      ? '/business/overseas/volunteer/projects'
+                      : tab === 'research'
+                        ? '/business/advocacy/projects'
+                        : '/business/domestic/projects'
+            }`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            미리보기
+          </a>
           <AdminSaveActions saving={saving} onSave={(mode) => void onSave(mode)} />
         </div>
       </div>
       {tab === 'sets' ? <p className="admin-callout">국내·해외·연구 진행사업을 한 곳에서 입력합니다. 사업 하나 = 사업 세트 하나이며, 비운 영역은 화면에서 빠집니다.</p> : null}
       {error ? <p className="admin-banner admin-banner--error">{error}</p> : null}
       {draftStatus(unpublished, savedAt, savedMode) ? <p className="admin-panel__foot">{draftStatus(unpublished, savedAt, savedMode)}</p> : null}
+      <AdminLocaleEmptyNote locale={editLocale} />
       {tab !== 'sets' ? (
         <PageTab
           doc={doc}

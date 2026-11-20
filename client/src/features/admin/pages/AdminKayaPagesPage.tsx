@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { AdminOrgPanel } from './AdminOrgPanel'
 import { AdminKayaSectionForms } from './AdminKayaSectionForms'
+import { AdminLocaleEmptyNote, AdminLocaleTabs, type AdminEditLocale } from '../components/AdminLocaleTabs'
 import { AdminSaveActions, draftStatus, takeUnpublished } from '../AdminSaveActions'
 import { adminFetchFinancialReports, adminFetchKayaPages, adminFetchPageHeroBanners, adminPutFinancialReports, adminPutKayaPages, adminPutPageHeroBanners, type SaveMode } from '../../../services/api'
 import type { FinancialReportsDocument } from '../../financial-report/financialReportTypes'
@@ -35,7 +36,7 @@ export function AdminKayaPagesPage() {
   const [savedAt, setSavedAt] = useState('')
   const [savedMode, setSavedMode] = useState<SaveMode | ''>('')
   const [unpublished, setUnpublished] = useState(false)
-  const [orgLocale, setOrgLocale] = useState<'ko' | 'en'>('ko')
+  const [editLocale, setEditLocale] = useState<AdminEditLocale>('ko')
   const [hero, setHero] = useState<PageHeroBannersDocument | null>(null)
   const [finance, setFinance] = useState<FinancialReportsDocument | null>(null)
 
@@ -107,18 +108,31 @@ export function AdminKayaPagesPage() {
           <h1 className="admin-page__title">{label} 관리</h1>
         </div>
         <div className="admin-page__actions">
-          {tab === 'org' ? (
-            <div className="admin-org__lang" role="group" aria-label="언어">
-              <button type="button" className={orgLocale === 'ko' ? 'is-on' : undefined} onClick={() => setOrgLocale('ko')}>국문</button>
-              <button type="button" className={orgLocale === 'en' ? 'is-on' : undefined} onClick={() => setOrgLocale('en')}>영문</button>
-            </div>
-          ) : null}
-          <a className="admin-btn" href={tab === 'greet' ? '/about/greeting' : tab === 'org' ? '/about/org-chart' : tab === 'trans' ? '/about/transparency' : tab === 'location' ? '/about/location' : '/about/khayah'} target="_blank" rel="noopener noreferrer">미리보기</a>
+          <AdminLocaleTabs value={editLocale} onChange={setEditLocale} />
+          <a
+            className="admin-btn"
+            href={`${editLocale === 'en' ? '/en' : ''}${
+              tab === 'greet'
+                ? '/about/greeting'
+                : tab === 'org'
+                  ? '/about/org-chart'
+                  : tab === 'trans'
+                    ? '/about/transparency'
+                    : tab === 'location'
+                      ? '/about/location'
+                      : '/about/khayah'
+            }`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            미리보기
+          </a>
           <AdminSaveActions saving={saving} onSave={(mode) => void onSave(mode)} />
         </div>
       </div>
       {error ? <p className="admin-banner admin-banner--error">{error}</p> : null}
       {draftStatus(unpublished, savedAt, savedMode) ? <p className="admin-panel__foot">{draftStatus(unpublished, savedAt, savedMode)}</p> : null}
+      {tab !== 'org' ? <AdminLocaleEmptyNote locale={editLocale} /> : null}
 
       {tab === 'intro' || tab === 'greet' || tab === 'trans' || tab === 'location' ? (
         <AdminKayaSectionForms
@@ -130,6 +144,7 @@ export function AdminKayaPagesPage() {
           onHeroImage={(url) => setHero((prev) => (prev ? { ...prev, images: { ...prev.images, khayah: url } } : prev))}
           finance={finance}
           setFinance={setFinance}
+          editLocale={editLocale}
         />
       ) : null}
 
@@ -138,7 +153,7 @@ export function AdminKayaPagesPage() {
           doc={doc}
           setDoc={setDoc}
           setField={setField}
-          locale={orgLocale}
+          locale={editLocale}
           saving={saving}
           onSave={() => void onSave('publish')}
           onDraft={() => void onSave('draft')}

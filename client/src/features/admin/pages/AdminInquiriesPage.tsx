@@ -1,4 +1,5 @@
 import { type FormEvent, useCallback, useEffect, useState } from 'react'
+import { AdminLocaleEmptyNote, AdminLocaleTabs, type AdminEditLocale } from '../components/AdminLocaleTabs'
 import { adminDeleteInquiry, adminFetchInquiries, adminUpdateInquiry } from '../../../services/api'
 import type { InquiryAdmin } from '../../../types/inquiry'
 import { Pagination } from '../../../components/Pagination'
@@ -37,6 +38,7 @@ export function AdminInquiriesPage() {
   const [contactInput, setContactInput] = useState('')
   const [appliedName, setAppliedName] = useState('')
   const [appliedContact, setAppliedContact] = useState('')
+  const [editLocale, setEditLocale] = useState<AdminEditLocale>('ko')
 
   const perPage = 20
 
@@ -136,7 +138,14 @@ export function AdminInquiriesPage() {
             확인할 수 있습니다.
           </p>
         </div>
+        <div className="admin-page__actions">
+          <AdminLocaleTabs value={editLocale} onChange={setEditLocale} />
+        </div>
       </div>
+      <AdminLocaleEmptyNote locale={editLocale} />
+      {editLocale === 'en' ? (
+        <p className="admin-panel__foot">고객 문의는 언어 구분 없이 접수됩니다. FAQ 영문은 FAQ 관리에서 편집합니다.</p>
+      ) : null}
 
       <form className="admin-inquiry-filter" onSubmit={onSearch}>
         <label className="admin-field">
