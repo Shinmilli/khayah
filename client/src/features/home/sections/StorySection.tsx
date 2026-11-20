@@ -52,7 +52,7 @@ function KoreanHomeStories() {
             {featured.expertPhoto ? (
               <img src={featured.expertPhoto} alt="" />
             ) : (
-              <div className="home-stories__slot">대표 사례 현장 사진</div>
+              <div className="home-stories__slot" aria-hidden="true" />
             )}
           </div>
           <div className="home-stories__lead-copy">
@@ -66,7 +66,7 @@ function KoreanHomeStories() {
         </Link>
       ) : (
         <Link className="home-stories__lead" to={storyListHref(localize, '변화의 이야기')}>
-          <div className="home-stories__lead-photo home-stories__slot">대표 사례 현장 사진</div>
+          <div className="home-stories__lead-photo home-stories__slot" aria-hidden="true" />
           <div className="home-stories__lead-copy">
             <span className="is-change">대표 사례 · 변화의 이야기</span>
             <p className="home-stories__lead-title">[대표 사례 제목: 변화가 드러나는 한 문장]</p>
@@ -79,7 +79,7 @@ function KoreanHomeStories() {
         {rest.map((story) => (
           <Link key={story.id} to={storyDetailHref(localize, story)}>
             <div className="home-stories__thumb">
-              {story.expertPhoto ? <img src={story.expertPhoto} alt="" /> : <div className="home-stories__slot">썸네일</div>}
+              {story.expertPhoto ? <img src={story.expertPhoto} alt="" /> : <div className="home-stories__slot" aria-hidden="true" />}
             </div>
             <p>
               <span className={story.category === '전문가 이야기' ? 'is-expert' : 'is-change'}>[{story.category}]</span>{' '}
@@ -91,7 +91,7 @@ function KoreanHomeStories() {
           const expert = rest.length + index === 1
           return (
             <div key={`empty-${index}`} className="home-stories__card">
-              <div className="home-stories__thumb home-stories__slot">썸네일 (가로형, 글자 없는 사진)</div>
+              <div className="home-stories__thumb home-stories__slot" aria-hidden="true" />
               <p>
                 <span className={expert ? 'is-expert' : 'is-change'}>{expert ? '[전문가 이야기]' : '[변화의 이야기]'}</span>{' '}
                 {expert ? '[전문가 이름] [평가 한 문장]' : '[국가] [변화가 드러나는 제목]'}

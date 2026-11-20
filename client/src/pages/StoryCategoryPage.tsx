@@ -38,6 +38,12 @@ function publishedStories(stories: ImpactStory[] | undefined): ImpactStory[] {
   return (stories ?? []).filter((story) => story.consent && story.title.trim())
 }
 
+function formatStoryDate(ymd: string | undefined): string {
+  const raw = (ymd ?? '').trim()
+  if (!/^\d{4}-\d{2}-\d{2}/.test(raw)) return '—'
+  return raw.slice(0, 10)
+}
+
 function storyIdFromPath(pathname: string): string {
   const pathKey = normalizePathKey(pathname)
   if (!pathKey.startsWith(`${PATH.newsStories}/`)) return ''
@@ -111,38 +117,38 @@ export function StoryCategoryPage() {
         <div className="section">
           <div className="section_wrapper clearfix">
             <div className="column one">
-              <article className="story-detail">
-                <div className="story-detail__hero">
-                  <div className="story-detail__photo">
-                    {detail.expertPhoto ? <img src={detail.expertPhoto} alt="" /> : <span>현장 사진</span>}
-                  </div>
-                  <div className="story-detail__intro">
-                    <span className={`impact-pill${isExpert ? ' is-expert' : ''}`}>{detail.category}</span>
-                    {detail.project ? <p className="story-detail__project">{detail.project}</p> : null}
-                    <h1 className="story-detail__title">{detail.title}</h1>
-                    {isExpert ? (
-                      <>
-                        {detail.expertLine ? <p className="impact-quote-text">“{detail.expertLine}”</p> : null}
-                        {detail.expertName || detail.expertOrg || detail.expertField ? (
-                          <div className="impact-person">
-                            {detail.expertPhoto ? <img src={detail.expertPhoto} alt="" /> : <i />}
-                            <div>
-                              <b>{detail.expertName}</b>
-                              <span>{[detail.expertOrg, detail.expertField].filter(Boolean).join(' · ')}</span>
-                            </div>
-                          </div>
-                        ) : null}
-                      </>
-                    ) : null}
-                    {detail.body?.trim() ? (
-                      <div className="story-detail__body" dangerouslySetInnerHTML={{ __html: detail.body }} />
-                    ) : null}
-                  </div>
+              <article className="impact-story story-detail">
+                <div className="impact-story__photo">
+                  {detail.expertPhoto ? <img src={detail.expertPhoto} alt="" /> : null}
                 </div>
-                {!isExpert ? <StoryChangeSteps steps={steps} /> : null}
-                <p className="story-detail__back">
-                  <Link to={listTo}>{detail.category} 목록으로</Link>
-                </p>
+                <div className="impact-story__copy">
+                  <span className={`impact-pill${isExpert ? ' is-expert' : ''}`}>
+                    {isExpert ? detail.category : detail.project?.trim() || detail.category}
+                  </span>
+                  {isExpert && detail.project?.trim() ? <p className="story-detail__project">{detail.project}</p> : null}
+                  <h1 className="story-detail__title">{detail.title}</h1>
+                  {isExpert ? (
+                    <>
+                      {detail.expertLine ? <p className="impact-quote-text">“{detail.expertLine}”</p> : null}
+                      {detail.expertName || detail.expertOrg || detail.expertField ? (
+                        <div className="impact-person">
+                          {detail.expertPhoto ? <img src={detail.expertPhoto} alt="" /> : <i />}
+                          <div>
+                            <b>{detail.expertName}</b>
+                            <span>{[detail.expertOrg, detail.expertField].filter(Boolean).join(' · ')}</span>
+                          </div>
+                        </div>
+                      ) : null}
+                    </>
+                  ) : null}
+                  {detail.body?.trim() ? (
+                    <div className="impact-story__body" dangerouslySetInnerHTML={{ __html: detail.body }} />
+                  ) : null}
+                  {!isExpert && steps.length > 0 ? <StoryChangeSteps steps={steps} variant="compact" /> : null}
+                  <p className="story-detail__back">
+                    <Link to={listTo}>{detail.category} 목록으로</Link>
+                  </p>
+                </div>
               </article>
             </div>
           </div>
@@ -195,29 +201,32 @@ export function StoryCategoryPage() {
                 <div className="archive-board">
                   <div className="archive-board__head" aria-hidden="true">
                     <span>{messages.pages.archive.colTitle}</span>
-                    <span className="archive-board__head-action">{messages.pages.archive.colAction}</span>
+                    <span>{messages.pages.archive.colDate}</span>
                   </div>
-                  <ul className="press-archive__list" aria-label={st.listAria}>
+                  <ul className="story-archive__list" aria-label={st.listAria}>
                     {paged.items.map((story) => {
                       const blurb = storyTeaser(story, 120)
+                      const ymd = formatStoryDate(story.publishedAt)
                       return (
-                        <li key={story.id} className="press-archive__item">
-                          <div className="press-archive__text">
-                            <p className="press-archive__headline">
-                              <span className="press-archive__source-wrap" aria-label={story.category}>
-                                <span className="press-archive__bracket">[</span>
-                                <span className="press-archive__source">{story.category}</span>
-                                <span className="press-archive__bracket">]</span>
-                              </span>{' '}
-                              <span className="press-archive__article-title">{story.title}</span>
-                            </p>
-                            {blurb ? <p className="press-archive__summary">{blurb}</p> : null}
-                          </div>
+                        <li key={story.id} className="story-archive__row">
                           <Link
-                            className="press-archive__btn"
+                            className="story-archive__link"
                             to={localize(`/news/stories/${encodeURIComponent(story.id)}`)}
                           >
-                            글 바로보기
+                            <div className="story-archive__text">
+                              <p className="story-archive__headline">
+                                <span className="story-archive__cat-wrap" aria-label={story.category}>
+                                  <span className="story-archive__bracket">[</span>
+                                  <span className="story-archive__cat">{story.category}</span>
+                                  <span className="story-archive__bracket">]</span>
+                                </span>{' '}
+                                <span className="story-archive__item-title">{story.title}</span>
+                              </p>
+                              {blurb ? <p className="story-archive__summary">{blurb}</p> : null}
+                            </div>
+                            <time className="story-archive__date" dateTime={ymd === '—' ? undefined : ymd}>
+                              {ymd}
+                            </time>
                           </Link>
                         </li>
                       )

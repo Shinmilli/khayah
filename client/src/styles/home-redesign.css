@@ -3188,20 +3188,7 @@
 }
 
 .home-stories__slot {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 16px;
-  box-sizing: border-box;
-  color: #5c5650;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.5;
-  text-align: center;
-}
-
-.home-stories__thumb.home-stories__slot {
-  font-size: 13px;
+  background: #ddd9d3;
 }
 
 .home-stories__thumb {

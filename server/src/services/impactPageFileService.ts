@@ -36,7 +36,7 @@ export type ImpactPageDocument = {
   projects: Array<{ id: string; name: string; base: string; field: string; period: string; status: '진행' | '종료' }>
   years: Array<{ year: string; rows: Array<{ name: string; real: string; total: string; child: string; youth: string; teacher: string }> }>
   evals: Array<{ id: string; program: string; axis: string; mode: string; value: string; itemName: string; meta: string }>
-  stories: Array<{ id: string; category: '변화의 이야기' | '전문가 이야기'; title: string; project: string; featured: boolean; consent: boolean; body: string; before: string; intervention: string; after: string; evidence: string; sustainability: string; expertName: string; expertOrg: string; expertField: string; expertLine: string; expertPhoto: string }>
+  stories: Array<{ id: string; category: '변화의 이야기' | '전문가 이야기'; title: string; project: string; featured: boolean; consent: boolean; publishedAt: string; body: string; before: string; intervention: string; after: string; evidence: string; sustainability: string; expertName: string; expertOrg: string; expertField: string; expertLine: string; expertPhoto: string }>
 }
 
 const SECTION_IDS = ['stories', 'education', 'experts', 'overview', 'offices', 'programs'] as const
@@ -54,6 +54,12 @@ function flag(value: unknown, fallback: boolean): boolean {
   return typeof value === 'boolean' ? value : fallback
 }
 
+function ymd(value: unknown, fallback = ''): string {
+  const raw = typeof value === 'string' ? value.trim() : ''
+  if (/^\d{4}-\d{2}-\d{2}/.test(raw)) return raw.slice(0, 10)
+  return fallback
+}
+
 export function defaultImpactPageDocument(): ImpactPageDocument {
   return {
     version: 1,
@@ -65,7 +71,7 @@ export function defaultImpactPageDocument(): ImpactPageDocument {
       '카야는 사람의 가능성에 주목합니다. 배움의 기회를 넓히고 스스로 성장할 수 있는 힘을 키우며, 그 변화가 지역사회로 이어지도록 함께합니다.',
     sections: [
       { id: 'stories', order: 1, enabled: true },
-      { id: 'education', order: 2, enabled: false },
+      { id: 'education', order: 2, enabled: true },
       { id: 'experts', order: 3, enabled: true },
       { id: 'overview', order: 4, enabled: true },
       { id: 'offices', order: 5, enabled: true },
@@ -137,6 +143,7 @@ export function defaultImpactPageDocument(): ImpactPageDocument {
         project: '테스트 사업',
         featured: true,
         consent: true,
+        publishedAt: '2026-11-20',
         body: '임팩트 스토리 본문 테스트입니다. 관리자에서 수정·삭제할 수 있습니다.',
         before: 'Before 테스트',
         intervention: 'Intervention 테스트',
@@ -253,6 +260,7 @@ export function normalizeImpactPage(body: unknown): ImpactPageDocument {
       project: text(row.project, '', 80),
       featured: flag(row.featured, false),
       consent: flag(row.consent, false),
+      publishedAt: ymd(row.publishedAt),
       body: text(row.body, '', 4000),
       before: text(row.before, '', 500),
       intervention: text(row.intervention, '', 500),

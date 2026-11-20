@@ -52,6 +52,8 @@ export type ImpactStory = {
   project: string
   featured: boolean
   consent: boolean
+  /** YYYY-MM-DD — 목록 등록일 */
+  publishedAt: string
   body: string
   before: string
   intervention: string

@@ -25,6 +25,14 @@ const SAMPLE_YEAR_ROWS = [
   { name: '중복 제외 전체 참여자 (본부 입력)', real: '[0,000]', total: '', child: '', youth: '', teacher: '' },
 ]
 
+function todayYmd(): string {
+  const d = new Date()
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${y}-${m}-${day}`
+}
+
 function blankStory() {
   return {
     id: newId('s'),
@@ -33,6 +41,7 @@ function blankStory() {
     project: '',
     featured: true,
     consent: false,
+    publishedAt: todayYmd(),
     body: '',
     before: '',
     intervention: '',
@@ -86,6 +95,7 @@ function withVisibleSamples(doc: ImpactPageDocument): ImpactPageDocument {
             project: '테스트 사업',
             featured: true,
             consent: true,
+            publishedAt: '2026-11-20',
             body: '임팩트 스토리 본문 테스트입니다. 관리자에서 수정·삭제할 수 있습니다.',
             before: 'Before 테스트',
             intervention: 'Intervention 테스트',
@@ -98,12 +108,12 @@ function withVisibleSamples(doc: ImpactPageDocument): ImpactPageDocument {
 }
 
 const SECTION_NOTE: Record<string, string> = {
-  stories: "아래 ⑤ 스토리 관리의 '변화의 이야기' 대표 글 1개",
-  education: '평가 자료 전까지 숨김',
-  experts: "아래 ⑤ 스토리 관리의 '전문가 이야기' 대표 글 최대 3개",
-  overview: '숫자 카드 5개. 값은 아래 한눈에 보기에서 입력',
-  offices: '아래 본부·지부 내용이 이 섹션에 나옵니다',
-  programs: '진행사업 페이지 6곳 연결 카드 (고정)',
+  stories: "⑤ 스토리 관리 › 변화의 이야기 대표 글 1개 (Before~Sustainability)",
+  education: '④ 평가 결과의 세 축 카드. 값 없어도 시안 틀 표시',
+  experts: "⑤ 스토리 관리 › 전문가 이야기 대표 글 최대 3개",
+  overview: '한눈에 보기 숫자 5개 + 연도 필터·추이 차트. 값 없으면 —',
+  offices: '본부·지부 카드 3곳. 숫자 없으면 — 명/곳',
+  programs: '진행사업·소셜비즈니스 6곳 연결 카드 (고정)',
 }
 
 function csvCell(value: string): string {
@@ -1062,7 +1072,7 @@ export function AdminImpactPage() {
                       value={row.axis}
                       onChange={(e) => setDoc({ ...doc, evals: doc.evals.map((item, itemIndex) => (itemIndex === index ? { ...item, axis: e.target.value } : item)) })}
                     >
-                      {['배우는 힘', '살아가는 힘', '선택하는 힘'].map((axis) => (
+                      {['배우는 힘', '살아가는 힘', '선택하고 나아가는 힘'].map((axis) => (
                         <option key={axis} value={axis}>
                           {axis}
                         </option>
@@ -1223,6 +1233,15 @@ export function AdminImpactPage() {
                   <span className="admin-field__label">연결 사업</span>
                   <input className="admin-input" value={row.project} onChange={(e) => setStory({ project: e.target.value })} />
                 </label>
+                <label className="admin-field">
+                  <span className="admin-field__label">등록일</span>
+                  <input
+                    className="admin-input"
+                    type="date"
+                    value={row.publishedAt || todayYmd()}
+                    onChange={(e) => setStory({ publishedAt: e.target.value })}
+                  />
+                </label>
                 <div className="admin-field">
                   <span className="admin-field__label">대표 글로 지정</span>
                   <div className="admin-segmented admin-segmented--tight">
@@ -1240,29 +1259,39 @@ export function AdminImpactPage() {
                 </div>
               </div>
               {row.category === '변화의 이야기' ? (
-                <div className="impact-story-steps">
-                  <p className="admin-field__label">변화 단계 (Before → Sustainability)</p>
-                  {(
-                    [
-                      ['before', 'Before'],
-                      ['intervention', 'Intervention'],
-                      ['after', 'After'],
-                      ['evidence', 'Evidence'],
-                      ['sustainability', 'Sustainability'],
-                    ] as const
-                  ).map(([key, label]) => (
-                    <label key={key} className="admin-field">
-                      <span className="admin-field__label">{label}</span>
-                      <textarea
-                        className="admin-input"
-                        rows={3}
-                        aria-label={`변화의 이야기 ${label}`}
-                        value={row[key] ?? ''}
-                        onChange={(e) => setStory({ [key]: e.target.value })}
-                      />
-                    </label>
-                  ))}
-                </div>
+                <>
+                  <div className="admin-field admin-field--full" style={{ marginTop: 12 }}>
+                    <AdminMediaUpload
+                      label="현장 사진 (동의 확인 후 게재)"
+                      variant="image"
+                      value={row.expertPhoto || null}
+                      onChange={(url) => setStory({ expertPhoto: url ?? '' })}
+                    />
+                  </div>
+                  <div className="impact-story-steps">
+                    <p className="admin-field__label">변화 단계 (시안: Before → Sustainability)</p>
+                    {(
+                      [
+                        ['before', 'Before · 참여 전 상황'],
+                        ['intervention', 'Intervention · 카야가 함께한 활동'],
+                        ['after', 'After · 달라진 점'],
+                        ['evidence', 'Evidence · 평가·인터뷰 근거'],
+                        ['sustainability', 'Sustainability · 이어지는 모습'],
+                      ] as const
+                    ).map(([key, label]) => (
+                      <label key={key} className="admin-field">
+                        <span className="admin-field__label">{label}</span>
+                        <textarea
+                          className="admin-input"
+                          rows={3}
+                          aria-label={`변화의 이야기 ${label}`}
+                          value={row[key] ?? ''}
+                          onChange={(e) => setStory({ [key]: e.target.value })}
+                        />
+                      </label>
+                    ))}
+                  </div>
+                </>
               ) : (
                 <div className="admin-form-grid">
                   <label className="admin-field">
