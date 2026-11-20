@@ -186,7 +186,8 @@ export const PAGES_STATIC_KO: Record<string, StaticPage> = {
     </article>
   <section class="gm-closing">
     <div class="gm-closing__inner">
-      <p class="gm-closing__text"><span class="gm-closing__mark" aria-hidden="true">&ldquo;</span><span data-k="greet.quote" data-k-mode="html">카야와 함께,<br />진정한 나눔과 변화가 이어지기를.</span><span class="gm-closing__mark gm-closing__mark--close" aria-hidden="true">&rdquo;</span></p>
+      <span class="gm-closing__mark" aria-hidden="true">&ldquo;</span>
+      <p class="gm-closing__text" data-k="greet.quote" data-k-mode="html">카야와 함께,<br />진정한 나눔과 변화가 이어지기를.</p>
       <div class="gm-closing__rule" aria-hidden="true"></div>
     </div>
   </section>

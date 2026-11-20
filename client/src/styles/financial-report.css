@@ -401,7 +401,7 @@
 }
 
 .financial-report__tables[hidden] {
-  display: none;
+  display: none !important;
 }
 
 @media (max-width: 900px) {

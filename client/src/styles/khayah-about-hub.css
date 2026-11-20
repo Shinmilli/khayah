@@ -265,7 +265,7 @@
 }
 
 .kaya-intro__photo[hidden] {
-  display: none;
+  display: none !important;
 }
 
 .kaya-intro__copy {
@@ -313,6 +313,10 @@
   border-radius: 6px;
   background: #f6f1e6;
   color: #2f2b28;
+}
+
+.kaya-chip[hidden] {
+  display: none !important;
 }
 
 .kaya-chip--on {
@@ -384,6 +388,10 @@
 .kaya-id {
   display: flex;
   gap: 22px;
+}
+
+.kaya-id[hidden] {
+  display: none !important;
 }
 
 .kaya-id__no {

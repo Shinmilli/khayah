@@ -307,19 +307,12 @@
 }
 
 .greeting-modern .gm-closing__mark {
-  display: inline;
-  color: #fff;
-  font-size: 0.72em;
+  display: block;
+  font-size: 56px;
+  line-height: 0.6;
+  color: #e58a9e;
   font-weight: 800;
-  line-height: 0;
-  vertical-align: 0.42em;
-  margin-right: 0.15em;
-}
-
-.greeting-modern .gm-closing__mark--close {
-  margin-right: 0;
-  margin-left: 0.12em;
-  vertical-align: -0.05em;
+  margin: 0 0 26px;
 }
 
 .page-content-wrapper .page-body .greeting-modern .gm-closing__text {

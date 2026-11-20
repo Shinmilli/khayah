@@ -416,6 +416,11 @@
   border-top: 1px solid #e6e6e3;
 }
 
+.dom-pr[hidden],
+.dedu-row[hidden] {
+  display: none !important;
+}
+
 .dom-pr:first-of-type {
   border-top: 0;
 }

@@ -340,7 +340,7 @@
 }
 
 .page-content-wrapper .page-body a.sbiz-btn[hidden] {
-  display: none;
+  display: none !important;
 }
 
 .page-content-wrapper .page-body a.sbiz-btn {

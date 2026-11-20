@@ -124,7 +124,11 @@ export function applyBizFields(root: HTMLElement, doc: BizSupportDocument, accou
 
   root.querySelectorAll<HTMLElement>('.dom-pr, .dedu-row').forEach((el) => {
     const title = el.querySelector('h3')?.textContent?.trim() ?? ''
-    el.hidden = !title
+    if (!title) {
+      el.remove()
+      return
+    }
+    el.hidden = false
   })
   root.querySelectorAll<HTMLElement>('.voln-steps > div').forEach((el) => {
     const name = el.querySelector('span')?.textContent?.trim() ?? ''

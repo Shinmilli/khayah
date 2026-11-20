@@ -126,8 +126,8 @@ function ProjectCard({ item }: { item: ProjectSet }) {
       ) : null}
 
       {facts.length > 0 ? (
-        <div className="pset-facts">
-          {facts.map((fact) => (
+        <div className={`pset-facts pset-facts--${Math.min(facts.length, 3)}`}>
+          {facts.slice(0, 3).map((fact) => (
             <div key={`${fact.value}-${fact.label}`} className="pset-fact">
               {filled(fact.value) ? (
                 <span className="pset-fact-value">
@@ -144,8 +144,8 @@ function ProjectCard({ item }: { item: ProjectSet }) {
       {filled(item.note) ? <p className="pset-note">{item.note}</p> : null}
 
       {photos.length > 0 ? (
-        <div className="pset-photos">
-          {photos.map((photo) => (
+        <div className={`pset-photos pset-photos--${Math.min(photos.length, 3)}`}>
+          {photos.slice(0, 3).map((photo) => (
             <img key={photo.src} src={photo.src} alt={photo.alt} />
           ))}
         </div>

@@ -493,6 +493,27 @@ function IntroForm({
                       <textarea className="admin-input" rows={2} value={text(idBodyKey(index))} onChange={(e) => setField(idBodyKey(index), e.target.value)} />
                     </label>
                   </div>
+                  {index >= 3 ? (
+                    <button
+                      type="button"
+                      className="biz-x"
+                      aria-label="항목 삭제"
+                      onClick={() => {
+                        const fields = { ...doc.fields }
+                        for (let cursor = index; cursor < ID_COUNT - 1; cursor += 1) {
+                          fields[`intro.id.${cursor}.name`] = fields[`intro.id.${cursor + 1}.name`] ?? ''
+                          fields[`intro.id.${cursor}.point`] = fields[`intro.id.${cursor + 1}.point`] ?? ''
+                          fields[`intro.id.${cursor}.body`] = fields[`intro.id.${cursor + 1}.body`] ?? ''
+                        }
+                        fields[`intro.id.${ID_COUNT - 1}.name`] = ''
+                        fields[`intro.id.${ID_COUNT - 1}.point`] = ''
+                        fields[`intro.id.${ID_COUNT - 1}.body`] = ''
+                        setDoc({ ...doc, fields })
+                      }}
+                    >
+                      ×
+                    </button>
+                  ) : null}
                 </div>
               ))}
             </div>

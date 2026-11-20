@@ -57,19 +57,27 @@ export function applyKayaFields(root: HTMLElement, doc: KayaPagesDocument) {
   }
   const chips = [...root.querySelectorAll<HTMLElement>('.kaya-chips .kaya-chip')]
   chips.forEach((chip) => {
-    chip.hidden = !chip.textContent?.trim()
+    const keep = Boolean(chip.textContent?.trim())
     chip.classList.remove('kaya-chip--on')
+    if (!keep) {
+      chip.remove()
+      return
+    }
+    chip.hidden = false
   })
-  chips.find((chip) => !chip.hidden)?.classList.add('kaya-chip--on')
+  root.querySelector<HTMLElement>('.kaya-chips .kaya-chip')?.classList.add('kaya-chip--on')
   let shown = 0
-  root.querySelectorAll<HTMLElement>('.kaya-id').forEach((article) => {
+  ;[...root.querySelectorAll<HTMLElement>('.kaya-id')].forEach((article) => {
     const point = article.querySelector<HTMLElement>('.kaya-id__point')
     if (point) point.hidden = !point.textContent?.trim()
     const name = article.querySelector('h3')?.textContent?.trim() ?? ''
     const body = article.querySelector('p:not(.kaya-id__en):not(.kaya-id__point)')?.textContent?.trim() ?? ''
     const keep = Boolean(name || body || point?.textContent?.trim())
-    article.hidden = !keep
-    if (!keep) return
+    if (!keep) {
+      article.remove()
+      return
+    }
+    article.hidden = false
     shown += 1
     const no = article.querySelector('.kaya-id__no')
     if (no) no.textContent = String(shown).padStart(2, '0')
