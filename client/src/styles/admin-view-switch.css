@@ -146,8 +146,18 @@ html.has-admin-switch .site-header__mobile {
 
 html.admin-menu-open,
 body.admin-menu-open {
-  overflow: hidden;
+  overflow: hidden !important;
   overscroll-behavior: none;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html.admin-menu-open::-webkit-scrollbar,
+body.admin-menu-open::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+  background: transparent;
 }
 
 body.admin-menu-open .admin-shell,
@@ -157,10 +167,22 @@ body.admin-menu-open .admin-app__content {
   overflow: hidden !important;
   overscroll-behavior: none;
   touch-action: none;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 body.admin-menu-open .admin-app__sidebar,
 body.admin-menu-open .admin-app__nav {
   touch-action: pan-y;
   overscroll-behavior: contain;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+body.admin-menu-open .admin-app__sidebar::-webkit-scrollbar,
+body.admin-menu-open .admin-app__nav::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+  background: transparent;
 }

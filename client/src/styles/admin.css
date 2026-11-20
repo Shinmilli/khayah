@@ -3984,8 +3984,8 @@ textarea.admin-input {
 .sup-admin__list {
   flex: 1 1 340px;
   min-width: 0;
-  position: sticky;
-  top: 12px;
+  /* sticky 제거: 스크롤 시 아래 편집칸(교체·미리보기)이 목록 위로 겹치던 원인 */
+  position: static;
   background: #fff;
   border: 1px solid #ece6e3;
   border-radius: 14px;
