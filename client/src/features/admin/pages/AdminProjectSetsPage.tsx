@@ -181,7 +181,6 @@ export function AdminProjectSetsPage() {
   }
 
   const selected = doc.items.find((item) => item.id === selectedId) ?? null
-  const editorRef = useRef<HTMLDivElement | null>(null)
 
   const openEditor = (id: string) => {
     setSelectedId(id)

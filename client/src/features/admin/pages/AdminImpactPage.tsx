@@ -5,7 +5,13 @@ import { AdminLocaleEmptyNote, AdminLocaleTabs, type AdminEditLocale } from '../
 import { AdminSaveActions, draftStatus, takeUnpublished } from '../AdminSaveActions'
 import { adminFetchImpactPage, adminPutImpactPage, type SaveMode } from '../../../services/api'
 import { resetImpactPageCache } from '../../impact/useImpactPage'
-import { IMPACT_SECTION_LABEL, type ImpactPageDocument } from '../../impact/impactPageTypes'
+import {
+  IMPACT_SECTION_LABEL,
+  type ImpactOffice,
+  type ImpactPageDocument,
+  type ImpactStory,
+  type ImpactYear,
+} from '../../impact/impactPageTypes'
 
 function newId(prefix: string): string {
   return `${prefix}-${typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID().slice(0, 8) : Date.now()}`
@@ -50,9 +56,11 @@ function withVisibleSamples(doc: ImpactPageDocument): ImpactPageDocument {
           { id: 'p-quake', name: '만달레이 대지진 긴급구호', base: '미얀마 지부', field: '긴급구호', period: '2025.04~08', status: '종료' },
           { id: 'p-labor', name: '외국인 노동자 기술·창업 교육', base: '한국 본부', field: '국내 (지난 사업)', period: '2018~2020', status: '종료' },
         ],
-    years: doc.years?.length
-      ? doc.years
-      : ['2024', '2025', '2026'].map((year) => ({ year, rows: SAMPLE_YEAR_ROWS.map((row) => ({ ...row })) })),
+    years: dedupeYears(
+      doc.years?.length
+        ? doc.years
+        : ['2024', '2025', '2026'].map((year) => ({ year, rows: SAMPLE_YEAR_ROWS.map((row) => ({ ...row })) })),
+    ),
     evals: doc.evals?.length
       ? doc.evals
       : [
@@ -79,15 +87,212 @@ const SECTION_NOTE: Record<string, string> = {
   programs: '진행사업 페이지 6곳 연결 카드 (고정)',
 }
 
+function csvCell(value: string): string {
+  return `"${String(value ?? '').replace(/"/g, '""')}"`
+}
+
 function csvOf(doc: ImpactPageDocument): string {
-  const lines = ['구분,이름,값,단위,설명']
-  for (const row of doc.homeNumbers) lines.push(['메인 숫자', row.label, row.value, row.unit, row.note].map(csvCell).join(','))
-  for (const row of doc.overview) lines.push(['한눈에 보기', row.label, row.value, row.unit, row.note].map(csvCell).join(','))
+  const lines = ['구분,이름,값,단위,설명,비고']
+  for (const row of doc.homeNumbers) {
+    lines.push(['메인 숫자', row.label, row.value, row.unit, row.note, ''].map(csvCell).join(','))
+  }
+  for (const row of doc.overview) {
+    lines.push(['한눈에 보기', row.label, row.value, row.unit, row.note, ''].map(csvCell).join(','))
+  }
+  for (const row of doc.projects ?? []) {
+    lines.push(['사업', row.name, row.period, row.field, row.base, row.status].map(csvCell).join(','))
+  }
+  for (const office of doc.offices ?? []) {
+    lines.push(['본부·지부', office.name, office.status, office.kicker, office.programs, office.body].map(csvCell).join(','))
+  }
+  for (const year of doc.years ?? []) {
+    for (const row of year.rows) {
+      lines.push(['연도별 실적', year.year, row.name, row.real, row.total, `${row.child}|${row.youth}|${row.teacher}`].map(csvCell).join(','))
+    }
+  }
+  for (const row of doc.evals ?? []) {
+    lines.push(['평가', row.program, row.value, row.axis, row.itemName, `${row.mode}|${row.meta}`].map(csvCell).join(','))
+  }
+  for (const row of doc.stories ?? []) {
+    lines.push(['스토리', row.title, row.project, row.category, row.featured ? '대표' : '', row.consent ? '동의' : ''].map(csvCell).join(','))
+  }
   return `\uFEFF${lines.join('\n')}`
 }
 
-function csvCell(value: string): string {
-  return `"${value.replace(/"/g, '""')}"`
+function parseCsvLine(line: string): string[] {
+  const cells: string[] = []
+  let cur = ''
+  let inQuotes = false
+  for (let i = 0; i < line.length; i += 1) {
+    const ch = line[i]
+    if (inQuotes) {
+      if (ch === '"' && line[i + 1] === '"') {
+        cur += '"'
+        i += 1
+      } else if (ch === '"') {
+        inQuotes = false
+      } else {
+        cur += ch
+      }
+      continue
+    }
+    if (ch === '"') {
+      inQuotes = true
+      continue
+    }
+    if (ch === ',') {
+      cells.push(cur)
+      cur = ''
+      continue
+    }
+    cur += ch
+  }
+  cells.push(cur)
+  return cells
+}
+
+function dedupeYears(years: ImpactYear[]): ImpactYear[] {
+  const byYear = new Map<string, ImpactYear>()
+  for (const item of years) {
+    const key = (item.year || '').trim() || '미정'
+    const prev = byYear.get(key)
+    if (!prev) {
+      byYear.set(key, { year: key === '미정' ? item.year : key, rows: item.rows.map((row) => ({ ...row })) })
+      continue
+    }
+    byYear.set(key, { ...prev, rows: [...prev.rows, ...item.rows.map((row) => ({ ...row }))] })
+  }
+  return Array.from(byYear.values())
+}
+
+function applyImpactCsv(doc: ImpactPageDocument, text: string): ImpactPageDocument {
+  const rows = text
+    .replace(/^\uFEFF/, '')
+    .split(/\r?\n/)
+    .slice(1)
+    .filter(Boolean)
+    .map(parseCsvLine)
+  const next: ImpactPageDocument = {
+    ...doc,
+    homeNumbers: doc.homeNumbers.map((item) => ({ ...item })),
+    overview: doc.overview.map((item) => ({ ...item })),
+    projects: (doc.projects ?? []).map((item) => ({ ...item })),
+    offices: (doc.offices ?? []).map((item) => ({ ...item })),
+    years: dedupeYears((doc.years ?? []).map((item) => ({ ...item, rows: item.rows.map((row) => ({ ...row })) }))),
+    evals: (doc.evals ?? []).map((item) => ({ ...item })),
+    stories: (doc.stories ?? []).map((item) => ({ ...item })),
+  }
+
+  for (const cells of rows) {
+    const [group, a = '', b = '', c = '', d = '', e = ''] = cells
+    if (group === '메인 숫자' || group === '한눈에 보기') {
+      const list = group === '메인 숫자' ? next.homeNumbers : next.overview
+      const found = list.find((item) => item.label === a)
+      if (!found) continue
+      found.value = b || found.value
+      found.unit = c || found.unit
+      found.note = d || found.note
+      continue
+    }
+    if (group === '사업') {
+      const found = next.projects.find((item) => item.name === a)
+      if (found) {
+        found.period = b || found.period
+        found.field = c || found.field
+        found.base = d || found.base
+        found.status = e === '종료' ? '종료' : e === '진행' ? '진행' : found.status
+      } else if (a.trim()) {
+        next.projects.push({ id: newId('p'), name: a, period: b, field: c, base: d, status: e === '종료' ? '종료' : '진행' })
+      }
+      continue
+    }
+    if (group === '본부·지부') {
+      const found = next.offices.find((item) => item.name === a || item.kicker === c)
+      if (found) {
+        found.name = a || found.name
+        found.status = b || found.status
+        found.kicker = c || found.kicker
+        found.programs = d || found.programs
+        found.body = e || found.body
+      } else if (a.trim()) {
+        next.offices.push({
+          name: a,
+          kicker: c || '지부',
+          status: b,
+          body: e,
+          photo: '',
+          photoAlt: '',
+          people: '',
+          partners: '',
+          programs: d,
+        })
+      }
+      continue
+    }
+    if (group === '연도별 실적') {
+      const yearKey = a.trim() || '미정'
+      let year = next.years.find((item) => item.year === yearKey)
+      if (!year) {
+        year = { year: yearKey, rows: [] }
+        next.years.push(year)
+      }
+      const [child = '', youth = '', teacher = ''] = e.split('|')
+      const found = year.rows.find((row) => row.name === b)
+      if (found) {
+        found.real = c || found.real
+        found.total = d || found.total
+        found.child = child || found.child
+        found.youth = youth || found.youth
+        found.teacher = teacher || found.teacher
+      } else if (b.trim()) {
+        year.rows.push({ name: b, real: c, total: d, child, youth, teacher })
+      }
+      continue
+    }
+    if (group === '평가') {
+      const found = next.evals.find((item) => item.program === a && item.itemName === d)
+      const [mode = '', meta = ''] = e.split('|')
+      if (found) {
+        found.value = b || found.value
+        found.axis = c || found.axis
+        found.itemName = d || found.itemName
+        found.mode = mode || found.mode
+        found.meta = meta || found.meta
+      } else if (a.trim()) {
+        next.evals.push({
+          id: newId('e'),
+          program: a,
+          value: b,
+          axis: c || '배우는 힘',
+          itemName: d,
+          mode: mode || '사전 · 사후',
+          meta,
+        })
+      }
+      continue
+    }
+    if (group === '스토리') {
+      const found = next.stories.find((item) => item.title === a)
+      const category = c === '전문가 이야기' ? '전문가 이야기' : '변화의 이야기'
+      if (found) {
+        found.project = b || found.project
+        found.category = category
+        found.featured = d === '대표' ? true : d === '' ? found.featured : false
+        found.consent = e === '동의' ? true : e === '' ? found.consent : false
+      } else if (a.trim()) {
+        next.stories.push({
+          ...blankStory(),
+          title: a,
+          project: b,
+          category,
+          featured: d === '대표',
+          consent: e === '동의',
+        })
+      }
+    }
+  }
+  next.years = dedupeYears(next.years)
+  return next
 }
 
 export function AdminImpactPage() {
@@ -100,13 +305,21 @@ export function AdminImpactPage() {
   const [unpublished, setUnpublished] = useState(false)
   const [editLocale, setEditLocale] = useState<AdminEditLocale>('ko')
   const [yearOn, setYearOn] = useState(0)
+  const [editingYears, setEditingYears] = useState(false)
+  const [editingOffices, setEditingOffices] = useState(false)
+  const [editingEvals, setEditingEvals] = useState(false)
+  const [editingStoryId, setEditingStoryId] = useState<string | null>(null)
 
   const load = useCallback(async () => {
     setLoading(true)
     setError('')
     try {
       const loaded = takeUnpublished(await adminFetchImpactPage())
-      const next = withVisibleSamples(loaded.doc)
+      const next = withVisibleSamples({
+        ...loaded.doc,
+        years: dedupeYears(loaded.doc.years ?? []),
+      })
+      next.years = dedupeYears(next.years ?? [])
       setUnpublished(loaded.unpublished)
       setDoc(next)
       const yearIndex = next.years.findIndex((year) => year.year === '2025')
@@ -199,20 +412,10 @@ export function AdminImpactPage() {
                 const file = event.target.files?.[0]
                 event.target.value = ''
                 if (!file) return
-                const text = (await file.text()).replace(/^\uFEFF/, '')
-                const rows = text.split(/\r?\n/).slice(1).filter(Boolean)
-                const next = { ...doc, homeNumbers: doc.homeNumbers.map((item) => ({ ...item })), overview: doc.overview.map((item) => ({ ...item })) }
-                for (const line of rows) {
-                  const cells = line.split(',').map((cell) => cell.replace(/^"|"$/g, '').replace(/""/g, '"'))
-                  const [group, label, value, unit, note] = cells
-                  const list = group === '메인 숫자' ? next.homeNumbers : group === '한눈에 보기' ? next.overview : null
-                  const found = list?.find((item) => item.label === label)
-                  if (!found) continue
-                  found.value = value ?? found.value
-                  found.unit = unit ?? found.unit
-                  found.note = note ?? found.note
-                }
+                const text = await file.text()
+                const next = applyImpactCsv(doc, text)
                 setDoc(next)
+                setYearOn((prev) => Math.min(prev, Math.max(next.years.length - 1, 0)))
               }}
             />
           </label>
@@ -385,85 +588,128 @@ export function AdminImpactPage() {
             ))}
           </tbody>
         </table>
-        <details id="impact-offices" className="admin-fold">
+        <details id="impact-offices" className="admin-fold" open>
           <summary className="admin-fold__summary">본부·지부 관리</summary>
-        <table className="admin-sheet">
-          <thead>
-            <tr>
-              <th>이름</th>
-              <th>구분</th>
-              <th>상태</th>
-              <th>하는 일</th>
-            </tr>
-          </thead>
-          <tbody>
-            {doc.offices.map((office) => (
-              <tr key={office.kicker}>
-                <td>{office.name}</td>
-                <td>{office.kicker}</td>
-                <td>{office.status}</td>
-                <td>{office.programs}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        {doc.offices.map((office, index) => (
-          <div key={office.kicker} className="admin-item">
-            <AdminMediaUpload
-              label={`${office.name} 현장 사진`}
-              variant="image"
-              value={office.photo || null}
-              onChange={(url) =>
-                setDoc({
-                  ...doc,
-                  offices: doc.offices.map((item, itemIndex) => (itemIndex === index ? { ...item, photo: url ?? '' } : item)),
-                })
-              }
-            />
-            <div className="admin-form-grid">
-              <label className="admin-field">
-                <span className="admin-field__label">상태</span>
-                <input
-                  className="admin-input"
-                  value={office.status}
-                  onChange={(e) =>
-                    setDoc({
-                      ...doc,
-                      offices: doc.offices.map((item, itemIndex) => (itemIndex === index ? { ...item, status: e.target.value } : item)),
-                    })
-                  }
-                />
-              </label>
-              <label className="admin-field">
-                <span className="admin-field__label">하는 일</span>
-                <input
-                  className="admin-input"
-                  value={office.programs}
-                  onChange={(e) =>
-                    setDoc({
-                      ...doc,
-                      offices: doc.offices.map((item, itemIndex) => (itemIndex === index ? { ...item, programs: e.target.value } : item)),
-                    })
-                  }
-                />
-              </label>
-              <label className="admin-field admin-field--full">
-                <span className="admin-field__label">본문</span>
-                <textarea
-                  className="admin-input"
-                  rows={3}
-                  value={office.body}
-                  onChange={(e) =>
-                    setDoc({
-                      ...doc,
-                      offices: doc.offices.map((item, itemIndex) => (itemIndex === index ? { ...item, body: e.target.value } : item)),
-                    })
-                  }
-                />
-              </label>
-            </div>
+          <div className="admin-panel__tools" style={{ margin: '10px 0 0' }}>
+            <button type="button" className="biz-edit" onClick={() => setEditingOffices((v) => !v)}>
+              {editingOffices ? '표로 보기' : '수정'}
+            </button>
+            {editingOffices ? (
+              <button
+                type="button"
+                className="admin-btn admin-btn--sm"
+                onClick={() =>
+                  setDoc({
+                    ...doc,
+                    offices: [
+                      ...doc.offices,
+                      {
+                        name: '',
+                        kicker: '지부',
+                        status: '',
+                        body: '',
+                        photo: '',
+                        photoAlt: '',
+                        people: '',
+                        partners: '',
+                        programs: '',
+                      },
+                    ],
+                  })
+                }
+              >
+                + 본부·지부
+              </button>
+            ) : null}
           </div>
-        ))}
+          <table className="admin-sheet impact-sheet">
+            <thead>
+              <tr>
+                <th>이름</th>
+                <th>구분</th>
+                <th>상태</th>
+                <th>하는 일</th>
+                <th>인원</th>
+                <th>파트너</th>
+                {editingOffices ? <th>본문·사진</th> : null}
+                {editingOffices ? <th></th> : null}
+              </tr>
+            </thead>
+            <tbody>
+              {doc.offices.map((office, index) => {
+                const patchOffice = (partial: Partial<ImpactOffice>) =>
+                  setDoc({
+                    ...doc,
+                    offices: doc.offices.map((item, itemIndex) => (itemIndex === index ? { ...item, ...partial } : item)),
+                  })
+                return (
+                  <tr key={`${office.kicker}-${index}`}>
+                    <td>
+                      {editingOffices ? (
+                        <input className="admin-input" value={office.name} aria-label="이름" onChange={(e) => patchOffice({ name: e.target.value })} />
+                      ) : (
+                        office.name || '—'
+                      )}
+                    </td>
+                    <td>
+                      {editingOffices ? (
+                        <input className="admin-input" value={office.kicker} aria-label="구분" onChange={(e) => patchOffice({ kicker: e.target.value })} />
+                      ) : (
+                        office.kicker || '—'
+                      )}
+                    </td>
+                    <td>
+                      {editingOffices ? (
+                        <input className="admin-input" value={office.status} aria-label="상태" onChange={(e) => patchOffice({ status: e.target.value })} />
+                      ) : (
+                        office.status || '—'
+                      )}
+                    </td>
+                    <td>
+                      {editingOffices ? (
+                        <input className="admin-input" value={office.programs} aria-label="하는 일" onChange={(e) => patchOffice({ programs: e.target.value })} />
+                      ) : (
+                        office.programs || '—'
+                      )}
+                    </td>
+                    <td>
+                      {editingOffices ? (
+                        <input className="admin-input" value={office.people} aria-label="인원" onChange={(e) => patchOffice({ people: e.target.value })} />
+                      ) : (
+                        office.people || '—'
+                      )}
+                    </td>
+                    <td>
+                      {editingOffices ? (
+                        <input className="admin-input" value={office.partners} aria-label="파트너" onChange={(e) => patchOffice({ partners: e.target.value })} />
+                      ) : (
+                        office.partners || '—'
+                      )}
+                    </td>
+                    {editingOffices ? (
+                      <td>
+                        <textarea className="admin-input" rows={2} value={office.body} aria-label="본문" onChange={(e) => patchOffice({ body: e.target.value })} />
+                        <AdminMediaUpload
+                          compact
+                          label={`${office.name || '본부·지부'} 사진`}
+                          variant="image"
+                          value={office.photo || null}
+                          onChange={(url) => patchOffice({ photo: url ?? '' })}
+                        />
+                      </td>
+                    ) : null}
+                    {editingOffices ? (
+                      <td>
+                        <button type="button" className="admin-btn admin-btn--sm" onClick={() => setDoc({ ...doc, offices: doc.offices.filter((_, itemIndex) => itemIndex !== index) })}>
+                          삭제
+                        </button>
+                      </td>
+                    ) : null}
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
         </details>
       </section>
 
@@ -473,125 +719,385 @@ export function AdminImpactPage() {
           <div className="admin-panel__tools">
             <div className="admin-segmented" role="tablist" aria-label="연도">
               {(doc.years ?? []).map((year, index) => (
-                <button key={`${year.year}-${index}`} type="button" className={`admin-segmented__btn${index === Math.min(yearOn, doc.years.length - 1) ? ' admin-segmented__btn--active' : ''}`} onClick={() => setYearOn(index)}>{year.year || '연도'}</button>
+                <button
+                  key={`${year.year}-${index}`}
+                  type="button"
+                  className={`admin-segmented__btn${index === Math.min(yearOn, doc.years.length - 1) ? ' admin-segmented__btn--active' : ''}`}
+                  onClick={() => setYearOn(index)}
+                >
+                  {year.year || '연도'}
+                </button>
               ))}
             </div>
-            <button type="button" className="admin-btn" onClick={() => setDoc({ ...doc, years: [...(doc.years ?? []), { year: String(new Date().getFullYear()), rows: [] }] })}>+ 연도</button>
+            <button
+              type="button"
+              className="admin-btn"
+              onClick={() => {
+                const used = new Set((doc.years ?? []).map((item) => item.year.trim()))
+                let nextYear = new Date().getFullYear()
+                while (used.has(String(nextYear))) nextYear += 1
+                setDoc({ ...doc, years: [...(doc.years ?? []), { year: String(nextYear), rows: [] }] })
+                setYearOn((doc.years ?? []).length)
+                setEditingYears(true)
+              }}
+            >
+              + 연도
+            </button>
+            <button type="button" className="biz-edit" onClick={() => setEditingYears((v) => !v)}>
+              {editingYears ? '표로 보기' : '수정'}
+            </button>
           </div>
         </div>
-        {(doc.years ?? []).map((year, yearIndex) => yearIndex !== Math.min(yearOn, doc.years.length - 1) ? null : (
-          <div key={`${year.year}-${yearIndex}`}>
-            <div className="admin-panel__tools" style={{ marginBottom: 12 }}>
-              <label className="admin-field" style={{ flex: '0 1 160px' }}>
-                <span className="admin-field__label">연도</span>
-                <input className="admin-input" value={year.year} onChange={(e) => setDoc({ ...doc, years: doc.years.map((item, index) => (index === yearIndex ? { ...item, year: e.target.value } : item)) })} />
-              </label>
-              <button type="button" className="admin-btn admin-btn--sm" onClick={() => setDoc({ ...doc, years: doc.years.map((item, index) => (index === yearIndex ? { ...item, rows: [...item.rows, { name: '', real: '', total: '', child: '', youth: '', teacher: '' }] } : item)) })}>+ 행</button>
-            </div>
-            <table className="admin-sheet">
-              <thead><tr><th>사업</th><th>실인원</th><th>연인원</th><th>아동·청소년</th><th>청년</th><th>교사</th></tr></thead>
-              <tbody>
-                {year.rows.map((row, rowIndex) => {
-                  const totalRow = row.name.includes('중복 제외')
-                  const setCell = (key: 'name' | 'real' | 'total' | 'child' | 'youth' | 'teacher', value: string) =>
-                    setDoc({ ...doc, years: doc.years.map((item, index) => index === yearIndex ? { ...item, rows: item.rows.map((line, lineIndex) => lineIndex === rowIndex ? { ...line, [key]: value } : line) } : item) })
-                  return (
-                    <tr key={rowIndex}>
-                      <td>
-                        <input className="admin-input" value={row.name} aria-label="사업" onChange={(e) => setCell('name', e.target.value)} />
-                      </td>
-                      {totalRow ? (
-                        <td colSpan={5}>
-                          <input className="admin-input" value={row.real} aria-label="전체 참여자" onChange={(e) => setCell('real', e.target.value)} />
+        {(doc.years ?? []).map((year, yearIndex) =>
+          yearIndex !== Math.min(yearOn, doc.years.length - 1) ? null : (
+            <div key={`${year.year}-${yearIndex}`} className="impact-year-panel">
+              {editingYears ? (
+                <div className="admin-panel__tools impact-year-tools">
+                  <label className="admin-field" style={{ flex: '0 1 140px' }}>
+                    <span className="admin-field__label">연도명</span>
+                    <input
+                      className="admin-input"
+                      value={year.year}
+                      onChange={(e) => {
+                        const value = e.target.value.trim()
+                        const dup = doc.years.some((item, index) => index !== yearIndex && item.year.trim() === value)
+                        if (dup) {
+                          window.alert('같은 연도가 이미 있습니다.')
+                          return
+                        }
+                        setDoc({
+                          ...doc,
+                          years: doc.years.map((item, index) => (index === yearIndex ? { ...item, year: e.target.value } : item)),
+                        })
+                      }}
+                    />
+                  </label>
+                  <button
+                    type="button"
+                    className="admin-btn admin-btn--sm"
+                    onClick={() =>
+                      setDoc({
+                        ...doc,
+                        years: doc.years.map((item, index) =>
+                          index === yearIndex ? { ...item, rows: [...item.rows, { name: '', real: '', total: '', child: '', youth: '', teacher: '' }] } : item,
+                        ),
+                      })
+                    }
+                  >
+                    + 행
+                  </button>
+                  <button
+                    type="button"
+                    className="admin-btn admin-btn--sm"
+                    onClick={() => {
+                      const next = doc.years.filter((_, index) => index !== yearIndex)
+                      setDoc({ ...doc, years: next })
+                      setYearOn((prev) => Math.min(prev, Math.max(next.length - 1, 0)))
+                    }}
+                  >
+                    이 연도 삭제
+                  </button>
+                </div>
+              ) : null}
+              <table className="admin-sheet impact-sheet">
+                <thead>
+                  <tr>
+                    <th>사업</th>
+                    <th>실인원</th>
+                    <th>연인원</th>
+                    <th>아동·청소년</th>
+                    <th>청년</th>
+                    <th>교사</th>
+                    {editingYears ? <th></th> : null}
+                  </tr>
+                </thead>
+                <tbody>
+                  {year.rows.map((row, rowIndex) => {
+                    const totalRow = row.name.includes('중복 제외')
+                    const setCell = (key: 'name' | 'real' | 'total' | 'child' | 'youth' | 'teacher', value: string) =>
+                      setDoc({
+                        ...doc,
+                        years: doc.years.map((item, index) =>
+                          index === yearIndex
+                            ? { ...item, rows: item.rows.map((line, lineIndex) => (lineIndex === rowIndex ? { ...line, [key]: value } : line)) }
+                            : item,
+                        ),
+                      })
+                    return (
+                      <tr key={rowIndex}>
+                        <td>
+                          {editingYears ? (
+                            <input className="admin-input" value={row.name} aria-label="사업" onChange={(e) => setCell('name', e.target.value)} />
+                          ) : (
+                            row.name || '—'
+                          )}
                         </td>
-                      ) : (
-                        (['real', 'total', 'child', 'youth', 'teacher'] as const).map((key) => (
-                          <td key={key}>
-                            <input className="admin-input" value={row[key]} aria-label={key} onChange={(e) => setCell(key, e.target.value)} />
+                        {totalRow ? (
+                          <td colSpan={5}>
+                            {editingYears ? (
+                              <input className="admin-input" value={row.real} aria-label="전체 참여자" onChange={(e) => setCell('real', e.target.value)} />
+                            ) : (
+                              row.real || '—'
+                            )}
                           </td>
-                        ))
-                      )}
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
-          </div>
-        ))}
+                        ) : (
+                          (['real', 'total', 'child', 'youth', 'teacher'] as const).map((key) => (
+                            <td key={key}>
+                              {editingYears ? (
+                                <input className="admin-input" value={row[key]} aria-label={key} onChange={(e) => setCell(key, e.target.value)} />
+                              ) : (
+                                row[key] || '—'
+                              )}
+                            </td>
+                          ))
+                        )}
+                        {editingYears ? (
+                          <td>
+                            <button
+                              type="button"
+                              className="admin-btn admin-btn--sm"
+                              onClick={() =>
+                                setDoc({
+                                  ...doc,
+                                  years: doc.years.map((item, index) =>
+                                    index === yearIndex ? { ...item, rows: item.rows.filter((_, lineIndex) => lineIndex !== rowIndex) } : item,
+                                  ),
+                                })
+                              }
+                            >
+                              삭제
+                            </button>
+                          </td>
+                        ) : null}
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
+          ),
+        )}
       </section>
 
       <section id="impact-evals" className="admin-panel">
         <div className="admin-panel__head">
           <h2 className="admin-panel__title">④ 평가 결과</h2>
-          <button type="button" className="admin-btn" onClick={() => setDoc({ ...doc, evals: [...(doc.evals ?? []), { id: newId('e'), program: '', axis: '배우는 힘', mode: '사전 · 사후', value: '', itemName: '', meta: '' }] })}>+ 평가 추가</button>
-        </div>
-        {(doc.evals ?? []).map((row, index) => (
-          <div key={row.id} className="impact-block">
-            <div className="impact-quad">
-              <label className="admin-field"><span className="admin-field__label">연결 사업</span><input className="admin-input" value={row.program} onChange={(e) => setDoc({ ...doc, evals: doc.evals.map((item, itemIndex) => itemIndex === index ? { ...item, program: e.target.value } : item) })} /></label>
-              <div className="admin-field">
-                <span className="admin-field__label">교육 축</span>
-                <div className="admin-segmented">
-                  {(['배우는 힘', '살아가는 힘', '선택하는 힘'] as const).map((axis) => (
-                    <button key={axis} type="button" className={`admin-segmented__btn${row.axis === axis ? ' admin-segmented__btn--active' : ''}`} onClick={() => setDoc({ ...doc, evals: doc.evals.map((item, itemIndex) => itemIndex === index ? { ...item, axis } : item) })}>{axis}</button>
-                  ))}
-                </div>
-              </div>
-              <div className="admin-field">
-                <span className="admin-field__label">표시 방식</span>
-                <div className="admin-segmented">
-                  {(['사전 · 사후', '단일 수치(%)', '향상률(%p)'] as const).map((mode) => (
-                    <button key={mode} type="button" className={`admin-segmented__btn${row.mode === mode ? ' admin-segmented__btn--active' : ''}`} onClick={() => setDoc({ ...doc, evals: doc.evals.map((item, itemIndex) => itemIndex === index ? { ...item, mode } : item) })}>{mode}</button>
-                  ))}
-                </div>
-              </div>
-              <label className="admin-field"><span className="admin-field__label">값 · 단위</span><input className="admin-input" value={row.value} onChange={(e) => setDoc({ ...doc, evals: doc.evals.map((item, itemIndex) => itemIndex === index ? { ...item, value: e.target.value } : item) })} /></label>
-            </div>
-            <div className="impact-pair">
-              <label className="admin-field"><span className="admin-field__label">항목 이름 (화면 표시)</span><input className="admin-input" value={row.itemName} onChange={(e) => setDoc({ ...doc, evals: doc.evals.map((item, itemIndex) => itemIndex === index ? { ...item, itemName: e.target.value } : item) })} /></label>
-              <label className="admin-field"><span className="admin-field__label">대상 · 시점 · 응답률 · 도구</span><input className="admin-input" value={row.meta} onChange={(e) => setDoc({ ...doc, evals: doc.evals.map((item, itemIndex) => itemIndex === index ? { ...item, meta: e.target.value } : item) })} /></label>
-            </div>
+          <div className="admin-panel__tools">
+            <button type="button" className="biz-edit" onClick={() => setEditingEvals((v) => !v)}>
+              {editingEvals ? '표로 보기' : '수정'}
+            </button>
+            <button
+              type="button"
+              className="admin-btn"
+              onClick={() => {
+                setDoc({
+                  ...doc,
+                  evals: [...(doc.evals ?? []), { id: newId('e'), program: '', axis: '배우는 힘', mode: '사전 · 사후', value: '', itemName: '', meta: '' }],
+                })
+                setEditingEvals(true)
+              }}
+            >
+              + 평가 추가
+            </button>
           </div>
-        ))}
+        </div>
+        <table className="admin-sheet impact-sheet">
+          <thead>
+            <tr>
+              <th>연결 사업</th>
+              <th>교육 축</th>
+              <th>표시 방식</th>
+              <th>값 · 단위</th>
+              <th>항목 이름</th>
+              <th>대상 · 시점</th>
+              {editingEvals ? <th></th> : null}
+            </tr>
+          </thead>
+          <tbody>
+            {(doc.evals ?? []).map((row, index) => (
+              <tr key={row.id}>
+                <td>
+                  {editingEvals ? (
+                    <input
+                      className="admin-input"
+                      value={row.program}
+                      onChange={(e) => setDoc({ ...doc, evals: doc.evals.map((item, itemIndex) => (itemIndex === index ? { ...item, program: e.target.value } : item)) })}
+                    />
+                  ) : (
+                    row.program || '—'
+                  )}
+                </td>
+                <td>
+                  {editingEvals ? (
+                    <select
+                      className="admin-input"
+                      value={row.axis}
+                      onChange={(e) => setDoc({ ...doc, evals: doc.evals.map((item, itemIndex) => (itemIndex === index ? { ...item, axis: e.target.value } : item)) })}
+                    >
+                      {['배우는 힘', '살아가는 힘', '선택하는 힘'].map((axis) => (
+                        <option key={axis} value={axis}>
+                          {axis}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    row.axis || '—'
+                  )}
+                </td>
+                <td>
+                  {editingEvals ? (
+                    <select
+                      className="admin-input"
+                      value={row.mode}
+                      onChange={(e) => setDoc({ ...doc, evals: doc.evals.map((item, itemIndex) => (itemIndex === index ? { ...item, mode: e.target.value } : item)) })}
+                    >
+                      {['사전 · 사후', '단일 수치(%)', '향상률(%p)'].map((mode) => (
+                        <option key={mode} value={mode}>
+                          {mode}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    row.mode || '—'
+                  )}
+                </td>
+                <td>
+                  {editingEvals ? (
+                    <input
+                      className="admin-input"
+                      value={row.value}
+                      onChange={(e) => setDoc({ ...doc, evals: doc.evals.map((item, itemIndex) => (itemIndex === index ? { ...item, value: e.target.value } : item)) })}
+                    />
+                  ) : (
+                    row.value || '—'
+                  )}
+                </td>
+                <td>
+                  {editingEvals ? (
+                    <input
+                      className="admin-input"
+                      value={row.itemName}
+                      onChange={(e) => setDoc({ ...doc, evals: doc.evals.map((item, itemIndex) => (itemIndex === index ? { ...item, itemName: e.target.value } : item)) })}
+                    />
+                  ) : (
+                    row.itemName || '—'
+                  )}
+                </td>
+                <td>
+                  {editingEvals ? (
+                    <input
+                      className="admin-input"
+                      value={row.meta}
+                      onChange={(e) => setDoc({ ...doc, evals: doc.evals.map((item, itemIndex) => (itemIndex === index ? { ...item, meta: e.target.value } : item)) })}
+                    />
+                  ) : (
+                    row.meta || '—'
+                  )}
+                </td>
+                {editingEvals ? (
+                  <td>
+                    <button type="button" className="admin-btn admin-btn--sm" onClick={() => setDoc({ ...doc, evals: doc.evals.filter((item) => item.id !== row.id) })}>
+                      삭제
+                    </button>
+                  </td>
+                ) : null}
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </section>
 
       <section id="impact-stories" className="admin-panel">
         <div className="admin-panel__head">
           <h2 className="admin-panel__title">⑤ 스토리 관리 (게시판)</h2>
-          <button type="button" className="admin-btn" onClick={() => setDoc({ ...doc, stories: [...(doc.stories ?? []), { id: newId('s'), category: '변화의 이야기', title: '', project: '', featured: true, consent: false, body: '', before: '', intervention: '', after: '', evidence: '', sustainability: '', expertName: '', expertOrg: '', expertField: '', expertLine: '', expertPhoto: '' }] })}>+ 글쓰기</button>
+          <button
+            type="button"
+            className="admin-btn"
+            onClick={() => {
+              const next = blankStory()
+              setDoc({ ...doc, stories: [...(doc.stories ?? []), next] })
+              setEditingStoryId(next.id)
+            }}
+          >
+            + 글쓰기
+          </button>
         </div>
+        <table className="admin-sheet impact-sheet">
+          <thead>
+            <tr>
+              <th>카테고리</th>
+              <th>제목</th>
+              <th>연결 사업</th>
+              <th>대표</th>
+              <th>동의</th>
+              <th>순서 · 수정</th>
+            </tr>
+          </thead>
+          <tbody>
+            {(doc.stories ?? []).map((row) => (
+              <tr key={row.id} className={editingStoryId === row.id ? 'is-selected' : undefined}>
+                <td>{row.category}</td>
+                <td>{row.title || '(제목 없음)'}</td>
+                <td>{row.project || '—'}</td>
+                <td>{row.featured ? '지정' : '지정 안 함'}</td>
+                <td>{row.consent ? '확인' : '미확인'}</td>
+                <td>
+                  <button type="button" className="biz-edit" onClick={() => setEditingStoryId((id) => (id === row.id ? null : row.id))}>
+                    {editingStoryId === row.id ? '닫기' : '수정'}
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
         {(doc.stories ?? []).map((row, index) => {
-          const setStory = (partial: Partial<typeof row>) => setDoc({ ...doc, stories: doc.stories.map((item, itemIndex) => (itemIndex === index ? { ...item, ...partial } : item)) })
+          if (editingStoryId !== row.id) return null
+          const setStory = (partial: Partial<ImpactStory>) =>
+            setDoc({ ...doc, stories: doc.stories.map((item, itemIndex) => (itemIndex === index ? { ...item, ...partial } : item)) })
           return (
-            <div key={row.id} className="impact-block">
+            <div key={`edit-${row.id}`} className="impact-block impact-block--edit">
               <div className="impact-quad">
                 <div className="admin-field">
                   <span className="admin-field__label">카테고리</span>
                   <div className="admin-segmented">
                     {(['변화의 이야기', '전문가 이야기'] as const).map((category) => (
-                      <button key={category} type="button" className={`admin-segmented__btn${row.category === category ? ' admin-segmented__btn--active' : ''}`} onClick={() => setStory({ category })}>{category}</button>
+                      <button key={category} type="button" className={`admin-segmented__btn${row.category === category ? ' admin-segmented__btn--active' : ''}`} onClick={() => setStory({ category })}>
+                        {category}
+                      </button>
                     ))}
                   </div>
                 </div>
-                <label className="admin-field"><span className="admin-field__label">제목</span><input className="admin-input" value={row.title} onChange={(e) => setStory({ title: e.target.value })} /></label>
-                <label className="admin-field"><span className="admin-field__label">연결 사업</span><input className="admin-input" value={row.project} onChange={(e) => setStory({ project: e.target.value })} /></label>
+                <label className="admin-field">
+                  <span className="admin-field__label">제목</span>
+                  <input className="admin-input" value={row.title} onChange={(e) => setStory({ title: e.target.value })} />
+                </label>
+                <label className="admin-field">
+                  <span className="admin-field__label">연결 사업</span>
+                  <input className="admin-input" value={row.project} onChange={(e) => setStory({ project: e.target.value })} />
+                </label>
                 <div className="admin-field">
                   <span className="admin-field__label">대표 글로 지정</span>
                   <div className="admin-segmented">
-                    <button type="button" className={`admin-segmented__btn${row.featured ? ' admin-segmented__btn--active' : ''}`} onClick={() => setStory({ featured: true })}>지정</button>
-                    <button type="button" className={`admin-segmented__btn${!row.featured ? ' admin-segmented__btn--active' : ''}`} onClick={() => setStory({ featured: false })}>지정 안 함</button>
+                    <button type="button" className={`admin-segmented__btn${row.featured ? ' admin-segmented__btn--active' : ''}`} onClick={() => setStory({ featured: true })}>
+                      지정
+                    </button>
+                    <button type="button" className={`admin-segmented__btn${!row.featured ? ' admin-segmented__btn--active' : ''}`} onClick={() => setStory({ featured: false })}>
+                      지정 안 함
+                    </button>
                   </div>
                 </div>
               </div>
               {row.category === '변화의 이야기' ? (
                 <div className="impact-five">
-                  {([
-                    ['before', 'Before'],
-                    ['intervention', 'Intervention'],
-                    ['after', 'After'],
-                    ['evidence', 'Evidence'],
-                    ['sustainability', 'Sustainability'],
-                  ] as const).map(([key, label]) => (
+                  {(
+                    [
+                      ['before', 'Before'],
+                      ['intervention', 'Intervention'],
+                      ['after', 'After'],
+                      ['evidence', 'Evidence'],
+                      ['sustainability', 'Sustainability'],
+                    ] as const
+                  ).map(([key, label]) => (
                     <label key={key} className="admin-field">
                       <span className="admin-field__label">{label}</span>
                       <input className="admin-input" aria-label={`변화의 이야기 ${label}`} value={row[key] ?? ''} onChange={(e) => setStory({ [key]: e.target.value })} />
@@ -600,20 +1106,47 @@ export function AdminImpactPage() {
                 </div>
               ) : (
                 <div className="impact-pair">
-                  <label className="admin-field"><span className="admin-field__label">이름</span><input className="admin-input" value={row.expertName ?? ''} onChange={(e) => setStory({ expertName: e.target.value })} /></label>
-                  <label className="admin-field"><span className="admin-field__label">소속</span><input className="admin-input" value={row.expertOrg ?? ''} onChange={(e) => setStory({ expertOrg: e.target.value })} /></label>
-                  <label className="admin-field"><span className="admin-field__label">전문 분야</span><input className="admin-input" value={row.expertField ?? ''} onChange={(e) => setStory({ expertField: e.target.value })} /></label>
-                  <label className="admin-field"><span className="admin-field__label">평가 한두 문장</span><input className="admin-input" value={row.expertLine ?? ''} onChange={(e) => setStory({ expertLine: e.target.value })} /></label>
-                  <label className="admin-field admin-field--full"><span className="admin-field__label">본문</span><textarea className="admin-input" rows={3} value={row.body} onChange={(e) => setStory({ body: e.target.value })} /></label>
+                  <label className="admin-field">
+                    <span className="admin-field__label">이름</span>
+                    <input className="admin-input" value={row.expertName ?? ''} onChange={(e) => setStory({ expertName: e.target.value })} />
+                  </label>
+                  <label className="admin-field">
+                    <span className="admin-field__label">소속</span>
+                    <input className="admin-input" value={row.expertOrg ?? ''} onChange={(e) => setStory({ expertOrg: e.target.value })} />
+                  </label>
+                  <label className="admin-field">
+                    <span className="admin-field__label">전문 분야</span>
+                    <input className="admin-input" value={row.expertField ?? ''} onChange={(e) => setStory({ expertField: e.target.value })} />
+                  </label>
+                  <label className="admin-field">
+                    <span className="admin-field__label">평가 한두 문장</span>
+                    <input className="admin-input" value={row.expertLine ?? ''} onChange={(e) => setStory({ expertLine: e.target.value })} />
+                  </label>
+                  <label className="admin-field admin-field--full">
+                    <span className="admin-field__label">본문</span>
+                    <textarea className="admin-input" rows={3} value={row.body} onChange={(e) => setStory({ body: e.target.value })} />
+                  </label>
                   <div className="admin-field admin-field--full">
                     <AdminMediaUpload label="전문가 사진 (선택)" variant="image" value={row.expertPhoto || null} onChange={(url) => setStory({ expertPhoto: url ?? '' })} />
                   </div>
                 </div>
               )}
-              <label style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 14, fontSize: 14, fontWeight: 700, minHeight: 44 }}>
+              <label className="impact-consent">
                 <input type="checkbox" checked={row.consent} onChange={(e) => setStory({ consent: e.target.checked })} />
                 사진·인터뷰 게재 동의 확인 (체크해야 공개 가능)
               </label>
+              <div className="admin-panel__tools" style={{ marginTop: 10 }}>
+                <button
+                  type="button"
+                  className="admin-btn admin-btn--sm"
+                  onClick={() => {
+                    setDoc({ ...doc, stories: doc.stories.filter((item) => item.id !== row.id) })
+                    setEditingStoryId(null)
+                  }}
+                >
+                  이 글 삭제
+                </button>
+              </div>
             </div>
           )
         })}
