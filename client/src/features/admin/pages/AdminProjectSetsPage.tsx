@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { AdminMediaUpload } from '../components/AdminMediaUpload'
 import { AdminLocaleEmptyNote, AdminLocaleTabs, type AdminEditLocale } from '../components/AdminLocaleTabs'
@@ -119,6 +119,7 @@ export function AdminProjectSetsPage() {
   const [savedMode, setSavedMode] = useState<SaveMode | ''>('')
   const [unpublished, setUnpublished] = useState(false)
   const [editLocale, setEditLocale] = useState<AdminEditLocale>('ko')
+  const editorRef = useRef<HTMLDivElement | null>(null)
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -180,6 +181,14 @@ export function AdminProjectSetsPage() {
   }
 
   const selected = doc.items.find((item) => item.id === selectedId) ?? null
+  const editorRef = useRef<HTMLDivElement | null>(null)
+
+  const openEditor = (id: string) => {
+    setSelectedId(id)
+    requestAnimationFrame(() => {
+      editorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    })
+  }
   const listed = doc.items.filter((item) => {
     if (category !== '전체' && item.category !== category) return false
     if (year === '전체') return true
@@ -270,7 +279,7 @@ export function AdminProjectSetsPage() {
                 onClick={() => {
                   const next = blankSet(doc.items.length)
                   setDoc({ ...doc, items: [...doc.items, next] })
-                  setSelectedId(next.id)
+                  openEditor(next.id)
                 }}
               >
                 + 사업 추가
@@ -289,7 +298,7 @@ export function AdminProjectSetsPage() {
               </thead>
               <tbody>
                 {listed.map((item, index) => (
-                  <tr key={item.id}>
+                  <tr key={item.id} className={item.id === selectedId ? 'is-selected' : undefined}>
                     <td>{item.year ?? '연도 미정'}</td>
                     <td>{item.category}</td>
                     <td>{item.field || '분야 없음'}</td>
@@ -302,7 +311,9 @@ export function AdminProjectSetsPage() {
                     <td>
                       <button type="button" className="biz-mv" aria-label="위로" disabled={index === 0} onClick={() => move(item.id, -1)}>↑</button>
                       <button type="button" className="biz-mv" aria-label="아래로" disabled={index === listed.length - 1} onClick={() => move(item.id, 1)}>↓</button>
-                      <button type="button" className="biz-del" onClick={() => setSelectedId(item.id)}>수정</button>
+                      <button type="button" className="biz-edit" onClick={() => openEditor(item.id)}>
+                        수정
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -310,14 +321,16 @@ export function AdminProjectSetsPage() {
             </table>
           </section>
           {selected ? (
-            <SetEditor
-              item={selected}
-              onChange={(patch) => updateItem(selected.id, patch)}
-              onDelete={() => {
-                setDoc({ ...doc, items: doc.items.filter((item) => item.id !== selected.id) })
-                setSelectedId(doc.items.find((item) => item.id !== selected.id)?.id ?? null)
-              }}
-            />
+            <div ref={editorRef} id="project-set-editor" className="project-set-editor">
+              <SetEditor
+                item={selected}
+                onChange={(patch) => updateItem(selected.id, patch)}
+                onDelete={() => {
+                  setDoc({ ...doc, items: doc.items.filter((item) => item.id !== selected.id) })
+                  setSelectedId(doc.items.find((item) => item.id !== selected.id)?.id ?? null)
+                }}
+              />
+            </div>
           ) : null}
         </>
       )}
@@ -381,16 +394,18 @@ function PageTab({
     <section className="admin-panel">
       {head('photo', '상단 사진', undefined, undefined, false)}
       {shown('photo') ? <>
-      <div className="admin-form-grid">
+      <div className="admin-project-hero">
         <AdminMediaUpload layout="slot" slotTitle="사진 올리기" slotRatio="1920×640" label="상단 사진" variant="image" value={view.photo || null} onChange={(url) => onChange({ ...header, photo: url ?? '' })} />
-        <label className="admin-field">
-          <span className="admin-field__label">영문 라벨</span>
-          <input className="admin-input" value={view.heroLabel} onChange={(e) => onChange({ ...header, heroLabel: e.target.value })} />
-        </label>
-        <label className="admin-field">
-          <span className="admin-field__label">페이지 제목</span>
-          <input className="admin-input" value={view.title} onChange={(e) => onChange({ ...header, title: e.target.value })} />
-        </label>
+        <div className="admin-project-hero__fields">
+          <label className="admin-field">
+            <span className="admin-field__label">영문 라벨</span>
+            <input className="admin-input" value={view.heroLabel} onChange={(e) => onChange({ ...header, heroLabel: e.target.value })} />
+          </label>
+          <label className="admin-field">
+            <span className="admin-field__label">페이지 제목</span>
+            <input className="admin-input" value={view.title} onChange={(e) => onChange({ ...header, title: e.target.value })} />
+          </label>
+        </div>
       </div>
       <p className="admin-panel__foot">상단 사진을 비우면 지금 페이지 배너를 그대로 씁니다.</p>
       </> : null}

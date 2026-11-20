@@ -271,7 +271,7 @@ function SectionImageFields({
   mobileHint: string
 }) {
   return (
-    <div className="admin-form-grid">
+    <div className="admin-section-images admin-form-grid">
       <AdminMediaUpload
         quiet
         layout="slot"
@@ -394,46 +394,44 @@ function IntroForm({
                 <textarea className="admin-input" rows={2} value={text('intro.lead')} onChange={(e) => setField('intro.lead', e.target.value)} />
               </label>
             </div>
-            <div className="admin-intro-split">
-              <div className="admin-field">
-                <span className="admin-field__label">칩 (추가·삭제)</span>
-                <div className="admin-chips">
-                  {chips.slice(0, visibleChips).map((value, index) => (
-                    <span key={index} className="admin-chip">
-                      <input aria-label={`칩 ${index + 1}`} value={value} onChange={(e) => setField(`intro.chip.${index}`, e.target.value)} />
-                      <button type="button" aria-label="칩 삭제" onClick={() => writeChips(chips.filter((_, chipIndex) => chipIndex !== index))}>
-                        ×
-                      </button>
-                    </span>
-                  ))}
-                  {visibleChips < CHIP_COUNT ? (
-                    <button type="button" className="admin-chip-add" onClick={() => setField(`intro.chip.${visibleChips}`, '새 칩')}>
-                      + 칩
+            <div className="admin-field admin-intro-chips">
+              <span className="admin-field__label">칩 (추가·삭제)</span>
+              <div className="admin-chips">
+                {chips.slice(0, visibleChips).map((value, index) => (
+                  <span key={index} className="admin-chip">
+                    <input aria-label={`칩 ${index + 1}`} value={value} onChange={(e) => setField(`intro.chip.${index}`, e.target.value)} />
+                    <button type="button" aria-label="칩 삭제" onClick={() => writeChips(chips.filter((_, chipIndex) => chipIndex !== index))}>
+                      ×
                     </button>
-                  ) : null}
-                </div>
+                  </span>
+                ))}
+                {visibleChips < CHIP_COUNT ? (
+                  <button type="button" className="admin-chip-add" onClick={() => setField(`intro.chip.${visibleChips}`, '새 칩')}>
+                    + 칩
+                  </button>
+                ) : null}
               </div>
-              <div>
-                <AdminMediaUpload
-                  quiet
-                  layout="slot"
-                  slotTitle={photoLabel}
-                  label={photoLabel}
-                  hint="사진 없이 저장하면 글이 전체 폭으로 표시"
-                  variant="image"
-                  value={text('intro.photo') || null}
-                  onChange={(url) => setField('intro.photo', url ?? '')}
-                />
-                <div className="admin-form-grid" style={{ marginTop: 10 }}>
-                  <label className="admin-field">
-                    <span className="admin-field__label">사진 설명 구분</span>
-                    <input className="admin-input" value={text('intro.captionKicker')} onChange={(e) => setField('intro.captionKicker', e.target.value)} />
-                  </label>
-                  <label className="admin-field">
-                    <span className="admin-field__label">사진 설명</span>
-                    <input className="admin-input" value={text('intro.caption')} onChange={(e) => setField('intro.caption', e.target.value)} />
-                  </label>
-                </div>
+            </div>
+            <div className="admin-intro-photo-row">
+              <AdminMediaUpload
+                quiet
+                layout="slot"
+                slotTitle={photoLabel}
+                label={photoLabel}
+                hint="사진 없이 저장하면 글이 전체 폭으로 표시"
+                variant="image"
+                value={text('intro.photo') || null}
+                onChange={(url) => setField('intro.photo', url ?? '')}
+              />
+              <div className="admin-intro-captions">
+                <label className="admin-field">
+                  <span className="admin-field__label">사진 설명 구분</span>
+                  <input className="admin-input" value={text('intro.captionKicker')} onChange={(e) => setField('intro.captionKicker', e.target.value)} />
+                </label>
+                <label className="admin-field">
+                  <span className="admin-field__label">사진 설명</span>
+                  <input className="admin-input" value={text('intro.caption')} onChange={(e) => setField('intro.caption', e.target.value)} />
+                </label>
               </div>
             </div>
             <div className="biz-opt">

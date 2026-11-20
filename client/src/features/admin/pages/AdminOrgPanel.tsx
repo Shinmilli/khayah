@@ -94,21 +94,23 @@ export function AdminOrgPanel({
             <input className="admin-input" value={doc.fields['org.lead'] ?? ''} onChange={(e) => setField('org.lead', e.target.value)} />
           </label>
         </div>
-        <AdminMediaUpload
-          label="조직도 이미지 올리기 (PC · 모바일)"
-          variant="image"
-          layout="slot"
-          slotTitle="조직도 이미지 올리기 (PC · 모바일)"
-          slotRatio="권장 가로 1200px 이상 · JPG/PNG"
-          value={doc.fields['org.image'] || null}
-          onChange={(url) => setField('org.image', url ?? '')}
-        />
-        {doc.fields['org.image'] ? <p className="admin-org__current">현재: {fileLabel(doc.fields['org.image'])}</p> : null}
-        <label className="admin-field admin-field--full">
-          <span className="admin-field__label">대체 텍스트 (검색·접근성용)</span>
-          <input className="admin-input" value={doc.fields['org.imageAlt'] ?? ''} onChange={(e) => setField('org.imageAlt', e.target.value)} />
-        </label>
-        <p className="admin-org__note">제목·설명은 글자로 입력, 도식(원)은 이미지 한 장으로 교체. 부서명이 바뀌면 이미지만 새로 올리면 됨</p>
+        <div className="admin-section-images">
+          <AdminMediaUpload
+            label="조직도 이미지 올리기 (PC · 모바일)"
+            variant="image"
+            layout="slot"
+            slotTitle="조직도 이미지 올리기 (PC · 모바일)"
+            slotRatio="권장 가로 1200px 이상 · JPG/PNG"
+            value={doc.fields['org.image'] || null}
+            onChange={(url) => setField('org.image', url ?? '')}
+          />
+          {doc.fields['org.image'] ? <p className="admin-org__current">현재: {fileLabel(doc.fields['org.image'])}</p> : null}
+          <label className="admin-field admin-field--full">
+            <span className="admin-field__label">대체 텍스트 (검색·접근성용)</span>
+            <input className="admin-input" value={doc.fields['org.imageAlt'] ?? ''} onChange={(e) => setField('org.imageAlt', e.target.value)} />
+          </label>
+          <p className="admin-org__note">제목·설명은 글자로 입력, 도식(원)은 이미지 한 장으로 교체. 부서명이 바뀌면 이미지만 새로 올리면 됨</p>
+        </div>
       </section>
 
       <div className="admin-org__split">
