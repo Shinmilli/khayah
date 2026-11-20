@@ -47,5 +47,5 @@ export function useBizSupport(): BizSupportDocument | null {
 
 export function donateHref(doc: BizSupportDocument | null): string {
   const url = doc?.donate.url?.trim()
-  return url || NANUM_DONATE_URL
+  return normalizeHref(url || NANUM_DONATE_URL)
 }

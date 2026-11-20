@@ -359,7 +359,7 @@ export function FinancialReportPage() {
           const no = String(index + 1).padStart(2, '0')
           if (item.kind === 'link') {
             return (
-              <a key={item.id} className="fr-disclose__row" href={item.href} target="_blank" rel="noopener noreferrer">
+              <a key={item.id} className="fr-disclose__row" href={normalizeHref(item.href)} target="_blank" rel="noopener noreferrer">
                 <span>{no}</span>
                 <span>{item.label}</span>
                 <span aria-hidden="true">→</span>

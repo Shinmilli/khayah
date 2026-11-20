@@ -115,7 +115,14 @@ function BlockView({ block }: { block: PageBlock }) {
                   </>
                 )
                 return item.href.trim() ? (
-                  <a key={`${item.title}-${index}`} className="pblk-card" href={item.href}>
+                  <a
+                    key={`${item.title}-${index}`}
+                    className="pblk-card"
+                    href={normalizeHref(item.href)}
+                    {...(isExternalHref(item.href)
+                      ? { target: '_blank', rel: 'noopener noreferrer' }
+                      : {})}
+                  >
                     {body}
                   </a>
                 ) : (

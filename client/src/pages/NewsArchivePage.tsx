@@ -17,6 +17,7 @@ import { pageHeroImageForPath } from '../constants/pageHeroImages'
 import { ListStatus } from '../components/ListStatus'
 import { PostCoverThumb } from '../components/PostCoverThumb'
 import { postCoverMedia } from '../utils/postMedia'
+import { normalizeHref } from '../utils/hrefs'
 
 function formatDate(
   iso: string,

@@ -82,12 +82,12 @@ export function BoardSection() {
 function KoreanFieldRecords() {
   const site = useSiteCommon()
   const channels = site?.homeStories
-  const blogHref = channels?.blog.href.trim() || BLOG_URL
+  const blogHref = normalizeHref(channels?.blog.href.trim() || BLOG_URL)
   const blogImage = channels?.blog.image.trim() || BLOG_CARD_IMAGE
-  const instaHref = channels?.instagram.href.trim() || INSTAGRAM_URL
+  const instaHref = normalizeHref(channels?.instagram.href.trim() || INSTAGRAM_URL)
   const instaImage = channels?.instagram.image.trim() || INSTAGRAM_CARD_IMAGE
   const storedYoutubeImage = channels?.youtube.image.trim() || ''
-  const storedYoutubeHref = channels?.youtube.href.trim() || ''
+  const storedYoutubeHref = normalizeHref(channels?.youtube.href.trim() || '')
   const [latest, setLatest] = useState<YoutubeLatestVideo | null>(null)
 
   useEffect(() => {

@@ -124,11 +124,21 @@ export function HeroSection() {
                 >
                   {m.donate}
                 </a>
-                {(slide.buttons ?? []).map((button) => (
-                  <a key={button.href} className="hero-cta-btn" href={button.href} style={{ marginLeft: 8 }}>
-                    {button.label}
-                  </a>
-                ))}
+                {(slide.buttons ?? []).map((button) => {
+                  const href = normalizeHref(button.href)
+                  const external = isExternalHref(href)
+                  return (
+                    <a
+                      key={button.href}
+                      className="hero-cta-btn"
+                      href={href}
+                      style={{ marginLeft: 8 }}
+                      {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                    >
+                      {button.label}
+                    </a>
+                  )
+                })}
               </div>
             </div>
           </div>

@@ -51,7 +51,7 @@ export function PartnersSection() {
           <a
             key={key}
             className="partner-card"
-            href={logo.href}
+            href={normalizeHref(logo.href)}
             target="_blank"
             rel="noopener noreferrer"
             aria-hidden={copy === 1}
