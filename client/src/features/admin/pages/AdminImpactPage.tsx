@@ -307,6 +307,7 @@ export function AdminImpactPage() {
   const [yearOn, setYearOn] = useState(0)
   const [editingYears, setEditingYears] = useState(false)
   const [editingOffices, setEditingOffices] = useState(false)
+  const [editingProjects, setEditingProjects] = useState(false)
   const [editingEvals, setEditingEvals] = useState(false)
   const [editingStoryId, setEditingStoryId] = useState<string | null>(null)
 
@@ -562,28 +563,87 @@ export function AdminImpactPage() {
       <section id="impact-projects" className="admin-panel">
         <div className="admin-panel__head">
           <h2 className="admin-panel__title">② 사업 관리</h2>
-          <button type="button" className="admin-btn" onClick={() => setDoc({ ...doc, projects: [...(doc.projects ?? []), { id: newId('p'), name: '', base: '', field: '', period: '', status: '진행' }] })}>
-            + 사업 추가
-          </button>
+          <div className="admin-panel__tools">
+            <button type="button" className="biz-edit" onClick={() => setEditingProjects((v) => !v)}>
+              {editingProjects ? '표로 보기' : '수정'}
+            </button>
+            {editingProjects ? (
+              <button
+                type="button"
+                className="admin-btn admin-btn--add"
+                onClick={() => setDoc({ ...doc, projects: [...(doc.projects ?? []), { id: newId('p'), name: '', base: '', field: '', period: '', status: '진행' }] })}
+              >
+                + 사업 추가
+              </button>
+            ) : null}
+          </div>
         </div>
-        <table className="admin-sheet">
+        <table className="admin-sheet impact-sheet">
           <thead>
-            <tr><th>사업명</th><th>거점</th><th>분야</th><th>기간</th><th>상태</th><th></th></tr>
+            <tr>
+              <th>사업명</th>
+              <th>거점</th>
+              <th>분야</th>
+              <th>기간</th>
+              <th>상태</th>
+              {editingProjects ? <th></th> : null}
+            </tr>
           </thead>
           <tbody>
             {(doc.projects ?? []).map((row, index) => (
               <tr key={row.id}>
                 {(['name', 'base', 'field', 'period'] as const).map((key) => (
                   <td key={key}>
-                    <input className="admin-input" value={row[key]} aria-label={key} onChange={(e) => setDoc({ ...doc, projects: doc.projects.map((item, itemIndex) => (itemIndex === index ? { ...item, [key]: e.target.value } : item)) })} />
+                    {editingProjects ? (
+                      <input
+                        className="admin-input"
+                        value={row[key]}
+                        aria-label={key}
+                        onChange={(e) =>
+                          setDoc({
+                            ...doc,
+                            projects: doc.projects.map((item, itemIndex) =>
+                              itemIndex === index ? { ...item, [key]: e.target.value } : item,
+                            ),
+                          })
+                        }
+                      />
+                    ) : (
+                      row[key] || '—'
+                    )}
                   </td>
                 ))}
                 <td>
-                  <button type="button" className={`admin-status${row.status === '진행' ? ' admin-status--on' : ' admin-status--off'}`} onClick={() => setDoc({ ...doc, projects: doc.projects.map((item, itemIndex) => (itemIndex === index ? { ...item, status: item.status === '진행' ? '종료' : '진행' } : item)) })}>{row.status}</button>
+                  {editingProjects ? (
+                    <button
+                      type="button"
+                      className={`admin-status${row.status === '진행' ? ' admin-status--on' : ' admin-status--off'}`}
+                      onClick={() =>
+                        setDoc({
+                          ...doc,
+                          projects: doc.projects.map((item, itemIndex) =>
+                            itemIndex === index ? { ...item, status: item.status === '진행' ? '종료' : '진행' } : item,
+                          ),
+                        })
+                      }
+                    >
+                      {row.status}
+                    </button>
+                  ) : (
+                    <span className={`admin-status${row.status === '진행' ? ' admin-status--on' : ' admin-status--off'}`}>{row.status}</span>
+                  )}
                 </td>
-                <td>
-                  <button type="button" className="admin-btn admin-btn--sm" onClick={() => setDoc({ ...doc, projects: doc.projects.filter((item) => item.id !== row.id) })}>삭제</button>
-                </td>
+                {editingProjects ? (
+                  <td>
+                    <button
+                      type="button"
+                      className="admin-btn admin-btn--sm"
+                      onClick={() => setDoc({ ...doc, projects: doc.projects.filter((item) => item.id !== row.id) })}
+                    >
+                      삭제
+                    </button>
+                  </td>
+                ) : null}
               </tr>
             ))}
           </tbody>
@@ -597,7 +657,7 @@ export function AdminImpactPage() {
             {editingOffices ? (
               <button
                 type="button"
-                className="admin-btn admin-btn--sm"
+                className="admin-btn admin-btn--add"
                 onClick={() =>
                   setDoc({
                     ...doc,
@@ -622,20 +682,8 @@ export function AdminImpactPage() {
               </button>
             ) : null}
           </div>
-          <table className="admin-sheet impact-sheet">
-            <thead>
-              <tr>
-                <th>이름</th>
-                <th>구분</th>
-                <th>상태</th>
-                <th>하는 일</th>
-                <th>인원</th>
-                <th>파트너</th>
-                {editingOffices ? <th>본문·사진</th> : null}
-                {editingOffices ? <th></th> : null}
-              </tr>
-            </thead>
-            <tbody>
+          {editingOffices ? (
+            <div className="impact-office-list">
               {doc.offices.map((office, index) => {
                 const patchOffice = (partial: Partial<ImpactOffice>) =>
                   setDoc({
@@ -643,52 +691,55 @@ export function AdminImpactPage() {
                     offices: doc.offices.map((item, itemIndex) => (itemIndex === index ? { ...item, ...partial } : item)),
                   })
                 return (
-                  <tr key={`${office.kicker}-${index}`}>
-                    <td>
-                      {editingOffices ? (
+                  <article key={`${office.kicker}-${index}`} className="impact-office-card">
+                    <div className="impact-office-card__head">
+                      <label className="admin-field impact-office-card__name">
+                        <span className="admin-field__label">이름</span>
                         <input className="admin-input" value={office.name} aria-label="이름" onChange={(e) => patchOffice({ name: e.target.value })} />
-                      ) : (
-                        office.name || '—'
-                      )}
-                    </td>
-                    <td>
-                      {editingOffices ? (
+                      </label>
+                      <button
+                        type="button"
+                        className="admin-btn admin-btn--sm"
+                        onClick={() => setDoc({ ...doc, offices: doc.offices.filter((_, itemIndex) => itemIndex !== index) })}
+                      >
+                        삭제
+                      </button>
+                    </div>
+                    <div className="impact-office-card__meta">
+                      <label className="admin-field">
+                        <span className="admin-field__label">구분</span>
                         <input className="admin-input" value={office.kicker} aria-label="구분" onChange={(e) => patchOffice({ kicker: e.target.value })} />
-                      ) : (
-                        office.kicker || '—'
-                      )}
-                    </td>
-                    <td>
-                      {editingOffices ? (
+                      </label>
+                      <label className="admin-field">
+                        <span className="admin-field__label">상태</span>
                         <input className="admin-input" value={office.status} aria-label="상태" onChange={(e) => patchOffice({ status: e.target.value })} />
-                      ) : (
-                        office.status || '—'
-                      )}
-                    </td>
-                    <td>
-                      {editingOffices ? (
+                      </label>
+                      <label className="admin-field">
+                        <span className="admin-field__label">하는 일</span>
                         <input className="admin-input" value={office.programs} aria-label="하는 일" onChange={(e) => patchOffice({ programs: e.target.value })} />
-                      ) : (
-                        office.programs || '—'
-                      )}
-                    </td>
-                    <td>
-                      {editingOffices ? (
+                      </label>
+                      <label className="admin-field">
+                        <span className="admin-field__label">인원</span>
                         <input className="admin-input" value={office.people} aria-label="인원" onChange={(e) => patchOffice({ people: e.target.value })} />
-                      ) : (
-                        office.people || '—'
-                      )}
-                    </td>
-                    <td>
-                      {editingOffices ? (
+                      </label>
+                      <label className="admin-field">
+                        <span className="admin-field__label">파트너</span>
                         <input className="admin-input" value={office.partners} aria-label="파트너" onChange={(e) => patchOffice({ partners: e.target.value })} />
-                      ) : (
-                        office.partners || '—'
-                      )}
-                    </td>
-                    {editingOffices ? (
-                      <td>
-                        <textarea className="admin-input" rows={2} value={office.body} aria-label="본문" onChange={(e) => patchOffice({ body: e.target.value })} />
+                      </label>
+                    </div>
+                    <div className="impact-office-card__content">
+                      <label className="admin-field impact-office-card__body">
+                        <span className="admin-field__label">본문</span>
+                        <textarea
+                          className="admin-input"
+                          rows={5}
+                          value={office.body}
+                          aria-label="본문"
+                          onChange={(e) => patchOffice({ body: e.target.value })}
+                        />
+                      </label>
+                      <div className="impact-office-card__photo">
+                        <span className="admin-field__label">사진</span>
                         <AdminMediaUpload
                           compact
                           label={`${office.name || '본부·지부'} 사진`}
@@ -696,20 +747,38 @@ export function AdminImpactPage() {
                           value={office.photo || null}
                           onChange={(url) => patchOffice({ photo: url ?? '' })}
                         />
-                      </td>
-                    ) : null}
-                    {editingOffices ? (
-                      <td>
-                        <button type="button" className="admin-btn admin-btn--sm" onClick={() => setDoc({ ...doc, offices: doc.offices.filter((_, itemIndex) => itemIndex !== index) })}>
-                          삭제
-                        </button>
-                      </td>
-                    ) : null}
-                  </tr>
+                      </div>
+                    </div>
+                  </article>
                 )
               })}
-            </tbody>
-          </table>
+            </div>
+          ) : (
+            <table className="admin-sheet impact-sheet">
+              <thead>
+                <tr>
+                  <th>이름</th>
+                  <th>구분</th>
+                  <th>상태</th>
+                  <th>하는 일</th>
+                  <th>인원</th>
+                  <th>파트너</th>
+                </tr>
+              </thead>
+              <tbody>
+                {doc.offices.map((office, index) => (
+                  <tr key={`${office.kicker}-${index}`}>
+                    <td>{office.name || '—'}</td>
+                    <td>{office.kicker || '—'}</td>
+                    <td>{office.status || '—'}</td>
+                    <td>{office.programs || '—'}</td>
+                    <td>{office.people || '—'}</td>
+                    <td>{office.partners || '—'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </details>
       </section>
 
@@ -729,23 +798,24 @@ export function AdminImpactPage() {
                 </button>
               ))}
             </div>
-            <button
-              type="button"
-              className="admin-btn"
-              onClick={() => {
-                const used = new Set((doc.years ?? []).map((item) => item.year.trim()))
-                let nextYear = new Date().getFullYear()
-                while (used.has(String(nextYear))) nextYear += 1
-                setDoc({ ...doc, years: [...(doc.years ?? []), { year: String(nextYear), rows: [] }] })
-                setYearOn((doc.years ?? []).length)
-                setEditingYears(true)
-              }}
-            >
-              + 연도
-            </button>
             <button type="button" className="biz-edit" onClick={() => setEditingYears((v) => !v)}>
               {editingYears ? '표로 보기' : '수정'}
             </button>
+            {editingYears ? (
+              <button
+                type="button"
+                className="admin-btn admin-btn--add"
+                onClick={() => {
+                  const used = new Set((doc.years ?? []).map((item) => item.year.trim()))
+                  let nextYear = new Date().getFullYear()
+                  while (used.has(String(nextYear))) nextYear += 1
+                  setDoc({ ...doc, years: [...(doc.years ?? []), { year: String(nextYear), rows: [] }] })
+                  setYearOn((doc.years ?? []).length)
+                }}
+              >
+                + 연도
+              </button>
+            ) : null}
           </div>
         </div>
         {(doc.years ?? []).map((year, yearIndex) =>
@@ -774,7 +844,7 @@ export function AdminImpactPage() {
                   </label>
                   <button
                     type="button"
-                    className="admin-btn admin-btn--sm"
+                    className="admin-btn admin-btn--add"
                     onClick={() =>
                       setDoc({
                         ...doc,
@@ -886,19 +956,20 @@ export function AdminImpactPage() {
             <button type="button" className="biz-edit" onClick={() => setEditingEvals((v) => !v)}>
               {editingEvals ? '표로 보기' : '수정'}
             </button>
-            <button
-              type="button"
-              className="admin-btn"
-              onClick={() => {
-                setDoc({
-                  ...doc,
-                  evals: [...(doc.evals ?? []), { id: newId('e'), program: '', axis: '배우는 힘', mode: '사전 · 사후', value: '', itemName: '', meta: '' }],
-                })
-                setEditingEvals(true)
-              }}
-            >
-              + 평가 추가
-            </button>
+            {editingEvals ? (
+              <button
+                type="button"
+                className="admin-btn admin-btn--add"
+                onClick={() => {
+                  setDoc({
+                    ...doc,
+                    evals: [...(doc.evals ?? []), { id: newId('e'), program: '', axis: '배우는 힘', mode: '사전 · 사후', value: '', itemName: '', meta: '' }],
+                  })
+                }}
+              >
+                + 평가 추가
+              </button>
+            ) : null}
           </div>
         </div>
         <table className="admin-sheet impact-sheet">
@@ -1012,7 +1083,7 @@ export function AdminImpactPage() {
           <h2 className="admin-panel__title">⑤ 스토리 관리 (게시판)</h2>
           <button
             type="button"
-            className="admin-btn"
+            className="admin-btn admin-btn--add"
             onClick={() => {
               const next = blankStory()
               setDoc({ ...doc, stories: [...(doc.stories ?? []), next] })
