@@ -6,7 +6,7 @@ const postsService_1 = require("../services/postsService");
 async function getPosts(req, res) {
     try {
         const page = Math.max(1, parseInt(req.query.page) || 1);
-        const perPage = Math.min(50, Math.max(1, parseInt(req.query.perPage) || 10));
+        const perPage = Math.min(200, Math.max(1, parseInt(req.query.perPage) || 10));
         const kind = typeof req.query.kind === 'string' ? req.query.kind : undefined;
         const region = typeof req.query.region === 'string' ? req.query.region : undefined;
         const result = await postsService_1.postsService.getPublishedPosts({ page, perPage, kind, region });

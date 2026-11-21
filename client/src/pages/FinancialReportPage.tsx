@@ -7,6 +7,7 @@ import { FinancialDonutChart } from '../features/financial-report/FinancialDonut
 import { formatWon } from '../features/financial-report/financialReportDefaults'
 import type { FinancialReportsPublicDocument } from '../features/financial-report/financialReportTypes'
 import { fetchFinancialReports } from '../services/api'
+import { fieldsForLocale } from '../features/content/fieldText'
 import { useLocale } from '../i18n/LocaleContext'
 import { useKayaPages } from '../features/kaya/useKayaPages'
 import { donateHref, useBizSupport } from '../features/biz/useBizSupport'
@@ -119,7 +120,8 @@ export function FinancialReportPage() {
   const { locale, messages } = useLocale()
   const kaya = useKayaPages()
   const biz = useBizSupport()
-  const ko = (key: string, fallback: string) => (locale === 'ko' && kaya?.fields[key] ? kaya.fields[key] : fallback)
+  const kayaFields = fieldsForLocale(kaya?.fields ?? {}, locale)
+  const ko = (key: string, fallback: string) => kayaFields[key]?.trim() || fallback
   const fr = messages.pages.financialReport
   const nav = messages.nav
   const [doc, setDoc] = useState<FinancialReportsPublicDocument | null>(null)
@@ -236,13 +238,13 @@ export function FinancialReportPage() {
 
   if (loading) {
     return (
-      <div className={`financial-report-page${locale === 'ko' ? ' financial-report-page--ko' : ''}`}>
+      <div className={`financial-report-page${true ? ' financial-report-page--ko' : ''}`}>
         <PageHero
           title={nav.links.financialReport}
           backgroundImageUrl={pageHeroImageForPath(PATH.aboutFinancialReport)}
           showScrollHint={false}
-          layout={locale === 'ko' ? 'kaya' : 'banner'}
-          eyebrow={locale === 'ko' ? 'TRANSPARENCY' : undefined}
+          layout={true ? 'kaya' : 'banner'}
+          eyebrow={true ? 'TRANSPARENCY' : undefined}
         />
         <KhayahSectionNav />
         <div className="financial-report__inner">
@@ -254,13 +256,13 @@ export function FinancialReportPage() {
 
   if (error) {
     return (
-      <div className={`financial-report-page${locale === 'ko' ? ' financial-report-page--ko' : ''}`}>
+      <div className={`financial-report-page${true ? ' financial-report-page--ko' : ''}`}>
         <PageHero
           title={nav.links.financialReport}
           backgroundImageUrl={pageHeroImageForPath(PATH.aboutFinancialReport)}
           showScrollHint={false}
-          layout={locale === 'ko' ? 'kaya' : 'banner'}
-          eyebrow={locale === 'ko' ? 'TRANSPARENCY' : undefined}
+          layout={true ? 'kaya' : 'banner'}
+          eyebrow={true ? 'TRANSPARENCY' : undefined}
         />
         <KhayahSectionNav />
         <div className="financial-report__inner">
@@ -278,13 +280,13 @@ export function FinancialReportPage() {
 
   if (!doc || !report || year === null || !settings) {
     return (
-      <div className={`financial-report-page${locale === 'ko' ? ' financial-report-page--ko' : ''}`}>
+      <div className={`financial-report-page${true ? ' financial-report-page--ko' : ''}`}>
         <PageHero
           title={nav.links.financialReport}
           backgroundImageUrl={pageHeroImageForPath(PATH.aboutFinancialReport)}
           showScrollHint={false}
-          layout={locale === 'ko' ? 'kaya' : 'banner'}
-          eyebrow={locale === 'ko' ? 'TRANSPARENCY' : undefined}
+          layout={true ? 'kaya' : 'banner'}
+          eyebrow={true ? 'TRANSPARENCY' : undefined}
         />
         <KhayahSectionNav />
         <div className="financial-report__inner">
@@ -353,7 +355,7 @@ export function FinancialReportPage() {
   const discloseBox = report && settings?.showActionButtons ? (
     <div className="fr-disclose">
       <p>DISCLOSURE · 공시 자료</p>
-      {disclosureItems(kaya?.fields ?? {})
+      {disclosureItems(kayaFields)
         .filter((item) => item.label.trim() && (item.kind !== 'link' || item.href.trim()))
         .map((item, index) => {
           const no = String(index + 1).padStart(2, '0')
@@ -394,18 +396,18 @@ export function FinancialReportPage() {
   ) : null
 
   return (
-    <div className={`financial-report-page${locale === 'ko' ? ' financial-report-page--ko' : ''}`}>
-      {locale === 'ko' && !transOn('hero') ? null : <PageHero
+    <div className={`financial-report-page${true ? ' financial-report-page--ko' : ''}`}>
+      {true && !transOn('hero') ? null : <PageHero
         title={nav.links.financialReport}
         backgroundImageUrl={pageHeroImageForPath(PATH.aboutFinancialReport)}
         showScrollHint={false}
-        layout={locale === 'ko' ? 'kaya' : 'banner'}
-        eyebrow={locale === 'ko' ? 'TRANSPARENCY' : undefined}
+        layout={true ? 'kaya' : 'banner'}
+        eyebrow={true ? 'TRANSPARENCY' : undefined}
       />}
       <KhayahSectionNav />
 
       <div className="financial-report__inner">
-        {locale === 'ko' ? (
+        {true ? (
           <>
             <section className="fr-intro" style={{ order: 0 }} hidden={!transOn('hero')}>
               <div className="fr-intro__copy">
@@ -435,7 +437,7 @@ export function FinancialReportPage() {
             {transOn('disclose') && !discloseInline ? <section style={{ order: transMoving.indexOf('disclose') + 1 }}>{discloseBox}</section> : null}
           </>
         ) : null}
-        {locale === 'ko' ? (
+        {true ? (
           <>
             <section className="fr-principles" hidden={!transOn('principles')} style={{ order: transMoving.indexOf('principles') + 1 }}>
               <div className="fr-principles__copy">
@@ -447,7 +449,7 @@ export function FinancialReportPage() {
                 />
               </div>
               <div className="fr-principle-grid">
-                {principleItems(kaya?.fields ?? {})
+                {principleItems(kayaFields)
                   .filter((item) => item.title.trim() || item.body.trim())
                   .map((item, index) => (
                     <article key={`${item.title}-${index}`}>
@@ -469,7 +471,7 @@ export function FinancialReportPage() {
                 }}
               />
               <dl>
-                {complianceItems(kaya?.fields ?? {})
+                {complianceItems(kayaFields)
                   .filter((item) => item.dt.trim() || item.dd.trim())
                   .map((item, index) => (
                     <div key={`${item.dt}-${index}`}>
@@ -481,7 +483,7 @@ export function FinancialReportPage() {
             </section>
           </>
         ) : null}
-        {locale === 'ko' ? null : (
+        {true ? null : (
         <div className="financial-report__year-row">
           <span className="financial-report__year-label" id="fr-year-label">
             연도
@@ -528,7 +530,7 @@ export function FinancialReportPage() {
         </div>
         )}
 
-        {locale === 'ko' ? (
+        {true ? (
           <section className="fr-finance" hidden={!transOn('reports')} style={{ order: transMoving.indexOf('reports') + 1 }}>
             <div className="fr-finance__head">
               <div>
@@ -614,9 +616,9 @@ export function FinancialReportPage() {
         </div>
         )}
 
-        {locale === 'ko' ? null : statementBlock}
+        {true ? null : statementBlock}
 
-        {locale !== 'ko' && settings.showActionButtons ? (
+        {false && settings.showActionButtons ? (
           <div className="financial-report__actions">
             <button
               type="button"
@@ -669,7 +671,7 @@ export function FinancialReportPage() {
             </a>
           </div>
         ) : null}
-        {locale === 'ko' ? (
+        {true ? (
           <section className="fr-support" hidden={!transOn('banner')} style={{ order: 100 }}>
             <div>
               <p className="fr-kicker">SUPPORT</p>

@@ -27,8 +27,9 @@ function folderPrefix() {
 }
 async function uploadBufferToCloudinary(options) {
     configureCloudinary();
-    const folder = `${folderPrefix()}/${options.kind === 'document' ? 'documents' : 'images'}`;
-    const resourceType = options.kind === 'document' ? 'raw' : 'image';
+    const folder = `${folderPrefix()}/` +
+        (options.kind === 'document' ? 'documents' : options.kind === 'video' ? 'videos' : 'images');
+    const resourceType = options.kind === 'document' ? 'raw' : options.kind === 'video' ? 'video' : 'image';
     // public_id에 .pdf를 넣으면 Cloudinary delivery URL이 401이 나는 경우가 있음 → 확장자 제외
     const publicId = options.kind === 'document'
         ? `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`
@@ -98,10 +99,12 @@ async function destroyCloudinaryAsset(publicId, resourceTypeHint) {
         return 'failed';
     configureCloudinary();
     const order = resourceTypeHint === 'image'
-        ? ['image', 'raw']
-        : resourceTypeHint === 'raw'
-            ? ['raw', 'image']
-            : ['raw', 'image'];
+        ? ['image', 'video', 'raw']
+        : resourceTypeHint === 'video'
+            ? ['video', 'image', 'raw']
+            : resourceTypeHint === 'raw'
+                ? ['raw', 'image', 'video']
+                : ['raw', 'image', 'video'];
     let sawNotFound = false;
     for (const resource_type of order) {
         try {

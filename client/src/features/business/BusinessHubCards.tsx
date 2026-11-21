@@ -38,7 +38,7 @@ export function BusinessHubCards({ hub }: { hub: BusinessHub }) {
   }, [locale, hub])
 
   const autoCards =
-    locale === 'ko' && biz?.otherBusiness === 'auto'
+    biz?.otherBusiness === 'auto'
       ? (NAV_MENU_COLUMNS.find((col) => col.topKey === 'business')
           ?.links.find((link) => link.key === (hub === 'domestic' ? 'domestic' : 'overseas'))
           ?.children ?? []
@@ -48,19 +48,21 @@ export function BusinessHubCards({ hub }: { hub: BusinessHub }) {
           title: messages.nav.links[link.key],
           description: '',
           href: link.to,
-          buttonLabel: '자세히 보기',
+          buttonLabel: locale === 'en' ? 'Learn more' : '자세히 보기',
           icon: 'education' as const,
         }))
       : null
   const shown = autoCards ?? cards
   if (shown.length === 0) return null
 
-  if (locale === 'ko' && (hub === 'domestic' || hub === 'overseas')) {
+  if (hub === 'domestic' || hub === 'overseas') {
     const others = filterNavLinks(
       NAV_MENU_COLUMNS.find((col) => col.topKey === 'business')?.links ?? [],
       visibility,
     ).filter((section) => section.key !== hub)
-    const programsLabel = hub === 'overseas' ? '해외사업 분야' : '국내사업 분야'
+    const programsLabel = hub === 'overseas'
+      ? locale === 'en' ? 'Overseas programs' : '해외사업 분야'
+      : locale === 'en' ? 'Domestic programs' : '국내사업 분야'
     const programCards = cards.length > 0 ? cards : shown
     return (
       <>
@@ -70,7 +72,7 @@ export function BusinessHubCards({ hub }: { hub: BusinessHub }) {
             <div className="dom-programs__row">
               {programCards.map((card) => {
                 const href = card.href.trim()
-                const label = (card.buttonLabel || '자세히 보기').replace(/\s*→\s*$/, '')
+                const label = (card.buttonLabel || (locale === 'en' ? 'Learn more' : '자세히 보기')).replace(/\s*→\s*$/, '')
                 const body = (
                   <>
                     <span className="dom-ic__icon" aria-hidden="true">

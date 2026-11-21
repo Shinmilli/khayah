@@ -3,11 +3,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getInquiryFaq = getInquiryFaq;
 exports.getAdminInquiryFaq = getAdminInquiryFaq;
 exports.putAdminInquiryFaq = putAdminInquiryFaq;
+const documentDraft_1 = require("../services/documentDraft");
 const inquiryFaqFileService_1 = require("../services/inquiryFaqFileService");
 async function getInquiryFaq(req, res) {
     try {
         const locale = (0, inquiryFaqFileService_1.parseInquiryFaqLocale)(req.query.lang);
-        const content = await (0, inquiryFaqFileService_1.readInquiryFaqForLocale)(locale);
+        const content = await (0, inquiryFaqFileService_1.readInquiryFaqForLocale)(locale, await (0, documentDraft_1.adminCanSeeDraft)(req));
         const items = [...content.items].filter((i) => i.published).sort((a, b) => a.order - b.order);
         res.json({ version: 2, items });
     }
@@ -18,8 +19,8 @@ async function getInquiryFaq(req, res) {
 }
 async function getAdminInquiryFaq(_req, res) {
     try {
-        const doc = await (0, inquiryFaqFileService_1.readInquiryFaqDocument)();
-        res.json(doc);
+        const { doc, unpublished } = await (0, inquiryFaqFileService_1.readInquiryFaqState)(true);
+        res.json({ ...doc, unpublished });
     }
     catch (e) {
         console.error(e);
@@ -28,9 +29,9 @@ async function getAdminInquiryFaq(_req, res) {
 }
 async function putAdminInquiryFaq(req, res) {
     try {
-        await (0, inquiryFaqFileService_1.writeInquiryFaqDocument)(req.body);
-        const doc = await (0, inquiryFaqFileService_1.readInquiryFaqDocument)();
-        res.json(doc);
+        await (0, inquiryFaqFileService_1.writeInquiryFaqDocument)(req.body, (0, documentDraft_1.saveModeOf)(req));
+        const { doc, unpublished } = await (0, inquiryFaqFileService_1.readInquiryFaqState)(true);
+        res.json({ ...doc, unpublished });
     }
     catch (e) {
         const status = e?.status;

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, Navigate, useLocation } from 'react-router-dom'
 import { fetchPageBySlug, fetchPostBySlug } from '../services/api'
 import { PostDetail, crumbsForKind, crumbsForPost, heroTitleForKind } from '../components/PostDetail'
-import { getStaticPage, normalizePathKey, pathToSlug } from '../constants/pagesContent'
+import { getDesignPage, normalizePathKey, pathToSlug } from '../constants/pagesContent'
 import { useLocale } from '../i18n/LocaleContext'
 import { useKayaPages } from '../features/kaya/useKayaPages'
 import type { Page } from '../types/page'
@@ -42,15 +42,16 @@ import { useBizSupport } from '../features/biz/useBizSupport'
 function storyCtaForPathKey(
   pathKey: string,
   messages: ReturnType<typeof useLocale>['messages'],
-  locale: ReturnType<typeof useLocale>['locale'],
 ): { label: string; to: string } | null {
-  if (locale === 'ko') {
-    if (pathKey === PATH.businessDomestic) return null
-    if (pathKey === PATH.businessDomesticEducation) return null
-    if (pathKey === PATH.businessOverseas) return null
-    if (pathKey === PATH.businessOverseasEducation) return null
-    if (pathKey === PATH.businessOverseasVolunteer) return null
-    if (pathKey === PATH.businessAdvocacy) return null
+  if (
+    pathKey === PATH.businessDomestic ||
+    pathKey === PATH.businessDomesticEducation ||
+    pathKey === PATH.businessOverseas ||
+    pathKey === PATH.businessOverseasEducation ||
+    pathKey === PATH.businessOverseasVolunteer ||
+    pathKey === PATH.businessAdvocacy
+  ) {
+    return null
   }
   const cta = messages.pages.storyCta
   if (!pathKey) return null
@@ -125,7 +126,7 @@ function PageByPathInner({ kindHint }: { kindHint: string }) {
   const postMissing = Boolean(isPostPath && postState.slug === postSlug && post === null)
 
   const staticPage =
-    pathKey && !isPostPath && !isInquiry && !isHistory ? getStaticPage(pathKey, locale) : null
+    pathKey && !isPostPath && !isInquiry && !isHistory ? getDesignPage(pathKey, locale) : null
 
   const slug = pathToSlug(location.pathname)
 
@@ -212,11 +213,10 @@ function PageByPathInner({ kindHint }: { kindHint: string }) {
 
   if (isHistory) return <HistoryPage />
 
-  if (locale === 'ko' && pathKey === PATH.newsActivities) return <StoryArchivePage kind="활동소식" heading="활동소식" />
+  if (pathKey === PATH.newsActivities) return <StoryArchivePage kind="활동소식" heading={messages.nav.links.activities} />
 
   if (pathKey === PATH.newsStories || pathKey.startsWith(`${PATH.newsStories}/`)) {
-    if (locale === 'ko') return <StoryCategoryPage />
-    return <StoryArchivePage />
+    return <StoryCategoryPage />
   }
 
   if (isNewsArchive) return <NewsArchivePage />
@@ -273,7 +273,7 @@ function PageByPathInner({ kindHint }: { kindHint: string }) {
   }
 
   if (staticPage) {
-    const storyCtaBase = storyCtaForPathKey(pathKey, messages, locale)
+    const storyCtaBase = storyCtaForPathKey(pathKey, messages)
     const ctaKey =
       pathKey === PATH.businessDomesticEducation
         ? 'dedu.cta'
@@ -287,34 +287,32 @@ function PageByPathInner({ kindHint }: { kindHint: string }) {
                 ? 'res.cta'
                 : ''
     const storyCta =
-      locale === 'ko' && storyCtaBase && ctaKey && biz?.fields[ctaKey]
+      storyCtaBase && ctaKey && biz?.fields[ctaKey]
         ? { ...storyCtaBase, label: biz.fields[ctaKey] }
         : storyCtaBase
-    const bindBiz = locale === 'ko' && (pathKey.startsWith('business/') || pathKey.startsWith('support/'))
-    const koreanSupportPage =
-      locale === 'ko' && (pathKey === PATH.supportGuide || pathKey === PATH.supportMethod)
+    const bindBiz = pathKey.startsWith('business/') || pathKey.startsWith('support/')
+    const koreanSupportPage = pathKey === PATH.supportGuide || pathKey === PATH.supportMethod
     return (
       <div className="page-content-wrapper">
-        {koreanSupportPage || (locale === 'ko' && pathKey === PATH.aboutGreeting && kaya?.fields['greet.heroOn'] === '0') ? null : (
+        {koreanSupportPage || (pathKey === PATH.aboutGreeting && kaya?.fields['greet.heroOn'] === '0') ? null : (
           <PageHero
             title={
-              locale === 'ko' && pathKey === PATH.businessSocialAcademy && biz?.fields['aca.heroTitle']?.trim()
+ pathKey === PATH.businessSocialAcademy && biz?.fields['aca.heroTitle']?.trim()
                 ? biz.fields['aca.heroTitle'].trim()
-                : locale === 'ko' && pathKey === PATH.businessSocialComfort && biz?.fields['cnc.heroTitle']?.trim()
+                :  pathKey === PATH.businessSocialComfort && biz?.fields['cnc.heroTitle']?.trim()
                   ? biz.fields['cnc.heroTitle'].trim()
                   : staticPage.title
             }
             backgroundImageUrl={
-              locale === 'ko' && pathKey === PATH.businessSocialAcademy && biz?.fields['aca.banner']?.trim()
+ pathKey === PATH.businessSocialAcademy && biz?.fields['aca.banner']?.trim()
                 ? biz.fields['aca.banner'].trim()
-                : locale === 'ko' && pathKey === PATH.businessSocialComfort && biz?.fields['cnc.banner']?.trim()
+                :  pathKey === PATH.businessSocialComfort && biz?.fields['cnc.banner']?.trim()
                   ? biz.fields['cnc.banner'].trim()
                   : pageHeroImageForPath(pathKey)
             }
             showScrollHint={
               pathKey !== PATH.aboutLocation &&
               !(
-                locale === 'ko' &&
                 (pathKey === PATH.aboutGreeting ||
                   pathKey === PATH.businessDomestic ||
                   pathKey === PATH.businessDomesticEducation ||
@@ -328,10 +326,9 @@ function PageByPathInner({ kindHint }: { kindHint: string }) {
               )
             }
             layout={
-              locale === 'ko' && pathKey === PATH.aboutGreeting
+ pathKey === PATH.aboutGreeting
                 ? 'kaya'
-                : locale === 'ko' &&
-                    (pathKey === PATH.businessDomestic ||
+                :                     (pathKey === PATH.businessDomestic ||
                       pathKey === PATH.businessDomesticEducation ||
                       pathKey === PATH.businessOverseas ||
                       pathKey === PATH.businessOverseasEducation ||
@@ -344,25 +341,25 @@ function PageByPathInner({ kindHint }: { kindHint: string }) {
                   : 'banner'
             }
             eyebrow={
-              locale === 'ko' && pathKey === PATH.aboutGreeting
+ pathKey === PATH.aboutGreeting
                 ? 'MESSAGE'
-                : locale === 'ko' && pathKey === PATH.businessDomestic
+                :  pathKey === PATH.businessDomestic
                   ? 'DOMESTIC PROGRAMS'
-                  : locale === 'ko' && pathKey === PATH.businessDomesticEducation
+                  :  pathKey === PATH.businessDomesticEducation
                     ? 'DOMESTIC EDUCATION'
-                    : locale === 'ko' && pathKey === PATH.businessOverseas
+                    :  pathKey === PATH.businessOverseas
                       ? 'OVERSEAS PROGRAMS'
-                      : locale === 'ko' && pathKey === PATH.businessOverseasEducation
+                      :  pathKey === PATH.businessOverseasEducation
                         ? 'OVERSEAS EDUCATION'
-                        : locale === 'ko' && pathKey === PATH.businessOverseasVolunteer
+                        :  pathKey === PATH.businessOverseasVolunteer
                           ? 'OVERSEAS VOLUNTEERS'
-                          : locale === 'ko' && pathKey === PATH.businessAdvocacy
+                          :  pathKey === PATH.businessAdvocacy
                             ? 'RESEARCH'
-                            : locale === 'ko' && pathKey === PATH.businessSocial
+                            :  pathKey === PATH.businessSocial
                               ? biz?.fields['soc.heroLabel'] || 'SOCIAL BUSINESS'
-                              : locale === 'ko' && pathKey === PATH.businessSocialAcademy
+                              :  pathKey === PATH.businessSocialAcademy
                                 ? biz?.fields['aca.heroLabel'] || 'KHAYAH ACADEMY'
-                                : locale === 'ko' && pathKey === PATH.businessSocialComfort
+                                :  pathKey === PATH.businessSocialComfort
                                   ? biz?.fields['cnc.heroLabel'] || 'COLOR & COMFORT'
                                   : undefined
             }
@@ -373,8 +370,7 @@ function PageByPathInner({ kindHint }: { kindHint: string }) {
         <div className="section">
           <div className="section_wrapper clearfix">
             <div className="column one">
-              {locale === 'ko' &&
-              (pathKey === PATH.aboutGreeting || pathKey === 'about/org-chart' || pathKey === 'about/directors') ? (
+              {pathKey === PATH.aboutGreeting || pathKey === PATH.aboutLocation || pathKey === 'about/org-chart' || pathKey === 'about/directors' ? (
                 <KayaBoundHtml className="the_content_wrapper page-body" html={staticPage.content} />
               ) : bindBiz ? (
                 <BizBoundHtml className="the_content_wrapper page-body" html={staticPage.content} />
@@ -385,7 +381,7 @@ function PageByPathInner({ kindHint }: { kindHint: string }) {
                 />
               )}
               {pathKey === PATH.businessOverseasEducation ? <OverseasEducationPrograms /> : null}
-              {locale === 'ko' && (pathKey === PATH.businessSocial || pathKey === PATH.businessSocialAcademy || pathKey === PATH.businessSocialComfort) ? (
+              { (pathKey === PATH.businessSocial || pathKey === PATH.businessSocialAcademy || pathKey === PATH.businessSocialComfort) ? (
                 <PageBlocks
                   blocks={[
                     ...(biz?.blocks ?? []).filter((block) => block.page === (pathKey === PATH.businessSocial ? 'social' : pathKey === PATH.businessSocialAcademy ? 'academy' : 'cnc')),
@@ -410,7 +406,7 @@ function PageByPathInner({ kindHint }: { kindHint: string }) {
   }
 
   if (apiPage) {
-    const storyCta = storyCtaForPathKey(pathKey, messages, locale)
+    const storyCta = storyCtaForPathKey(pathKey, messages)
     return (
       <div className="page-content-wrapper">
         <PageHero title={apiPage.title} backgroundImageUrl={pageHeroImageForPath(pathKey)} />

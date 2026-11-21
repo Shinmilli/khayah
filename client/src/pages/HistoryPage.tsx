@@ -36,7 +36,7 @@ export function HistoryPage() {
 
   return (
     <div className="page-content-wrapper">
-      <PageHero title={title} backgroundImageUrl={pageHeroImageForPath(PATH.aboutHistory)} />
+      <PageHero title={title} backgroundImageUrl={pageHeroImageForPath(PATH.aboutHistory)} layout="kaya" eyebrow="HISTORY" showScrollHint={false} />
       <KhayahSectionNav />
       <div className="section">
         <div className="section_wrapper clearfix">

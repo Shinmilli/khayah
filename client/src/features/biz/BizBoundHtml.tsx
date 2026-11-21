@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { useLocale } from '../../i18n/LocaleContext'
 import { applyBizFields } from './applyBizFields'
 import { useBizSupport } from './useBizSupport'
 import { useSiteCommon } from '../site/useSiteCommon'
@@ -9,10 +10,11 @@ export function BizBoundHtml({ html, className }: { html: string; className?: st
   const doc = useBizSupport()
   const site = useSiteCommon()
   const impact = useImpactPage()
+  const { locale } = useLocale()
 
   useEffect(() => {
     if (!ref.current || !doc) return
-    applyBizFields(ref.current, doc, site?.org.accounts ?? '')
+    applyBizFields(ref.current, doc, site?.org.accounts ?? '', locale)
     const breaks: Record<string, string[]> = {
       'dom.p.0.body': ['발견하고,'],
       'dom.p.1.body': ['존중합니다.', '지양하고,'],
@@ -37,7 +39,7 @@ export function BizBoundHtml({ html, className }: { html: string; className?: st
     }
     const band = ref.current.querySelector<HTMLElement>('[data-sec="guide.impact"]')
     if (band && !impact?.public) band.hidden = true
-  }, [html, doc, site, impact])
+  }, [html, doc, site, impact, locale])
 
   return <div ref={ref} className={className} dangerouslySetInnerHTML={{ __html: html }} />
 }

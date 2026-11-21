@@ -7,11 +7,9 @@ export const INQUIRY_HUB_TABS: Array<{ id: InquiryHubTabId; label: string }> = [
   { id: 'board', label: '문의하기' },
 ]
 
-/** 준비 전 FAQ는 메뉴·화면에서 숨긴다. 관리자 FAQ는 그대로 둔다. */
-export const FAQ_PUBLIC = false
-
-export function parseInquiryHubTab(search: string): InquiryHubTabId {
-  if (!FAQ_PUBLIC) return 'board'
+/** faqPublic가 꺼져 있으면 FAQ 탭 요청도 문의하기로 둔다. */
+export function parseInquiryHubTab(search: string, faqPublic = false): InquiryHubTabId {
+  if (!faqPublic) return 'board'
   const params = new URLSearchParams(search.startsWith('?') ? search.slice(1) : search)
   const raw = params.get('tab')?.toLowerCase().trim()
   if (raw === '1to1' || raw === 'inquiry' || raw === 'write' || raw === 'lookup' || raw === 'board') {

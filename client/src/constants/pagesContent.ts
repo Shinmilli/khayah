@@ -33,6 +33,17 @@ export function getStaticPage(pathKey: string, locale: Locale): StaticPage | nul
   return BY_LOCALE[locale][key] ?? null
 }
 
+const REDESIGN_MARK = /data-k=|class="(?:kaya|dom|ovs|gm|sbiz|sup|aca|cnc|kh-history)-/
+
+/** 영어 화면은 예전 HTML 대신 한국어와 같은 디자인 마크업을 쓴다. 제목은 영어 페이지 것을 유지한다. */
+export function getDesignPage(pathKey: string, locale: Locale): StaticPage | null {
+  const local = getStaticPage(pathKey, locale)
+  if (locale === 'ko') return local
+  const ko = getStaticPage(pathKey, 'ko')
+  if (!ko || !REDESIGN_MARK.test(ko.content)) return local
+  return { title: local?.title || ko.title, content: ko.content }
+}
+
 /** 각 세그먼트를 한 번 디코드해 정적 키·API slug와 맞춤 (이중 인코딩 URL 대응) */
 function decodeSegment(segment: string): string {
   try {

@@ -98,7 +98,7 @@ export function Header() {
 
   const navColumns = useMemo(() => {
     const columns = filterNavColumns(NAV_MENU_COLUMNS, navVisibility)
-    const showImpact = locale === 'ko' && impact?.public === true
+    const showImpact = impact?.public === true
     const withImpact = (col: (typeof columns)[number]) => {
       if (!showImpact || col.topKey !== 'business') return col
       return { ...col, links: [...col.links, { key: 'impactGlance' as const, to: '/business/impact' }] }
@@ -226,11 +226,11 @@ export function Header() {
       ? biz?.donate.menuLabel?.trim() || site?.headerDonate.labelKo || messages.home.hero.donate
       : messages.home.hero.donate
   const hideHeaderDonate =
-    locale === 'ko' && biz?.donate.menuPin === 'off'
+    biz?.donate.menuPin === 'off'
       ? true
-      : locale === 'ko' && biz?.donate.menuPin === 'on'
+      : biz?.donate.menuPin === 'on'
         ? false
-        : locale === 'ko' && site
+        : site
           ? !site.headerDonate.pinned && !atTop
           : false
 

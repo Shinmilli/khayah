@@ -1,0 +1,982 @@
+{
+    "pages": {
+        "domestic": {
+            "title": "",
+            "eyebrow": "PROGRAMS · 국내 진행사업",
+            "photo": "",
+            "photoAlt": "",
+            "align": "center"
+        },
+        "overseas": {
+            "title": "",
+            "eyebrow": "PROGRAMS · 해외 진행사업",
+            "photo": "",
+            "photoAlt": "",
+            "align": "left"
+        },
+        "education": {
+            "title": "",
+            "eyebrow": "PROGRAMS · 해외 교육 진행사업",
+            "photo": "",
+            "photoAlt": "",
+            "align": "center"
+        },
+        "volunteer": {
+            "title": "",
+            "eyebrow": "PROGRAMS · 해외봉사단 진행사업",
+            "photo": "",
+            "photoAlt": "",
+            "align": "left"
+        },
+        "research": {
+            "title": "",
+            "eyebrow": "PROGRAMS · 연구사업 진행사업",
+            "photo": "",
+            "photoAlt": "",
+            "align": "left"
+        }
+    },
+    "items": [
+        {
+            "id": "item-0",
+            "year": 2026,
+            "field": "",
+            "eyebrow": "CAREER & FUTURE SKILLS · 진로·미래역량 교육",
+            "title": "청년 해외연수 사전교육",
+            "period": "2026",
+            "audience": "청년",
+            "partner": "[협력기관]",
+            "paragraphs": [
+                "디자인 씽킹을 진로교육에 적용한 Life Design 커리큘럼과 워크북을 카야 교육 전문가 그룹이 직접 개발했습니다.",
+                "경기도·서울시·통일과나눔재단 사업을 거치며 청년 수백 명과 현장에서 검증했습니다.",
+                "참가자 사전교육과 인솔자 선발·교육·관리를 맡습니다."
+            ],
+            "slides": [
+                {
+                    "src": "/images/business/research-edu-model-1.jpg",
+                    "alt": "[사진 1] 청년 해외연수 사전교육"
+                }
+            ],
+            "showArrows": false,
+            "steps": [
+                {
+                    "kicker": "DISCOVER",
+                    "title": "자기이해",
+                    "detail": "강점·가치관·행동 패턴 정리",
+                    "emphasis": false
+                },
+                {
+                    "kicker": "EXPLORE",
+                    "title": "직업·사회 탐색",
+                    "detail": "직무 체험, 현장 방문, 멘토링",
+                    "emphasis": false
+                },
+                {
+                    "kicker": "DESIGN",
+                    "title": "진로·삶 설계",
+                    "detail": "미래 시나리오와 실행 계획 완성",
+                    "emphasis": true
+                }
+            ],
+            "facts": [
+                {
+                    "value": "77.9",
+                    "unit": "%",
+                    "label": "\"진로를 설계하는 방법을 익히는 데 도움이 됐다\""
+                },
+                {
+                    "value": "93.6",
+                    "unit": "%",
+                    "label": "\"진로 탐색 의지가 높아졌다\""
+                },
+                {
+                    "value": "[0.0]",
+                    "unit": "/5",
+                    "label": "[만족도 항목]"
+                }
+            ],
+            "note": "Life Design 워크숍 사후 설문",
+            "photos": [
+                {
+                    "src": "/images/business/overseas-edu-future-1.jpg",
+                    "alt": "[사진] 사전교육 소그룹 워크숍. 테이블별로 워크북을 펼쳐 놓고 토론하는 장면"
+                },
+                {
+                    "src": "/images/business/research-edu-model-2.jpg",
+                    "alt": "[사진] Life Design 워크북 작성. 참가자 손과 워크북 페이지 클로즈업"
+                },
+                {
+                    "src": "/images/business/research-academy-1.jpg",
+                    "alt": "[사진] 디렉터 진행 장면. 디렉터(퍼실리테이터)가 그룹을 이끄는 모습"
+                }
+            ],
+            "category": "국내",
+            "enabled": true,
+            "order": 0,
+            "emphasizeLast": true,
+            "stepsOn": true,
+            "factsOn": true,
+            "photosOn": true
+        },
+        {
+            "id": "item-1",
+            "year": 2026,
+            "field": "",
+            "eyebrow": "VOLUNTEER OPERATION · 청년 해외봉사단 국내 운영",
+            "title": "청년 해외봉사단 국내 운영",
+            "period": "2026",
+            "audience": "청년 (만 19~39세)",
+            "partner": "[협력기관]",
+            "paragraphs": [
+                "청년 해외봉사단의 모집·선발, 파견 전 국내교육, 귀국 후 성과공유회는 국내에서 진행됩니다.",
+                "카야는 이 과정 전체를 맡아 청년들이 준비된 상태로 현장에 나가도록 합니다."
+            ],
+            "slides": [
+                {
+                    "src": "/images/business/volunteer-group.jpg",
+                    "alt": "[사진 1] 청년 해외봉사단 국내 운영"
+                }
+            ],
+            "showArrows": true,
+            "steps": [
+                {
+                    "kicker": "STEP 1",
+                    "title": "모집·선발",
+                    "detail": "홍보, 심사, 선발",
+                    "emphasis": false
+                },
+                {
+                    "kicker": "STEP 2",
+                    "title": "국내교육",
+                    "detail": "세계시민성, 주제, 안전관리",
+                    "emphasis": false
+                },
+                {
+                    "kicker": "STEP 3",
+                    "title": "파견",
+                    "detail": "현장 활동, 인솔",
+                    "emphasis": false
+                },
+                {
+                    "kicker": "STEP 4",
+                    "title": "성과공유",
+                    "detail": "성과분석, 성과공유회",
+                    "emphasis": false
+                }
+            ],
+            "facts": [
+                {
+                    "value": "[000]",
+                    "unit": "명",
+                    "label": "국내교육 이수 청년"
+                },
+                {
+                    "value": "[0.0]",
+                    "unit": "/5",
+                    "label": "[만족도 항목]"
+                },
+                {
+                    "value": "[0.0]",
+                    "unit": "/5",
+                    "label": "[만족도 항목]"
+                }
+            ],
+            "note": "[조사 시점 · 대상 · 응답 수]",
+            "photos": [
+                {
+                    "src": "/images/business/volunteer-group.jpg",
+                    "alt": "[사진] 파견 전 국내교육. 세계시민성·안전교육 강의 장면"
+                },
+                {
+                    "src": "/images/business/research-academy-2.jpg",
+                    "alt": "[사진] 성과공유회. 단원 발표 또는 단체 사진"
+                },
+                {
+                    "src": "/images/business/volunteer-launch.jpg",
+                    "alt": "[사진] 발대식"
+                }
+            ],
+            "category": "국내",
+            "enabled": true,
+            "order": 1,
+            "emphasizeLast": false,
+            "stepsOn": true,
+            "factsOn": true,
+            "photosOn": true
+        },
+        {
+            "id": "dream-seekers-life-design-youth-camp",
+            "year": 2025,
+            "field": "",
+            "eyebrow": "YOUTH CAMP · 청소년 초청 캠프",
+            "title": "Dream Seekers : Life Design Youth Camp",
+            "period": "2025.12~",
+            "audience": "개발도상국 중·고등학생",
+            "partner": "[협력기관]",
+            "paragraphs": [
+                "개발도상국 중·고등학생을 한국에 초청해 5일 동안 진로를 설계하는 캠프입니다.",
+                "Life Design 워크숍에 직업체험관·대학·산업 현장 방문을 더해, 2025년 12월부터 몽골 청소년 1~3기를 운영하고 있습니다."
+            ],
+            "slides": [
+                {
+                    "src": "/images/business/domestic-edu-2.jpg",
+                    "alt": "[사진 1] Dream Seekers : Life Design Youth Camp"
+                }
+            ],
+            "showArrows": true,
+            "steps": [
+                {
+                    "kicker": "DAY 1",
+                    "title": "입국·오리엔테이션",
+                    "detail": "프로그램 이해, 관계 형성",
+                    "emphasis": false
+                },
+                {
+                    "kicker": "DAY 2",
+                    "title": "진로 인식·자기이해",
+                    "detail": "Life Design 워크숍",
+                    "emphasis": false
+                },
+                {
+                    "kicker": "DAY 3",
+                    "title": "직업·사회 환경 체험",
+                    "detail": "잡월드, 산업 현장",
+                    "emphasis": false
+                },
+                {
+                    "kicker": "DAY 4",
+                    "title": "학습 환경 탐방",
+                    "detail": "대학 탐방, 문화 체험",
+                    "emphasis": false
+                },
+                {
+                    "kicker": "DAY 5",
+                    "title": "진로·삶 설계 정리",
+                    "detail": "성과 공유, 수료",
+                    "emphasis": true
+                }
+            ],
+            "facts": [
+                {
+                    "value": "86",
+                    "unit": "%",
+                    "label": "\"직업 선택 기준이 생겼다\""
+                },
+                {
+                    "value": "4.7",
+                    "unit": "/5",
+                    "label": "운영·진행 만족도"
+                },
+                {
+                    "value": "4.6",
+                    "unit": "/5",
+                    "label": "새로운 경험·기회 만족도"
+                }
+            ],
+            "note": "2025.12 몽골팀 사후 설문 (참여 57명 · 응답 45명)",
+            "photos": [
+                {
+                    "src": "/images/business/overseas-edu-job.jpg",
+                    "alt": "[사진] 잡월드 직업 체험. 수술실·생명공학 체험 장면 · 라이프디자인 홍보자료 13p"
+                },
+                {
+                    "src": "/images/business/domestic-edu-2.jpg",
+                    "alt": "[사진] 대학 캠퍼스 투어. 정문 앞 Dream Seekers 현수막 단체 사진 · 홍보자료 13p"
+                },
+                {
+                    "src": "/images/business/overseas-edu-future-1.jpg",
+                    "alt": "[사진] Life Design 워크숍. 워크북을 작성하는 참가자 · 홍보자료 3p"
+                }
+            ],
+            "category": "국내",
+            "enabled": true,
+            "order": 2,
+            "emphasizeLast": true,
+            "stepsOn": true,
+            "factsOn": true,
+            "photosOn": true
+        },
+        {
+            "id": "seem",
+            "year": 2026,
+            "field": "교육",
+            "eyebrow": "KYRGYZSTAN · 교육 · Phase 2 확산·매뉴얼화",
+            "title": "SEEM 방과후학습 · 비슈케크 외곽 학교",
+            "period": "2026~",
+            "audience": "외곽지역 학교 학생",
+            "partner": "사랑의열매·KCOC 해외지원사업",
+            "paragraphs": [
+                "STEM 기초학습에서 진로역량까지 이어지는 방과후학습을 운영합니다.",
+                "비슈케크 레닌구 학교 기반 이러닝학습센터(2023~2025)에서 개발한 모델을 외곽지역 학교로 넓힙니다."
+            ],
+            "slides": [
+                {
+                    "src": "/images/business/overseas-edu-quality-2.jpg",
+                    "alt": "[사진 1] SEEM 방과후학습 · 비슈케크 외곽 학교"
+                }
+            ],
+            "showArrows": true,
+            "steps": [
+                {
+                    "kicker": "2022",
+                    "title": "시범 운영",
+                    "detail": "칸트시 청년 STEM 교육",
+                    "emphasis": false
+                },
+                {
+                    "kicker": "2023",
+                    "title": "대상 확대",
+                    "detail": "비슈케크 청(소)년 STEM 교육",
+                    "emphasis": false
+                },
+                {
+                    "kicker": "2023~2025",
+                    "title": "모델 개발",
+                    "detail": "이러닝학습센터",
+                    "emphasis": false
+                },
+                {
+                    "kicker": "2026~",
+                    "title": "확산·매뉴얼화",
+                    "detail": "외곽지역 학교 SEEM",
+                    "emphasis": false
+                }
+            ],
+            "facts": [
+                {
+                    "value": "[000]",
+                    "unit": "명",
+                    "label": "참여 학생"
+                },
+                {
+                    "value": "[00]",
+                    "unit": "개",
+                    "label": "참여 학교"
+                },
+                {
+                    "value": "[00]",
+                    "unit": "%",
+                    "label": "[성과 항목]"
+                }
+            ],
+            "note": "[조사 시점 · 대상 · 응답 수]",
+            "photos": [
+                {
+                    "src": "/images/business/overseas-edu-quality-2.jpg",
+                    "alt": "[사진] SEEM 방과후학습. 학생들이 노트북으로 STEM 이러닝을 하는 교실 장면"
+                },
+                {
+                    "src": "/images/business/overseas-edu-future-3.jpg",
+                    "alt": "[사진] STEM 프로젝트 수업"
+                },
+                {
+                    "src": "/images/business/overseas-edu-quality-1.jpg",
+                    "alt": "[사진] 교사 연수"
+                }
+            ],
+            "category": "해외",
+            "enabled": true,
+            "order": 0,
+            "emphasizeLast": false,
+            "stepsOn": true,
+            "factsOn": true,
+            "photosOn": true
+        },
+        {
+            "id": "stem",
+            "year": 2026,
+            "field": "교육",
+            "eyebrow": "KYRGYZSTAN · 교육",
+            "title": "STEM 교사·청소년 진로역량 강화 · 토크막",
+            "period": "2026 (진행 중)",
+            "audience": "STEM 교사·청소년",
+            "partner": "KOICA 시민사회협력사업",
+            "paragraphs": [
+                "12학년제 교육개혁에 대응한 STEM 교사 실행역량 강화와 청소년 진로역량 강화를 함께 진행합니다."
+            ],
+            "slides": [
+                {
+                    "src": "/images/business/overseas-edu-quality-1.jpg",
+                    "alt": "[사진 1] STEM 교사·청소년 진로역량 강화 · 토크막"
+                }
+            ],
+            "showArrows": false,
+            "steps": [],
+            "facts": [
+                {
+                    "value": "[000]",
+                    "unit": "명",
+                    "label": "참여 교사"
+                },
+                {
+                    "value": "[000]",
+                    "unit": "명",
+                    "label": "참여 청소년"
+                },
+                {
+                    "value": "[00]",
+                    "unit": "%",
+                    "label": "[성과 항목]"
+                }
+            ],
+            "note": "[조사 시점 · 대상 · 응답 수]",
+            "photos": [
+                {
+                    "src": "/images/business/overseas-edu-quality-1.jpg",
+                    "alt": "[사진] 토크막 STEM 교사 연수. 교사들이 실습하거나 수업안을 발표하는 장면"
+                },
+                {
+                    "src": "/images/business/overseas-edu-future-1.jpg",
+                    "alt": "[사진] 청소년 진로 교육"
+                }
+            ],
+            "category": "해외",
+            "enabled": true,
+            "order": 1,
+            "emphasizeLast": false,
+            "stepsOn": true,
+            "factsOn": true,
+            "photosOn": true
+        },
+        {
+            "id": "item-2",
+            "year": 2026,
+            "field": "해외봉사단",
+            "eyebrow": "VOLUNTEERS · 청년 해외봉사단",
+            "title": "청년 해외봉사단 현지 파견 운영",
+            "period": "2024~2026",
+            "audience": "청년 (만 19~39세)",
+            "partner": "경기도 국제개발협력사업",
+            "paragraphs": [
+                "2024년부터 청년 해외봉사단을 운영하고 있습니다.",
+                "모집·교육·파견·성과관리까지 전 과정을 직접 맡아, 3년간 6개국에 청년 460명을 파견했습니다.",
+                "현지조사로 지역 과제와 활동 주제를 정하고, 현지 정부·학교·전문기관과 협력 체계를 구성합니다.",
+                "현장 인솔자 동행, 위기 대응 체계를 운영하고 귀국 후 성과 분석과 성과공유회를 엽니다."
+            ],
+            "slides": [
+                {
+                    "src": "/images/business/volunteer-field.jpg",
+                    "alt": "[사진 1] 청년 해외봉사단 현지 파견 운영"
+                }
+            ],
+            "showArrows": true,
+            "steps": [
+                {
+                    "kicker": "PHASE 1",
+                    "title": "모집·선발",
+                    "detail": "홍보·모집, 서류·면접 심사",
+                    "emphasis": false
+                },
+                {
+                    "kicker": "PHASE 2",
+                    "title": "교육·준비",
+                    "detail": "국내교육·활동 기획, 현지 사전 준비",
+                    "emphasis": false
+                },
+                {
+                    "kicker": "PHASE 3",
+                    "title": "파견·활동",
+                    "detail": "발대식·파견, 현장 인솔·안전관리",
+                    "emphasis": false
+                },
+                {
+                    "kicker": "PHASE 4",
+                    "title": "성과·확산",
+                    "detail": "만족도·변화 조사, 성과공유회",
+                    "emphasis": true
+                }
+            ],
+            "facts": [
+                {
+                    "value": "460",
+                    "unit": "명",
+                    "label": "청년 파견 (2024~2026)"
+                },
+                {
+                    "value": "6",
+                    "unit": "개국",
+                    "label": "라오스 · 몽골 · 우즈베키스탄 · 캄보디아 · 키르기스스탄 · 필리핀"
+                },
+                {
+                    "value": "3",
+                    "unit": "주",
+                    "label": "1회 파견 기간 (하계·동계 연 2회)"
+                }
+            ],
+            "note": "2024~2026 누적",
+            "photos": [
+                {
+                    "src": "/images/business/volunteer-group.jpg",
+                    "alt": "[사진] 파견 전 국내교육. 강의실에서 단원들이 교육받는 장면 · 0801_00194.jpg 후보"
+                },
+                {
+                    "src": "/images/business/overseas-edu-foundation-2.jpg",
+                    "alt": "[사진] 현지 학교 환경교육. 단원이 현지 학생들과 수업하는 장면"
+                },
+                {
+                    "src": "/images/business/volunteer-field.jpg",
+                    "alt": "[사진] 나무심기·현판식. 현지 기관과 함께한 식재 활동 · IMG_9776.HEIC 후보"
+                }
+            ],
+            "category": "해외",
+            "enabled": true,
+            "order": 2,
+            "emphasizeLast": true,
+            "stepsOn": true,
+            "factsOn": true,
+            "photosOn": true
+        },
+        {
+            "id": "item-3",
+            "year": 2026,
+            "field": "교육",
+            "eyebrow": "MYANMAR · 교육 · EQUIP",
+            "title": "현지 교사·퍼실리테이터 역량강화 · 양곤·만달레이",
+            "period": "2026",
+            "audience": "현지 교사·퍼실리테이터",
+            "partner": "[협력기관]",
+            "paragraphs": [
+                "정기 교수법 워크숍(아동 중심 지도법, 독서토론 퍼실리테이션, 심리·정서 지원)을 운영합니다.",
+                "현지어 교사 매뉴얼과 주차별 학습 발달 진단 시트를 개발하고, 현지 수석교사를 리더로 양성해 외부 지원 없이도 교육 품질을 관리하도록 합니다."
+            ],
+            "slides": [
+                {
+                    "src": "/images/business/research-academy-1.jpg",
+                    "alt": "[사진 1] 현지 교사·퍼실리테이터 역량강화 · 양곤·만달레이"
+                }
+            ],
+            "showArrows": false,
+            "steps": [],
+            "facts": [
+                {
+                    "value": "[00]",
+                    "unit": "명",
+                    "label": "참여 교사"
+                },
+                {
+                    "value": "[00]",
+                    "unit": "회",
+                    "label": "교수법 워크숍"
+                },
+                {
+                    "value": "[00]",
+                    "unit": "%",
+                    "label": "[성과 항목]"
+                }
+            ],
+            "note": "[조사 시점 · 대상 · 응답 수]",
+            "photos": [
+                {
+                    "src": "/images/business/research-academy-1.jpg",
+                    "alt": "[사진] 미얀마 교사 워크숍. 현지 교사들이 큰 종이에 수업안을 정리하는 장면 · 미얀마 사업소개 10p"
+                }
+            ],
+            "category": "해외",
+            "enabled": true,
+            "order": 3,
+            "emphasizeLast": false,
+            "stepsOn": true,
+            "factsOn": true,
+            "photosOn": true
+        },
+        {
+            "id": "dream-seekers-education-center",
+            "year": 2025,
+            "field": "교육",
+            "eyebrow": "MYANMAR · 교육 · 통합 교육 허브",
+            "title": "양곤 Dream Seekers Education Center",
+            "period": "2025~",
+            "audience": "아동·청소년, 학부모·주민",
+            "partner": "카야 자체사업 (2022 바보의나눔, 2021 삼성꿈장학재단 사업 후속)",
+            "paragraphs": [
+                "East Dagon 강제이주마을 Dream Seekers 도서관(삼성꿈장학재단, 2021~)에서 시작해, 도서관·RTT 독서교육, 수학·영어 Self-Care 학습지, 정서 지원을 한곳에서 운영합니다.",
+                "학부모와 주민으로 구성된 운영위원회가 도서관 관리와 출석 모니터링을 맡습니다."
+            ],
+            "slides": [
+                {
+                    "src": "/images/business/overseas-edu-reading.jpg",
+                    "alt": "[사진 1] 양곤 Dream Seekers Education Center"
+                }
+            ],
+            "showArrows": false,
+            "steps": [
+                {
+                    "kicker": "01",
+                    "title": "도서관",
+                    "detail": "독서 공간과 도서 관리",
+                    "emphasis": false
+                },
+                {
+                    "kicker": "02",
+                    "title": "RTT 독서교육",
+                    "detail": "Reading · Thinking · Talking",
+                    "emphasis": false
+                },
+                {
+                    "kicker": "03",
+                    "title": "Self-Care 학습지",
+                    "detail": "수학·영어 수준별 학습",
+                    "emphasis": false
+                },
+                {
+                    "kicker": "04",
+                    "title": "정서 지원",
+                    "detail": "아동 심리·정서 지원",
+                    "emphasis": false
+                }
+            ],
+            "facts": [
+                {
+                    "value": "[000]",
+                    "unit": "명",
+                    "label": "참여 아동·청소년"
+                },
+                {
+                    "value": "[00]",
+                    "unit": "%",
+                    "label": "출석률"
+                },
+                {
+                    "value": "[00]",
+                    "unit": "%",
+                    "label": "[성과 항목]"
+                }
+            ],
+            "note": "[조사 시점 · 대상 · 응답 수]",
+            "photos": [
+                {
+                    "src": "/images/business/overseas-edu-reading.jpg",
+                    "alt": "[사진] Dream Seekers 도서관. 도서관에서 아이들이 책을 읽는 장면 · 미얀마 사업소개 7p"
+                },
+                {
+                    "src": "/images/business/overseas-edu-foundation-1.jpg",
+                    "alt": "[사진] Self-Care 학습지. 아이들이 학습지를 들고 있는 단체 컷"
+                },
+                {
+                    "src": "/images/business/overseas-intro.jpg",
+                    "alt": "[사진] Dream Seekers Library 단체 사진. 현수막 앞 아이들 단체 사진 · 2026 사업계획 슬라이드"
+                }
+            ],
+            "category": "해외",
+            "enabled": true,
+            "order": 4,
+            "emphasizeLast": false,
+            "stepsOn": true,
+            "factsOn": true,
+            "photosOn": true
+        },
+        {
+            "id": "cfs-2-myin-taw-kyi-myin-dai",
+            "year": 2025,
+            "field": "교육",
+            "eyebrow": "MYANMAR · 교육 · 대지진 긴급구호 후속",
+            "title": "만달레이 아동친화공간(CFS) 2곳 · Myin Taw, Kyi Myin Dai",
+            "period": "2025~",
+            "audience": "지진 피해 아동",
+            "partner": "[협력기관]",
+            "paragraphs": [
+                "지진 피해 아동 보호, 기초 문해·수리 교육, 심리·정서 지원을 이어갑니다."
+            ],
+            "slides": [
+                {
+                    "src": "/images/business/overseas-intro.jpg",
+                    "alt": "[사진 1] 만달레이 아동친화공간(CFS) 2곳 · Myin Taw, Kyi Myin Dai"
+                }
+            ],
+            "showArrows": false,
+            "steps": [],
+            "facts": [
+                {
+                    "value": "2",
+                    "unit": "곳",
+                    "label": "아동친화공간"
+                },
+                {
+                    "value": "[000]",
+                    "unit": "명",
+                    "label": "참여 아동"
+                },
+                {
+                    "value": "[00]",
+                    "unit": "%",
+                    "label": "[성과 항목]"
+                }
+            ],
+            "note": "[조사 시점 · 대상 · 응답 수]",
+            "photos": [
+                {
+                    "src": "/images/business/overseas-intro.jpg",
+                    "alt": "[사진] 아동친화공간(CFS) 수업. 사가잉 700년 기념마을 CFS 내부 · 결과보고 13p"
+                }
+            ],
+            "category": "해외",
+            "enabled": true,
+            "order": 5,
+            "emphasizeLast": false,
+            "stepsOn": true,
+            "factsOn": true,
+            "photosOn": true
+        },
+        {
+            "id": "item-6",
+            "year": 2025,
+            "field": "긴급구호",
+            "eyebrow": "MYANMAR · 긴급구호",
+            "title": "만달레이 대지진 긴급구호",
+            "period": "2025.04~08",
+            "audience": "피해 마을 주민",
+            "partner": "자체모금 · 국회 · 사랑의열매 · KCOC · Malteser International",
+            "paragraphs": [
+                "2025년 3월 만달레이 대지진 직후 미얀마 지부가 피해 마을을 조사하고 4~8월 긴급구호를 진행했습니다.",
+                "식수·위생·주거 지원에서 시작한 활동은 아동친화공간과 방과후 학습으로 이어지고 있습니다.",
+                "아동친화공간(CFS) 10개를 설치해 아동 249명의 심리·정서를 지원했습니다."
+            ],
+            "slides": [
+                {
+                    "src": "/images/business/volunteer-field.jpg",
+                    "alt": "[사진 1] 만달레이 대지진 긴급구호"
+                }
+            ],
+            "showArrows": true,
+            "steps": [
+                {
+                    "kicker": "01",
+                    "title": "피해 마을 조사",
+                    "detail": "3개 타운십 18개 마을",
+                    "emphasis": false
+                },
+                {
+                    "kicker": "02",
+                    "title": "식수·위생",
+                    "detail": "마을 공용 핸드펌프",
+                    "emphasis": false
+                },
+                {
+                    "kicker": "03",
+                    "title": "주거",
+                    "detail": "임시 쉘터",
+                    "emphasis": false
+                },
+                {
+                    "kicker": "04",
+                    "title": "아동 보호",
+                    "detail": "아동친화공간(CFS)",
+                    "emphasis": false
+                }
+            ],
+            "facts": [
+                {
+                    "value": "18",
+                    "unit": "개 마을",
+                    "label": "3개 타운십, 주민 7,937명"
+                },
+                {
+                    "value": "23",
+                    "unit": "개",
+                    "label": "마을 공용 핸드펌프 설치 (10개 마을)"
+                },
+                {
+                    "value": "19",
+                    "unit": "개",
+                    "label": "임시 쉘터 설치, 1,177명 수용"
+                }
+            ],
+            "note": "2025 미얀마 대지진 긴급구호 결과보고",
+            "photos": [
+                {
+                    "src": "/images/business/volunteer-field.jpg",
+                    "alt": "[사진] 마을 공용 핸드펌프. 아이들이 펌프 물을 쓰는 장면 · 긴급구호 결과보고 9p"
+                },
+                {
+                    "src": "/images/business/overseas-intro.jpg",
+                    "alt": "[사진] 아동친화공간(CFS) 수업. 사가잉 700년 기념마을 CFS 내부 · 결과보고 13p"
+                },
+                {
+                    "src": "/images/business/overseas-edu-env.jpg",
+                    "alt": "[사진] 식량·조리용 키트 배분. Myin Taw 또는 Yay Oo 마을 배분 현장 · 결과보고 11~12p"
+                }
+            ],
+            "category": "해외",
+            "enabled": true,
+            "order": 6,
+            "emphasizeLast": false,
+            "stepsOn": true,
+            "factsOn": true,
+            "photosOn": true
+        },
+        {
+            "id": "seem-stem-e-learning-empowerment-model",
+            "year": 2023,
+            "field": "",
+            "eyebrow": "01 · EDUCATION MODELS · 교육모델",
+            "title": "SEEM · STEM E-Learning Empowerment Model",
+            "period": "2023~",
+            "audience": "키르기스스탄 학교",
+            "partner": "[협력기관]",
+            "paragraphs": [
+                "학교 수업과 이러닝을 결합한 STEM 학습 모델입니다.",
+                "키르기스스탄 학교에서 개발·시범 운영 후 확산 중입니다."
+            ],
+            "slides": [
+                {
+                    "src": "/images/business/overseas-edu-quality-2.jpg",
+                    "alt": "[사진 1] SEEM · STEM E-Learning Empowerment Model"
+                }
+            ],
+            "showArrows": false,
+            "steps": [],
+            "facts": [],
+            "note": "",
+            "photos": [
+                {
+                    "src": "/images/business/overseas-edu-quality-2.jpg",
+                    "alt": "[사진] SEEM 이러닝 수업. 학생들이 플랫폼으로 학습하는 장면"
+                }
+            ],
+            "category": "연구",
+            "enabled": true,
+            "order": 0,
+            "emphasizeLast": false,
+            "stepsOn": true,
+            "factsOn": true,
+            "photosOn": true
+        },
+        {
+            "id": "self-care",
+            "year": 2021,
+            "field": "",
+            "eyebrow": "01 · EDUCATION MODELS · 교육모델",
+            "title": "Self-Care 학습지 · 아동·청소년 학습·놀이 교재",
+            "period": "[기간]",
+            "audience": "미얀마 도시빈민마을 아동·청소년",
+            "partner": "[협력기관]",
+            "paragraphs": [
+                "학교 밖에서도 혼자 학습할 수 있도록 만든 교재입니다.",
+                "미얀마 도시빈민마을에서 개발해 배포했습니다."
+            ],
+            "slides": [
+                {
+                    "src": "/images/business/overseas-edu-foundation-1.jpg",
+                    "alt": "[사진 1] Self-Care 학습지 · 아동·청소년 학습·놀이 교재"
+                }
+            ],
+            "showArrows": false,
+            "steps": [],
+            "facts": [],
+            "note": "",
+            "photos": [
+                {
+                    "src": "/images/business/overseas-edu-foundation-1.jpg",
+                    "alt": "[사진] Self-Care 학습지. 학습지 표지와 아이가 사용하는 장면"
+                }
+            ],
+            "category": "연구",
+            "enabled": true,
+            "order": 1,
+            "emphasizeLast": false,
+            "stepsOn": true,
+            "factsOn": true,
+            "photosOn": true
+        },
+        {
+            "id": "life-design",
+            "year": null,
+            "field": "",
+            "eyebrow": "01 · EDUCATION MODELS · 교육모델",
+            "title": "Life Design · 진로교육 커리큘럼·워크북",
+            "period": "[기간]",
+            "audience": "국내 청년, 개발도상국 청소년",
+            "partner": "[협력기관]",
+            "paragraphs": [
+                "디자인 씽킹을 적용한 3단계 진로 설계 과정입니다.",
+                "국내 청년 워크숍과 몽골 초청 캠프에서 운영 중입니다."
+            ],
+            "slides": [
+                {
+                    "src": "/images/business/research-edu-model-2.jpg",
+                    "alt": "[사진 1] Life Design · 진로교육 커리큘럼·워크북"
+                }
+            ],
+            "showArrows": false,
+            "steps": [
+                {
+                    "kicker": "DISCOVER",
+                    "title": "자기이해",
+                    "detail": "",
+                    "emphasis": false
+                },
+                {
+                    "kicker": "EXPLORE",
+                    "title": "직업·사회 탐색",
+                    "detail": "",
+                    "emphasis": false
+                },
+                {
+                    "kicker": "DESIGN",
+                    "title": "진로·삶 설계",
+                    "detail": "",
+                    "emphasis": true
+                }
+            ],
+            "facts": [],
+            "note": "",
+            "photos": [
+                {
+                    "src": "/images/business/research-edu-model-2.jpg",
+                    "alt": "[사진] Life Design 워크북. 워크북 표지와 펼친 내지"
+                }
+            ],
+            "category": "연구",
+            "enabled": true,
+            "order": 2,
+            "emphasizeLast": true,
+            "stepsOn": true,
+            "factsOn": true,
+            "photosOn": true
+        },
+        {
+            "id": "oda",
+            "year": null,
+            "field": "",
+            "eyebrow": "03 · KNOWLEDGE SHARING · 경험을 나누는 교육",
+            "title": "해외봉사단·인솔자 교육, 국제개발협력·ODA 교육, 강의·세미나",
+            "period": "[기간]",
+            "audience": "[대상]",
+            "partner": "[협력기관]",
+            "paragraphs": [
+                "현장에서 쌓은 개발협력 경험을 강의와 교육과정으로 나눕니다."
+            ],
+            "slides": [
+                {
+                    "src": "/images/business/volunteer-group.jpg",
+                    "alt": "[사진 1] 해외봉사단·인솔자 교육, 국제개발협력·ODA 교육, 강의·세미나"
+                }
+            ],
+            "showArrows": false,
+            "steps": [],
+            "facts": [],
+            "note": "",
+            "photos": [
+                {
+                    "src": "/images/business/volunteer-group.jpg",
+                    "alt": "[사진] 인솔자 교육. 인솔자 대상 교육 장면 · 기존 ‘인솔자 교육’ 사진"
+                },
+                {
+                    "src": "/images/business/domestic-edu-3.jpg",
+                    "alt": "[사진] 해외봉사단 국내교육. 대규모 단원 교육 장면 · 기존 ‘해외봉사단 교육’ 사진"
+                },
+                {
+                    "src": "/images/business/research-academy-3.jpg",
+                    "alt": "[사진] 강의·세미나. 외부 기관 초청 강의 장면"
+                }
+            ],
+            "category": "연구",
+            "enabled": true,
+            "order": 3,
+            "emphasizeLast": false,
+            "stepsOn": true,
+            "factsOn": true,
+            "photosOn": true
+        }
+    ]
+}

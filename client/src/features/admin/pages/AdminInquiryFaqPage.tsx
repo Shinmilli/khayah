@@ -65,6 +65,7 @@ export function AdminInquiryFaqPage() {
   const syncMetaToAllLocales = (id: string, patch: Pick<InquiryFaqItem, 'published' | 'order'>) => {
     setDoc((prev) => ({
       version: 2,
+      enabled: prev.enabled,
       locales: {
         ko: {
           items: prev.locales.ko.items.map((item) => (item.id === id ? { ...item, ...patch } : item)),
@@ -95,6 +96,7 @@ export function AdminInquiryFaqPage() {
     const blank = { id, question: '', answer: '', published: true, order }
     setDoc((prev) => ({
       version: 2,
+      enabled: prev.enabled,
       locales: {
         ko: { items: [...prev.locales.ko.items, { ...blank }] },
         en: { items: [...prev.locales.en.items, { ...blank, question: '', answer: '' }] },
@@ -107,6 +109,7 @@ export function AdminInquiryFaqPage() {
     if (!id || !window.confirm('이 FAQ 항목을 삭제할까요? (한·영 모두 삭제)')) return
     setDoc((prev) => ({
       version: 2,
+      enabled: prev.enabled,
       locales: {
         ko: { items: prev.locales.ko.items.filter((item) => item.id !== id) },
         en: { items: prev.locales.en.items.filter((item) => item.id !== id) },
@@ -145,7 +148,7 @@ export function AdminInquiryFaqPage() {
         <div>
           <h1 className="admin-page__title">고객 문의 FAQ</h1>
           <p className="admin-page__desc">
-            문의 페이지 FAQ 아코디언 문구를 한·영으로 관리합니다. 공개/순서는 언어 공통입니다.
+            문의 페이지 FAQ를 한·영으로 관리합니다. 전체 공개를 켜야 탭이 나오고, 항목 공개와 순서는 언어 공통입니다.
           </p>
         </div>
         <div className="admin-page__actions">
@@ -171,6 +174,31 @@ export function AdminInquiryFaqPage() {
 
       {error ? <p className="admin-panel__foot" style={{ color: '#b00020' }}>{error}</p> : null}
       {draftStatus(unpublished, savedAt, savedMode) ? <p className="admin-panel__foot">{draftStatus(unpublished, savedAt, savedMode)}</p> : null}
+
+      <section className="admin-panel">
+        <div className="admin-panel__head">
+          <div>
+            <h2 className="admin-panel__title">FAQ 전체 공개</h2>
+            <p className="admin-panel__foot">끄면 FAQ 탭이 숨겨집니다. 항목을 켜도 전체가 꺼져 있으면 문의 페이지에 나오지 않습니다.</p>
+          </div>
+          <label className="admin-onoff" title="끄면 문의 페이지의 FAQ 탭을 숨깁니다.">
+            <span>전체 공개</span>
+            <span className={`admin-onoff__state${doc.enabled ? ' is-on' : ''}`} aria-hidden>
+              {doc.enabled ? 'ON' : 'OFF'}
+            </span>
+            <input
+              type="checkbox"
+              role="switch"
+              checked={doc.enabled === true}
+              onChange={(e) => setDoc((prev) => ({ ...prev, enabled: e.target.checked }))}
+              aria-label="FAQ 전체 공개. 끄면 문의 페이지의 FAQ 탭을 숨깁니다"
+            />
+            <span className="admin-onoff__track" aria-hidden>
+              <span className="admin-onoff__thumb" />
+            </span>
+          </label>
+        </div>
+      </section>
 
       <section className="admin-panel">
         <div className="admin-page__head admin-page__head--inline">

@@ -1,3 +1,5 @@
+import type { Locale } from '../../i18n/locale'
+import { fieldsForLocale } from '../content/fieldText'
 import type { KayaMember, KayaPagesDocument } from './kayaPagesTypes'
 import { greetSectionOrder } from './kayaSectionOrder'
 import { fillTextWithBreaks, normalizeHtmlBreaks } from '../../utils/lineBreaks'
@@ -6,15 +8,18 @@ function esc(value: string): string {
   return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 }
 
-function memberCell(row: KayaMember): string {
-  return `<div class="khayah-board-cell" role="listitem"><div class="khayah-board-name"><span>${esc(row.badge)}</span> ${esc(row.name)}</div><div class="khayah-board-role">${esc(row.role)}</div></div>`
+function memberCell(row: KayaMember, locale: Locale): string {
+  const name = locale === 'en' ? row.nameEn.trim() || row.name : row.name
+  const role = locale === 'en' ? row.bioEn.trim() || row.role : row.role
+  return `<div class="khayah-board-cell" role="listitem"><div class="khayah-board-name"><span>${esc(row.badge)}</span> ${esc(name)}</div><div class="khayah-board-role">${esc(role)}</div></div>`
 }
 
-export function applyKayaFields(root: HTMLElement, doc: KayaPagesDocument) {
+export function applyKayaFields(root: HTMLElement, doc: KayaPagesDocument, locale: Locale = 'ko') {
+  const fields = fieldsForLocale(doc.fields, locale)
   root.querySelectorAll<HTMLElement>('[data-k]').forEach((el) => {
     const key = el.getAttribute('data-k')
-    if (!key || !(key in doc.fields)) return
-    const value = doc.fields[key] ?? ''
+    if (!key || !(key in fields)) return
+    const value = fields[key] ?? ''
     const mode = el.getAttribute('data-k-mode') || 'text'
     if (mode === 'src') {
       if (value && el instanceof HTMLImageElement) el.src = value
@@ -37,8 +42,8 @@ export function applyKayaFields(root: HTMLElement, doc: KayaPagesDocument) {
       fillTextWithBreaks(el, value)
     }
     const altKey = el.getAttribute('data-k-alt')
-    if (altKey && altKey in doc.fields && el instanceof HTMLImageElement && doc.fields[altKey]) {
-      el.alt = doc.fields[altKey]
+    if (altKey && altKey in fields && el instanceof HTMLImageElement && fields[altKey]) {
+      el.alt = fields[altKey]
     }
   })
 
@@ -52,16 +57,16 @@ export function applyKayaFields(root: HTMLElement, doc: KayaPagesDocument) {
     const rows = doc.members
       .filter((row) => row.group === group && row.enabled && row.name.trim())
       .sort((a, b) => a.order - b.order)
-    grid.innerHTML = rows.map(memberCell).join('')
+    grid.innerHTML = rows.map((row) => memberCell(row, locale)).join('')
   }
 
   const intro = root.querySelector<HTMLElement>('.kaya-intro')
   if (intro) {
-    intro.classList.toggle('kaya-intro--gray', doc.fields['intro.bg'] === 'gray')
-    intro.classList.toggle('kaya-intro--center', doc.fields['intro.align'] === 'center')
-    intro.classList.toggle('kaya-intro--photo-left', doc.fields['intro.photoSide'] === 'left')
+    intro.classList.toggle('kaya-intro--gray', fields['intro.bg'] === 'gray')
+    intro.classList.toggle('kaya-intro--center', fields['intro.align'] === 'center')
+    intro.classList.toggle('kaya-intro--photo-left', fields['intro.photoSide'] === 'left')
     const photo = intro.querySelector<HTMLElement>('.kaya-intro__photo')
-    const hidePhoto = doc.fields['intro.photoSide'] === 'none' || !doc.fields['intro.photo']?.trim()
+    const hidePhoto = fields['intro.photoSide'] === 'none' || !fields['intro.photo']?.trim()
     if (photo) photo.hidden = hidePhoto
   }
   const chips = [...root.querySelectorAll<HTMLElement>('.kaya-chips .kaya-chip')]
@@ -94,14 +99,14 @@ export function applyKayaFields(root: HTMLElement, doc: KayaPagesDocument) {
 
   root.querySelectorAll<HTMLIFrameElement>('iframe[data-k-map]').forEach((frame) => {
     const key = frame.getAttribute('data-k-map')
-    const address = key ? doc.fields[key] : ''
+    const address = key ? fields[key] : ''
     if (!address) return
     frame.src = `https://maps.google.com/maps?q=${encodeURIComponent(address)}&hl=ko&z=17&output=embed`
   })
 
   const greeting = root.querySelector<HTMLElement>('.greeting-modern')
   if (greeting) {
-    const on = (id: string) => doc.fields[`greet.${id}On`] !== '0'
+    const on = (id: string) => fields[`greet.${id}On`] !== '0'
     const profile = greeting.querySelector<HTMLElement>('.gm-hero')
     const quote = greeting.querySelector<HTMLElement>('.gm-band')
     const body = greeting.querySelector<HTMLElement>('.article')
@@ -111,7 +116,7 @@ export function applyKayaFields(root: HTMLElement, doc: KayaPagesDocument) {
     if (body) body.hidden = !on('body')
     if (close) close.hidden = !on('close')
     if (quote && body) {
-      const first = greetSectionOrder(doc.fields['greet.sectionOrder'])[0]
+      const first = greetSectionOrder(fields['greet.sectionOrder'])[0]
       greeting.insertBefore(first === 'body' ? body : quote, first === 'body' ? quote : body)
     }
   }

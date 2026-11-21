@@ -69,6 +69,7 @@ export type Messages = {
       slidesNavAria: string
       bizStrip: string
       bizLabels: string[]
+      tagline: string
       slides: { alt: string; lines: string[] }[]
     }
     story: {
@@ -76,6 +77,14 @@ export type Messages = {
       kicker: string
       title: string
       subtitle: string
+      featuredLabel: string
+      categoryChange: string
+      categoryExpert: string
+      viewCategory: (label: string) => string
+      emptyLeadTitle: string
+      emptyLeadBody: string
+      emptyChange: string
+      emptyExpert: string
       listAria: string
       more: string
       moreAria: (title: string) => string
@@ -118,6 +127,7 @@ export type Messages = {
       instagramDesc: string
       instagramAria: string
       youtubeTitle: string
+      youtubeDesc: string
       latestLabel: string
       promoError: string
       watchOnYoutube: string
@@ -376,6 +386,7 @@ export const koMessages: Messages = {
       slidesNavAria: '히어로 슬라이드',
       bizStrip: '사업 분야',
       bizLabels: ['국내사업', '해외사업', '연구사업', '소셜비즈니스'],
+      tagline: '교육으로 사람을 세우는 국제개발협력 NGO, 카야인터내셔널',
       slides: [
         {
           alt: '아이들 이미지',
@@ -395,7 +406,15 @@ export const koMessages: Messages = {
       aria: '스토리',
       kicker: 'Stories',
       title: '스토리',
-      subtitle: '우리들이 전하는 이야기',
+      subtitle: '카야가 전하는 현장 이야기',
+      featuredLabel: '대표 사례',
+      categoryChange: '변화의 이야기',
+      categoryExpert: '전문가 이야기',
+      viewCategory: (label: string) => `${label} 보기`,
+      emptyLeadTitle: '[대표 사례 제목: 변화가 드러나는 한 문장]',
+      emptyLeadBody: '[참여 전 상황, 카야의 활동, 달라진 점을 2~3문장으로 정리합니다.]',
+      emptyChange: '[국가] [변화가 드러나는 제목]',
+      emptyExpert: '[전문가 이름] [평가 한 문장]',
       listAria: '스토리 목록',
       more: '스토리 더보기',
       moreAria: (title: string) => `스토리 더보기. 미리보기: ${title}`,
@@ -436,13 +455,14 @@ export const koMessages: Messages = {
       subtitle: '블로그, 인스타그램, 유튜브에 담긴 카야의 하루입니다.',
       more: '바로가기',
       moreAria: '더보기',
-      blogTitle: '블로그',
-      blogDesc: '카야의 이야기를 네이버 블로그에서 만나보세요.',
+      blogTitle: '네이버 블로그',
+      blogDesc: '카야의 이야기를 블로그에서 만나보세요.',
       blogAria: '네이버 블로그 바로가기',
       instagramTitle: '인스타그램',
       instagramDesc: '현장의 순간을 인스타그램에서 확인하세요.',
       instagramAria: '인스타그램 바로가기',
       youtubeTitle: '유튜브',
+      youtubeDesc: '활동 영상을 유튜브에서 만나보세요.',
       latestLabel: '최신',
       promoError: '영상을 불러오지 못했습니다.',
       watchOnYoutube: 'YouTube에서 보기',

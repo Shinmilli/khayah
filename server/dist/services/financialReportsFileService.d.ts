@@ -1,3 +1,4 @@
+import { type SaveMode } from './documentDraft';
 export type FinancialReportSegmentLabels = {
     ko: string;
     en: string;
@@ -6,6 +7,7 @@ export type FinancialReportSegmentV2 = {
     id: string;
     percent: number;
     color: string;
+    amount?: number;
     labels: FinancialReportSegmentLabels;
 };
 export type FinancialReportPageSettings = {
@@ -22,6 +24,7 @@ export type FinancialReportYearDataV2 = {
     balanceSheetImageUrl?: string | null;
     operationsStatementImageUrl?: string | null;
     donationDisclosurePdfUrl?: string | null;
+    publicInterestDisclosurePdfUrl?: string | null;
 };
 export type FinancialReportsDocumentV2 = {
     version: 2;
@@ -48,6 +51,10 @@ export type FinancialReportsDocument = FinancialReportsDocumentV2;
 export type FinancialLocale = 'ko' | 'en';
 export declare function parseFinancialLocale(raw: unknown): FinancialLocale;
 export declare function readFinancialReportsDocument(): Promise<FinancialReportsDocumentV2>;
-export declare function readFinancialReportsForLocale(locale: FinancialLocale): Promise<FinancialReportsPublicDocument>;
-export declare function writeFinancialReportsDocument(body: unknown): Promise<void>;
+export declare function readFinancialReportsState(preferDraft: boolean): Promise<{
+    doc: FinancialReportsDocumentV2;
+    unpublished: boolean;
+}>;
+export declare function readFinancialReportsForLocale(locale: FinancialLocale, preferDraft?: boolean): Promise<FinancialReportsPublicDocument>;
+export declare function writeFinancialReportsDocument(body: unknown, mode?: SaveMode): Promise<void>;
 //# sourceMappingURL=financialReportsFileService.d.ts.map

@@ -16,4 +16,8 @@ export declare function cloudinaryPublicIdCandidates(url: string, explicit?: str
 export declare function deleteStoredMedia(ref: StoredMediaRef): Promise<void>;
 export declare function deleteStoredMediaMany(refs: StoredMediaRef[]): Promise<void>;
 export declare function mediaNotIn(oldRefs: StoredMediaRef[], newRefs: StoredMediaRef[]): StoredMediaRef[];
+/** JSON 문서 안의 Cloudinary·Supabase URL을 재귀적으로 모은다 */
+export declare function extractRemoteMediaFromValue(value: unknown): StoredMediaRef[];
+/** 저장 전후 JSON을 비교해 빠진 원격 파일을 Cloudinary·Supabase에서 지운다 */
+export declare function deleteRemovedStoredMedia(previous: unknown, next: unknown): Promise<void>;
 //# sourceMappingURL=storedMedia.d.ts.map

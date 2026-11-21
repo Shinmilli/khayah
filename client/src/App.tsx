@@ -10,13 +10,11 @@ import { KhayahAboutHubPage } from './pages/KhayahAboutHubPage'
 import { PageByPath } from './pages/PageByPath'
 import { ImpactPage } from './pages/ImpactPage'
 import { ProjectsPage } from './pages/ProjectsPage'
-import { StoryArchivePage } from './pages/StoryArchivePage'
-
 function LegacyStoriesRedirect() {
   const { locale, localize } = useLocale()
   const params = useParams()
   const { search, hash } = useLocation()
-  if (locale !== 'ko') return <StoryArchivePage />
+  if (locale !== 'ko') return <Navigate to={`${localize('/news/stories')}${search}${hash}`} replace />
   const scope = params.scope?.trim()
   const q = scope ? `?scope=${encodeURIComponent(scope)}` : search
   return <Navigate to={`${localize('/news/activities')}${q}${hash}`} replace />

@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.postImageUpload = exports.postDocumentUpload = void 0;
+exports.postVideoUpload = exports.postImageUpload = exports.postDocumentUpload = void 0;
 exports.deleteUpload = deleteUpload;
 const path_1 = __importDefault(require("path"));
 const multer_1 = __importDefault(require("multer"));
@@ -41,6 +41,19 @@ const uploadImage = (0, multer_1.default)({
     fileFilter: imageFilter,
     limits: { fileSize: 15 * 1024 * 1024 },
 });
+function videoFilter(_req, file, cb) {
+    if (/^video\/(mp4|webm|quicktime|x-m4v)$/i.test(file.mimetype))
+        return cb(null, true);
+    const ext = path_1.default.extname(file.originalname ?? '').toLowerCase();
+    if (['.mp4', '.webm', '.mov', '.m4v'].includes(ext))
+        return cb(null, true);
+    return cb(new Error('Only MP4, WebM, or MOV videos are allowed'));
+}
+const uploadVideo = (0, multer_1.default)({
+    storage: memory,
+    fileFilter: videoFilter,
+    limits: { fileSize: 50 * 1024 * 1024 },
+});
 function runMulter(middleware) {
     return (req, res, next) => {
         middleware(req, res, (err) => {
@@ -48,7 +61,7 @@ function runMulter(middleware) {
                 return next();
             if (err instanceof multer_1.default.MulterError && err.code === 'LIMIT_FILE_SIZE') {
                 return res.status(400).json({
-                    error: '파일이 너무 큽니다. PDF는 최대 50MB까지 업로드할 수 있습니다.',
+                    error: '파일이 너무 큽니다. PDF·동영상은 최대 50MB까지 업로드할 수 있습니다.',
                 });
             }
             const message = err instanceof Error ? err.message : 'Upload failed';
@@ -60,6 +73,61 @@ async function handleUpload(req, res, kind) {
     const file = req.file;
     if (!file?.buffer) {
         return res.status(400).json({ error: 'No file uploaded (field name: file)' });
+    }
+    if (kind === 'video') {
+        const originalName = (0, uploadFilename_1.decodeOriginalFilename)(file.originalname, 'video.mp4');
+        const useSupabase = file.size > CLOUDINARY_MAX_BYTES;
+        try {
+            if (useSupabase) {
+                if (!(0, supabaseStorage_1.isSupabaseStorageConfigured)()) {
+                    return res.status(503).json({
+                        error: 'File is larger than 10MB but Supabase Storage is not configured',
+                        required: ['SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY'],
+                    });
+                }
+                const uploaded = await (0, supabaseStorage_1.uploadBufferToSupabase)({
+                    buffer: file.buffer,
+                    originalName,
+                    mimeType: file.mimetype || 'video/mp4',
+                    kind: 'video',
+                });
+                return res.json({
+                    url: uploaded.url,
+                    path: uploaded.path,
+                    filename: uploaded.filename,
+                    originalName,
+                    mimeType: file.mimetype,
+                    size: uploaded.bytes || file.size,
+                    publicId: uploaded.publicId,
+                    resourceType: uploaded.resourceType,
+                    provider: 'supabase',
+                });
+            }
+            if (!(0, cloudinary_1.isCloudinaryConfigured)()) {
+                return res.status(503).json({ error: 'Cloudinary is not configured' });
+            }
+            const uploaded = await (0, cloudinary_1.uploadBufferToCloudinary)({
+                buffer: file.buffer,
+                originalName,
+                mimeType: file.mimetype || 'video/mp4',
+                kind: 'video',
+            });
+            return res.json({
+                url: uploaded.url,
+                path: uploaded.path,
+                filename: uploaded.filename,
+                originalName,
+                mimeType: file.mimetype,
+                size: uploaded.bytes || file.size,
+                publicId: uploaded.publicId,
+                resourceType: uploaded.resourceType,
+                provider: 'cloudinary',
+            });
+        }
+        catch (e) {
+            console.error('[uploads] video error', e);
+            return res.status(500).json({ error: e instanceof Error ? e.message : 'Upload failed' });
+        }
     }
     // 이미지가 documents(raw)로 들어가는 사고 방지
     if (kind === 'document') {
@@ -154,6 +222,12 @@ exports.postImageUpload = [
     runMulter(uploadImage.single('file')),
     (req, res) => {
         void handleUpload(req, res, 'image');
+    },
+];
+exports.postVideoUpload = [
+    runMulter(uploadVideo.single('file')),
+    (req, res) => {
+        void handleUpload(req, res, 'video');
     },
 ];
 async function deleteUpload(req, res) {

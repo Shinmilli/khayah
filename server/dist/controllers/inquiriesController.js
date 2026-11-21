@@ -7,6 +7,7 @@ exports.adminGetInquiry = adminGetInquiry;
 exports.adminUpdateInquiry = adminUpdateInquiry;
 exports.adminDeleteInquiry = adminDeleteInquiry;
 const inquiriesService_1 = require("../services/inquiriesService");
+const inquiryNotify_1 = require("../services/inquiryNotify");
 const rateLimit_1 = require("../utils/rateLimit");
 const prisma_1 = require("../utils/prisma");
 function errStatus(e) {
@@ -40,6 +41,7 @@ async function createInquiry(req, res) {
             subject: String(body.subject ?? ''),
             body: String(body.body ?? ''),
         });
+        void (0, inquiryNotify_1.notifyInquiry)(created).catch((error) => console.error('inquiry notify', error));
         res.status(201).json(created);
     }
     catch (e) {

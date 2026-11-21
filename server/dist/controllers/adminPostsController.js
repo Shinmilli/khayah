@@ -23,7 +23,13 @@ async function adminListPosts(req, res) {
         const page = Math.max(1, parseInt(req.query.page) || 1);
         const perPage = Math.min(100, Math.max(1, parseInt(req.query.perPage) || 20));
         const kind = typeof req.query.kind === 'string' ? req.query.kind : undefined;
-        const result = await adminPostsService_1.adminPostsService.list({ page, perPage, kind });
+        const q = typeof req.query.q === 'string' ? req.query.q : undefined;
+        const result = await adminPostsService_1.adminPostsService.list({
+            page,
+            perPage,
+            kind,
+            q,
+        });
         res.json(result);
     }
     catch (e) {

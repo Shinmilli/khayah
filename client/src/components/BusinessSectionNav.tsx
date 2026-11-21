@@ -14,6 +14,13 @@ const INTRO_LABEL: Partial<Record<NavLinkKey, string>> = {
   researchSocial: '소셜비즈니스 소개',
 }
 
+const INTRO_LABEL_EN: Partial<Record<NavLinkKey, string>> = {
+  domestic: 'About domestic programs',
+  overseas: 'About overseas programs',
+  advocacy: 'About research',
+  researchSocial: 'About social business',
+}
+
 function sectionLinks(): NavMenuLinkDef[] {
   return NAV_MENU_COLUMNS.find((col) => col.topKey === 'business')?.links ?? []
 }
@@ -38,12 +45,12 @@ export function BusinessSectionNav() {
   )
 
   const labelFor = (key: NavLinkKey, isIntro: boolean) => {
-    if (isIntro && locale === 'ko' && INTRO_LABEL[key]) return INTRO_LABEL[key]
+    const intro = locale === 'en' ? INTRO_LABEL_EN[key] : INTRO_LABEL[key]
+    if (isIntro && intro) return intro
     return messages.nav.links[key]
   }
 
-  if (locale === 'ko') {
-    return (
+  return (
       <>
         <div className="biz-nav">
           <nav className="biz-nav__row" aria-label="사업 메뉴">
@@ -81,45 +88,5 @@ export function BusinessSectionNav() {
           </nav>
         </div>
       </>
-    )
-  }
-
-  return (
-    <>
-      <nav className="khayah-about-tabs" aria-label="사업 메뉴">
-        <div className="khayah-about-tabs__rail">
-          {sections.map((section) => {
-            const active = section.key === current.key
-            return (
-              <Link
-                key={section.key}
-                to={localize(section.to)}
-                className={`khayah-about-tabs__tab${active ? ' is-active' : ''}`}
-                aria-current={active ? 'page' : undefined}
-              >
-                {messages.nav.links[section.key]}
-              </Link>
-            )
-          })}
-        </div>
-      </nav>
-      <nav className="khayah-about-tabs" aria-label="사업 하위 메뉴">
-        <div className="khayah-about-tabs__rail">
-          {sub.map((item, index) => {
-            const active = path === item.to
-            return (
-              <Link
-                key={item.key}
-                to={localize(item.to)}
-                className={`khayah-about-tabs__tab${active ? ' is-active' : ''}`}
-                aria-current={active ? 'page' : undefined}
-              >
-                {labelFor(item.key, index === 0)}
-              </Link>
-            )
-          })}
-        </div>
-      </nav>
-    </>
   )
 }

@@ -147,22 +147,21 @@ export function Footer() {
   const { footer } = messages
   const site = useSiteCommon()
   const year = new Date().getFullYear()
-  const koOrg = locale === 'ko' ? site?.org : null
+  const koOrg = site?.org ?? null
   const fallback = parseFallbackContact(footer.contactText)
   const { phone, fax } = koOrg ? parsePhoneFax(koOrg.phoneFax) : { phone: fallback.phone, fax: fallback.fax }
   const contact = {
-    name: koOrg?.nameKo || fallback.name,
-    address: koOrg?.addressKo || fallback.address,
+    name: (locale === 'en' ? koOrg?.nameEn : koOrg?.nameKo) || koOrg?.nameKo || fallback.name,
+    address: (locale === 'en' ? koOrg?.addressEn : koOrg?.addressKo) || koOrg?.addressKo || fallback.address,
     phone,
     fax,
     email: koOrg ? cleanEmail(koOrg.email) : fallback.email,
   }
-  const koLinks =
-    locale === 'ko' && site
-      ? site.footerLinks
-          .filter((row) => row.enabled && row.labelKo.trim() && row.href.trim() && row.href.trim() !== '#')
-          .sort((a, b) => a.order - b.order)
-      : null
+  const koLinks = site
+    ? site.footerLinks
+        .filter((row) => row.enabled && (locale === 'en' ? row.labelEn || row.labelKo : row.labelKo).trim() && row.href.trim() && row.href.trim() !== '#')
+        .sort((a, b) => a.order - b.order)
+    : null
 
   return (
     <footer id="Footer" className="clearfix">
@@ -174,6 +173,7 @@ export function Footer() {
                 ? koLinks.map((row, i) => {
                     const href = normalizeHref(row.href)
                     const external = isExternalHref(href)
+                    const label = locale === 'en' ? row.labelEn || row.labelKo : row.labelKo
                     return (
                       <Fragment key={row.id}>
                         {i > 0 && (
@@ -183,11 +183,11 @@ export function Footer() {
                         )}
                         {external ? (
                           <a className="footer-links-bar__link" href={href} target="_blank" rel="noopener noreferrer">
-                            {row.labelKo}
+                            {label}
                           </a>
                         ) : (
                           <Link className="footer-links-bar__link" to={localize(href)}>
-                            {row.labelKo}
+                            {label}
                           </Link>
                         )}
                       </Fragment>
@@ -206,7 +206,7 @@ export function Footer() {
                     to={
                       'to' in item
                         ? localize(
-                            item.key === 'projects' && locale === 'ko'
+                            item.key === 'projects'
                               ? '/business/domestic'
                               : item.to,
                           )

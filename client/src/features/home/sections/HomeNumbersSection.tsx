@@ -11,11 +11,12 @@ export function HomeNumbersSection() {
   if (!impact || !shown) return null
 
   const en = locale === 'en'
-  const title = (en ? impact.homeTitleEn : impact.homeTitle)?.trim() || ''
+  const text = (primary: string | undefined, fallback: string | undefined) => primary?.trim() || (en ? fallback?.trim() || '' : '')
+  const title = text(en ? impact.homeTitleEn : impact.homeTitle, impact.homeTitle)
   if (!title) return null
 
-  const lead = (en ? impact.homeLeadEn : impact.homeLead)?.trim() || ''
-  const note = (en ? impact.homeNoteEn : impact.homeNote)?.trim() || ''
+  const lead = text(en ? impact.homeLeadEn : impact.homeLead, impact.homeLead)
+  const note = text(en ? impact.homeNoteEn : impact.homeNote, impact.homeNote)
   const glanceHref = localize('/business/impact')
 
   const cards = impact.homeNumbers
@@ -26,8 +27,8 @@ export function HomeNumbersSection() {
     })
     .map((item) => ({
       ...item,
-      label: (en ? item.labelEn || item.label : item.label).trim(),
-      note: (en ? item.noteEn || item.note : item.note).trim(),
+      label: text(en ? item.labelEn : item.label, item.label),
+      note: text(en ? item.noteEn : item.note, item.note),
     }))
     .filter((item) => item.label)
 

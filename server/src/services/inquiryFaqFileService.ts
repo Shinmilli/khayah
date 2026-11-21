@@ -18,6 +18,8 @@ export type InquiryFaqLocaleContent = {
 
 export type InquiryFaqDocumentV2 = {
   version: 2
+  /** 끄면 공개 화면에서 FAQ 탭을 숨긴다. 없으면 꺼진 것으로 본다. */
+  enabled: boolean
   locales: {
     ko: InquiryFaqLocaleContent
     en: InquiryFaqLocaleContent
@@ -55,9 +57,18 @@ function validateLocaleContent(v: unknown): v is InquiryFaqLocaleContent {
 function validateDocumentV2(body: unknown): body is InquiryFaqDocumentV2 {
   if (!isPlainObject(body)) return false
   if (body.version !== 2) return false
+  if (body.enabled !== undefined && typeof body.enabled !== 'boolean') return false
   if (!isPlainObject(body.locales)) return false
   const locales = body.locales
   return validateLocaleContent(locales.ko) && validateLocaleContent(locales.en)
+}
+
+function withEnabled(body: InquiryFaqDocumentV2): InquiryFaqDocumentV2 {
+  return {
+    version: 2,
+    enabled: body.enabled === true,
+    locales: body.locales,
+  }
 }
 
 function validateDocumentV1(body: unknown): body is InquiryFaqDocumentV1 {
@@ -75,6 +86,7 @@ function migrateV1ToV2(v1: InquiryFaqDocumentV1): InquiryFaqDocumentV2 {
   const seed = seedDocument as InquiryFaqDocumentV2
   return {
     version: 2,
+    enabled: false,
     locales: {
       ko: { items: cloneItems(v1.items) },
       en: { items: cloneItems(seed.locales.en.items) },
@@ -88,21 +100,24 @@ export function parseInquiryFaqLocale(raw: unknown): InquiryLocale {
 
 export async function readInquiryFaqDocument(): Promise<InquiryFaqDocumentV2> {
   const parsed = await readJsonDocument(DOCUMENT_KEY)
-  if (validateDocumentV2(parsed)) return parsed
+  if (validateDocumentV2(parsed)) return withEnabled(parsed)
   if (validateDocumentV1(parsed)) return migrateV1ToV2(parsed)
   throw new Error('Invalid FAQ document')
 }
 
-export function readInquiryFaqState(preferDraft: boolean) {
-  return readDrafted(DOCUMENT_KEY, readInquiryFaqDocument, preferDraft)
+export async function readInquiryFaqState(preferDraft: boolean) {
+  const state = await readDrafted(DOCUMENT_KEY, readInquiryFaqDocument, preferDraft)
+  if (validateDocumentV2(state.doc)) return { doc: withEnabled(state.doc), unpublished: state.unpublished }
+  if (validateDocumentV1(state.doc)) return { doc: migrateV1ToV2(state.doc), unpublished: state.unpublished }
+  throw new Error('Invalid FAQ document')
 }
 
 export async function readInquiryFaqForLocale(
   locale: InquiryLocale,
   preferDraft = false,
-): Promise<InquiryFaqLocaleContent> {
+): Promise<InquiryFaqLocaleContent & { enabled: boolean }> {
   const { doc } = await readInquiryFaqState(preferDraft)
-  return doc.locales[locale]
+  return { enabled: doc.enabled, ...doc.locales[locale] }
 }
 
 export async function writeInquiryFaqDocument(body: unknown, mode: SaveMode = 'publish'): Promise<void> {
@@ -113,6 +128,7 @@ export async function writeInquiryFaqDocument(body: unknown, mode: SaveMode = 'p
   }
   const cleaned: InquiryFaqDocumentV2 = {
     version: 2,
+    enabled: body.enabled === true,
     locales: {
       ko: {
         items: body.locales.ko.items.map((item) => ({

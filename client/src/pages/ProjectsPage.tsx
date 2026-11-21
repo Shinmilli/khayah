@@ -82,9 +82,9 @@ export function ProjectsPage({
               ? PATH.businessResearchProjects
               : PATH.businessProjects
   const fallbackTitle =
-    locale === 'ko' && projectList === 'overseas-education'
+projectList === 'overseas-education'
       ? '해외 교육 진행사업'
-      : locale === 'ko' && projectList === 'volunteer'
+      : projectList === 'volunteer'
         ? '해외봉사단 진행사업'
         : region === '국내'
           ? messages.nav.links.domesticProjects
@@ -93,11 +93,11 @@ export function ProjectsPage({
             : region === '연구사업'
               ? messages.nav.links.researchProjects
               : pj.title
-  const live = locale === 'ko' && projectList && projectSets ? publicSetsFor(projectSets, projectList) : null
+  const live = projectList && projectSets ? publicSetsFor(projectSets, projectList) : null
   const title = live?.title || fallbackTitle
   const catalog =
     live ??
-    (locale !== 'ko' || !projectList
+    (!projectList
       ? null
       : projectList === 'domestic'
         ? { items: DOMESTIC_PROJECTS, eyebrow: 'PROGRAMS · 국내 진행사업', recentFromYear: 2020 }
@@ -152,7 +152,7 @@ export function ProjectsPage({
   }, [region, pj.loadError])
 
   const paged = paginate(rows, listPage, 6)
-  const koBiz = locale === 'ko' && Boolean(projectList)
+  const koBiz = Boolean(projectList)
   const middleId = projectList === 'research' ? 'flow' : projectList === 'overseas-education' ? null : 'cards'
   const coreIds = ['photo', 'intro', ...(middleId ? [middleId] : [])]
   const savedPanels = live?.panels ?? []
@@ -188,17 +188,16 @@ export function ProjectsPage({
         title={title}
         backgroundImageUrl={live?.photo || pageHeroImageForPath(heroPath)}
         layout={
-          locale === 'ko' &&
-          (projectList === 'domestic' ||
-            projectList === 'overseas' ||
-            projectList === 'overseas-education' ||
-            projectList === 'volunteer' ||
-            projectList === 'research')
+          projectList === 'domestic' ||
+          projectList === 'overseas' ||
+          projectList === 'overseas-education' ||
+          projectList === 'volunteer' ||
+          projectList === 'research'
             ? 'biz'
             : 'banner'
         }
         eyebrow={
-          locale === 'ko' && projectList
+projectList
             ? live?.heroLabel ||
               (projectList === 'domestic'
                 ? 'DOMESTIC PROGRAMS'
@@ -215,12 +214,11 @@ export function ProjectsPage({
         }
         showScrollHint={
           !(
-            locale === 'ko' &&
-            (projectList === 'domestic' ||
-              projectList === 'overseas' ||
-              projectList === 'overseas-education' ||
-              projectList === 'volunteer' ||
-              projectList === 'research')
+            projectList === 'domestic' ||
+            projectList === 'overseas' ||
+            projectList === 'overseas-education' ||
+            projectList === 'volunteer' ||
+            projectList === 'research'
           )
         }
       />
@@ -253,10 +251,10 @@ export function ProjectsPage({
           fields={'fields' in catalog ? catalog.fields : undefined}
         />
       ) : null}
-      {locale === 'ko' && projectList ? (
+      {projectList ? (
         <PageBlocks blocks={[...(live?.blocks ?? []), ...(biz?.blocks ?? []).filter((block) => block.page === 'common')]} />
       ) : null}
-      {locale === 'ko' && projectList === 'research' ? (
+      {projectList === 'research' ? (
         <section className="dom-more dom-more--after">
           <div className="dom-wrap">
             <p className="dom-kicker">MORE · 다른 사업 보기</p>
@@ -283,7 +281,7 @@ export function ProjectsPage({
           </div>
         </section>
       ) : null}
-      {locale === 'ko' && projectList === 'overseas' ? (
+      {projectList === 'overseas' ? (
         <section className="dom-more dom-more--after">
           <div className="dom-wrap">
             <p className="dom-kicker">MORE · 다른 사업 보기</p>
@@ -310,7 +308,7 @@ export function ProjectsPage({
           </div>
         </section>
       ) : null}
-      {locale === 'ko' && projectList === 'volunteer' ? (
+      {projectList === 'volunteer' ? (
         <section className="dom-more dom-more--after">
           <div className="dom-wrap">
             <p className="dom-kicker">MORE · 다른 사업 보기</p>
@@ -337,7 +335,7 @@ export function ProjectsPage({
           </div>
         </section>
       ) : null}
-      {locale === 'ko' && projectList === 'overseas-education' ? (
+      {projectList === 'overseas-education' ? (
         <section className="dom-more dom-more--after">
           <div className="dom-wrap">
             <p className="dom-kicker">MORE · 다른 사업 보기</p>
@@ -364,7 +362,7 @@ export function ProjectsPage({
           </div>
         </section>
       ) : null}
-      {locale === 'ko' && projectList === 'domestic' ? (
+      {projectList === 'domestic' ? (
         <section className="dom-more dom-more--after">
           <div className="dom-wrap">
             <p className="dom-kicker">MORE · 다른 사업 보기</p>

@@ -5,7 +5,6 @@ import { pageHeroImageForPath } from '../constants/pageHeroImages'
 import { PATH } from '../i18n/routes'
 import { ListStatus } from '../components/ListStatus'
 import {
-  FAQ_PUBLIC,
   INQUIRY_HUB_TAB_IDS,
   type InquiryHubTabId,
   parseInquiryHubTab,
@@ -37,7 +36,12 @@ export function InquiryPage() {
   const navigate = useNavigate()
   const { locale, localize, messages } = useLocale()
   const iq = messages.pages.inquiry
-  const activeHubTab = useMemo(() => parseInquiryHubTab(location.search), [location.search])
+  const [faqEnabled, setFaqEnabled] = useState(false)
+  const [faqReady, setFaqReady] = useState(false)
+  const activeHubTab = useMemo(
+    () => parseInquiryHubTab(location.search, faqEnabled),
+    [location.search, faqEnabled],
+  )
   const hubTabs = useMemo(
     () =>
       INQUIRY_HUB_TAB_IDS.map((id) => ({
@@ -80,28 +84,32 @@ export function InquiryPage() {
   }, [iq.title, messages.pages])
 
   useEffect(() => {
-    if (FAQ_PUBLIC) return
+    if (!faqReady || faqEnabled) return
     if (new URLSearchParams(location.search).get('tab') !== 'faq') return
     navigate({ pathname: localize('/news/inquiry') }, { replace: true })
-  }, [location.search, localize, navigate])
+  }, [faqReady, faqEnabled, location.search, localize, navigate])
 
   useEffect(() => {
-    if (!FAQ_PUBLIC) return
     let cancelled = false
     setFaqLoading(true)
+    setFaqReady(false)
     setFaqError(false)
     fetchInquiryFaq(locale)
       .then((doc) => {
-        if (!cancelled) {
-          setFaqItems(doc.items)
-          setOpenFaqId(doc.items[0]?.id ?? null)
-        }
+        if (cancelled) return
+        const enabled = doc.enabled === true
+        setFaqEnabled(enabled)
+        setFaqItems(enabled ? doc.items : [])
+        setOpenFaqId(enabled ? (doc.items[0]?.id ?? null) : null)
       })
       .catch(() => {
         if (!cancelled) setFaqError(true)
       })
       .finally(() => {
-        if (!cancelled) setFaqLoading(false)
+        if (!cancelled) {
+          setFaqLoading(false)
+          setFaqReady(true)
+        }
       })
     return () => {
       cancelled = true
@@ -183,7 +191,7 @@ export function InquiryPage() {
     <div className="khayah-about-hub inquiry-page">
       <PageHero title={iq.title} backgroundImageUrl={pageHeroImageForPath(PATH.newsInquiry)} showScrollHint={false} />
 
-      {FAQ_PUBLIC ? (
+      {faqEnabled ? (
       <nav className="khayah-about-tabs" aria-label={iq.tabsAria}>
         <div className="khayah-about-tabs__rail" role="tablist">
           {hubTabs.map((t) => {
@@ -213,7 +221,7 @@ export function InquiryPage() {
           role="tabpanel"
           aria-labelledby={`inquiry-hub-tab-${activeHubTab}`}
         >
-          {activeHubTab === 'faq' ? (
+          {faqReady && activeHubTab === 'faq' ? (
             <section className="inquiry-faq" aria-labelledby="inquiry-faq-heading">
               <header className="inquiry-section-head">
                 <h2 id="inquiry-faq-heading" className="inquiry-section-title">

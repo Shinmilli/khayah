@@ -1,3 +1,5 @@
+import type { Locale } from '../../i18n/locale'
+import { fieldsForLocale } from '../content/fieldText'
 import type { BizSupportDocument } from './bizSupportTypes'
 import { rankedSupportSections } from './supportSections'
 import { donateHref } from './useBizSupport'
@@ -32,11 +34,12 @@ function reorder(parent: Element, selector: string, doc: BizSupportDocument) {
   }
 }
 
-export function applyBizFields(root: HTMLElement, doc: BizSupportDocument, accounts: string) {
+export function applyBizFields(root: HTMLElement, doc: BizSupportDocument, accounts: string, locale: Locale = 'ko') {
+  const shown = fieldsForLocale(doc.fields, locale)
   root.querySelectorAll<HTMLElement>('[data-k]').forEach((el) => {
     const key = el.getAttribute('data-k')
-    if (!key || !(key in doc.fields)) return
-    const value = doc.fields[key] ?? ''
+    if (!key || !(key in shown)) return
+    const value = shown[key] ?? ''
     const mode = el.getAttribute('data-k-mode') || 'text'
     if (mode === 'src') {
       if (value && el instanceof HTMLImageElement) el.src = value
@@ -78,7 +81,7 @@ export function applyBizFields(root: HTMLElement, doc: BizSupportDocument, accou
       el.hidden = !value.trim()
     }
     const altKey = el.getAttribute('data-k-alt')
-    if (altKey && doc.fields[altKey] && el instanceof HTMLImageElement) el.alt = doc.fields[altKey]
+    if (altKey && shown[altKey] && el instanceof HTMLImageElement) el.alt = shown[altKey]
   })
 
   ;(['data-aca', 'data-cnc'] as const).forEach((attr) => {
@@ -87,8 +90,8 @@ export function applyBizFields(root: HTMLElement, doc: BizSupportDocument, accou
       const id = section.getAttribute(attr)
       if (!id) return
       const image = section.querySelector<HTMLImageElement>(':scope > .aca-replace')
-      const src = doc.fields[`${prefix}.${id}.image`]?.trim() ?? ''
-      const replace = doc.fields[`${prefix}.${id}.mode`] === 'image' && src
+      const src = shown[`${prefix}.${id}.image`]?.trim() ?? ''
+      const replace = shown[`${prefix}.${id}.mode`] === 'image' && src
       if (replace) {
         const img = image ?? document.createElement('img')
         img.className = 'aca-replace'
@@ -122,7 +125,7 @@ export function applyBizFields(root: HTMLElement, doc: BizSupportDocument, accou
     step.hidden = !title && !body
   })
   root.querySelectorAll<HTMLElement>('.sbiz-note').forEach((note) => {
-    note.hidden = !(note.textContent ?? '').trim() || doc.fields['cnc.noteOn'] === '0'
+    note.hidden = !(note.textContent ?? '').trim() || shown['cnc.noteOn'] === '0'
   })
 
   root.querySelectorAll<HTMLElement>('.dom-pr, .dedu-row').forEach((el) => {
@@ -142,13 +145,13 @@ export function applyBizFields(root: HTMLElement, doc: BizSupportDocument, accou
   root.querySelectorAll<HTMLAnchorElement>('[data-k-href]').forEach((el) => {
     const key = el.getAttribute('data-k-href')
     if (!key) return
-    const href = normalizeHref(doc.fields[key] ?? '')
+    const href = normalizeHref(shown[key] ?? '')
     if (!href || href === '#') {
       if (socialHrefKeys.has(key)) {
         el.hidden = true
         return
       }
-      if (!(key in doc.fields)) return
+      if (!(key in shown)) return
       if (el.classList.contains('sbiz-btn')) {
         el.hidden = false
         return
@@ -195,9 +198,9 @@ export function applyBizFields(root: HTMLElement, doc: BizSupportDocument, accou
   const where = root.querySelector<HTMLElement>('[data-sec="guide.where"]')
   if (where) {
     const title = where.querySelector<HTMLElement>('.sup-h2')
-    const size = doc.fields['guide.whereSize'] || 'md'
-    const color = doc.fields['guide.whereColor'] || 'burgundy'
-    const bg = doc.fields['guide.whereBg'] || 'beige'
+    const size = shown['guide.whereSize'] || 'md'
+    const color = shown['guide.whereColor'] || 'burgundy'
+    const bg = shown['guide.whereBg'] || 'beige'
     where.classList.toggle('sup-band--white', bg === 'white')
     if (title) {
       title.style.fontSize = size === 'lg' ? '2rem' : size === 'sm' ? '1.35rem' : ''
@@ -216,7 +219,7 @@ export function applyBizFields(root: HTMLElement, doc: BizSupportDocument, accou
   root.querySelectorAll<HTMLElement>('[data-icon]').forEach((el) => {
     const key = el.getAttribute('data-icon')
     if (!key) return
-    const icon = doc.fields[key] || 'house'
+    const icon = shown[key] || 'house'
     if (ICONS[icon]) el.innerHTML = ICONS[icon]
   })
   const impactTitle = doc.donate.impactTitle?.trim()
@@ -238,7 +241,7 @@ export function applyBizFields(root: HTMLElement, doc: BizSupportDocument, accou
   secParents.forEach((parent) => reorder(parent, ':scope > [data-sec]', doc))
   root.querySelectorAll<HTMLElement>('.sup--guide, .sup--method').forEach((page) => layoutSupport(page, doc))
 
-  const methodAccounts = doc.fields['method.accounts']?.trim() ?? ''
+  const methodAccounts = shown['method.accounts']?.trim() ?? ''
   const source = methodAccounts || accounts
   const grid = root.querySelector('.sup-account-grid')
   if (!grid || !source.trim()) return
@@ -263,8 +266,8 @@ function syncGuideSideItems(root: HTMLElement, doc: BizSupportDocument, icons: R
   if (!side) return
   for (let index = 0; index < 4; index += 1) {
     const id = `guide.item.${index}`
-    const title = doc.fields[`${id}.title`]?.trim() ?? ''
-    const body = doc.fields[`${id}.body`]?.trim() ?? ''
+    const title = shown[`${id}.title`]?.trim() ?? ''
+    const body = shown[`${id}.body`]?.trim() ?? ''
     let el = side.querySelector<HTMLElement>(`:scope > .sup-item[data-item="${id}"]`)
     if (!title && !body) {
       el?.remove()
@@ -283,7 +286,7 @@ function syncGuideSideItems(root: HTMLElement, doc: BizSupportDocument, icons: R
     const bodyEl = el.querySelector<HTMLElement>('p')
     if (titleEl) titleEl.textContent = title
     if (bodyEl) bodyEl.textContent = body
-    const iconKey = doc.fields[`${id}.icon`] || (['house', 'book', 'heart', 'person'][index] ?? 'house')
+    const iconKey = shown[`${id}.icon`] || (['house', 'book', 'heart', 'person'][index] ?? 'house')
     const ico = el.querySelector<HTMLElement>('.sup-ico')
     if (ico && icons[iconKey]) ico.innerHTML = icons[iconKey]
   }

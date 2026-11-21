@@ -81,5 +81,5 @@ export const HERO_BIZ_LINKS: { to: string }[] = [
   { to: '/business/domestic' },
   { to: '/business/overseas' },
   { to: '/business/advocacy' },
-  { to: '/business/projects' },
+  { to: '/business/social' },
 ]

@@ -3,11 +3,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getFinancialReports = getFinancialReports;
 exports.getAdminFinancialReports = getAdminFinancialReports;
 exports.putAdminFinancialReports = putAdminFinancialReports;
+const documentDraft_1 = require("../services/documentDraft");
 const financialReportsFileService_1 = require("../services/financialReportsFileService");
 async function getFinancialReports(req, res) {
     try {
         const locale = (0, financialReportsFileService_1.parseFinancialLocale)(req.query.lang);
-        const doc = await (0, financialReportsFileService_1.readFinancialReportsForLocale)(locale);
+        const doc = await (0, financialReportsFileService_1.readFinancialReportsForLocale)(locale, await (0, documentDraft_1.adminCanSeeDraft)(req));
         res.json(doc);
     }
     catch (e) {
@@ -17,8 +18,8 @@ async function getFinancialReports(req, res) {
 }
 async function getAdminFinancialReports(_req, res) {
     try {
-        const doc = await (0, financialReportsFileService_1.readFinancialReportsDocument)();
-        res.json(doc);
+        const { doc, unpublished } = await (0, financialReportsFileService_1.readFinancialReportsState)(true);
+        res.json({ ...doc, unpublished });
     }
     catch (e) {
         console.error(e);
@@ -27,9 +28,9 @@ async function getAdminFinancialReports(_req, res) {
 }
 async function putAdminFinancialReports(req, res) {
     try {
-        await (0, financialReportsFileService_1.writeFinancialReportsDocument)(req.body);
-        const doc = await (0, financialReportsFileService_1.readFinancialReportsDocument)();
-        res.json(doc);
+        await (0, financialReportsFileService_1.writeFinancialReportsDocument)(req.body, (0, documentDraft_1.saveModeOf)(req));
+        const { doc, unpublished } = await (0, financialReportsFileService_1.readFinancialReportsState)(true);
+        res.json({ ...doc, unpublished });
     }
     catch (e) {
         const status = e?.status;

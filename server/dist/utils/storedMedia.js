@@ -8,6 +8,8 @@ exports.cloudinaryPublicIdCandidates = cloudinaryPublicIdCandidates;
 exports.deleteStoredMedia = deleteStoredMedia;
 exports.deleteStoredMediaMany = deleteStoredMediaMany;
 exports.mediaNotIn = mediaNotIn;
+exports.extractRemoteMediaFromValue = extractRemoteMediaFromValue;
+exports.deleteRemovedStoredMedia = deleteRemovedStoredMedia;
 const cloudinary_1 = require("./cloudinary");
 const supabaseStorage_1 = require("./supabaseStorage");
 function isRecord(v) {
@@ -82,7 +84,13 @@ function extractMediaFromHtml(html) {
             url: u,
             provider,
             resourceType: resourceType ||
-                (u.includes('/raw/upload/') ? 'raw' : provider === 'cloudinary' ? 'image' : undefined),
+                (u.includes('/raw/upload/')
+                    ? 'raw'
+                    : u.includes('/video/upload/') || /\.(mp4|webm|mov|m4v)(?:\?|$)/i.test(u)
+                        ? 'video'
+                        : provider === 'cloudinary'
+                            ? 'image'
+                            : undefined),
         });
     };
     const srcRe = /(?:src|href)=["']([^"']+)["']/gi;
@@ -134,6 +142,8 @@ function cloudinaryResourceHint(url, explicit) {
         return explicit;
     if (url.includes('/image/upload/'))
         return 'image';
+    if (url.includes('/video/upload/'))
+        return 'video';
     if (url.includes('/raw/upload/'))
         return 'raw';
     if (url.toLowerCase().includes('.pdf'))
@@ -183,5 +193,49 @@ async function deleteStoredMediaMany(refs) {
 function mediaNotIn(oldRefs, newRefs) {
     const keep = new Set(newRefs.map((r) => r.url.trim()).filter(Boolean));
     return oldRefs.filter((r) => r.url.trim() && !keep.has(r.url.trim()));
+}
+/** JSON 문서 안의 Cloudinary·Supabase URL을 재귀적으로 모은다 */
+function extractRemoteMediaFromValue(value) {
+    const out = [];
+    const seen = new Set();
+    const push = (ref) => {
+        const url = ref.url.trim();
+        if (!url || seen.has(url))
+            return;
+        seen.add(url);
+        out.push({ ...ref, url });
+    };
+    const walk = (v) => {
+        if (typeof v === 'string') {
+            const t = v.trim();
+            if (!t)
+                return;
+            const provider = guessProvider(t);
+            if (provider) {
+                push({ url: t, provider });
+                return;
+            }
+            if (t.includes('<') && (t.includes('src=') || t.includes('href='))) {
+                for (const ref of extractMediaFromHtml(t))
+                    push(ref);
+            }
+            return;
+        }
+        if (Array.isArray(v)) {
+            for (const item of v)
+                walk(item);
+            return;
+        }
+        if (v && typeof v === 'object') {
+            for (const item of Object.values(v))
+                walk(item);
+        }
+    };
+    walk(value);
+    return out;
+}
+/** 저장 전후 JSON을 비교해 빠진 원격 파일을 Cloudinary·Supabase에서 지운다 */
+async function deleteRemovedStoredMedia(previous, next) {
+    await deleteStoredMediaMany(mediaNotIn(extractRemoteMediaFromValue(previous), extractRemoteMediaFromValue(next)));
 }
 //# sourceMappingURL=storedMedia.js.map

@@ -1,17 +1,15 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.parseFinancialLocale = parseFinancialLocale;
 exports.readFinancialReportsDocument = readFinancialReportsDocument;
+exports.readFinancialReportsState = readFinancialReportsState;
 exports.readFinancialReportsForLocale = readFinancialReportsForLocale;
 exports.writeFinancialReportsDocument = writeFinancialReportsDocument;
-const promises_1 = __importDefault(require("fs/promises"));
-const path_1 = __importDefault(require("path"));
-const financial_reports_default_json_1 = __importDefault(require("../seed/financial-reports.default.json"));
 const normalizeStoredMediaUrl_1 = require("../utils/normalizeStoredMediaUrl");
-const DATA_FILE = path_1.default.resolve(process.cwd(), 'data', 'financial-reports.json');
+const storedMedia_1 = require("../utils/storedMedia");
+const documentDraft_1 = require("./documentDraft");
+const siteDocumentStore_1 = require("./siteDocumentStore");
+const DOCUMENT_KEY = 'financial-reports';
 const SEGMENT_LABEL_EN_BY_ID = {
     misc: 'Other income',
     brought_forward: 'Brought forward',
@@ -111,13 +109,6 @@ function migrateV1ToV2(v1) {
         })),
     };
 }
-function normalizeDocument(body) {
-    if (validateDocumentV2(body))
-        return normalizeDocumentMedia(body);
-    if (validateDocumentV1(body))
-        return normalizeDocumentMedia(migrateV1ToV2(body));
-    return normalizeDocumentMedia(financial_reports_default_json_1.default);
-}
 function normalizeDocumentMedia(doc) {
     return {
         ...doc,
@@ -126,6 +117,7 @@ function normalizeDocumentMedia(doc) {
             balanceSheetImageUrl: (0, normalizeStoredMediaUrl_1.normalizeStoredMediaUrl)(r.balanceSheetImageUrl),
             operationsStatementImageUrl: (0, normalizeStoredMediaUrl_1.normalizeStoredMediaUrl)(r.operationsStatementImageUrl),
             donationDisclosurePdfUrl: (0, normalizeStoredMediaUrl_1.normalizeStoredMediaUrl)(r.donationDisclosurePdfUrl),
+            publicInterestDisclosurePdfUrl: (0, normalizeStoredMediaUrl_1.normalizeStoredMediaUrl)(r.publicInterestDisclosurePdfUrl),
         })),
     };
 }
@@ -150,34 +142,30 @@ function toPublicDocument(doc, locale) {
     };
 }
 async function readFinancialReportsDocument() {
-    try {
-        const raw = await promises_1.default.readFile(DATA_FILE, 'utf8');
-        const parsed = JSON.parse(raw);
-        const normalized = normalizeDocument(parsed);
-        if (!validateDocumentV2(parsed)) {
-            await promises_1.default.mkdir(path_1.default.dirname(DATA_FILE), { recursive: true });
-            await promises_1.default.writeFile(DATA_FILE, JSON.stringify(normalized, null, 2), 'utf8');
-        }
-        return normalized;
-    }
-    catch (e) {
-        const code = e?.code;
-        if (code !== 'ENOENT')
-            console.warn('[financial-reports] read failed, using seed:', e);
-    }
-    return normalizeDocumentMedia(financial_reports_default_json_1.default);
+    const parsed = await (0, siteDocumentStore_1.readJsonDocument)(DOCUMENT_KEY);
+    if (validateDocumentV2(parsed))
+        return normalizeDocumentMedia(parsed);
+    if (validateDocumentV1(parsed))
+        return normalizeDocumentMedia(migrateV1ToV2(parsed));
+    throw new Error('Invalid financial reports document');
 }
-async function readFinancialReportsForLocale(locale) {
-    const doc = await readFinancialReportsDocument();
+function readFinancialReportsState(preferDraft) {
+    return (0, documentDraft_1.readDrafted)(DOCUMENT_KEY, readFinancialReportsDocument, preferDraft);
+}
+async function readFinancialReportsForLocale(locale, preferDraft = false) {
+    const { doc } = await readFinancialReportsState(preferDraft);
     return toPublicDocument(doc, locale);
 }
-async function writeFinancialReportsDocument(body) {
+async function writeFinancialReportsDocument(body, mode = 'publish') {
     if (!validateDocumentV2(body)) {
         const err = new Error('Invalid financial reports payload');
         err.status = 400;
         throw err;
     }
-    await promises_1.default.mkdir(path_1.default.dirname(DATA_FILE), { recursive: true });
-    await promises_1.default.writeFile(DATA_FILE, JSON.stringify(normalizeDocumentMedia(body), null, 2), 'utf8');
+    const cleaned = normalizeDocumentMedia(body);
+    await (0, documentDraft_1.writeDrafted)(DOCUMENT_KEY, cleaned, mode, async (previous) => {
+        if (previous != null)
+            await (0, storedMedia_1.deleteRemovedStoredMedia)(previous, cleaned);
+    });
 }
 //# sourceMappingURL=financialReportsFileService.js.map

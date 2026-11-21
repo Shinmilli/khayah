@@ -11,8 +11,11 @@ export async function getInquiryFaq(req: Request, res: Response) {
   try {
     const locale = parseInquiryFaqLocale(req.query.lang)
     const content = await readInquiryFaqForLocale(locale, await adminCanSeeDraft(req))
-    const items = [...content.items].filter((i) => i.published).sort((a, b) => a.order - b.order)
-    res.json({ version: 2, items })
+    const enabled = content.enabled === true
+    const items = enabled
+      ? [...content.items].filter((i) => i.published).sort((a, b) => a.order - b.order)
+      : []
+    res.json({ version: 2, enabled, items })
   } catch (e) {
     console.error(e)
     res.status(500).json({ error: 'Failed to load FAQ' })

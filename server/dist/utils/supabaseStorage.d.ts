@@ -12,7 +12,7 @@ export declare function uploadBufferToSupabase(options: {
     buffer: Buffer;
     originalName: string;
     mimeType: string;
-    kind: 'document' | 'image';
+    kind: 'document' | 'image' | 'video';
 }): Promise<StorageUploadResult>;
 export declare function removeFromSupabase(objectPath: string): Promise<void>;
 //# sourceMappingURL=supabaseStorage.d.ts.map

@@ -5,12 +5,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.parseInquiryFaqLocale = parseInquiryFaqLocale;
 exports.readInquiryFaqDocument = readInquiryFaqDocument;
+exports.readInquiryFaqState = readInquiryFaqState;
 exports.readInquiryFaqForLocale = readInquiryFaqForLocale;
 exports.writeInquiryFaqDocument = writeInquiryFaqDocument;
-const promises_1 = __importDefault(require("fs/promises"));
-const path_1 = __importDefault(require("path"));
 const inquiry_faq_default_json_1 = __importDefault(require("../seed/inquiry-faq.default.json"));
-const DATA_FILE = path_1.default.resolve(process.cwd(), 'data', 'inquiry-faq.json');
+const documentDraft_1 = require("./documentDraft");
+const siteDocumentStore_1 = require("./siteDocumentStore");
+const DOCUMENT_KEY = 'inquiry-faq';
 function isPlainObject(v) {
     return typeof v === 'object' && v !== null && !Array.isArray(v);
 }
@@ -68,39 +69,25 @@ function migrateV1ToV2(v1) {
         },
     };
 }
-function normalizeDocument(body) {
-    if (validateDocumentV2(body))
-        return body;
-    if (validateDocumentV1(body))
-        return migrateV1ToV2(body);
-    return inquiry_faq_default_json_1.default;
-}
 function parseInquiryFaqLocale(raw) {
     return raw === 'en' ? 'en' : 'ko';
 }
 async function readInquiryFaqDocument() {
-    try {
-        const raw = await promises_1.default.readFile(DATA_FILE, 'utf8');
-        const parsed = JSON.parse(raw);
-        const normalized = normalizeDocument(parsed);
-        if (!validateDocumentV2(parsed)) {
-            await promises_1.default.mkdir(path_1.default.dirname(DATA_FILE), { recursive: true });
-            await promises_1.default.writeFile(DATA_FILE, JSON.stringify(normalized, null, 2), 'utf8');
-        }
-        return normalized;
-    }
-    catch (e) {
-        const code = e?.code;
-        if (code !== 'ENOENT')
-            console.warn('[inquiry-faq] read failed, using seed:', e);
-    }
-    return inquiry_faq_default_json_1.default;
+    const parsed = await (0, siteDocumentStore_1.readJsonDocument)(DOCUMENT_KEY);
+    if (validateDocumentV2(parsed))
+        return parsed;
+    if (validateDocumentV1(parsed))
+        return migrateV1ToV2(parsed);
+    throw new Error('Invalid FAQ document');
 }
-async function readInquiryFaqForLocale(locale) {
-    const doc = await readInquiryFaqDocument();
+function readInquiryFaqState(preferDraft) {
+    return (0, documentDraft_1.readDrafted)(DOCUMENT_KEY, readInquiryFaqDocument, preferDraft);
+}
+async function readInquiryFaqForLocale(locale, preferDraft = false) {
+    const { doc } = await readInquiryFaqState(preferDraft);
     return doc.locales[locale];
 }
-async function writeInquiryFaqDocument(body) {
+async function writeInquiryFaqDocument(body, mode = 'publish') {
     if (!validateDocumentV2(body)) {
         const err = new Error('Invalid FAQ payload');
         err.status = 400;
@@ -129,7 +116,6 @@ async function writeInquiryFaqDocument(body) {
             },
         },
     };
-    await promises_1.default.mkdir(path_1.default.dirname(DATA_FILE), { recursive: true });
-    await promises_1.default.writeFile(DATA_FILE, JSON.stringify(cleaned, null, 2), 'utf8');
+    await (0, documentDraft_1.writeDrafted)(DOCUMENT_KEY, cleaned, mode);
 }
 //# sourceMappingURL=inquiryFaqFileService.js.map

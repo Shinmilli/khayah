@@ -7,112 +7,331 @@ exports.parseImpactLocale = parseImpactLocale;
 exports.readImpactStatsDocument = readImpactStatsDocument;
 exports.readImpactStatsForLocale = readImpactStatsForLocale;
 exports.writeImpactStatsDocument = writeImpactStatsDocument;
-const promises_1 = __importDefault(require("fs/promises"));
-const path_1 = __importDefault(require("path"));
 const impact_stats_default_json_1 = __importDefault(require("../seed/impact-stats.default.json"));
-const DATA_FILE = path_1.default.resolve(process.cwd(), 'data', 'impact-stats.json');
+const storedMedia_1 = require("../utils/storedMedia");
+const siteDocumentStore_1 = require("./siteDocumentStore");
+const DOCUMENT_KEY = 'impact-stats';
+const ICON_NAME_RE = /^[a-z0-9_]{1,64}$/;
+const COLOR_RE = /^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/;
+const DEFAULT_BG = '/images/Home/impact_background.png';
 function isPlainObject(v) {
     return typeof v === 'object' && v !== null && !Array.isArray(v);
 }
-function validateLocaleContent(body) {
-    if (!isPlainObject(body))
-        return false;
-    if (!isPlainObject(body.donut))
-        return false;
-    const donut = body.donut;
-    if (typeof donut.percent !== 'number' || !Number.isFinite(donut.percent))
-        return false;
-    if (donut.percent < 0 || donut.percent > 100)
-        return false;
-    if (!Array.isArray(donut.labelLines))
-        return false;
-    if (!donut.labelLines.every((line) => typeof line === 'string'))
-        return false;
-    if (!Array.isArray(body.stats))
-        return false;
-    for (const row of body.stats) {
-        if (!isPlainObject(row))
-            return false;
-        if (typeof row.id !== 'string' || !row.id.trim())
-            return false;
-        if (typeof row.label !== 'string')
-            return false;
-        if (typeof row.value !== 'string')
-            return false;
-        if (row.unit != null && typeof row.unit !== 'string')
-            return false;
-    }
-    return true;
+function asString(v, fallback = '') {
+    return typeof v === 'string' ? v : fallback;
 }
-function validateDocumentV2(body) {
-    if (!isPlainObject(body))
-        return false;
-    if (body.version !== 2)
-        return false;
-    if (!isPlainObject(body.locales))
-        return false;
-    const locales = body.locales;
-    return validateLocaleContent(locales.ko) && validateLocaleContent(locales.en);
+function asColor(v, fallback) {
+    const s = asString(v).trim();
+    return COLOR_RE.test(s) ? s : fallback;
 }
-function validateDocumentV1(body) {
-    if (!isPlainObject(body))
-        return false;
-    if (body.version !== 1)
-        return false;
-    return validateLocaleContent(body);
+function asBool(v, fallback = true) {
+    return typeof v === 'boolean' ? v : fallback;
 }
-function cloneLocaleContent(src) {
-    return JSON.parse(JSON.stringify(src));
+function asPercent(v) {
+    const n = typeof v === 'number' ? v : Number(v);
+    if (!Number.isFinite(n))
+        return 0;
+    return Math.min(100, Math.max(0, n));
 }
-function migrateV1ToV2(v1) {
-    const seed = impact_stats_default_json_1.default;
+function asStringArray(v) {
+    if (!Array.isArray(v))
+        return [];
+    return v.filter((line) => typeof line === 'string');
+}
+function asDonut(v, fallback) {
+    if (!isPlainObject(v))
+        return { ...fallback, labelLines: [...fallback.labelLines] };
     return {
-        version: 2,
-        locales: {
-            ko: cloneLocaleContent({ donut: v1.donut, stats: v1.stats }),
-            en: cloneLocaleContent(seed.locales.en),
-        },
+        percent: asPercent(v.percent),
+        labelLines: asStringArray(v.labelLines),
     };
 }
-function normalizeDocument(body) {
-    if (validateDocumentV2(body))
-        return body;
-    if (validateDocumentV1(body))
-        return migrateV1ToV2(body);
-    return impact_stats_default_json_1.default;
+const DEFAULT_PRIMARY_COLORS = {
+    cardBg: '#b20838',
+    kicker: '#df84a1',
+    title: '#ffffff',
+    desc: '#ffffff',
+    ctaBg: '#ffffff',
+    ctaText: '#b20838',
+    donutFill: '#ffd6e6',
+    donutTrack: '#e96c9c',
+    donutHole: '#b20838',
+    donutValue: '#ffffff',
+    donutSub: '#ffffff',
+};
+const DEFAULT_STAT_COLORS = {
+    cardBg: '#ffffff',
+    label: '#555555',
+    value: '#b20838',
+    unit: '#b20838',
+    iconBg: '#d4d4d4',
+    iconColor: '#ffffff',
+};
+const DEFAULT_INTRO_COLORS = {
+    kicker: '#b20838',
+    title: '#333333',
+    subtitle: '#777777',
+    rotator: '#ffffff',
+};
+function parseIntroLocale(v, fallback) {
+    if (!isPlainObject(v))
+        return { ...fallback, rotator: [...fallback.rotator] };
+    return {
+        kicker: asString(v.kicker, fallback.kicker),
+        title: asString(v.title, fallback.title),
+        subtitle: asString(v.subtitle, fallback.subtitle),
+        rotator: asStringArray(v.rotator),
+    };
+}
+function parsePrimaryLocale(v, fallback) {
+    if (!isPlainObject(v)) {
+        return { ...fallback, donut: { ...fallback.donut, labelLines: [...fallback.donut.labelLines] } };
+    }
+    return {
+        kicker: asString(v.kicker, fallback.kicker),
+        title: asString(v.title),
+        desc: asString(v.desc),
+        ctaLabel: asString(v.ctaLabel, fallback.ctaLabel),
+        ctaHref: asString(v.ctaHref),
+        donut: asDonut(v.donut, fallback.donut),
+    };
+}
+function parsePrimaryColors(v) {
+    const src = isPlainObject(v) ? v : {};
+    return {
+        cardBg: asColor(src.cardBg, DEFAULT_PRIMARY_COLORS.cardBg),
+        kicker: asColor(src.kicker, DEFAULT_PRIMARY_COLORS.kicker),
+        title: asColor(src.title, DEFAULT_PRIMARY_COLORS.title),
+        desc: asColor(src.desc, DEFAULT_PRIMARY_COLORS.desc),
+        ctaBg: asColor(src.ctaBg, DEFAULT_PRIMARY_COLORS.ctaBg),
+        ctaText: asColor(src.ctaText, DEFAULT_PRIMARY_COLORS.ctaText),
+        donutFill: asColor(src.donutFill, DEFAULT_PRIMARY_COLORS.donutFill),
+        donutTrack: asColor(src.donutTrack, DEFAULT_PRIMARY_COLORS.donutTrack),
+        donutHole: asColor(src.donutHole, DEFAULT_PRIMARY_COLORS.donutHole),
+        donutValue: asColor(src.donutValue, DEFAULT_PRIMARY_COLORS.donutValue),
+        donutSub: asColor(src.donutSub, DEFAULT_PRIMARY_COLORS.donutSub),
+    };
+}
+function parseStatColors(v) {
+    const src = isPlainObject(v) ? v : {};
+    return {
+        cardBg: asColor(src.cardBg, DEFAULT_STAT_COLORS.cardBg),
+        label: asColor(src.label, DEFAULT_STAT_COLORS.label),
+        value: asColor(src.value, DEFAULT_STAT_COLORS.value),
+        unit: asColor(src.unit, DEFAULT_STAT_COLORS.unit),
+        iconBg: asColor(src.iconBg, DEFAULT_STAT_COLORS.iconBg),
+        iconColor: asColor(src.iconColor, DEFAULT_STAT_COLORS.iconColor),
+    };
+}
+function parseStatLocale(v) {
+    if (!isPlainObject(v))
+        return { label: '', value: '', unit: '' };
+    return {
+        label: asString(v.label),
+        value: asString(v.value),
+        unit: asString(v.unit),
+    };
+}
+function clone(v) {
+    return JSON.parse(JSON.stringify(v));
+}
+const seed = impact_stats_default_json_1.default;
+function migrateV2ToV3(v2) {
+    const koStats = v2.locales.ko.stats;
+    const enById = new Map(v2.locales.en.stats.map((row) => [row.id, row]));
+    return {
+        version: 3,
+        visible: true,
+        backgroundImageUrl: '',
+        introColors: clone(seed.introColors),
+        intro: clone(seed.intro),
+        primaryCards: [
+            {
+                id: 'fund-use',
+                showDonut: true,
+                colors: clone(DEFAULT_PRIMARY_COLORS),
+                locales: {
+                    ko: {
+                        ...seed.primaryCards[0].locales.ko,
+                        donut: clone(v2.locales.ko.donut),
+                    },
+                    en: {
+                        ...seed.primaryCards[0].locales.en,
+                        donut: clone(v2.locales.en.donut),
+                    },
+                },
+            },
+        ],
+        stats: koStats.map((row) => {
+            const en = enById.get(row.id);
+            return {
+                id: row.id.trim() || `stat-${row.id}`,
+                icon: row.icon,
+                colors: clone(DEFAULT_STAT_COLORS),
+                locales: {
+                    ko: { label: row.label, value: row.value, unit: row.unit ?? '' },
+                    en: {
+                        label: en?.label ?? row.label,
+                        value: en?.value ?? row.value,
+                        unit: en?.unit ?? row.unit ?? '',
+                    },
+                },
+            };
+        }),
+    };
+}
+function migrateV1ToV3(v1) {
+    return migrateV2ToV3({
+        version: 2,
+        locales: {
+            ko: { donut: v1.donut, stats: v1.stats },
+            en: clone(seed.primaryCards[0]
+                ? {
+                    donut: seed.primaryCards[0].locales.en.donut,
+                    stats: seed.stats.map((row) => ({
+                        id: row.id,
+                        label: row.locales.en.label,
+                        value: row.locales.en.value,
+                        unit: row.locales.en.unit,
+                        icon: row.icon,
+                    })),
+                }
+                : { donut: v1.donut, stats: v1.stats }),
+        },
+    });
+}
+function parseDocumentV3(body) {
+    if (!isPlainObject(body))
+        return null;
+    if (body.version !== 3)
+        return null;
+    if (!isPlainObject(body.intro) || !Array.isArray(body.primaryCards) || !Array.isArray(body.stats))
+        return null;
+    const introColorsSrc = isPlainObject(body.introColors) ? body.introColors : {};
+    const intro = {
+        ko: parseIntroLocale(isPlainObject(body.intro) ? body.intro.ko : null, seed.intro.ko),
+        en: parseIntroLocale(isPlainObject(body.intro) ? body.intro.en : null, seed.intro.en),
+    };
+    const primaryCards = [];
+    for (const raw of body.primaryCards) {
+        if (!isPlainObject(raw))
+            continue;
+        const id = asString(raw.id).trim();
+        if (!id)
+            continue;
+        const localesRaw = isPlainObject(raw.locales) ? raw.locales : {};
+        primaryCards.push({
+            id,
+            showDonut: asBool(raw.showDonut, true),
+            colors: parsePrimaryColors(raw.colors),
+            locales: {
+                ko: parsePrimaryLocale(localesRaw.ko, seed.primaryCards[0].locales.ko),
+                en: parsePrimaryLocale(localesRaw.en, seed.primaryCards[0].locales.en),
+            },
+        });
+    }
+    const stats = [];
+    for (const raw of body.stats) {
+        if (!isPlainObject(raw))
+            continue;
+        const id = asString(raw.id).trim();
+        if (!id)
+            continue;
+        if (raw.icon != null && raw.icon !== '') {
+            if (typeof raw.icon !== 'string' || !ICON_NAME_RE.test(raw.icon))
+                continue;
+        }
+        const localesRaw = isPlainObject(raw.locales) ? raw.locales : {};
+        stats.push({
+            id,
+            icon: typeof raw.icon === 'string' ? raw.icon : undefined,
+            colors: parseStatColors(raw.colors),
+            locales: {
+                ko: parseStatLocale(localesRaw.ko),
+                en: parseStatLocale(localesRaw.en),
+            },
+        });
+    }
+    return {
+        version: 3,
+        visible: asBool(body.visible, true),
+        backgroundImageUrl: asString(body.backgroundImageUrl),
+        introColors: {
+            kicker: asColor(introColorsSrc.kicker, DEFAULT_INTRO_COLORS.kicker),
+            title: asColor(introColorsSrc.title, DEFAULT_INTRO_COLORS.title),
+            subtitle: asColor(introColorsSrc.subtitle, DEFAULT_INTRO_COLORS.subtitle),
+            rotator: asColor(introColorsSrc.rotator, DEFAULT_INTRO_COLORS.rotator),
+        },
+        intro,
+        primaryCards,
+        stats,
+    };
+}
+function isV2(body) {
+    if (!isPlainObject(body) || body.version !== 2 || !isPlainObject(body.locales))
+        return false;
+    const ko = body.locales.ko;
+    const en = body.locales.en;
+    return isPlainObject(ko) && isPlainObject(en) && isPlainObject(ko.donut) && Array.isArray(ko.stats);
+}
+function isV1(body) {
+    if (!isPlainObject(body) || body.version !== 1)
+        return false;
+    return isPlainObject(body.donut) && Array.isArray(body.stats);
 }
 function parseImpactLocale(raw) {
     return raw === 'en' ? 'en' : 'ko';
 }
 async function readImpactStatsDocument() {
-    try {
-        const raw = await promises_1.default.readFile(DATA_FILE, 'utf8');
-        const parsed = JSON.parse(raw);
-        const normalized = normalizeDocument(parsed);
-        if (!validateDocumentV2(parsed)) {
-            await promises_1.default.mkdir(path_1.default.dirname(DATA_FILE), { recursive: true });
-            await promises_1.default.writeFile(DATA_FILE, JSON.stringify(normalized, null, 2), 'utf8');
-        }
-        return normalized;
-    }
-    catch (e) {
-        const code = e?.code;
-        if (code !== 'ENOENT')
-            console.warn('[impact-stats] read failed, using seed:', e);
-    }
-    return impact_stats_default_json_1.default;
+    const parsed = await (0, siteDocumentStore_1.readJsonDocument)(DOCUMENT_KEY);
+    const v3 = parseDocumentV3(parsed);
+    if (v3)
+        return v3;
+    if (isV2(parsed))
+        return migrateV2ToV3(parsed);
+    if (isV1(parsed))
+        return migrateV1ToV3(parsed);
+    throw new Error('Invalid impact stats document');
 }
 async function readImpactStatsForLocale(locale) {
     const doc = await readImpactStatsDocument();
-    return doc.locales[locale];
+    const bg = doc.backgroundImageUrl.trim() || DEFAULT_BG;
+    return {
+        visible: doc.visible !== false,
+        backgroundImageUrl: bg,
+        introColors: doc.introColors,
+        intro: doc.intro[locale],
+        primaryCards: doc.primaryCards.map((card) => {
+            const loc = card.locales[locale] ?? card.locales.ko;
+            return {
+                id: card.id,
+                showDonut: card.showDonut !== false,
+                colors: card.colors,
+                kicker: loc.kicker,
+                title: loc.title,
+                desc: loc.desc,
+                ctaLabel: loc.ctaLabel,
+                ctaHref: loc.ctaHref,
+                donut: asDonut(loc.donut, { percent: 0, labelLines: [] }),
+            };
+        }),
+        stats: doc.stats.map((row) => ({
+            id: row.id,
+            icon: row.icon,
+            colors: row.colors,
+            ...row.locales[locale],
+        })),
+    };
 }
 async function writeImpactStatsDocument(body) {
-    if (!validateDocumentV2(body)) {
+    const normalized = parseDocumentV3(body);
+    if (!normalized) {
         const err = new Error('Invalid impact stats payload');
         err.status = 400;
         throw err;
     }
-    await promises_1.default.mkdir(path_1.default.dirname(DATA_FILE), { recursive: true });
-    await promises_1.default.writeFile(DATA_FILE, JSON.stringify(body, null, 2), 'utf8');
+    const previous = await readImpactStatsDocument();
+    await (0, siteDocumentStore_1.writeJsonDocument)(DOCUMENT_KEY, normalized);
+    await (0, storedMedia_1.deleteRemovedStoredMedia)(previous, normalized);
 }
 //# sourceMappingURL=impactStatsFileService.js.map

@@ -1,17 +1,19 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.parseHeroLocale = parseHeroLocale;
 exports.readHeroBannerDocument = readHeroBannerDocument;
 exports.readHeroBannerForLocale = readHeroBannerForLocale;
 exports.writeHeroBannerDocument = writeHeroBannerDocument;
-const promises_1 = __importDefault(require("fs/promises"));
-const path_1 = __importDefault(require("path"));
-const hero_banner_default_json_1 = __importDefault(require("../seed/hero-banner.default.json"));
 const normalizeStoredMediaUrl_1 = require("../utils/normalizeStoredMediaUrl");
-const DATA_FILE = path_1.default.resolve(process.cwd(), 'data', 'hero-banner.json');
+const storedMedia_1 = require("../utils/storedMedia");
+const siteDocumentStore_1 = require("./siteDocumentStore");
+const DOCUMENT_KEY = 'hero-banner';
+const KO_SMALL_LINE = '교육으로 사람을 세우는 국제개발협력 NGO, 카야인터내셔널';
+function readSmallLine(v, whenMissing) {
+    if (typeof v !== 'string')
+        return whenMissing;
+    return v.trim().slice(0, 200);
+}
 function isPlainObject(v) {
     return typeof v === 'object' && v !== null && !Array.isArray(v);
 }
@@ -21,6 +23,8 @@ function validateLocaleCopy(v) {
     if (typeof v.alt !== 'string')
         return false;
     if (!Array.isArray(v.lines) || !v.lines.every((line) => typeof line === 'string'))
+        return false;
+    if (v.smallLine != null && typeof v.smallLine !== 'string')
         return false;
     return true;
 }
@@ -65,14 +69,23 @@ function normalizeDocument(doc) {
             order: slide.order,
             enabled: slide.enabled,
             image: normalizeImage(slide.image),
+            mobileImage: normalizeImage(typeof slide.mobileImage === 'string' ? slide.mobileImage : ''),
+            align: (slide.align === 'center' ? 'center' : 'left'),
+            dim: (slide.dim === 'weak' ? 'weak' : slide.dim === 'strong' ? 'strong' : 'mid'),
+            buttons: (Array.isArray(slide.buttons) ? slide.buttons : []).slice(0, 2).map((row) => ({
+                label: typeof row?.label === 'string' ? row.label.trim().slice(0, 40) : '',
+                href: typeof row?.href === 'string' ? row.href.trim().slice(0, 400) : '',
+            })),
             locales: {
                 ko: {
                     alt: slide.locales.ko.alt.trim().slice(0, 200),
                     lines: slide.locales.ko.lines.map((l) => l.trimEnd()).slice(0, 8),
+                    smallLine: readSmallLine(slide.locales.ko.smallLine, KO_SMALL_LINE),
                 },
                 en: {
                     alt: slide.locales.en.alt.trim().slice(0, 200),
                     lines: slide.locales.en.lines.map((l) => l.trimEnd()).slice(0, 8),
+                    smallLine: readSmallLine(slide.locales.en.smallLine, ''),
                 },
             },
         }))
@@ -84,19 +97,10 @@ function parseHeroLocale(raw) {
     return raw === 'en' ? 'en' : 'ko';
 }
 async function readHeroBannerDocument() {
-    try {
-        const raw = await promises_1.default.readFile(DATA_FILE, 'utf8');
-        const parsed = JSON.parse(raw);
-        if (validateDocument(parsed))
-            return normalizeDocument(parsed);
-        console.warn('[hero-banner] invalid file content, using seed');
-    }
-    catch (e) {
-        const code = e?.code;
-        if (code !== 'ENOENT')
-            console.warn('[hero-banner] read failed, using seed:', e);
-    }
-    return normalizeDocument(hero_banner_default_json_1.default);
+    const parsed = await (0, siteDocumentStore_1.readJsonDocument)(DOCUMENT_KEY);
+    if (!validateDocument(parsed))
+        throw new Error('Invalid hero banner document');
+    return normalizeDocument(parsed);
 }
 async function readHeroBannerForLocale(locale) {
     const doc = await readHeroBannerDocument();
@@ -107,10 +111,14 @@ async function readHeroBannerForLocale(locale) {
         id: s.id,
         order: s.order,
         image: s.image,
+        mobileImage: s.mobileImage,
+        align: s.align,
+        dim: s.dim,
+        buttons: s.buttons.filter((button) => button.label && button.href),
         alt: s.locales[locale].alt,
-        lines: s.locales[locale].lines.filter((line) => line.trim().length > 0),
-    }))
-        .filter((s) => s.lines.length > 0);
+        lines: s.locales[locale].lines.map((line) => line.trimEnd()).filter((line) => line.length > 0),
+        smallLine: s.locales[locale].smallLine ?? (locale === 'ko' ? KO_SMALL_LINE : ''),
+    }));
 }
 async function writeHeroBannerDocument(body) {
     if (!validateDocument(body)) {
@@ -119,7 +127,8 @@ async function writeHeroBannerDocument(body) {
         throw err;
     }
     const cleaned = normalizeDocument(body);
-    await promises_1.default.mkdir(path_1.default.dirname(DATA_FILE), { recursive: true });
-    await promises_1.default.writeFile(DATA_FILE, JSON.stringify(cleaned, null, 2), 'utf8');
+    const previous = await readHeroBannerDocument();
+    await (0, siteDocumentStore_1.writeJsonDocument)(DOCUMENT_KEY, cleaned);
+    await (0, storedMedia_1.deleteRemovedStoredMedia)(previous, cleaned);
 }
 //# sourceMappingURL=heroBannerFileService.js.map

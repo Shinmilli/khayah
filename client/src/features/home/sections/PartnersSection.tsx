@@ -30,79 +30,52 @@ export function PartnersSection() {
   const { locale, messages } = useLocale()
   const site = useSiteCommon()
   const m = messages.home.partners
-  if (locale === 'ko') {
-    const logos = (site?.partners ?? PARTNER_LOGOS.map((logo, i) => ({
-      id: logo.src,
-      order: i + 1,
-      enabled: true,
-      logo: logo.src,
-      nameKo: logo.alt,
-      nameEn: '',
-      kind: '',
-      href: '',
-    })))
-      .filter((logo) => logo.enabled && logo.logo)
-      .sort((a, b) => a.order - b.order)
-    const row = (copy: number) =>
-      logos.map((logo) => {
-        const img = <img className="partner-logo" src={logo.logo} alt={copy === 0 ? logo.nameKo : ''} />
-        const key = `${logo.id}-${copy}`
-        return logo.href ? (
-          <a
-            key={key}
-            className="partner-card"
-            href={normalizeHref(logo.href)}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-hidden={copy === 1}
-          >
-            {img}
-          </a>
-        ) : (
-          <div key={key} className="partner-card" aria-hidden={copy === 1}>
-            {img}
-          </div>
-        )
-      })
-
-    return (
-      <section className="partners-section partners-section--marquee" aria-label={m.aria}>
-        <div className="partners-container">
-          <header className="partners-head partners-head--left">
-            <h2 className="partners-title">{m.title}</h2>
-            <p className="partners-sub">{m.subtitle}</p>
-          </header>
-          <div className="partners-marquee">
-            <div className="partners-track">
-              {row(0)}
-              {row(1)}
-            </div>
-          </div>
+  const logos = (site?.partners ?? PARTNER_LOGOS.map((logo, i) => ({
+    id: logo.src,
+    order: i + 1,
+    enabled: true,
+    logo: logo.src,
+    nameKo: logo.alt,
+    nameEn: '',
+    kind: '',
+    href: '',
+  })))
+    .filter((logo) => logo.enabled && logo.logo)
+    .sort((a, b) => a.order - b.order)
+  const row = (copy: number) =>
+    logos.map((logo) => {
+      const name = locale === 'en' ? logo.nameEn || logo.nameKo : logo.nameKo
+      const img = <img className="partner-logo" src={logo.logo} alt={copy === 0 ? name : ''} />
+      const key = `${logo.id}-${copy}`
+      return logo.href ? (
+        <a
+          key={key}
+          className="partner-card"
+          href={normalizeHref(logo.href)}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-hidden={copy === 1}
+        >
+          {img}
+        </a>
+      ) : (
+        <div key={key} className="partner-card" aria-hidden={copy === 1}>
+          {img}
         </div>
-      </section>
-    )
-  }
+      )
+    })
 
   return (
-    <section className="partners-section" aria-label={m.aria}>
+    <section className="partners-section partners-section--marquee" aria-label={m.aria}>
       <div className="partners-container">
-        <header className="partners-head">
+        <header className="partners-head partners-head--left">
           <h2 className="partners-title">{m.title}</h2>
           <p className="partners-sub">{m.subtitle}</p>
         </header>
-
         <div className="partners-marquee">
           <div className="partners-track">
-            {PARTNER_LOGOS.map((logo) => (
-              <div key={logo.src} className="partner-card">
-                <img className="partner-logo" src={logo.src} alt={logo.alt} />
-              </div>
-            ))}
-            {PARTNER_LOGOS.map((logo) => (
-              <div key={`${logo.src}-dup`} className="partner-card" aria-hidden="true">
-                <img className="partner-logo" src={logo.src} alt="" />
-              </div>
-            ))}
+            {row(0)}
+            {row(1)}
           </div>
         </div>
       </div>

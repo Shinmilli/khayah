@@ -8,9 +8,7 @@ import { fetchHeroBanner } from '../../../services/api'
 import { toCloudinaryWebpUrl } from '../../../utils/cloudinaryWebp'
 import { isExternalHref, normalizeHref } from '../../../utils/hrefs'
 
-const BIZ_ICONS = ['home', 'public', 'menu_book', 'groups'] as const
-
-const KO_BIZ_SVGS = [
+const BIZ_SVGS = [
   <svg key="home" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 11l8-7 8 7" /><path d="M6 10v10h12V10" /><path d="M10 20v-6h4v6" /></svg>,
   <svg key="globe" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5" /><path d="M3.5 12h17" /><path d="M12 3.5c2.6 2.6 2.6 14.4 0 17" /><path d="M12 3.5c-2.6 2.6-2.6 14.4 0 17" /></svg>,
   <svg key="book" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 6c-2-1.5-5-2-8-1.5V19c3-.5 6 0 8 1.5" /><path d="M12 6c2-1.5 5-2 8-1.5V19c-3-.5-6 0-8 1.5" /><path d="M12 6v14.5" /></svg>,
@@ -103,12 +101,7 @@ export function HeroSection() {
                         </div>
                       ))}
                       {(() => {
-                        const small =
-                          slide.smallLine !== undefined
-                            ? slide.smallLine
-                            : locale === 'ko'
-                              ? '교육으로 사람을 세우는 국제개발협력 NGO, 카야인터내셔널'
-                              : ''
+                        const small = slide.smallLine?.trim() ? slide.smallLine : m.tagline
                         return small ? <p className="hero-org">{small}</p> : null
                       })()}
                       <div className="hero-text-en" aria-hidden="true" />
@@ -158,17 +151,14 @@ export function HeroSection() {
       </div>
 
       <nav className="hero-biz-strip" aria-label={m.bizStrip}>
-        {HERO_BIZ_LINKS.map((item, i) => {
-          const to = locale === 'ko' && i === 3 ? '/business/social' : item.to
-          return (
-            <Link key={to} to={localize(to)} className="hero-biz-strip__item">
-              <span className="hero-biz-strip__icon" aria-hidden="true">
-                {locale === 'ko' ? KO_BIZ_SVGS[i] : <span className="material-symbols-outlined">{BIZ_ICONS[i]}</span>}
-              </span>
-              <span className="hero-biz-strip__label">{m.bizLabels[i]}</span>
-            </Link>
-          )
-        })}
+        {HERO_BIZ_LINKS.map((item, i) => (
+          <Link key={item.to} to={localize(item.to)} className="hero-biz-strip__item">
+            <span className="hero-biz-strip__icon" aria-hidden="true">
+              {BIZ_SVGS[i]}
+            </span>
+            <span className="hero-biz-strip__label">{m.bizLabels[i]}</span>
+          </Link>
+        ))}
       </nav>
     </section>
   )

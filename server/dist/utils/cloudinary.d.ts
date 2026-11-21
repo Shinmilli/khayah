@@ -13,7 +13,7 @@ export declare function uploadBufferToCloudinary(options: {
     buffer: Buffer;
     originalName: string;
     mimeType: string;
-    kind: 'document' | 'image';
+    kind: 'document' | 'image' | 'video';
 }): Promise<CloudinaryUploadResult>;
 export type CloudinaryDestroyOutcome = 'ok' | 'not_found' | 'failed';
 /** public delivery가 401인 raw(특히 public_id에 .pdf 포함)용 인증 다운로드 */
