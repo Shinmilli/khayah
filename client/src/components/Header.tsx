@@ -408,7 +408,17 @@ export function Header() {
                           }`}
                         >
                           <div className="site-header__submenu-left">
-                            <p className="site-header__submenu-title">{topLabel(col.topKey)}</p>
+                            <p className="site-header__submenu-title">
+                              {locale === 'en' && col.topKey === 'khayah' ? (
+                                <>
+                                  About
+                                  <br />
+                                  Khayah
+                                </>
+                              ) : (
+                                topLabel(col.topKey)
+                              )}
+                            </p>
                           </div>
                           <div className="site-header__submenu-right">
                             {renderLinkList(col.links ?? [])}

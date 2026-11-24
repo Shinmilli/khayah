@@ -214,7 +214,7 @@ export function applyBizFields(root: HTMLElement, doc: BizSupportDocument, accou
     heart: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B11E3B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.4-7-10a4 4 0 017-2.6A4 4 0 0119 11c0 5.6-7 10-7 10z"></path></svg>',
     person: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B11E3B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"></circle><path d="M5 20a7 7 0 0114 0"></path></svg>',
   }
-  syncGuideSideItems(root, doc, ICONS)
+  syncGuideSideItems(root, shown, ICONS)
 
   root.querySelectorAll<HTMLElement>('[data-icon]').forEach((el) => {
     const key = el.getAttribute('data-icon')
@@ -261,7 +261,7 @@ export function applyBizFields(root: HTMLElement, doc: BizSupportDocument, accou
 }
 
 /** Empty guide side cards are removed from the DOM (not merely hidden). */
-function syncGuideSideItems(root: HTMLElement, doc: BizSupportDocument, icons: Record<string, string>) {
+function syncGuideSideItems(root: HTMLElement, shown: Record<string, string>, icons: Record<string, string>) {
   const side = root.querySelector('.sup-side')
   if (!side) return
   for (let index = 0; index < 4; index += 1) {
