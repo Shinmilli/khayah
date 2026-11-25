@@ -1,5 +1,11 @@
 import type { Request } from 'express'
 import { loadAdminUser } from '../middlewares/requireAdmin'
+import {
+  deleteRemovedStoredMedia,
+  deleteStoredMediaMany,
+  extractRemoteMediaFromValue,
+  mediaNotIn,
+} from '../utils/storedMedia'
 import { deleteJsonDocument, readJsonDocumentOptional, writeJsonDocument } from './siteDocumentStore'
 
 export type SaveMode = 'draft' | 'publish'
@@ -40,11 +46,29 @@ export async function writeDrafted(
   afterPublish?: (previous: unknown | null) => Promise<void>,
 ): Promise<void> {
   if (mode === 'draft') {
+    const [published, previousDraft] = await Promise.all([
+      readJsonDocumentOptional(key),
+      readJsonDocumentOptional(draftDocumentKey(key)),
+    ])
     await writeJsonDocument(draftDocumentKey(key), cleaned)
+    // 초안에서 빠졌고 게시본에도 없는 파일만 지운다. 게시 중인 파일은 남긴다.
+    await deleteStoredMediaMany(
+      mediaNotIn(extractRemoteMediaFromValue(previousDraft), [
+        ...extractRemoteMediaFromValue(cleaned),
+        ...extractRemoteMediaFromValue(published),
+      ]),
+    )
     return
   }
-  const previous = afterPublish ? await readJsonDocumentOptional(key) : null
+  const [previous, previousDraft] = await Promise.all([
+    readJsonDocumentOptional(key),
+    readJsonDocumentOptional(draftDocumentKey(key)),
+  ])
   await writeJsonDocument(key, cleaned)
   await deleteJsonDocument(draftDocumentKey(key))
-  if (afterPublish) await afterPublish(previous)
+  try {
+    if (afterPublish) await afterPublish(previous)
+  } finally {
+    await deleteRemovedStoredMedia([previous, previousDraft], cleaned)
+  }
 }

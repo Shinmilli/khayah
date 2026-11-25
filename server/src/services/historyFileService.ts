@@ -1,4 +1,5 @@
-import { readJsonDocument, writeJsonDocument } from './siteDocumentStore'
+import { deleteRemovedStoredMedia } from '../utils/storedMedia'
+import { readJsonDocument, readJsonDocumentOptional, writeJsonDocument } from './siteDocumentStore'
 
 const DOCUMENT_KEY = 'history'
 
@@ -87,5 +88,7 @@ export async function writeHistoryDocument(body: unknown): Promise<void> {
     ;(err as Error & { status?: number }).status = 400
     throw err
   }
+  const previous = await readJsonDocumentOptional(DOCUMENT_KEY)
   await writeJsonDocument(DOCUMENT_KEY, body)
+  if (previous != null) await deleteRemovedStoredMedia(previous, body)
 }

@@ -119,7 +119,23 @@ function supabasePathFromUrl(url: string): string | undefined {
   return m?.[1] ? decodeURIComponent(m[1]) : undefined
 }
 
-/** Cloudinary URL → 시도할 public_id 후보들 (.pdf 유무 등) */
+const IMAGE_EXT = /\.(jpe?g|png|gif|webp|avif)$/i
+
+function isCloudinaryTransformSegment(segment: string): boolean {
+  if (!segment || /^v\d+$/.test(segment)) return false
+  if (segment.includes(',')) return true
+  return /^[a-z]{1,3}_/.test(segment)
+}
+
+function withoutMediaExt(id: string): string {
+  return id.replace(/\.(jpe?g|png|gif|webp|avif|pdf)$/i, '')
+}
+
+/**
+ * Cloudinary URL → 시도할 public_id 후보들.
+ * 이미지 주소는 `.../id.jpg`인데 실제 public_id는 확장자가 없다.
+ * 변환(f_webp 등)이 붙은 주소도 같은 id로 지운다.
+ */
 export function cloudinaryPublicIdCandidates(url: string, explicit?: string): string[] {
   const out: string[] = []
   const add = (id?: string | null) => {
@@ -128,13 +144,18 @@ export function cloudinaryPublicIdCandidates(url: string, explicit?: string): st
     out.push(v)
   }
   add(explicit)
-  const m = url.match(/\/(?:raw|image|video)\/upload\/(?:v\d+\/)?(.+?)(?:\?|$)/)
-  if (m?.[1]) {
-    const decoded = decodeURIComponent(m[1])
-    add(decoded)
-    if (decoded.toLowerCase().endsWith('.pdf')) add(decoded.slice(0, -4))
-    else add(`${decoded}.pdf`)
+  if (explicit) add(withoutMediaExt(explicit))
+  const m = url.match(/\/(?:raw|image|video)\/upload\/(.+?)(?:\?|$)/)
+  if (!m?.[1]) return out
+  const parts = decodeURIComponent(m[1]).split('/').filter(Boolean)
+  while (parts.length > 1 && (/^v\d+$/.test(parts[0]!) || isCloudinaryTransformSegment(parts[0]!))) {
+    parts.shift()
   }
+  const decoded = parts.join('/')
+  add(withoutMediaExt(decoded))
+  add(decoded)
+  if (decoded.toLowerCase().endsWith('.pdf')) add(decoded.slice(0, -4))
+  else if (!IMAGE_EXT.test(decoded)) add(`${decoded}.pdf`)
   return out
 }
 

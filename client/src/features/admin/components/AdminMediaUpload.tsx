@@ -1,5 +1,5 @@
 import { useCallback, useId, useRef, useState } from 'react'
-import { uploadDocumentPdf, uploadReportImage } from '../../../services/api'
+import { deleteUploadedMedia, uploadDocumentPdf, uploadReportImage } from '../../../services/api'
 import { pdfOpenHref } from '../../../utils/pdfAttachments'
 
 export type AdminMediaUploadProps = {
@@ -37,6 +37,9 @@ export function AdminMediaUpload({
 }: AdminMediaUploadProps) {
   const inputId = useId()
   const inputRef = useRef<HTMLInputElement>(null)
+  const sessionUrls = useRef(new Set<string>())
+  const valueRef = useRef(value)
+  valueRef.current = value
   const [dragOver, setDragOver] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [localErr, setLocalErr] = useState<string | null>(null)
@@ -61,7 +64,13 @@ export function AdminMediaUpload({
         if (!url) {
           throw new Error('업로드는 됐지만 공개 URL을 받지 못했습니다. 서버 설정을 확인하세요.')
         }
+        const previous = valueRef.current
         onChange(url)
+        sessionUrls.current.add(url)
+        if (previous && previous !== url && sessionUrls.current.has(previous)) {
+          sessionUrls.current.delete(previous)
+          void deleteUploadedMedia({ url: previous }).catch(() => undefined)
+        }
         setLastOk(`${file.name} (${mb}MB → ${dest})`)
       } catch (e) {
         setLocalErr(e instanceof Error ? e.message : '업로드에 실패했습니다.')
@@ -134,7 +143,12 @@ export function AdminMediaUpload({
 
   const clearFile = () => {
     if (inputRef.current) inputRef.current.value = ''
+    const previous = value
     onChange(null)
+    if (previous && sessionUrls.current.has(previous)) {
+      sessionUrls.current.delete(previous)
+      void deleteUploadedMedia({ url: previous }).catch(() => undefined)
+    }
     setLastOk(null)
     setLocalErr(null)
   }

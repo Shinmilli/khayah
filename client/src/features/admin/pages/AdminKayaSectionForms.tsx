@@ -5,7 +5,7 @@ import { BizHead, bizTitle } from '../biz/BizChrome'
 import { greetSectionOrder, kayaSectionOrder, transSectionOrder, type GreetMovingId, type KayaSectionId, type TransMovingId } from '../../kaya/kayaSectionOrder'
 import type { KayaPagesDocument } from '../../kaya/kayaPagesTypes'
 import type { FinancialReportsDocument } from '../../financial-report/financialReportTypes'
-import { uploadDocumentPdf } from '../../../services/api'
+import { deleteUploadedMedia, uploadDocumentPdf } from '../../../services/api'
 import { pdfOpenHref } from '../../../utils/pdfAttachments'
 import {
   complianceItems,
@@ -1249,6 +1249,7 @@ function YearPdfField({
   onSet: (year: number, url: string | null) => void
 }) {
   const inputRef = useRef<HTMLInputElement>(null)
+  const sessionUrls = useRef(new Set<string>())
   const [picked, setPicked] = useState<number | null>(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
@@ -1264,7 +1265,17 @@ function YearPdfField({
             <a href={pdfOpenHref(file.url, `${file.year}.pdf`)} target="_blank" rel="noopener noreferrer">
               {file.year}.pdf
             </a>
-            <button type="button" aria-label={`${file.year}년 PDF 삭제`} onClick={() => onSet(file.year, null)}>
+            <button
+              type="button"
+              aria-label={`${file.year}년 PDF 삭제`}
+              onClick={() => {
+                if (sessionUrls.current.has(file.url)) {
+                  sessionUrls.current.delete(file.url)
+                  void deleteUploadedMedia({ url: file.url }).catch(() => undefined)
+                }
+                onSet(file.year, null)
+              }}
+            >
               ×
             </button>
           </span>
@@ -1310,7 +1321,15 @@ function YearPdfField({
           setBusy(true)
           setError('')
           void uploadDocumentPdf(file)
-            .then((result) => onSet(active, result.url))
+            .then((result) => {
+              const previous = files.find((item) => item.year === active)?.url
+              if (previous && result.url && previous !== result.url && sessionUrls.current.has(previous)) {
+                sessionUrls.current.delete(previous)
+                void deleteUploadedMedia({ url: previous }).catch(() => undefined)
+              }
+              if (result.url) sessionUrls.current.add(result.url)
+              onSet(active, result.url)
+            })
             .catch((err: unknown) => setError(err instanceof Error ? err.message : '업로드에 실패했습니다.'))
             .finally(() => setBusy(false))
         }}
