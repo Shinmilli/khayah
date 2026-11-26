@@ -213,7 +213,7 @@ function PageByPathInner({ kindHint }: { kindHint: string }) {
 
   if (isHistory) return <HistoryPage />
 
-  if (pathKey === PATH.newsActivities) return <StoryArchivePage kind="활동소식" heading={messages.nav.links.activities} />
+  if (pathKey === PATH.newsActivities) return <StoryArchivePage kind="활동소식" />
 
   if (pathKey === PATH.newsStories || pathKey.startsWith(`${PATH.newsStories}/`)) {
     return <StoryCategoryPage />

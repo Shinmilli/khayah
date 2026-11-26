@@ -298,6 +298,8 @@ export function FinancialReportPage() {
     )
   }
 
+  const yearReport = report
+  const pageSettings = settings
   const showAnyTable = settings.showBalanceSheet || settings.showOperationsStatement
   const statementBlock = showAnyTable ? (
     <div className="fr-statements">
@@ -598,19 +600,19 @@ export function FinancialReportPage() {
         ) : (
         <div className="financial-report__charts">
           <FinancialDonutChart
-            key={`fr-income-${report.year}`}
-            year={report.year}
+            key={`fr-income-${yearReport.year}`}
+            year={yearReport.year}
             kind="income"
-            segments={report.incomeSegments}
-            totalFormatted={formatWon(report.incomeTotalWon, locale)}
+            segments={yearReport.incomeSegments}
+            totalFormatted={formatWon(yearReport.incomeTotalWon, locale)}
             incomeTitle={fr.incomeChart}
           />
           <FinancialDonutChart
-            key={`fr-expense-${report.year}`}
-            year={report.year}
+            key={`fr-expense-${yearReport.year}`}
+            year={yearReport.year}
             kind="expense"
-            segments={report.expenseSegments}
-            totalFormatted={formatWon(report.expenseTotalWon, locale)}
+            segments={yearReport.expenseSegments}
+            totalFormatted={formatWon(yearReport.expenseTotalWon, locale)}
             expenseTitle={fr.expenseChart}
           />
         </div>
@@ -618,15 +620,15 @@ export function FinancialReportPage() {
 
         {true ? null : statementBlock}
 
-        {false && settings.showActionButtons ? (
+        {false && pageSettings.showActionButtons ? (
           <div className="financial-report__actions">
             <button
               type="button"
               className="financial-report__action financial-report__action--teal"
               onClick={() =>
                 openYearPdf(
-                  report.publicInterestDisclosurePdfUrl,
-                  `${report.year}년 공익법인 결산서류 공시.pdf`,
+                  yearReport.publicInterestDisclosurePdfUrl,
+                  `${yearReport.year}년 공익법인 결산서류 공시.pdf`,
                   { title: fr.pdfModalTitlePublicInterest, body: fr.pdfModalBodyPublicInterest },
                 )
               }
@@ -640,7 +642,7 @@ export function FinancialReportPage() {
               type="button"
               className="financial-report__action financial-report__action--yellow"
               onClick={() =>
-                openYearPdf(report.donationDisclosurePdfUrl, `${report.year}년 기부금 공시.pdf`, {
+                openYearPdf(yearReport.donationDisclosurePdfUrl, `${yearReport.year}년 기부금 공시.pdf`, {
                   title: fr.pdfModalTitle,
                   body: fr.pdfModalBody,
                 })
